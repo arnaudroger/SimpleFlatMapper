@@ -4,6 +4,7 @@ import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
 import org.simpleflatmapper.map.fieldmapper.MapperFieldMapper;
 import org.simpleflatmapper.map.impl.GetterMapper;
@@ -33,7 +34,7 @@ import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BiConsumer;
@@ -117,7 +118,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         return this;
     }
 
-    public Mapper<S, T> mapper() {
+    public SourceFieldMapper<S, T> mapper() {
         // look for property with a default value property but no definition.
         mapperConfig
                 .columnDefinitions()
@@ -146,7 +147,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         FieldMapper<S, T>[] fields = fields();
         InstantiatorAndFieldMappers constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
 
-        Mapper<S, T> mapper;
+        SourceFieldMapper<S, T> mapper;
 
         if (isEligibleForAsmMapper()) {
             try {
@@ -249,7 +250,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
                 final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(e.owner, properties);
 
-                final Mapper<S, ?> mapper;
+                final SourceMapper<S, ?> mapper;
                 if (properties.size() == 1 && JoinUtils.isArrayElement(properties.get(0).getPropertyMeta())) {
                     mapper = getterPropertyMapper(e.owner, properties.get(0));
                 } else {
@@ -263,7 +264,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 		return new ConstructorInjections(injections, fieldMappers.toArray(new FieldMapper[0]));
 	}
 
-    private <P> Mapper<S, P> getterPropertyMapper(PropertyMeta<T, P> owner, PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping) {
+    private <P> SourceMapper<S, P> getterPropertyMapper(PropertyMeta<T, P> owner, PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping) {
         PropertyMeta<T, ?> pm = propertyMapping.getPropertyMeta();
         final Getter<? super S, P> getter =
                 (Getter<? super S, P>) fieldMapperFactory.getGetterFromSource(propertyMapping.getColumnKey(), pm.getPropertyType(), propertyMapping.getColumnDefinition(), pm.getPropertyClassMetaSupplier());
@@ -277,9 +278,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private <P> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, PropertyMeta<T, ?> meta, Mapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
-        final MapperFieldMapper<S, T, P> fieldMapper =
-                new MapperFieldMapper<S, T, P>((Mapper<S, P>) mapper,
+    private <P, M extends SourceMapper<S, P> & FieldMapper<S, P>> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, PropertyMeta<T, ?> meta, SourceMapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+        final MapperFieldMapper<S, T, P, M> fieldMapper =
+                new MapperFieldMapper<S, T, P, M>((M) mapper,
                         (Setter<T, P>) meta.getSetter(),
                         mappingContextFactoryBuilder.nullChecker(),
                         mappingContextFactoryBuilder.currentIndex());
@@ -288,8 +289,8 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private <P> BiFunction<S, MappingContext<? super S>, P> newMapperGetterAdapter(Mapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> builder) {
-        return new MapperBiFunctionAdapter<S, P>((Mapper<S, P>)mapper, builder.nullChecker(), builder.currentIndex());
+    private <P> BiFunction<S, MappingContext<? super S>, P> newMapperGetterAdapter(SourceMapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> builder) {
+        return new MapperBiFunctionAdapter<S, P>((SourceMapper<S, P>)mapper, builder.nullChecker(), builder.currentIndex());
     }
 
     // call use towards sub jdbcMapper
@@ -319,7 +320,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             if (!e.owner.isConstructorProperty()) {
                 final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(e.owner, e.propertyMappings);
 
-                final Mapper<S, ?> mapper;
+                final SourceMapper<S, ?> mapper;
                 if (e.propertyMappings.size() == 1 && JoinUtils.isArrayElement(e.propertyMappings.get(0).getPropertyMeta())) {
                     mapper = getterPropertyMapper(e.owner, e.propertyMappings.get(0));
                 } else {
@@ -388,7 +389,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private <P> Mapper<S, P> subPropertyMapper(PropertyMeta<T, P> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+    private <P> SourceMapper<S, P> subPropertyMapper(PropertyMeta<T, P> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
         final ConstantSourceMapperBuilder<S, P, K> builder =
                 newSubBuilder(owner.getPropertyClassMeta(),
                         mappingContextFactoryBuilder,

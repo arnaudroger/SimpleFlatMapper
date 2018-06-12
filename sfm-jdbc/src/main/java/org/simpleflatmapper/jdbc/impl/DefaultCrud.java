@@ -4,7 +4,7 @@ import org.simpleflatmapper.jdbc.Crud;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 import org.simpleflatmapper.jdbc.SelectQuery;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.CheckedConsumer;
 
@@ -180,7 +180,7 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
     protected <RH extends CheckedConsumer<? super K>> RH executeQueryPreparerInBatchMode(Connection connection, Collection<T> values, RH keyConsumer, QueryPreparer<T> queryPreparer) throws SQLException {
         PreparedStatement preparedStatement = queryPreparer.prepareStatement(connection);
         try {
-            Mapper<T, PreparedStatement> mapper = queryPreparer.mapper();
+            FieldMapper<T, PreparedStatement> mapper = queryPreparer.mapper();
 
             for (T value : values) {
                 mapper.mapTo(value, preparedStatement, null);

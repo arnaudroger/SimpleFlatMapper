@@ -1,16 +1,16 @@
 package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.MappingException;
 
 
-public class ContextualMapper<S, T> implements Mapper<S, T> {
+public class ContextualSourceMapper<S, T> implements SourceMapper<S, T> {
     private final MappingContextFactory<S> mappingContextFactory;
-    private final Mapper<S, T> delegate;
+    private final SourceMapper<S, T> delegate;
 
-    public ContextualMapper(Mapper<S, T> delegate, MappingContextFactory<S> mappingContextFactory) {
+    public ContextualSourceMapper(SourceMapper<S, T> delegate, MappingContextFactory<S> mappingContextFactory) {
         this.delegate = delegate;
         this.mappingContextFactory = mappingContextFactory;
     }
@@ -30,13 +30,8 @@ public class ContextualMapper<S, T> implements Mapper<S, T> {
     }
 
     @Override
-    public void mapTo(S source, T target, MappingContext<? super S> context) throws Exception {
-        delegate.mapTo(source, target, context);
-    }
-
-    @Override
     public String toString() {
-        return "ContextualMapper{" +
+        return "ContextualSourceMapper{" +
                 "mappingContextFactory=" + mappingContextFactory +
                 ", delegate=" + delegate +
                 '}';

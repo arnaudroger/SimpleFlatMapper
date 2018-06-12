@@ -1,9 +1,11 @@
 package org.simpleflatmapper.test.issue;
 
 import org.junit.Test;
-import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.GetterProperty;
@@ -17,6 +19,7 @@ import org.simpleflatmapper.test.map.mapper.AbstractConstantTargetMapperBuilderT
 import org.simpleflatmapper.test.map.mapper.AbstractMapperBuilderTest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -69,7 +72,7 @@ public class Issue365Test {
         AbstractMapperBuilderTest.SampleMapperBuilder<Data> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Data>(classMeta, mapperConfig());
 
-        Mapper<Object[], Data> mapper =
+        SourceMapper<Object[], Data> mapper =
                 builder
                         .addMapping("score")
                         .addMapping("benchmark")
@@ -84,14 +87,14 @@ public class Issue365Test {
 
 
     @Test
-    public void testMapOnCustomGetter() throws IOException {
+    public void testMapOnCustomGetter() throws Exception {
 
         ClassMeta<Data> classMeta = ReflectionService.newInstance().getClassMeta(Data.class);
 
         AbstractConstantTargetMapperBuilderTest.Writerbuilder<Data> builder =
                 new AbstractConstantTargetMapperBuilderTest.Writerbuilder<Data>(classMeta, mapperConfig());
 
-        Mapper<Data, List<Object>> mapper =
+        FieldMapper<Data, List<Object>> mapper =
                 builder
                     .addColumn("score")
                     .addColumn("benchmark")
@@ -102,7 +105,9 @@ public class Issue365Test {
         data.algorithm = "algo";
         data.type = "type";
 
-        List<Object> list = mapper.map(data);
+        List<Object> list = new ArrayList<>();
+        
+        mapper.mapTo(data, list, MappingContext.EMPTY_CONTEXT);
 
         assertEquals(Arrays.asList(new Object[] {3.455, "algo.type"}), list);
     }
@@ -116,7 +121,7 @@ public class Issue365Test {
         AbstractMapperBuilderTest.SampleMapperBuilder<DataHolder> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<DataHolder>(classMeta, mapperConfig());
 
-        Mapper<Object[], DataHolder> mapper =
+        SourceMapper<Object[], DataHolder> mapper =
                 builder
                         .addMapping("data_score")
                         .addMapping("data_benchmark")

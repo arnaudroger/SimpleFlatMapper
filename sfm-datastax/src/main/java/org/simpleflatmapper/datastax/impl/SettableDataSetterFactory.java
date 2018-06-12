@@ -5,7 +5,8 @@ import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.datastax.DataTypeHelper;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
@@ -293,11 +294,11 @@ public class SettableDataSetterFactory
     private Converter<?, ?> getConverter(Type elementType, Class<?> dataTypeElt, DataType dtElt, ColumnDefinition<DatastaxColumnKey, ?> columnDefinition) {
         if (dtElt != null) {
             if (UDTValue.class.equals(dataTypeElt)) {
-                Mapper mapper = UDTObjectSettableDataSetter.newUDTMapper(elementType, (UserType) dtElt, mapperConfig, reflectionService);
+                FieldMapper mapper = UDTObjectSettableDataSetter.newUDTMapper(elementType, (UserType) dtElt, mapperConfig, reflectionService);
                 return new ConverterToUDTValueMapper(mapper, (UserType) dtElt);
             }
             if (TupleValue.class.equals(dataTypeElt)) {
-                Mapper mapper = TupleValueSettableDataSetter.newTupleMapper(elementType, (TupleType) dtElt, mapperConfig, reflectionService);
+                FieldMapper mapper = TupleValueSettableDataSetter.newTupleMapper(elementType, (TupleType) dtElt, mapperConfig, reflectionService);
                 return new ConverterToTupleValueMapper(mapper, (TupleType) dtElt);
             }
         }

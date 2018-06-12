@@ -59,11 +59,6 @@ public class DynamicSetRowMapper<ROW, SET, T, E extends Exception, K extends Fie
 	}
 
 	@Override
-	public final void mapTo(ROW row, T target, MappingContext<? super ROW> context) throws Exception {
-		getMapperFromRow(row).mapTo(row, target, context);
-	}
-
-	@Override
 	public final Iterator<T> iterator(SET rs) throws E, MappingException {
 		return getMapperFromSet(rs).iterator(rs);
 	}

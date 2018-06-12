@@ -3,9 +3,10 @@ package org.simpleflatmapper.datastax;
 import com.datastax.driver.core.*;
 import com.datastax.driver.core.exceptions.DriverException;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.impl.ResultSetEnumarable;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactory;
@@ -75,12 +76,12 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
     }
 
     @Override
-    protected DatastaxMapper<T> newJoinMapper(Mapper<Row, T> mapper) {
+    protected DatastaxMapper<T> newJoinMapper(SourceFieldMapper<Row, T> mapper) {
         return new JoinDatastaxMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 
     private static class JoinDatastaxMapper<T> extends JoinMapper<Row, ResultSet, T, DriverException> implements DatastaxMapper<T> {
-        public JoinDatastaxMapper(Mapper<Row, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
+        public JoinDatastaxMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
             super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
         }
     }
@@ -93,13 +94,13 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
     }
 
     @Override
-    protected DatastaxMapper<T> newStaticMapper(Mapper<Row, T> mapper) {
+    protected DatastaxMapper<T> newStaticMapper(SourceFieldMapper<Row, T> mapper) {
         return new StaticDatastaxMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 
     public static class StaticDatastaxMapper<T> extends StaticSetRowMapper<Row, ResultSet, T, DriverException> implements DatastaxMapper<T> {
 
-        public StaticDatastaxMapper(Mapper<Row, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
+        public StaticDatastaxMapper(SourceMapper<Row, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
             super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
         }
     }

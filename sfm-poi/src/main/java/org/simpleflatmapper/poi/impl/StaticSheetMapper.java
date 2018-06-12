@@ -3,7 +3,8 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceFieldMapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
@@ -20,13 +21,13 @@ import java.util.stream.StreamSupport;
 
 public class StaticSheetMapper<T> implements RowMapper<T> {
 
-    private final Mapper<Row, T> mapper;
+    private final SourceFieldMapper<Row, T> mapper;
     private final int startRow = 0;
 
     private final ConsumerErrorHandler consumerErrorHandler;
     private final MappingContextFactory<? super Row> mappingContextFactory;
 
-    public StaticSheetMapper(Mapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
+    public StaticSheetMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
         this.mapper = mapper;
         this.consumerErrorHandler = consumerErrorHandler;
         this.mappingContextFactory = mappingContextFactory;
@@ -50,7 +51,7 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
     @Override
     public <RH extends CheckedConsumer<T>> RH forEach(int startRow, Sheet sheet, RH consumer) {
         MappingContext<? super Row> mappingContext = newMappingContext();
-        Mapper<Row, T> lMapper = this.mapper;
+        SourceMapper<Row, T> lMapper = this.mapper;
         for(int rowNum = startRow; rowNum <= sheet.getLastRowNum(); rowNum++) {
             T object = lMapper.map(sheet.getRow(rowNum), mappingContext);
             try {

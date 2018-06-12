@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbi;
 
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -9,9 +9,9 @@ import java.sql.SQLException;
 
 public class DefaultSfmResultSetMapper<T> implements ResultSetMapper<T> {
 
-    private final Mapper<ResultSet, T> mapper;
+    private final SourceMapper<ResultSet, T> mapper;
 
-    public DefaultSfmResultSetMapper(Mapper<ResultSet, T> mapper) {
+    public DefaultSfmResultSetMapper(SourceMapper<ResultSet, T> mapper) {
         this.mapper = mapper;
     }
 

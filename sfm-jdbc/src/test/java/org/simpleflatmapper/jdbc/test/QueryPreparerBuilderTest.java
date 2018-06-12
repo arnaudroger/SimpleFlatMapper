@@ -3,8 +3,9 @@ package org.simpleflatmapper.jdbc.test;
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.PreparedStatementMapperBuilder;
+import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.simpleflatmapper.reflect.Getter;
@@ -20,7 +21,7 @@ public class QueryPreparerBuilderTest {
 
     @Test
     public void testMapDbObjectToStatement() throws Exception {
-        Mapper<DbObject, PreparedStatement> mapper =
+        FieldMapper<DbObject, PreparedStatement> mapper =
                 JdbcMapperFactory.newInstance().buildFrom(DbObject.class)
                         .addColumn("id")
                         .addColumn("name")
@@ -66,7 +67,7 @@ public class QueryPreparerBuilderTest {
         PreparedStatementMapperBuilder<DMClass> mapperBuilder = JdbcMapperFactory.newInstance().buildFrom(DMClass.class);
         mapperBuilder.addColumn("time");
 
-        Mapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
+        FieldMapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
 
         DMClass dmClass = new DMClass();
         dmClass.setTime(new Date());
@@ -82,7 +83,7 @@ public class QueryPreparerBuilderTest {
         PreparedStatementMapperBuilder<DMClass> mapperBuilder = JdbcMapperFactory.newInstance().buildFrom(DMClass.class);
         mapperBuilder.addColumn("value");
 
-        Mapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
+        FieldMapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
 
         DMClass dmClass = new DMClass();
 
@@ -101,7 +102,7 @@ public class QueryPreparerBuilderTest {
                 .buildFrom(DMClass.class);
         mapperBuilder.addColumn("val");
 
-        Mapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
+        FieldMapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
 
         DMClass dmClass = new DMClass();
 
@@ -127,7 +128,7 @@ public class QueryPreparerBuilderTest {
                 .buildFrom(DMClass.class);
         mapperBuilder.addColumn("value");
 
-        Mapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
+        FieldMapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
 
         DMClass dmClass = new DMClass();
 
@@ -146,7 +147,7 @@ public class QueryPreparerBuilderTest {
                 .buildFrom(Object.class);
         mapperBuilder.addColumn("text");
 
-        Mapper<Object, PreparedStatement> mapper = mapperBuilder.mapper();
+        FieldMapper<Object, PreparedStatement> mapper = mapperBuilder.mapper();
 
 
         PreparedStatement ps = mock(PreparedStatement.class);

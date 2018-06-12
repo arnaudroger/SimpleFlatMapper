@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jooq;
 
 import org.jooq.*;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -11,11 +11,11 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Integration point with jooq.<p>
- * Provide a JooqRecordMapper backed by an Sfm {@link org.jooq.Record} {@link Mapper}
+ * Provide a JooqRecordMapper backed by an Sfm {@link org.jooq.Record} {@link SourceMapper}
  */
 public class SfmRecordMapperProvider implements RecordMapperProvider {
 
-	private final ConcurrentMap<TargetColumnsMapperKey, Mapper<Record, ?>> mapperCache = new ConcurrentHashMap<TargetColumnsMapperKey, Mapper<Record, ?>>();
+	private final ConcurrentMap<TargetColumnsMapperKey, SourceMapper<Record, ?>> mapperCache = new ConcurrentHashMap<TargetColumnsMapperKey, SourceMapper<Record, ?>>();
 	private final MapperConfig<JooqFieldKey, FieldMapperColumnDefinition<JooqFieldKey>> mapperConfig;
 	private final ReflectionService reflectionService;
 
@@ -35,7 +35,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 		TargetColumnsMapperKey key = getMapperKey(recordType, type);
 		
 		@SuppressWarnings("unchecked")
-		Mapper<Record, E> mapper = (Mapper<Record, E>) mapperCache.get(key);
+        SourceMapper<Record, E> mapper = (SourceMapper<Record, E>) mapperCache.get(key);
 		
 		if (mapper == null) {
 			mapper = buildMapper(recordType, type);
@@ -45,7 +45,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 		return new JooqRecordMapperWrapper<R, E>(mapper);
 	}
 
-	private <R extends Record, E> Mapper<Record, E> buildMapper(RecordType<R> recordType, Class<? extends E> type) {
+	private <R extends Record, E> SourceMapper<Record, E> buildMapper(RecordType<R> recordType, Class<? extends E> type) {
 		JooqMapperBuilder<E> mapperBuilder =
 				new JooqMapperBuilder<E>(
 						reflectionService.<E>getClassMeta(type),

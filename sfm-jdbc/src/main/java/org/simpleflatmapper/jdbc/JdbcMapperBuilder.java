@@ -1,6 +1,9 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.Result;
+import org.simpleflatmapper.map.SourceFieldMapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
@@ -147,13 +150,18 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
     }
 
     @Override
-    protected JdbcMapper<T> newJoinMapper(Mapper<ResultSet, T> mapper) {
+    protected JdbcMapper<T> newJoinMapper(SourceFieldMapper<ResultSet, T> mapper) {
         return new JoinJdbcMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
+    }
+
+    @Override
+    protected JdbcMapper<T> newStaticMapper(SourceFieldMapper<ResultSet, T> mapper) {
+        return new StaticJdbcSetRowMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 
     private static class JoinJdbcMapper<T> extends JoinMapper<ResultSet, ResultSet, T, SQLException>
             implements JdbcMapper<T> {
-        public JoinJdbcMapper(Mapper<ResultSet, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ResultSet> mappingContextFactory) {
+        public JoinJdbcMapper(SourceFieldMapper<ResultSet, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ResultSet> mappingContextFactory) {
             super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
         }
 
@@ -169,19 +177,16 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
             return new ResultSetEnumarable(rows);
         }
     }
-    @Override
-    protected JdbcMapper<T> newStaticMapper(Mapper<ResultSet, T> mapper) {
-        return new StaticJdbcSetRowMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
-    }
+
 
     private static class StaticJdbcSetRowMapper<T> extends StaticSetRowMapper<ResultSet, ResultSet, T, SQLException> implements  JdbcMapper<T> {
 
-        public StaticJdbcSetRowMapper(Mapper<ResultSet, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ResultSet> mappingContextFactory) {
+        public StaticJdbcSetRowMapper(SourceMapper<ResultSet, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ResultSet> mappingContextFactory) {
             super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
         }
 
         @Override
-        public MappingContext<? super ResultSet> newMappingContext(ResultSet resultSet) throws SQLException {
+        public MappingContext<? super ResultSet> newMappingContext(ResultSet resultSet) {
             return getMappingContextFactory().newContext();
         }
     }

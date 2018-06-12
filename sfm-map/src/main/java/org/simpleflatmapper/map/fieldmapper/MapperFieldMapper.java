@@ -1,22 +1,22 @@
 package org.simpleflatmapper.map.fieldmapper;
 
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.util.Predicate;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
-public final class MapperFieldMapper<S, T, P> implements FieldMapper<S, T> {
+public final class MapperFieldMapper<S, T, P, M extends SourceMapper<S, P> & FieldMapper<S, P>> implements FieldMapper<S, T> {
 
-	private final Mapper<S, P> mapper;
+	private final M mapper;
 	private final Setter<? super T, ? super P> propertySetter;
     private final Predicate<? super S> nullChecker;
 
     private final int currentValueIndex;
 
-    public MapperFieldMapper(Mapper<S, P> mapper, Setter<? super T, ? super P> propertySetter, Predicate<? super S> nullChecker, int currentValueIndex) {
+    public MapperFieldMapper(M mapper, Setter<? super T, ? super P> propertySetter, Predicate<? super S> nullChecker, int currentValueIndex) {
         this.mapper = requireNonNull("jdbcMapper", mapper);
         this.propertySetter = requireNonNull("propertySetter", propertySetter);
         this.nullChecker = requireNonNull("nullChecker", nullChecker);

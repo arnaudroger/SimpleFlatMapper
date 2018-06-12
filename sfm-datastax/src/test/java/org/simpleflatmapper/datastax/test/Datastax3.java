@@ -10,7 +10,7 @@ import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.datastax.DataTypeHelper;
 import org.simpleflatmapper.datastax.DatastaxCrud;
 import org.simpleflatmapper.datastax.test.utils.RecorderInvocationHandler;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
         librarySets = {
                 "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar"
         },
-        includes={Converter.class, ReflectionService.class, Mapper.class, DatastaxCrud.class, DatastaxCrudTest.class},
+        includes={Converter.class, ReflectionService.class, SourceMapper.class, DatastaxCrud.class, DatastaxCrudTest.class},
         excludes = { "org.junit", "io.netty"},
         names={"v303"}
 )

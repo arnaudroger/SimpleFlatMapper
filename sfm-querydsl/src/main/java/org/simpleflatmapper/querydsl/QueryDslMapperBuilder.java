@@ -2,7 +2,7 @@ package org.simpleflatmapper.querydsl;
 
 import com.mysema.query.Tuple;
 import com.mysema.query.types.Expression;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
@@ -51,7 +51,7 @@ public final class QueryDslMapperBuilder<T> {
 		return this;
 	}
 
-	public Mapper<Tuple, T> mapper() {
+	public SourceMapper<Tuple, T> mapper() {
 		return constantSourceMapperBuilder.mapper();
 	}
 }

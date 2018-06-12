@@ -2,7 +2,7 @@ package org.simpleflatmapper.test.map.impl;
 
 import org.junit.Test;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.reflect.TypeAffinity;
@@ -89,7 +89,7 @@ public class ConstantSourceMapperBuilderTest {
 
         constantSourceMapperBuilder.addMapping(new SampleFieldKey("prop", 0, Date.class), FieldMapperColumnDefinition.<SampleFieldKey>identity());
 
-        Mapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
+        SourceMapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
 
         MyObjectWithInner o = mapper.map(null);
 
@@ -114,7 +114,7 @@ public class ConstantSourceMapperBuilderTest {
         constantSourceMapperBuilder.addMapping(new SampleFieldKey("prop_date", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
 
 
-        Mapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
+        SourceMapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
 
         MyObjectWithInner o = mapper.map(null);
 
@@ -139,7 +139,7 @@ public class ConstantSourceMapperBuilderTest {
 
         constantSourceMapperBuilder.addMapping(new SampleFieldKey("prop_date", 16), FieldMapperColumnDefinition.<SampleFieldKey>identity());
 
-        Mapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
+        SourceMapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
 
         MyObjectWithInner o = mapper.map(null);
 

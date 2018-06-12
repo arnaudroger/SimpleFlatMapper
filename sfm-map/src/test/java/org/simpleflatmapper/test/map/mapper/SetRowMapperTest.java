@@ -1,12 +1,11 @@
 package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.SourceFieldMapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.reflect.ReflectionService;
-import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.test.beans.DbListObject;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.test.map.SampleFieldKeyMapperKeyComparator;
 import org.simpleflatmapper.map.SetRowMapper;
@@ -42,7 +41,7 @@ public class SetRowMapperTest {
             return new ArrayEnumarable<Object[]>(objects);
         }
     };
-    public static final Mapper<Object[], DbObject> ID_NAME_MAPPER =  new Mapper<Object[], DbObject>() {
+    public static final SourceFieldMapper<Object[], DbObject> ID_NAME_MAPPER =  new SourceFieldMapper<Object[], DbObject>() {
         @Override
         public DbObject map(Object[] source) throws MappingException {
             return map(source, null);
@@ -66,7 +65,7 @@ public class SetRowMapperTest {
         }
     };
 
-    public static final Mapper<Object[], DbObject> ID_NAME_EMIL_MAPPER =  new Mapper<Object[], DbObject>() {
+    public static final SourceFieldMapper<Object[], DbObject> ID_NAME_EMIL_MAPPER =  new SourceFieldMapper<Object[], DbObject>() {
         @Override
         public DbObject map(Object[] source) throws MappingException {
             return map(source, null);
@@ -113,9 +112,6 @@ public class SetRowMapperTest {
         //IFJAVA8_END
         checkIdNameRow(1l, staticSetRowMapper.map(ID_NAME_DATA[0]));
         checkIdNameRow(1l, staticSetRowMapper.map(ID_NAME_DATA[0], null));
-        DbObject d = new DbObject();
-        staticSetRowMapper.mapTo(ID_NAME_DATA[0], d, null);
-        checkIdNameRow(1l, d);
     }
 
     private void checkIdNameResult(Iterator<DbObject> it) {
@@ -150,9 +146,6 @@ public class SetRowMapperTest {
         //IFJAVA8_END
         checkIdNameEmailRow(1l, staticSetRowMapper.map(ID_NAME_EMAIL_DATA[0]));
         checkIdNameEmailRow(1l, staticSetRowMapper.map(ID_NAME_EMAIL_DATA[0], null));
-        DbObject d = new DbObject();
-        staticSetRowMapper.mapTo(ID_NAME_EMAIL_DATA[0], d, null);
-        checkIdNameEmailRow(1l, d);
     }
 
     private void checkIdNameEmailResult(Iterator<DbObject> it) {
@@ -184,7 +177,7 @@ public class SetRowMapperTest {
                 new UnaryFactory<MapperKey<SampleFieldKey>, SetRowMapper<Object[], Object[][], DbObject, RuntimeException>>() {
                     @Override
                     public SetRowMapper<Object[], Object[][], DbObject, RuntimeException> newInstance(MapperKey<SampleFieldKey> sampleFieldKeyMapperKey) {
-                        Mapper<Object[], DbObject> mapper = sampleFieldKeyMapperKey.getColumns().length == 2 ? ID_NAME_MAPPER : ID_NAME_EMIL_MAPPER;
+                        SourceMapper<Object[], DbObject> mapper = sampleFieldKeyMapperKey.getColumns().length == 2 ? ID_NAME_MAPPER : ID_NAME_EMIL_MAPPER;
                         return new StaticSetRowMapper<Object[], Object[][], DbObject, RuntimeException>(mapper,
                                 RethrowConsumerErrorHandler.INSTANCE, MappingContext.EMPTY_FACTORY, ENUMARABLE_UNARY_FACTORY);
                     }

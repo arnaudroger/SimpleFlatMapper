@@ -4,7 +4,8 @@ package org.simpleflatmapper.poi.impl;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceFieldMapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.context.MappingContextFactory;
@@ -24,13 +25,13 @@ import java.util.stream.StreamSupport;
 
 public class JoinSheetMapper<T> implements RowMapper<T> {
 
-    private final Mapper<Row, T> mapper;
+    private final SourceFieldMapper<Row, T> mapper;
     private final int startRow = 0;
 
     private final ConsumerErrorHandler consumerErrorHandler;
     private final MappingContextFactory<? super Row> mappingContextFactory;
 
-    public JoinSheetMapper(Mapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
+    public JoinSheetMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
         this.mapper = mapper;
         this.consumerErrorHandler = consumerErrorHandler;
         this.mappingContextFactory = mappingContextFactory;

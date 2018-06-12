@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.jdbc.QueryBinder;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 
 import java.sql.Connection;
@@ -27,7 +27,7 @@ public class UnsupportedQueryPreparer<T> implements QueryPreparer<T> {
     }
 
     @Override
-    public Mapper<T, PreparedStatement> mapper() {
+    public FieldMapper<T, PreparedStatement> mapper() {
         throw new UnsupportedOperationException(message);
     }
 

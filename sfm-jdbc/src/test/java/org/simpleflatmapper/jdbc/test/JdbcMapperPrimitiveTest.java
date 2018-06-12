@@ -6,7 +6,7 @@ import org.simpleflatmapper.test.beans.DbBoxedPrimitiveObject;
 import org.simpleflatmapper.test.beans.DbFinalPrimitiveObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.test.beans.PrimitiveObject;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -76,7 +76,7 @@ public class JdbcMapperPrimitiveTest {
 	}
 	
 
-	public <T extends PrimitiveObject> void testPrimitives(Mapper<ResultSet, T> mapper) throws SQLException, Exception {
+	public <T extends PrimitiveObject> void testPrimitives(SourceMapper<ResultSet, T> mapper) throws SQLException, Exception {
 		ResultSet rs = mock(ResultSet.class);
 
 		when(rs.getBoolean(1)).thenReturn(true);
@@ -101,7 +101,7 @@ public class JdbcMapperPrimitiveTest {
 	}
 	
 	public void testPrimitivesWithNullValues(
-			Mapper<ResultSet, DbBoxedPrimitiveObject> mapper) throws SQLException, Exception {
+			SourceMapper<ResultSet, DbBoxedPrimitiveObject> mapper) throws SQLException, Exception {
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.wasNull()).thenReturn(true);
 		

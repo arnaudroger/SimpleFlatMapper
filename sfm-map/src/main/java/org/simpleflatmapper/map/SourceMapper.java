@@ -1,7 +1,7 @@
 package org.simpleflatmapper.map;
 
 
-public interface Mapper<S, T> extends FieldMapper<S, T> {
+public interface SourceMapper<S, T> {
 	/**
 	 * map the current row of source object to a new newInstance of T.
 	 * This method does not manage the iteration of the source and will only map the current row. No join aggregation will be performed.

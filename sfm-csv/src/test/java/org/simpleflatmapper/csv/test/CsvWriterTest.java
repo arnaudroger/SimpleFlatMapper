@@ -188,7 +188,9 @@ public class CsvWriterTest {
     public void testFailOnListWithDefaultHeaderAndSkipHeaders() throws IOException {
         try {
             CsvWriter.from(new TypeReference<List<String>>() {
-            }).skipHeaders().to(new StringWriter());
+            })
+                    .skipHeaders()
+                    .to(new StringWriter());
             fail();
         } catch(IllegalStateException e) {
             // expected

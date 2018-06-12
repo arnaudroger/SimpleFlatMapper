@@ -5,8 +5,7 @@ import org.simpleflatmapper.jdbc.QueryBinder;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 import org.simpleflatmapper.jdbc.SizeSupplier;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
-import org.simpleflatmapper.map.Mapper;
-import org.simpleflatmapper.util.Asserts;
+import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.util.ErrorHelper;
 
 import java.sql.Connection;
@@ -37,7 +36,7 @@ public class MultiIndexQueryPreparer<T> implements QueryPreparer<T> {
     }
 
     @Override
-    public Mapper<T, PreparedStatement> mapper() {
+    public FieldMapper<T, PreparedStatement> mapper() {
         throw new UnsupportedOperationException();
     }
 

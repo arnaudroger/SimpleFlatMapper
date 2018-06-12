@@ -7,7 +7,8 @@ import com.datastax.driver.core.TupleValue;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 import org.simpleflatmapper.datastax.SettableDataMapperBuilder;
 import org.simpleflatmapper.datastax.impl.SettableDataSetterFactory;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
@@ -35,9 +36,9 @@ public class TupleValueSettableDataSetter implements Setter<SettableByIndexData,
         }
     }
 
-    public static <T extends Tuple2<?, ?>> Mapper<T, SettableByIndexData> newTupleMapper(Type target, TupleType tt,
-                                                                                         MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
-                                                                                         ReflectionService reflectionService) {
+    public static <T extends Tuple2<?, ?>> FieldMapper<T, SettableByIndexData> newTupleMapper(Type target, TupleType tt,
+                                                                                              MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
+                                                                                              ReflectionService reflectionService) {
         SettableDataMapperBuilder<T> builder = newFieldMapperBuilder(config, reflectionService, target);
         List<DataType> componentTypes = tt.getComponentTypes();
         for(int i = 0; i < componentTypes.size(); i++) {

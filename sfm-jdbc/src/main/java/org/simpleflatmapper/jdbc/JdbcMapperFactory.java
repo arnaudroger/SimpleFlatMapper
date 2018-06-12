@@ -275,19 +275,7 @@ public final class JdbcMapperFactory
 			return getMapper(resultSet.getMetaData()).newMappingContext(resultSet);
 		}
 	}
-
-	/**
-     * Create a discriminator builder based on the specified property
-     * @param column the discriminator property
-     * @param <T> the root type of the jdbcMapper
-     * @return a builder to specify the type mapping
-     */
-    public <T> DiscriminatorJdbcBuilder<T> newDiscriminator(String column) {
-        ignorePropertyNotFound();
-        addColumnDefinition(column, FieldMapperColumnDefinition.<JdbcColumnKey>ignoreDefinition());
-        return new DiscriminatorJdbcBuilder<T>(column, this);
-    }
-
+	
 	private static class MapperKeyFactory implements UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> {
 		@Override
         public MapperKey<JdbcColumnKey> newInstance(ResultSet set) throws SQLException {

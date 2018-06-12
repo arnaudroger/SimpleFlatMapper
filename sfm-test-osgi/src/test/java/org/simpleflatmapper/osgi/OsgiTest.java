@@ -8,7 +8,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.poi.SheetMapper;
 import org.simpleflatmapper.reflect.Getter;
@@ -102,7 +102,7 @@ public class OsgiTest {
         hostApplication.deployBundleWithClass(ErrorHelper.class);
         hostApplication.deployBundleWithClass(Converter.class);
         hostApplication.deployBundleWithClass(Getter.class);
-        hostApplication.deployBundleWithClass(Mapper.class);
+        hostApplication.deployBundleWithClass(SourceMapper.class);
     }
 
     private void installFelix(HostApplication hostApplication) throws IOException, BundleException {

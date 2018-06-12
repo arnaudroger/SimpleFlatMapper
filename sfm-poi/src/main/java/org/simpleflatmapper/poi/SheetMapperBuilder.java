@@ -2,10 +2,12 @@ package org.simpleflatmapper.poi;
 
 
 import org.apache.poi.ss.usermodel.Row;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.map.mapper.AbstractMapperBuilder;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
@@ -38,12 +40,12 @@ public class SheetMapperBuilder<T> extends AbstractMapperBuilder<Row, T, CsvColu
     }
 
     @Override
-    protected RowMapper<T> newJoinMapper(Mapper<Row, T> mapper) {
+    protected RowMapper<T> newJoinMapper(SourceFieldMapper<Row, T> mapper) {
         return new JoinSheetMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 
     @Override
-    protected RowMapper<T> newStaticMapper(Mapper<Row, T> mapper) {
+    protected RowMapper<T> newStaticMapper(SourceFieldMapper<Row, T> mapper) {
         return  new StaticSheetMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 }

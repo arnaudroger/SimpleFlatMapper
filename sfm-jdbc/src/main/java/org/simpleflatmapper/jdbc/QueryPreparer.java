@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.FieldMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,7 +33,7 @@ public interface QueryPreparer<T> {
      * @return the mapper
      * @throws UnsupportedOperationException if a parameter is an array or a List
      */
-    Mapper<T, PreparedStatement> mapper();
+    FieldMapper<T, PreparedStatement> mapper();
 
     String toRewrittenSqlQuery(T value);
 }

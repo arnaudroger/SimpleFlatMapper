@@ -2,7 +2,7 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
@@ -54,7 +54,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
      * @return a new newInstance of the jdbcMapper based on the current state of the builder.
      */
     public final M mapper() {
-        Mapper<S, T> mapper = constantSourceMapperBuilder.mapper();
+        SourceFieldMapper<S, T> mapper = constantSourceMapperBuilder.mapper();
 
         if (constantSourceMapperBuilder.hasJoin()) {
             return newJoinMapper(mapper);
@@ -176,7 +176,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
         return keyFactory.newKey(column, index);
     }
 
-    protected abstract M newJoinMapper(Mapper<S, T> mapper);
+    protected abstract M newJoinMapper(SourceFieldMapper<S, T> mapper);
 
-    protected abstract M newStaticMapper(Mapper<S, T> mapper);
+    protected abstract M newStaticMapper(SourceFieldMapper<S, T> mapper);
 }

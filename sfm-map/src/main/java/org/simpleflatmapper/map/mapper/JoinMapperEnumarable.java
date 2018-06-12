@@ -1,13 +1,13 @@
 package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.util.Enumarable;
 import org.simpleflatmapper.util.ErrorHelper;
 
 public class JoinMapperEnumarable<S, T> implements Enumarable<T> {
 
-    private final Mapper<S, T> mapper;
+    private final SourceFieldMapper<S, T> mapper;
     private final MappingContext<? super S> mappingContext;
 
 
@@ -15,7 +15,7 @@ public class JoinMapperEnumarable<S, T> implements Enumarable<T> {
     private T currentValue;
     private T nextValue;
 
-    public JoinMapperEnumarable(Mapper<S, T> mapper,
+    public JoinMapperEnumarable(SourceFieldMapper<S, T> mapper,
                                 MappingContext<? super S> mappingContext,
                                 Enumarable<S> sourceEnumarable) {
         this.mapper = mapper;

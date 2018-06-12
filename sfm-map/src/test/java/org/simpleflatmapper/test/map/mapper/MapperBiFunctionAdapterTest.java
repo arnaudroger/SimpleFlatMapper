@@ -1,7 +1,7 @@
 package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.MapperBiFunctionAdapter;
 import org.simpleflatmapper.util.Predicate;
@@ -18,7 +18,7 @@ public class MapperBiFunctionAdapterTest {
     @Test
     public void test() throws Exception {
         Predicate<Object> nullChecker = mock(Predicate.class);
-        Mapper<Object, String> mapper = mock(Mapper.class);
+        SourceMapper<Object, String> mapper = mock(SourceMapper.class);
 
         MappingContext mappingContext = mock(MappingContext.class);
 

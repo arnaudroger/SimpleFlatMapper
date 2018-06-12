@@ -6,7 +6,8 @@ import org.joda.time.format.DateTimeFormatter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceFieldMapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
@@ -37,9 +38,7 @@ import org.simpleflatmapper.test.beans.ObjectWith1ParamConstructionWithLoop;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.ArrayEnumarable;
 import org.simpleflatmapper.util.ConstantPredicate;
-import org.simpleflatmapper.util.ConstantUnaryFactory;
 import org.simpleflatmapper.util.Enumarable;
-import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.TypeReference;
@@ -66,7 +65,7 @@ public class AbstractMapperBuilderTest {
         ClassMeta<List<DateTime>> classMeta =
                 ReflectionService.disableAsm().<List<DateTime>>getClassMeta(new TypeReference<List<DateTime>>() {}.getType());
 
-        Mapper<Object[] , List<DateTime>> mapper =
+        SourceMapper<Object[] , List<DateTime>> mapper =
                 new SampleMapperBuilder<List<DateTime>>(classMeta)
                     .addMapping(new SampleFieldKey("0", 0, new Class[0], Date.class)).mapper();
 
@@ -82,7 +81,7 @@ public class AbstractMapperBuilderTest {
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyyMMdd HH:mm:ss.SSSS Z");
 
-        Mapper<Object[] , List<DateTime>> mapper =
+        SourceMapper<Object[] , List<DateTime>> mapper =
                 new SampleMapperBuilder<List<DateTime>>(classMeta)
                         .addMapping(new SampleFieldKey("0", 0, new Class[0], String.class), dateTimeFormatter).mapper();
 
@@ -97,7 +96,7 @@ public class AbstractMapperBuilderTest {
     public void testOptionalDbObject() {
         ClassMeta<Optional<DbObject>> classMeta =
                 ReflectionService.disableAsm().<Optional<DbObject>>getClassMeta(new TypeReference<Optional<DbObject>>() {}.getType());
-        Mapper<Object[], Optional<DbObject>> mapper =
+        SourceMapper<Object[], Optional<DbObject>> mapper =
                 new SampleMapperBuilder<Optional<DbObject>>(classMeta)
                         .addMapping("id")
                         .addMapping("name")
@@ -114,7 +113,7 @@ public class AbstractMapperBuilderTest {
     public void testArrayDbObject() {
         ClassMeta<DbObject[]> classMeta =
                 ReflectionService.disableAsm().<DbObject[]>getClassMeta(DbObject[].class);
-        Mapper<Object[], DbObject[]> mapper =
+        SourceMapper<Object[], DbObject[]> mapper =
                 new SampleMapperBuilder<DbObject[]>(classMeta)
                         .addMapping("1_id")
                         .addMapping("1_name")
@@ -134,7 +133,7 @@ public class AbstractMapperBuilderTest {
     public void testListDbObject() {
         ClassMeta<List<DbObject>> classMeta =
                 ReflectionService.disableAsm().<List<DbObject>>getClassMeta(new TypeReference<List<DbObject>>() {}.getType());
-        Mapper<Object[], List<DbObject>> mapper =
+        SourceMapper<Object[], List<DbObject>> mapper =
                 new SampleMapperBuilder<List<DbObject>>(classMeta)
                         .addMapping("1_id")
                         .addMapping("1_name")
@@ -155,7 +154,7 @@ public class AbstractMapperBuilderTest {
     public void testSetDbObject() {
         ClassMeta<Set<DbObject>> classMeta =
                 ReflectionService.disableAsm().<Set<DbObject>>getClassMeta(new TypeReference<Set<DbObject>>() {}.getType());
-        Mapper<Object[], Set<DbObject>> mapper =
+        SourceMapper<Object[], Set<DbObject>> mapper =
                 new SampleMapperBuilder<Set<DbObject>>(classMeta)
                         .addMapping("1_id")
                         .addMapping("1_name")
@@ -189,7 +188,7 @@ public class AbstractMapperBuilderTest {
     public void testMapDbObject() {
         ClassMeta<Map<Long, DbObject>> classMeta =
                 ReflectionService.disableAsm().<Map<Long, DbObject>>getClassMeta(new TypeReference<Map<Long, DbObject>>() {}.getType());
-        Mapper<Object[], Map<Long, DbObject>> mapper =
+        SourceMapper<Object[], Map<Long, DbObject>> mapper =
                 new SampleMapperBuilder<Map<Long, DbObject>>(classMeta)
                         .addMapping("1_id")
                         .addMapping("1_name")
@@ -209,7 +208,7 @@ public class AbstractMapperBuilderTest {
     public void testFinalObjectWithOneConstructor() {
         ClassMeta<FinalObjectWith1ParamConstruction> classMeta = ReflectionService.newInstance().<FinalObjectWith1ParamConstruction>getClassMeta(FinalObjectWith1ParamConstruction.class);
 
-        Mapper<Object[], FinalObjectWith1ParamConstruction> mapper =
+        SourceMapper<Object[], FinalObjectWith1ParamConstruction> mapper =
                 new SampleMapperBuilder<FinalObjectWith1ParamConstruction>(classMeta)
                         .addMapping("id")
                         .addMapping("o1p")
@@ -228,7 +227,7 @@ public class AbstractMapperBuilderTest {
     public void testObjectWithOneConstructor() {
         ClassMeta<ObjectWith1ParamConstruction> classMeta = ReflectionService.newInstance().<ObjectWith1ParamConstruction>getClassMeta(ObjectWith1ParamConstruction.class);
 
-        Mapper<Object[], ObjectWith1ParamConstruction> mapper =
+        SourceMapper<Object[], ObjectWith1ParamConstruction> mapper =
                 new SampleMapperBuilder<ObjectWith1ParamConstruction>(classMeta)
                         .addMapping("id")
                         .addMapping("o1p")
@@ -247,7 +246,7 @@ public class AbstractMapperBuilderTest {
 
         try {
             ClassMeta<ObjectWith1ParamConstructionWithLoop> classMeta = ReflectionService.newInstance().<ObjectWith1ParamConstructionWithLoop>getClassMeta(ObjectWith1ParamConstructionWithLoop.class);
-            Mapper<Object[], ObjectWith1ParamConstructionWithLoop> mapper =
+            SourceMapper<Object[], ObjectWith1ParamConstructionWithLoop> mapper =
                     new SampleMapperBuilder<ObjectWith1ParamConstructionWithLoop>(classMeta)
                             .addMapping("id")
                             .addMapping("o1p")
@@ -259,7 +258,7 @@ public class AbstractMapperBuilderTest {
 
         try {
             ClassMeta<FinalObjectWith1ParamConstructionWithLoop> classMeta = ReflectionService.newInstance().<FinalObjectWith1ParamConstructionWithLoop>getClassMeta(FinalObjectWith1ParamConstructionWithLoop.class);
-            Mapper<Object[], FinalObjectWith1ParamConstructionWithLoop> mapper =
+            SourceMapper<Object[], FinalObjectWith1ParamConstructionWithLoop> mapper =
                     new SampleMapperBuilder<FinalObjectWith1ParamConstructionWithLoop>(classMeta)
                             .addMapping("id")
                             .addMapping("o1p")
@@ -272,7 +271,7 @@ public class AbstractMapperBuilderTest {
 
         ClassMeta<DbFinal1DeepObject> classMeta = ReflectionService.newInstance().<DbFinal1DeepObject>getClassMeta(DbFinal1DeepObject.class);
 
-        Mapper<Object[], DbFinal1DeepObject> mapper =
+        SourceMapper<Object[], DbFinal1DeepObject> mapper =
                 new SampleMapperBuilder<DbFinal1DeepObject>(classMeta)
                         .addMapping("id")
                         .addMapping("value")
@@ -356,7 +355,7 @@ public class AbstractMapperBuilderTest {
 
         MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig =
                 MapperConfig.<SampleFieldKey>fieldMapperConfig().columnDefinitions(definitionProvider);
-        Mapper<Object[], DbObject> mapper =
+        SourceMapper<Object[], DbObject> mapper =
                 new SampleMapperBuilder<DbObject>(classMeta, mapperConfig)
                         .addMapping("id")
                         .mapper();
@@ -414,7 +413,7 @@ public class AbstractMapperBuilderTest {
     public void testCustomization() throws Exception {
         ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
 
-        Mapper<Object[], DbObject> mapper =
+        SourceMapper<Object[], DbObject> mapper =
                 new SampleMapperBuilder<DbObject>(classMeta)
                     .addKey("id")
                     .addMapper(new FieldMapper<Object[], DbObject>() {
@@ -464,10 +463,9 @@ public class AbstractMapperBuilderTest {
 
     }
     private <T> void testDbObjectxxxMapper(Supplier<T> supplier, boolean mapTo) throws Exception {
-        testDbObjectxxxMapper(supplier, mapTo, false, DbObject.HEADERS);
-        testDbObjectxxxMapper(supplier, mapTo, true, DbObject.HEADERS);
+        testDbObjectxxxMapper(supplier, mapTo, DbObject.HEADERS);
     }
-    private <T> void testDbObjectxxxMapper(Supplier<T> supplier, boolean mapTo, boolean useAsm, String[] headers) throws Exception {
+    private <T> void testDbObjectxxxMapper(Supplier<T> supplier,  boolean useAsm, String[] headers) throws Exception {
         T instance1 = supplier.get();
         T instance2 = supplier.get();
         ClassMeta<T> classMeta = ReflectionService.newInstance(useAsm).<T>getClassMeta(instance1.getClass());
@@ -484,17 +482,13 @@ public class AbstractMapperBuilderTest {
             row[i] = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str), new Object[0], (TypeAffinity)null).getGetter().get(instance1);
 
         }
-        Mapper<Object[], T> mapper = builder.mapper();
+        SourceMapper<Object[], T> mapper = builder.mapper();
 
         assertEquals(instance1, mapper.map(row));
         Assert.assertEquals(instance1, builderIndexed.mapper().map(row));
 
         assertNotEquals(instance1, instance2);
 
-        if (mapTo) {
-            mapper.mapTo(row, instance2, null);
-            assertEquals(instance1, instance2);
-        }
     }
 
 
@@ -579,7 +573,7 @@ public class AbstractMapperBuilderTest {
         }
     };
 
-    public static class SampleMapperBuilder<T> extends AbstractMapperBuilder<Object[], T, SampleFieldKey, Mapper<Object[], T>, SampleMapperBuilder<T>> {
+    public static class SampleMapperBuilder<T> extends AbstractMapperBuilder<Object[], T, SampleFieldKey, SourceMapper<Object[], T>, SampleMapperBuilder<T>> {
 
         public SampleMapperBuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig) {
             super(classMeta, new MappingContextFactoryBuilder<Object[], SampleFieldKey>(new KeySourceGetter<SampleFieldKey, Object[]>() {
@@ -595,7 +589,7 @@ public class AbstractMapperBuilderTest {
         }
 
         @Override
-        protected Mapper<Object[], T> newJoinMapper(Mapper<Object[], T> mapper) {
+        protected SourceMapper<Object[], T> newJoinMapper(SourceFieldMapper<Object[], T> mapper) {
             return new JoinMapper<Object[], Object[][], T, RuntimeException>(mapper,
                     mapperConfig.consumerErrorHandler(),
                     mappingContextFactoryBuilder.newFactory(),
@@ -608,7 +602,7 @@ public class AbstractMapperBuilderTest {
         }
 
         @Override
-        protected Mapper<Object[], T> newStaticMapper(Mapper<Object[], T> mapper) {
+        protected SourceMapper<Object[], T> newStaticMapper(SourceFieldMapper<Object[], T> mapper) {
             return new StaticSetRowMapper<Object[], Object[][], T, Exception>(mapper,
                     mapperConfig.consumerErrorHandler(),
                     mappingContextFactoryBuilder.newFactory(),

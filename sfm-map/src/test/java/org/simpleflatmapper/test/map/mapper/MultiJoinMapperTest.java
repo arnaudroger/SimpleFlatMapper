@@ -1,7 +1,7 @@
 package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.annotation.Key;
 import org.simpleflatmapper.map.mapper.JoinMapper;
@@ -53,7 +53,7 @@ public class MultiJoinMapperTest {
         AbstractMapperBuilderTest.SampleMapperBuilder<Root> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, mapperConfig());
 
-        Mapper<Object[], Root> rowMapper =
+        SourceMapper<Object[], Root> rowMapper =
                 builder
                         .addMapping("id")
                         .addKey("ll_id")
@@ -88,7 +88,7 @@ public class MultiJoinMapperTest {
         AbstractMapperBuilderTest.SampleMapperBuilder<Root2> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Root2>(classMeta, mapperConfig());
 
-        Mapper<Object[], Root2> rowMapper =
+        SourceMapper<Object[], Root2> rowMapper =
                 builder
                         .addKey("id")
                         .addKey("ll_id")
@@ -122,7 +122,7 @@ public class MultiJoinMapperTest {
         AbstractMapperBuilderTest.SampleMapperBuilder<Root> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, mapperConfig());
 
-        Mapper<Object[], Root> rowMapper = builder.addMapping("id").addKey("ll_id").addKey("ll_elements_id").addMapping("ll_elements_value").mapper();
+        SourceMapper<Object[], Root> rowMapper = builder.addMapping("id").addKey("ll_id").addKey("ll_elements_id").addMapping("ll_elements_value").mapper();
         JoinMapper<Object[], Object[][], Root, RuntimeException> mapper =
                 (JoinMapper<Object[], Object[][], Root, RuntimeException>) rowMapper;
 
@@ -208,7 +208,7 @@ public class MultiJoinMapperTest {
         AbstractMapperBuilderTest.SampleMapperBuilder<RootC> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<RootC>(classMeta, mapperConfig());
 
-        Mapper<Object[], RootC> rowMapper = builder
+        SourceMapper<Object[], RootC> rowMapper = builder
                 .addMapping("id")
                 .addMapping("ll_id")
                 .addMapping("ls_id")

@@ -1,7 +1,7 @@
 package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.mapper.JoinMapper;
@@ -59,7 +59,7 @@ public class MapKeyValueTest {
         builder.addMapping("map_value");
 
 
-        Mapper<Object[], PojoWithMap> rowMapper = builder.mapper();
+        SourceMapper<Object[], PojoWithMap> rowMapper = builder.mapper();
 
         SetRowMapper<Object[], Object[][],PojoWithMap, RuntimeException> mapper =
                 (SetRowMapper<Object[], Object[][], PojoWithMap, RuntimeException>) rowMapper;
@@ -84,7 +84,7 @@ public class MapKeyValueTest {
         builder.addMapping("map_value");
 
 
-        Mapper<Object[], PojoWithMap> rowMapper = builder.mapper();
+        SourceMapper<Object[], PojoWithMap> rowMapper = builder.mapper();
 
         JoinMapper<Object[], Object[][],PojoWithMap, RuntimeException> mapper =
                 (JoinMapper<Object[], Object[][], PojoWithMap, RuntimeException>) rowMapper;
@@ -112,7 +112,7 @@ public class MapKeyValueTest {
         builder.addMapping("map_value_elt1");
 
 
-        Mapper<Object[], ComplexPojoWithMap> rowMapper = builder.mapper();
+        SourceMapper<Object[], ComplexPojoWithMap> rowMapper = builder.mapper();
 
         SetRowMapper<Object[], Object[][],ComplexPojoWithMap, RuntimeException> mapper =
                 (SetRowMapper<Object[], Object[][], ComplexPojoWithMap, RuntimeException>) rowMapper;
@@ -139,7 +139,7 @@ public class MapKeyValueTest {
         builder.addMapping("map_value_elt1");
 
 
-        Mapper<Object[], ComplexPojoWithMap> rowMapper = builder.mapper();
+        SourceMapper<Object[], ComplexPojoWithMap> rowMapper = builder.mapper();
 
         JoinMapper<Object[], Object[][],ComplexPojoWithMap, RuntimeException> mapper =
                 (JoinMapper<Object[], Object[][], ComplexPojoWithMap, RuntimeException>) rowMapper;
@@ -166,7 +166,7 @@ public class MapKeyValueTest {
         builder.addMapping("map_elt0_elt1_elt1");
 
 
-        Mapper<Object[], ComplexPojoWithList> rowMapper = builder.mapper();
+        SourceMapper<Object[], ComplexPojoWithList> rowMapper = builder.mapper();
 
         JoinMapper<Object[], Object[][],ComplexPojoWithList, RuntimeException> mapper =
                 (JoinMapper<Object[], Object[][], ComplexPojoWithList, RuntimeException>) rowMapper;

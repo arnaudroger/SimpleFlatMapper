@@ -27,10 +27,8 @@ package org.simpleflatmapper.jdbc.test;
 //import java.util.concurrent.Executors;
 //import java.util.concurrent.Future;
 //import java.util.concurrent.atomic.AtomicInteger;
-////IFJAVA8_START
 //import java.util.stream.Collectors;
 //import java.util.stream.Stream;
-////IFJAVA8_END
 //
 //import static org.junit.Assert.assertArrayEquals;
 //import static org.junit.Assert.assertEquals;

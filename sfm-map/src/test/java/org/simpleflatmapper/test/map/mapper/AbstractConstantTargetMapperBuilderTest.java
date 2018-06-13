@@ -52,7 +52,7 @@ public class AbstractConstantTargetMapperBuilderTest {
         builder.addColumn("blop", new ConstantValueProperty<String>("blop", String.class));
 
         DbObject dbObject = DbObject.newInstance();
-        List<Object> list = new ArrayList<>();
+        List<Object> list = new ArrayList<Object>();
 
         builder.mapper().mapTo(dbObject, list, MappingContext.EMPTY_CONTEXT);
 
@@ -78,7 +78,7 @@ public class AbstractConstantTargetMapperBuilderTest {
 
         FieldMapper<T, List<Object>> mapper = builder.mapper();
 
-        List<Object> objects = new ArrayList<>();
+        List<Object> objects = new ArrayList<Object>();
         mapper.mapTo(instance1, objects, MappingContext.EMPTY_CONTEXT);
         assertArrayEquals(row, objects.toArray());
     }

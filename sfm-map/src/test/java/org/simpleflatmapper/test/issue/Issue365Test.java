@@ -105,7 +105,7 @@ public class Issue365Test {
         data.algorithm = "algo";
         data.type = "type";
 
-        List<Object> list = new ArrayList<>();
+        List<Object> list = new ArrayList<Object>();
         
         mapper.mapTo(data, list, MappingContext.EMPTY_CONTEXT);
 

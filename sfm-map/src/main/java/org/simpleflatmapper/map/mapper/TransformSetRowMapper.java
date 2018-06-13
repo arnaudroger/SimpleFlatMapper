@@ -5,6 +5,8 @@ import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Function;
+import org.simpleflatmapper.util.TransformCheckedConsumer;
+import org.simpleflatmapper.util.TransformIterator;
 
 import java.util.Iterator;
 //IFJAVA8_START
@@ -47,45 +49,5 @@ public final class TransformSetRowMapper<ROW, SET, I, O, E extends Exception> im
 	@Override
 	public O map(ROW source, MappingContext<? super ROW> context) throws MappingException {
 		return transformer.apply(delegate.map(source, context));
-	}
-
-	private static class TransformIterator<I, O> implements Iterator<O> {
-		private final Iterator<I> it;
-		private final Function<? super I, ? extends O> transformer;
-
-		public TransformIterator(Iterator<I> it, Function<? super I, ? extends O> transformer) {
-			this.it = it;
-			this.transformer = transformer;
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException("remove");
-		}
-		
-		@Override
-		public boolean hasNext() {
-			return it.hasNext();
-		}
-
-		@Override
-		public O next() {
-			return transformer.apply(it.next());
-		}
-	}
-
-	private static class TransformCheckedConsumer<I, O> implements CheckedConsumer<I> {
-		private final CheckedConsumer<? super O> handler;
-		private final Function<? super I, ? extends O> transformer;
-
-		public TransformCheckedConsumer(CheckedConsumer<? super O> handler, Function<? super I, ? extends O> transformer) {
-			this.handler = handler;
-			this.transformer = transformer;
-		}
-
-		@Override
-		public void accept(I i) throws Exception {
-			handler.accept(transformer.apply(i));
-		}
 	}
 }

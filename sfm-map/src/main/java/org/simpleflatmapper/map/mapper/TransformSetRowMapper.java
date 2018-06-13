@@ -59,6 +59,11 @@ public final class TransformSetRowMapper<ROW, SET, I, O, E extends Exception> im
 		}
 
 		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("remove");
+		}
+		
+		@Override
 		public boolean hasNext() {
 			return it.hasNext();
 		}

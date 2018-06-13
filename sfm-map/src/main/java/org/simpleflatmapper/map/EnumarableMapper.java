@@ -5,7 +5,7 @@ import org.simpleflatmapper.util.CheckedConsumer;
 import java.util.Iterator;
 //IFJAVA8_START
 import java.util.stream.Stream;
-//IFJAVA8_START
+//IFJAVA8_END
 
 /**
  *

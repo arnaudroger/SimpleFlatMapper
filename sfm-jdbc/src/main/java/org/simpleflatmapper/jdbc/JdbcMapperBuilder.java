@@ -1,7 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.Result;
+import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
@@ -149,6 +148,11 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
         return this;
     }
 
+
+    public JdbcSourceFieldMapper<T> newSourceFieldMapper() {
+        return new JdbcSourceFieldMapperImpl<T>(super.sourceFieldMapper(), mappingContextFactoryBuilder.newFactory());
+    }
+    
     @Override
     protected JdbcMapper<T> newJoinMapper(SourceFieldMapper<ResultSet, T> mapper) {
         return new JoinJdbcMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
@@ -158,7 +162,37 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
     protected JdbcMapper<T> newStaticMapper(SourceFieldMapper<ResultSet, T> mapper) {
         return new StaticJdbcSetRowMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
+    
+    private static class JdbcSourceFieldMapperImpl<T> implements JdbcSourceFieldMapper<T> {
+        private final SourceFieldMapper<ResultSet, T> sourceFieldMapper;
+        private final MappingContextFactory<? super ResultSet> mappingContextFactory;
 
+        private JdbcSourceFieldMapperImpl(SourceFieldMapper<ResultSet, T> sourceFieldMapper, MappingContextFactory<? super ResultSet> mappingContextFactory) {
+            this.sourceFieldMapper = sourceFieldMapper;
+            this.mappingContextFactory = mappingContextFactory;
+        }
+
+        @Override
+        public void mapTo(ResultSet source, T target, MappingContext<? super ResultSet> context) throws Exception {
+            sourceFieldMapper.mapTo(source, target, context);
+        }
+
+        @Override
+        public T map(ResultSet source) throws MappingException {
+            return sourceFieldMapper.map(source);
+        }
+
+        @Override
+        public T map(ResultSet source, MappingContext<? super ResultSet> context) throws MappingException {
+            return sourceFieldMapper.map(source, context);
+        }
+
+        @Override
+        public MappingContext<? super ResultSet> newMappingContext(ResultSet resultSet) throws SQLException {
+            return mappingContextFactory.newContext();
+        }
+    }
+    
     private static class JoinJdbcMapper<T> extends JoinMapper<ResultSet, ResultSet, T, SQLException>
             implements JdbcMapper<T> {
         public JoinJdbcMapper(SourceFieldMapper<ResultSet, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ResultSet> mappingContextFactory) {

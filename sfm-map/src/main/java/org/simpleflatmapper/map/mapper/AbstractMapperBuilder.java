@@ -62,6 +62,10 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
             return newStaticMapper(mapper);
         }
     }
+    
+    protected final SourceFieldMapper<S, T> sourceFieldMapper() {
+        return constantSourceMapperBuilder.mapper();
+    }
 
     /**
      * add a new mapping to the specified property with a key property definition and an undefined type.
@@ -179,4 +183,6 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     protected abstract M newJoinMapper(SourceFieldMapper<S, T> mapper);
 
     protected abstract M newStaticMapper(SourceFieldMapper<S, T> mapper);
+    
+    
 }

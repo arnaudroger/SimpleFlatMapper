@@ -6,6 +6,7 @@ import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.Result;
+import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.property.GetterProperty;
@@ -24,6 +25,7 @@ import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
+import java.sql.ResultSet;
 import java.util.Map;
 
 

@@ -68,7 +68,7 @@ public class Result<T, K> {
     @ReflectionService.PassThrough
     public static class ResultBuilder<T, K> {
         private T value;
-        private final List<FieldError<K>> errors = new ArrayList<>();
+        private final List<FieldError<K>> errors = new ArrayList<FieldError<K>>();
 
         public ResultBuilder() {
         }

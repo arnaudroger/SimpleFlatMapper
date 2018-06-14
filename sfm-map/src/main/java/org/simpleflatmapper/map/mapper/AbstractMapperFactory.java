@@ -151,11 +151,11 @@ public abstract class AbstractMapperFactory<
 	/**
 	 * Associate an alias on the property key to rename to value.
 	 * @param column the column name to rename
-	 * @param value then name to rename to
+	 * @param actualPropertyName then name to rename to match the actual property name
 	 * @return the current factory
 	 */
-	public final MF addAlias(String column, String value) {
-		return addColumnDefinition(column,  identity.addRename(value));
+	public final MF addAlias(String column, String actualPropertyName) {
+		return addColumnDefinition(column,  identity.addRename(actualPropertyName));
 	}
 
     /**

@@ -2,9 +2,8 @@ package org.simpleflatmapper.csv.mapper;
 
 import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.RootCurrentInstanceProvider;
 import org.simpleflatmapper.util.CheckedConsumer;
-
-import java.util.Collection;
 
 public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
@@ -197,8 +196,8 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
         }
     }
 
-    public Object getRootCurrentInstance() {
+    public Object rootCurrentInstance() {
         if (parent == null) return mapperSetters.currentInstance;
-        return parent.getRootCurrentInstance();
+        return parent.rootCurrentInstance();
     }
 }

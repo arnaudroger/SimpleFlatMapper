@@ -1,7 +1,6 @@
 package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.impl.CellValueReaderFactoryImpl;
-import org.simpleflatmapper.csv.impl.CellValueReaderToStringReaderAdapter;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
 import org.simpleflatmapper.csv.impl.TransformCsvMapper;
@@ -14,7 +13,6 @@ import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -123,7 +121,7 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 	public <T> CsvMapper<Result<T,CsvColumnKey>> newErrorCollectingMapper(final Type target) throws MapperBuildingException {
 		CsvMapper<Result.ResultBuilder<T, CsvColumnKey>> csvMapper = 
 				new CsvMapperFactory(this)
-						.fieldMapperErrorHandler(new ResultFieldMapperErrorHandler<CsvColumnKey>(mapperConfig().fieldMapperErrorHandler()))
+						.fieldMapperErrorHandler(new ResultFieldMapperErrorHandler<CsvColumnKey>())
 				.newMapper(new ParameterizedTypeImpl(Result.ResultBuilder.class, target, CsvColumnKey.class))
 				;
 		Function<Result.ResultBuilder<T, CsvColumnKey>, Result<T, CsvColumnKey>> resultBuilderResultFunction = Result.buildingFunction();

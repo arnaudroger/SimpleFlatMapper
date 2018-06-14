@@ -6,6 +6,7 @@ import org.simpleflatmapper.ow2asm.signature.SignatureReader;
 import org.simpleflatmapper.ow2asm.signature.SignatureVisitor;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
+import org.simpleflatmapper.reflect.ParameterizedTypeImpl;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,10 +16,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -569,61 +568,7 @@ public class AsmUtils {
 	}
 
 
-	private static class ParameterizedTypeImpl implements ParameterizedType {
-
-        private final Class<?> rawType;
-        private final Type[] types;
-
-        public ParameterizedTypeImpl(Class<?> rawType, Type[] types) {
-            this.rawType = rawType;
-            this.types = types;
-        }
-
-        @Override
-        public Type getRawType() {
-            return rawType;
-        }
-
-        @Override
-        public Type getOwnerType() {
-            return null;
-        }
-
-        @Override
-        public Type[] getActualTypeArguments() {
-            return types;
-        }
-
-        @Override
-        public String toString() {
-            return "ParameterizedTypeImpl{" +
-                    "rawType=" + rawType +
-                    ", types=" + Arrays.toString(types) +
-                    '}';
-        }
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (!(o instanceof ParameterizedType)) return false;
-
-			ParameterizedType that = (ParameterizedType) o;
-
-			if (!rawType.equals(that.getRawType())) return false;
-			// Probably incorrect - comparing Object[] arrays with Arrays.equals
-			return Arrays.equals(types, that.getActualTypeArguments()) && that.getOwnerType() == null;
-
-		}
-
-		@Override
-		public int hashCode() {
-			int result = rawType.hashCode();
-			result = 31 * result + Arrays.hashCode(types);
-			return result;
-		}
-	}
-
-    public static void addIndex(MethodVisitor mv, int i) {
+	public static void addIndex(MethodVisitor mv, int i) {
         switch(i) {
             case 0:
                 mv.visitInsn(ICONST_0);

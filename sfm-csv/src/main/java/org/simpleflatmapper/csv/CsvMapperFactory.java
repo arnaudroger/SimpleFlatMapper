@@ -4,11 +4,16 @@ import org.simpleflatmapper.csv.impl.CellValueReaderFactoryImpl;
 import org.simpleflatmapper.csv.impl.CellValueReaderToStringReaderAdapter;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
+import org.simpleflatmapper.csv.impl.TransformCsvMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
+import org.simpleflatmapper.map.Result;
+import org.simpleflatmapper.map.ResultFieldMapperErrorHandler;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
+import org.simpleflatmapper.reflect.ParameterizedTypeImpl;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -51,6 +56,12 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 
 	private CsvMapperFactory() {
 		super(new CsvColumnDefinitionProviderImpl(), CsvColumnDefinition.IDENTITY);
+	}
+	
+	private CsvMapperFactory(CsvMapperFactory parent)  {
+		super(parent);
+		this.defaultDateFormat = parent.defaultDateFormat;
+		this.cellValueReaderFactory = parent.cellValueReaderFactory;
 	}
 
 	public CsvMapperFactory defaultDateFormat(final String defaultDateFormat) {
@@ -98,6 +109,24 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 				defaultDateFormat,
 				cellValueReaderFactory,
 				mapperConfig());
+	}
+
+	public <T> CsvMapper<Result<T,CsvColumnKey>> newErrorCollectingMapper(final Class<T> target) throws MapperBuildingException {
+		return newErrorCollectingMapper((Type)target);
+	}
+
+	public <T> CsvMapper<Result<T,CsvColumnKey>> newErrorCollectingMapper(final TypeReference<T> target) throws MapperBuildingException {
+		return newErrorCollectingMapper(target.getType());
+	}
+
+	public <T> CsvMapper<Result<T,CsvColumnKey>> newErrorCollectingMapper(final Type target) throws MapperBuildingException {
+		CsvMapper<Result.ResultBuilder<T, CsvColumnKey>> csvMapper = 
+				new CsvMapperFactory(this)
+						.fieldMapperErrorHandler(new ResultFieldMapperErrorHandler<CsvColumnKey>(mapperConfig().fieldMapperErrorHandler()))
+				.newMapper(new ParameterizedTypeImpl(Result.ResultBuilder.class, target, CsvColumnKey.class))
+				;
+		return new TransformCsvMapper<Result.ResultBuilder<T, CsvColumnKey>, Result<T, CsvColumnKey>>(csvMapper, Result.buildingFunction());
+		
 	}
 
 	/**

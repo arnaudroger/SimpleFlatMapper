@@ -10,6 +10,7 @@ import org.simpleflatmapper.map.Result;
 import org.simpleflatmapper.map.ResultFieldMapperErrorHandler;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.reflect.ParameterizedTypeImpl;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 
@@ -125,7 +126,8 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 						.fieldMapperErrorHandler(new ResultFieldMapperErrorHandler<CsvColumnKey>(mapperConfig().fieldMapperErrorHandler()))
 				.newMapper(new ParameterizedTypeImpl(Result.ResultBuilder.class, target, CsvColumnKey.class))
 				;
-		return new TransformCsvMapper<Result.ResultBuilder<T, CsvColumnKey>, Result<T, CsvColumnKey>>(csvMapper, Result.buildingFunction());
+		Function<Result.ResultBuilder<T, CsvColumnKey>, Result<T, CsvColumnKey>> resultBuilderResultFunction = Result.buildingFunction();
+		return new TransformCsvMapper<Result.ResultBuilder<T, CsvColumnKey>, Result<T, CsvColumnKey>>(csvMapper, resultBuilderResultFunction);
 		
 	}
 

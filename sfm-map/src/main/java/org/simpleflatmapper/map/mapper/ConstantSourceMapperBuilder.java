@@ -16,6 +16,7 @@ import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.impl.FieldErrorHandlerMapper;
 import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactory;
 import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
+import org.simpleflatmapper.map.property.MandatoryProperty;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
@@ -143,6 +144,28 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                             }
                         });
 
+        final List<String> missingProperties = new ArrayList<String>();
+        //
+        mapperConfig
+                .columnDefinitions()
+                .forEach(
+                        MandatoryProperty.class,
+                        new BiConsumer<Predicate<? super K>, MandatoryProperty>() {
+                            @Override
+                            public void accept(Predicate<? super K> predicate, MandatoryProperty columnProperty) {
+                                if (!propertyMappingsBuilder.hasKey(predicate)){
+                                    if (predicate instanceof Named) {
+                                        missingProperties.add(((Named)predicate).getName());
+                                    } else {
+                                        missingProperties.add(predicate.toString());
+                                    }
+                                }
+                            }
+                        });
+        
+        if (!missingProperties.isEmpty()) {
+            throw new MissingPropertyException(missingProperties);
+        }
 
         FieldMapper<S, T>[] fields = fields();
         InstantiatorAndFieldMappers constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();

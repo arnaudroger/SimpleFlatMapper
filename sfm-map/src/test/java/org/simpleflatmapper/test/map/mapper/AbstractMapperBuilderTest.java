@@ -408,6 +408,16 @@ public class AbstractMapperBuilderTest {
             }
         }, false);
     }
+    
+    @Test
+    public void testMandatoryProperty461() {
+        
+    }
+    
+    @Test
+    public void testMandatoryAnnotatedProperty461() {
+        
+    }
 
     @Test
     public void testCustomization() throws Exception {

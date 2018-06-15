@@ -1,6 +1,7 @@
 package org.simpleflatmapper.map.property;
 
 import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.reflect.meta.DisallowSelfReference;
 import org.simpleflatmapper.util.Function;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
@@ -8,7 +9,7 @@ import static org.simpleflatmapper.util.Asserts.requireNonNull;
 /**
  * Map an incoming/outgoing column name to the actual object property name.
  */
-public class RenameProperty {
+public class RenameProperty implements DisallowSelfReference {
     private final Function<String, String> renameFunction;
 
     /**

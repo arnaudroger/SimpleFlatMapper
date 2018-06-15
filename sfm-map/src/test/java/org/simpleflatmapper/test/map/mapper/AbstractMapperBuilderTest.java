@@ -5,12 +5,14 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Assert;
 import org.junit.Test;
+import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.property.MandatoryProperty;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.test.beans.DbListObject;
@@ -37,8 +39,10 @@ import org.simpleflatmapper.test.beans.ObjectWith1ParamConstruction;
 import org.simpleflatmapper.test.beans.ObjectWith1ParamConstructionWithLoop;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.ArrayEnumarable;
+import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.TypeReference;
@@ -411,13 +415,35 @@ public class AbstractMapperBuilderTest {
     
     @Test
     public void testMandatoryProperty461() {
-        
+        ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = MapperConfig.fieldMapperConfig();
+
+        mapperConfig = mapperConfig.columnDefinitions(new ColumnDefinitionProvider<FieldMapperColumnDefinition<SampleFieldKey>, SampleFieldKey>() {
+            @Override
+            public FieldMapperColumnDefinition<SampleFieldKey> getColumnDefinition(SampleFieldKey key) {
+                if (key.getName().equals("email")) {
+                    return FieldMapperColumnDefinition.<SampleFieldKey>identity().add(MandatoryProperty.class);
+                }
+                return FieldMapperColumnDefinition.<SampleFieldKey>identity();
+            }
+
+            @Override
+            public <CP, BC extends BiConsumer<Predicate<? super SampleFieldKey>, CP>> BC forEach(Class<CP> propertyType, BC consumer) {
+                if (MandatoryProperty.class.equals(propertyType)) {
+                    consumer.accept(CaseInsensitiveFieldKeyNamePredicate.of("email"), (CP) MandatoryProperty.DEFAULT);
+                }
+                return consumer;
+            }
+        });
+
+        try {
+            new SampleMapperBuilder<DbObject>(classMeta, mapperConfig).addMapping("id").mapper();
+            fail();
+        } catch (MissingPropertyException e) {
+            // expected
+        }
     }
     
-    @Test
-    public void testMandatoryAnnotatedProperty461() {
-        
-    }
 
     @Test
     public void testCustomization() throws Exception {

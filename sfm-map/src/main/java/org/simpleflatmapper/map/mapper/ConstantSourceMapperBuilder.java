@@ -163,6 +163,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                             }
                         });
         
+        
         if (!missingProperties.isEmpty()) {
             throw new MissingPropertyException(missingProperties);
         }

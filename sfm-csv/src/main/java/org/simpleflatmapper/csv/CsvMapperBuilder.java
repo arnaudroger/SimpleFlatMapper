@@ -4,6 +4,8 @@ import org.simpleflatmapper.csv.property.MandatoryColumnProperty;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;
+import org.simpleflatmapper.map.mapper.MissingPropertyException;
+import org.simpleflatmapper.map.property.MandatoryProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
@@ -167,7 +169,28 @@ public class CsvMapperBuilder<T> {
 								}
 							}
 						});
+		final List<String> missingProperties = new ArrayList<String>();
+		mapperConfig
+				.columnDefinitions()
+				.forEach(
+						MandatoryProperty.class,
+						new BiConsumer<Predicate<? super CsvColumnKey>, MandatoryProperty>() {
+							@Override
+							public void accept(Predicate<? super CsvColumnKey> predicate, MandatoryProperty columnProperty) {
+								if (!propertyMappingsBuilder.hasKey(predicate)){
+									if (predicate instanceof Named) {
+										missingProperties.add(((Named)predicate).getName());
+									} else {
+										missingProperties.add(predicate.toString());
+									}
+								}
+							}
+						});
 
+
+		if (!missingProperties.isEmpty()) {
+			throw new MissingPropertyException(missingProperties);
+		}
         ParsingContextFactoryBuilder parsingContextFactoryBuilder = new ParsingContextFactoryBuilder(propertyMappingsBuilder.maxIndex() + 1);
 
 		ConstructorParametersDelayedCellSetter constructorParams = buildConstructorParametersDelayedCellSetter();

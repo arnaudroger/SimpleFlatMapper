@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperBuilder;
 import org.simpleflatmapper.csv.CsvMapperFactory;
+import org.simpleflatmapper.map.mapper.MissingPropertyException;
+import org.simpleflatmapper.map.property.MandatoryProperty;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbPartialFinalObject;
@@ -326,6 +328,17 @@ public class CsvMapperBuilderTest {
         assertEquals("v0", next.first());
         assertEquals("v1", next.second());
     }
+    
+    
+    @Test
+    public void testMandatory() {
+		try {
+			CsvMapperFactory.newInstance().addColumnProperty("email", MandatoryProperty.DEFAULT).newBuilder(DbObject.class).addMapping("id").mapper();
+			fail();
+		} catch (MissingPropertyException e) {
+			
+		}
+	}
 
 	public static void addDbObjectFields(CsvMapperBuilder<?> builder) {
 		builder.addMapping("id")

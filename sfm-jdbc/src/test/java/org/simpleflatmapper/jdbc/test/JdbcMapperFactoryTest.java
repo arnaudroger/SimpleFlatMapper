@@ -13,6 +13,7 @@ import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbObjectWithAlias;
 import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.test.beans.DbObjectWithEmptyAlias;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
@@ -103,6 +104,19 @@ public class JdbcMapperFactoryTest {
 				ResultSet rs = ps.executeQuery();
 				JdbcMapper<DbObjectWithAlias> mapper = asmFactory.newMapper(DbObjectWithAlias.class, rs.getMetaData());
 				assertMapPsDbObjectWithAlias(rs, mapper);
+			}
+		});
+	}
+
+	@Test
+	public void testAsmDbObjectWithEmptyAliasMappingFromDbWithMetaData()
+			throws Exception {
+		DbHelper.testDbObjectFromDb(new TestRowHandler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				ResultSet rs = ps.executeQuery();
+				JdbcMapper<DbObjectWithEmptyAlias> mapper = asmFactory.newMapper(DbObjectWithEmptyAlias.class, rs.getMetaData());
+				assertMapPsDbObjectWithEmptyAlias(rs, mapper);
 			}
 		});
 	}
@@ -272,7 +286,16 @@ public class JdbcMapperFactoryTest {
 		assertEquals(1,  list.size());
 		DbHelper.assertDbObjectWithAliasMapping(list.get(0));
 	}
-	
+
+	private void assertMapPsDbObjectWithEmptyAlias(ResultSet rs,
+											  JdbcMapper<DbObjectWithEmptyAlias> mapper) throws Exception,
+			ParseException {
+		List<DbObjectWithEmptyAlias> list = mapper.forEach(rs, new ListCollector<DbObjectWithEmptyAlias>()).getList();
+		assertEquals(1,  list.size());
+		DbHelper.assertDbObjectWithEmptyAliasMapping(list.get(0));
+	}
+
+
 	private void assertMapPsFinalDbObject(ResultSet rs,
 			JdbcMapper<DbFinalObject> mapper) throws Exception,
 			ParseException {

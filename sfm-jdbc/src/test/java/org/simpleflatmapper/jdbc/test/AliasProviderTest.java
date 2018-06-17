@@ -35,6 +35,8 @@ public class AliasProviderTest {
             return null;
         }
     }
+
+    
     @Test
     public void testJPAAliasProvider() throws NoSuchFieldException, NoSuchMethodException {
         JpaAliasProvider p = new JpaAliasProvider();
@@ -44,6 +46,8 @@ public class AliasProviderTest {
 
     }
 
+    
+    
     @Test
     public void testFactoryJPAPresent() {
         assertEquals(JpaAliasProvider.class, AliasProviderService.getAliasProvider().getClass());

@@ -4,7 +4,7 @@
 
     <groupId>org.simpleflatmapper</groupId>
     <artifactId>sfm-parent</artifactId>
-    <version>3.18.1-SNAPSHOT</version>
+    <version>3.18.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>sfm-parent</name>

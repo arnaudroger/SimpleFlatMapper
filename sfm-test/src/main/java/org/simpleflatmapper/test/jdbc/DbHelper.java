@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbObjectWithAlias;
+import org.simpleflatmapper.test.beans.DbObjectWithEmptyAlias;
 import org.simpleflatmapper.test.beans.DbPartialFinalObject;
 import org.simpleflatmapper.test.DateHelper;
 
@@ -129,7 +130,15 @@ public class DbHelper {
 		Assert.assertEquals(DbObject.Type.type3, dbObject.getTypeOrdinal());
 		Assert.assertEquals(DbObject.Type.type4, dbObject.getTypeName());
 	}
-	
+
+	public static void assertDbObjectWithEmptyAliasMapping(DbObjectWithEmptyAlias dbObject) throws ParseException  {
+		Assert.assertEquals(1, dbObject.getId());
+		Assert.assertEquals("name 1", dbObject.getName());
+		Assert.assertEquals("name1@mail.com", dbObject.getEmail());
+		Assert.assertEquals(DateHelper.toDate("2014-03-04 11:10:03"), dbObject.getCreationTime());
+		Assert.assertEquals(DbObject.Type.type3, dbObject.getTypeOrdinal());
+		Assert.assertEquals(DbObject.Type.type4, dbObject.getTypeName());
+	}
 	public static void assertDbObjectWithAliasMapping(DbObjectWithAlias dbObject) throws ParseException  {
 		Assert.assertEquals(1, dbObject.getIdWithAlias());
 		Assert.assertEquals("name 1", dbObject.getNameWithAlias());

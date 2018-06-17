@@ -67,7 +67,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			@Override
 			public void method(Method method) {
 				String alias = reflectService.getColumnName(method);
-				if (alias != null) {
+				if (alias != null && !alias.isEmpty()) {
 					final String name;
 					if (SetterHelper.isSetter(method)) {
 						name = SetterHelper.getPropertyNameFromMethodName(method.getName());
@@ -83,7 +83,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			@Override
 			public void field(Field field) {
 				String alias = reflectService.getColumnName(field);
-				if (alias != null) {
+				if (alias != null && !alias.isEmpty()) {
 					map.put(field.getName(), alias);
 				}
 			}

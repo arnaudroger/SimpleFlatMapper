@@ -2,7 +2,6 @@ package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
-import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.datastax.DataTypeHelper;
 import org.simpleflatmapper.reflect.Getter;
 
@@ -44,11 +43,13 @@ public class DatastaxGenericBigIntegerGetter implements Getter<GettableByIndexDa
                 return BigInteger.valueOf((long) target.getFloat(index));
             case DOUBLE:
                 return BigInteger.valueOf((long) target.getDouble(index));
+            case SMALLINT:
+                return BigInteger.valueOf((long) target.getShort(index));
+            case TINYINT:
+                return BigInteger.valueOf((long) target.getByte(index));
+            case TIME:
+                return BigInteger.valueOf((long) target.getTime(index));
         }
-
-        if (DataTypeHelper.isSmallInt(dataTypeName)) return BigInteger.valueOf((long) DataHelper.getShort(index, target));
-        if (DataTypeHelper.isTinyInt(dataTypeName)) return BigInteger.valueOf((long) DataHelper.getByte(index, target));
-        if (DataTypeHelper.isTime(dataTypeName)) return BigInteger.valueOf(DataHelper.getTime(index, target));
 
         return null;
     }

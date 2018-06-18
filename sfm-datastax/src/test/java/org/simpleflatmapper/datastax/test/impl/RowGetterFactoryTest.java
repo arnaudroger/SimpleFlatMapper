@@ -55,11 +55,13 @@ public class RowGetterFactoryTest {
         when(row.getLong(1)).thenReturn(13l);
         when(row.getFloat(1)).thenReturn(14.4f);
         when(row.getDouble(1)).thenReturn(15.4);
+        when(row.getByte(1)).thenReturn((byte)16);
+        when(row.getShort(1)).thenReturn((short)17);
         when(row.getString(1)).thenReturn("str");
         when(row.getString(2)).thenReturn("type2");
         when(row.getString(3)).thenReturn(new UUID(23, 24).toString());
         when(row.getBool(1)).thenReturn(Boolean.TRUE);
-        when(row.getDate(1)).thenReturn(date);
+        when(row.getTimestamp(1)).thenReturn(date);
         when(row.getDecimal(1)).thenReturn(new BigDecimal("2.123"));
         when(row.getVarint(1)).thenReturn(new BigInteger("234"));
         when(row.getInet(1)).thenReturn(InetAddress.getByName("192.168.0.1"));
@@ -163,7 +165,7 @@ public class RowGetterFactoryTest {
     //
     @Test
     public void testShortGetterShouldFailOnDatastax2() throws Exception {
-        assertNull(new RowGetterFactory(null).newGetter(Short.class, columnKey));
+        assertEquals((short)17, new RowGetterFactory(null).newGetter(Short.class, columnKey).get(row));
     }
 
     @Test
@@ -184,7 +186,7 @@ public class RowGetterFactoryTest {
 
     @Test
     public void testByteGetterShouldFailOnDatastax2() throws Exception {
-        assertNull(new RowGetterFactory(null).newGetter(Byte.class, columnKey));
+        assertEquals((byte)16, new RowGetterFactory(null).newGetter(Byte.class, columnKey).get(row));
     }
 
     @Test

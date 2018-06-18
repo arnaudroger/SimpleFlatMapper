@@ -55,13 +55,28 @@ public class ConverterService {
 
     @SuppressWarnings("unchecked")
     public <F, P> Converter<? super F, ? extends P> findConverter(Type inType, Type outType, Object... params) {
+        if (TypeHelper.isAssignable(outType, inType)) {
+            return new IdentityConverter();
+        }
+
+        List<ScoredConverterFactory> potentials = findConverterFactories(inType, outType, params);
+
+
+        ConvertingTypes targetedTypes = new ConvertingTypes(inType, outType);
+        for(ScoredConverterFactory p : potentials) {
+            Converter<F, P> converter = p.converterFactory.newConverter(targetedTypes, params);
+            if (converter != null) return converter;
+        }
+        return null;
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public  List<ScoredConverterFactory> findConverterFactories(Type inType, Type outType, Object... params) {
         List<ScoredConverterFactory> potentials = new ArrayList<ScoredConverterFactory>();
 
         List<ScoredConverterFactory> tails = new ArrayList<ScoredConverterFactory>();
 
-        if (TypeHelper.isAssignable(outType, inType)) {
-            return new IdentityConverter();
-        }
         ConvertingTypes targetedTypes = new ConvertingTypes(inType, outType);
 
         for(ConverterFactory converterFactory : converters) {
@@ -78,45 +93,47 @@ public class ConverterService {
         }
 
 
-        if (potentials.size() > 0) {
-            Collections.sort(potentials);
-            
-            for(ScoredConverterFactory p : potentials) {
-                Converter<F, P> converter = p.converterFactory.newConverter(targetedTypes, params);
-                if (converter != null) return converter;
-            }
-            return null;
-        } else {
+        if (potentials.isEmpty()) {
             if (tails.size() > 0) {
                 Collections.sort(tails);
-
-                ComposedConverter composedConverter = null;
-                int currentScore = 0;
-                
+                int currentScore = Integer.MIN_VALUE;
                 for(ScoredConverterFactory sfactory : tails) {
                     // break when score not to the max and have a converter
-                    if (composedConverter != null && currentScore > sfactory.score) {
-                        return composedConverter;
+                    if (! potentials.isEmpty() && currentScore != Integer.MIN_VALUE) {
+                        if (currentScore > sfactory.score) {
+                            return potentials;
+                        }
+                    } else {
+                        currentScore = sfactory.score;
                     }
+
                     Type tailFactoryInType = sfactory.converterFactory.getFromType();
                     if (outType != tailFactoryInType) { // ignore when no progress
-                        Converter headConverter = (Converter<? super F, ? extends P>) findConverter(inType, tailFactoryInType, params);
-                        if (headConverter != null) {
-                            Converter tailConverter = sfactory.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, targetedTypes.getTo()), params);
-                            if (tailConverter != null) {
-                                ComposedConverter c = new ComposedConverter(headConverter, tailConverter);
-                                // override converter only if depth is less\
-                                if (composedConverter == null || c.depth() < composedConverter.depth()) {
-                                    composedConverter = c;
+                        List<ScoredConverterFactory> headConverters  = findConverterFactories(inType, tailFactoryInType, params);
+                        if (!headConverters.isEmpty()) {
+                            List<ScoredConverterFactory> tailConverters = findConverterFactories(tailFactoryInType, outType, params);
+                            if (!tailConverters.isEmpty()) {
+                                for(ScoredConverterFactory hf : headConverters) {
+                                    if (hf.converterFactory.newConverter(new ConvertingTypes(inType, tailFactoryInType), params) != null) {
+                                        for(ScoredConverterFactory tf : tailConverters) {
+                                            if (hf.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, outType), params) != null) {
+                                                ComposedConverterFactory composedConverterFactory = new ComposedConverterFactory(hf.converterFactory, tf.converterFactory, tailFactoryInType);
+                                                int score = composedConverterFactory.score(new ConvertingTypes(inType, outType)).getScore();
+                                                potentials.add(new ScoredConverterFactory(score, composedConverterFactory));
+                                                break;
+                                            }
+                                        }
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-                return composedConverter;
             }
-            return null;
         }
+        Collections.sort(potentials);
+        return potentials;
     }
 
     private final List<ConverterFactory> converters;
@@ -136,5 +153,40 @@ public class ConverterService {
             return o.score - score;
         }
     }
+    
 
+    private static class ComposedConverterFactory<I, T, O> implements ConverterFactory<I, O> {
+
+        private final ConverterFactory<I, T> headConverterFactory;
+        private final ConverterFactory<T, O> tailConverterFactory;
+        private final Type tType;
+
+        private ComposedConverterFactory(ConverterFactory<I, T> headConverterFactory, ConverterFactory<T, O> tailConverterFactory, Type tType) {
+            this.headConverterFactory = headConverterFactory;
+            this.tailConverterFactory = tailConverterFactory;
+            this.tType = tType;
+        }
+
+        @Override
+        public Converter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, Object... params) {
+            Converter<? super I, ? extends T> head = headConverterFactory.newConverter(new ConvertingTypes(targetedTypes.getFrom(), tType), params);
+            if (head == null) return null;
+            Converter<? super T, ? extends O> tail = tailConverterFactory.newConverter(new ConvertingTypes(tType, targetedTypes.getTo()));
+            if (tail == null) return null;
+            return new ComposedConverter<I, T, O>(head, tail);
+        }
+
+        @Override
+        public ConvertingScore score(ConvertingTypes targetedTypes) {
+            ConvertingScore headScore = headConverterFactory.score(new ConvertingTypes(targetedTypes.getFrom(), tType));
+            ConvertingScore tailScore = tailConverterFactory.score(new ConvertingTypes(tType, targetedTypes.getTo()));
+            return new ConvertingScore(Math.min(headScore.getFromScore(), tailScore.getFromScore()), Math.min(headScore.getToScore(), tailScore.getToScore()));
+        }
+
+        @Override
+        public Type getFromType() {
+            return headConverterFactory.getFromType();
+        }
+    }
+    
 }

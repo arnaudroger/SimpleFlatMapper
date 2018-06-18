@@ -1,7 +1,6 @@
 package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
-import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.primitive.ShortGetter;
 
@@ -23,6 +22,6 @@ public class DatastaxShortGetter implements ShortGetter<GettableByIndexData>, Ge
 
     @Override
     public short getShort(GettableByIndexData target) throws Exception {
-        return DataHelper.getShort(index, target);
+        return target.getShort(index);
     }
 }

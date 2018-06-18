@@ -95,7 +95,7 @@ public class SettableDataSetterFactory
             @SuppressWarnings("unchecked")
             @Override
             public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
-                if (DataTypeHelper.isTime(arg.getColumnKey().getDataType().getName())) {
+                if (arg.getColumnKey().getDataType() == DataType.time()) {
                     return (Setter<SettableByIndexData, P>)new TimeSettableDataSetter(arg.getColumnKey().getIndex());
                 }
                 return (Setter<SettableByIndexData, P>) new LongSettableDataSetter(arg.getColumnKey().getIndex());
@@ -178,15 +178,13 @@ public class SettableDataSetterFactory
             }
         });
 
-        if (DataTypeHelper.localDateClass != null) {
-            factoryPerClass.put(DataTypeHelper.localDateClass, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
-                @SuppressWarnings("unchecked")
-                @Override
-                public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
-                    return (Setter<SettableByIndexData, P>) new DateSettableDataSetter(arg.getColumnKey().getIndex());
-                }
-            });
-        }
+        factoryPerClass.put(LocalDate.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+                return (Setter<SettableByIndexData, P>) new DateSettableDataSetter(arg.getColumnKey().getIndex());
+            }
+        });
     }
 
     public SettableDataSetterFactory(MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig, ReflectionService reflectionService) {

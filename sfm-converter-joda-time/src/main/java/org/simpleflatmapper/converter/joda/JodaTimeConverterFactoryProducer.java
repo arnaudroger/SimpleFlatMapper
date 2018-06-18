@@ -36,6 +36,7 @@ import org.simpleflatmapper.converter.joda.impl.JodaTimeHelper;
 import org.simpleflatmapper.util.Consumer;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class JodaTimeConverterFactoryProducer extends AbstractConverterFactoryProducer {
 
@@ -123,6 +124,19 @@ public class JodaTimeConverterFactoryProducer extends AbstractConverterFactoryPr
                 } else {
                     return ToStringConverter.INSTANCE;
                 }
+            }
+        });
+        
+        //IFJAVA8_START
+        constantConverter(consumer, LocalDateTime.class, java.time.LocalDateTime.class, new org.simpleflatmapper.converter.joda.impl.time.JodaLocalDateTimeTojuLocalDateTimeConverter());
+        constantConverter(consumer, LocalDate.class, java.time.LocalDate.class, new org.simpleflatmapper.converter.joda.impl.time.JodaLocalDateTojuLocalDateConverter());
+        constantConverter(consumer, LocalTime.class, java.time.LocalTime.class, new org.simpleflatmapper.converter.joda.impl.time.JodaLocalTimeTojuLocalTimeConverter());
+        //IFJAVA8_END
+        constantConverter(consumer, LocalTime.class, Long.class, new Converter<LocalTime, Long>() {
+            @Override
+            public Long convert(LocalTime in) throws Exception {
+                if (in == null) return null;
+                return TimeUnit.MILLISECONDS.toNanos(in.getMillisOfDay());
             }
         });
 

@@ -7,4 +7,7 @@ module org.simpleflatmapper.datastax {
 
         provides org.simpleflatmapper.reflect.meta.AliasProviderProducer
         with org.simpleflatmapper.datastax.impl.mapping.DatastaxAliasProviderFactory;
+        
+        provides org.simpleflatmapper.converter.ConverterFactoryProducer
+                with org.simpleflatmapper.datastax.impl.converter.DatastaxConverterFactoryProducer;
 }

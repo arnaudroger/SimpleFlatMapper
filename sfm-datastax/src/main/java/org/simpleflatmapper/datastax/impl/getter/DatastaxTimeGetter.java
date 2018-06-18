@@ -1,7 +1,6 @@
 package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
-import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.primitive.LongGetter;
 
@@ -23,6 +22,6 @@ public class DatastaxTimeGetter implements LongGetter<GettableByIndexData>, Gett
 
     @Override
     public long getLong(GettableByIndexData target) throws Exception {
-        return DataHelper.getTime(index, target);
+        return target.getTime(index);
     }
 }

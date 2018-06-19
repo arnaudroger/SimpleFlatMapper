@@ -134,7 +134,7 @@
 								<artifactItem>
 									<groupId>org.simpleflatmapper</groupId>
 									<artifactId>ow2asm</artifactId>
-									<version>6.1.1</version>
+									<version>6.2</version>
 								</artifactItem>
 							</artifactItems>
 							<outputDirectory>target/classes</outputDirectory>
@@ -198,7 +198,7 @@
 										<artifactItem>
 											<groupId>org.simpleflatmapper</groupId>
 											<artifactId>ow2asm</artifactId>
-											<version>5_1</version>
+											<version>5.2</version>
 										</artifactItem>
 									</artifactItems>
 									<outputDirectory>target/classes</outputDirectory>
@@ -249,7 +249,7 @@
 										<artifactItem>
 											<groupId>org.simpleflatmapper</groupId>
 											<artifactId>ow2asm</artifactId>
-											<version>5_1</version>
+											<version>5.2</version>
 										</artifactItem>
 									</artifactItems>
 									<outputDirectory>target/classes</outputDirectory>
@@ -356,7 +356,7 @@
 								<additionalDependency>
 									<groupId>org.simpleflatmapper</groupId>
 									<artifactId>ow2asm</artifactId>
-									<version>6.1.1</version>
+									<version>6.2</version>
 								</additionalDependency>
 							</additionalDependencies>	
 						</configuration>

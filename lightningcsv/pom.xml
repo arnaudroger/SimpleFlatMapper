@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>sfm-csv</artifactId>
+	<artifactId>lightning-csv</artifactId>
 	<packaging>bundle</packaging>
 
 	<parent>
@@ -31,41 +31,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-map</artifactId>
+			<artifactId>sfm-util</artifactId>
 			<version>3.18.2-SNAPSHOT</version>
-			<classifier>${jar.classifier}</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-tuples</artifactId>
-			<version>3.18.2-SNAPSHOT</version>
-			<classifier>${jar.classifier}</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-map</artifactId>
-			<version>3.18.2-SNAPSHOT</version>
-			<scope>test</scope>
-			<type>test-jar</type>
-		</dependency>
-        <dependency>
-            <groupId>org.simpleflatmapper</groupId>
-            <artifactId>sfm-test</artifactId>
-            <version>3.18.2-SNAPSHOT</version>
-            <scope>test</scope>
-			<classifier>${jar.classifier}</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-converter-joda-time</artifactId>
-			<version>3.18.2-SNAPSHOT</version>
-			<classifier>${jar.classifier}</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -86,17 +53,41 @@
 				<configuration>
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
-						<Export-Package>org.simpleflatmapper.csv,org.simpleflatmapper.csv.property,org.simpleflatmapper.csv.parser</Export-Package>
+						<Export-Package>org.simpleflatmapper.lightningcsv,org.simpleflatmapper.csv.property,org.simpleflatmapper.lightningcsv.parser</Export-Package>
 						<Import-Package>
 							org.simpleflatmapper.*
 						</Import-Package>
 					</instructions>
 					<archive>
 						<manifestEntries>
-							<Automatic-Module-Name>org.simpleflatmapper.csv</Automatic-Module-Name>
+							<Automatic-Module-Name>org.simpleflatmapper.lightningcsv</Automatic-Module-Name>
 						</manifestEntries>
 					</archive>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>copy-asm</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.simpleflatmapper</groupId>
+									<artifactId>lightning-csv-ow2asm</artifactId>
+									<version>6.2</version>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>target/classes</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -137,6 +128,30 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
 					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>3.0.2</version>
+						<executions>
+							<execution>
+								<id>copy-asm</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>org.simpleflatmapper</groupId>
+											<artifactId>lightning-csv-ow2asm</artifactId>
+											<version>5.2</version>
+										</artifactItem>
+									</artifactItems>
+									<outputDirectory>target/classes</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -167,6 +182,30 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>3.0.2</version>
+						<executions>
+							<execution>
+								<id>copy-asm</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>org.simpleflatmapper</groupId>
+											<artifactId>lightning-csv-ow2asm</artifactId>
+											<version>5.2</version>
+										</artifactItem>
+									</artifactItems>
+									<outputDirectory>target/classes</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
@@ -231,17 +270,17 @@
 									<fork>true</fork>
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.mapper=org.simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.mapper=org.simpleflatmapper.lightningcsv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.impl=org.simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.impl=org.simpleflatmapper.lightningcsv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.impl.cellreader=org.simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.impl.cellreader=org.simpleflatmapper.lightningcsv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.impl.primitive=org.simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.impl.primitive=org.simpleflatmapper.lightningcsv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.impl.writer=org.simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.impl.writer=org.simpleflatmapper.lightningcsv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.parser=org.simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.parser=org.simpleflatmapper.lightningcsv.test</arg>
 									</compilerArgs>
 								</configuration>
 								<goals>

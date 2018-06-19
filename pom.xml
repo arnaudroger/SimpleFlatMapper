@@ -127,6 +127,7 @@
                 <module>sfm-converter-joda-time</module>
                 <module>sfm-converter-protobuf</module>
                 <module>sfm-csv</module>
+                <module>lightningcsv</module>
                 <module>sfm-jdbc</module>
                 <module>sfm-datastax</module>
                 <module>sfm-jooq</module>

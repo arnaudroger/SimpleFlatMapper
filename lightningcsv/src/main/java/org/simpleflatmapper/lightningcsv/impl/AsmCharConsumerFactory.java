@@ -1,16 +1,15 @@
-package org.simpleflatmapper.csv.impl;
+package org.simpleflatmapper.lightningcsv.impl;
 
-import org.simpleflatmapper.csv.parser.AbstractCharConsumer;
-import org.simpleflatmapper.csv.parser.CellPreProcessor;
-import org.simpleflatmapper.csv.parser.CharBuffer;
-import org.simpleflatmapper.csv.parser.ConfigurableCharConsumer;
-import org.simpleflatmapper.csv.parser.TextFormat;
-import org.simpleflatmapper.ow2asm.ClassReader;
-import org.simpleflatmapper.ow2asm.ClassVisitor;
-import org.simpleflatmapper.ow2asm.ClassWriter;
-import org.simpleflatmapper.ow2asm.MethodVisitor;
+import org.simpleflatmapper.lightningcsv.parser.AbstractCharConsumer;
+import org.simpleflatmapper.lightningcsv.parser.CellPreProcessor;
+import org.simpleflatmapper.lightningcsv.parser.CharBuffer;
+import org.simpleflatmapper.lightningcsv.parser.ConfigurableCharConsumer;
+import org.simpleflatmapper.lightningcsv.parser.TextFormat;
+import org.simpleflatmapper.lightningcsv.ow2asm.ClassReader;
+import org.simpleflatmapper.lightningcsv.ow2asm.ClassVisitor;
+import org.simpleflatmapper.lightningcsv.ow2asm.ClassWriter;
+import org.simpleflatmapper.lightningcsv.ow2asm.MethodVisitor;
 import org.simpleflatmapper.util.FactoryClassLoader;
-import org.simpleflatmapper.reflect.asm.AsmUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
@@ -19,11 +18,11 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.simpleflatmapper.ow2asm.Opcodes.ASM5;
-import static org.simpleflatmapper.ow2asm.Opcodes.BIPUSH;
-import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_0;
-import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_1;
-import static org.simpleflatmapper.ow2asm.Opcodes.IRETURN;
+import static org.simpleflatmapper.lightningcsv.ow2asm.Opcodes.ASM5;
+import static org.simpleflatmapper.lightningcsv.ow2asm.Opcodes.BIPUSH;
+import static org.simpleflatmapper.lightningcsv.ow2asm.Opcodes.ICONST_0;
+import static org.simpleflatmapper.lightningcsv.ow2asm.Opcodes.ICONST_1;
+import static org.simpleflatmapper.lightningcsv.ow2asm.Opcodes.IRETURN;
 
 public class AsmCharConsumerFactory extends CharConsumerFactory {
     public AbstractCharConsumer newCharConsumer(TextFormat textFormat, CharBuffer charBuffer, CellPreProcessor cellTransformer, boolean specialisedCharConsumer) {
@@ -74,7 +73,7 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
     @SuppressWarnings("unchecked")
     private static Constructor<? extends AbstractCharConsumer> generateSpecialisedCharConsumer(final SpecialisationKey key) {
         try {
-            final String newName = "org/simpleflatmapper/csv/parser/Asm_"
+            final String newName = "org/simpleflatmapper/lightningcsv/parser/Asm_"
                     + (key.ignoreLeadingSpace ? "Ils_" : "")
                     + (key.textFormat.yamlComment ? "Yaml_" : "")
                     + "S_" + Integer.toHexString(key.textFormat.separatorChar)
@@ -83,7 +82,7 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
                     + "_CharConsumer";
 
 
-            final Set<String> oldNames = new HashSet<String>(Arrays.asList("org/simpleflatmapper/csv/parser/ConfigurableCharConsumer"));
+            final Set<String> oldNames = new HashSet<String>(Arrays.asList("org/simpleflatmapper/lightningcsv/parser/ConfigurableCharConsumer"));
             ClassReader reader = new ClassReader(
                     ConfigurableCharConsumer.class.getResourceAsStream("ConfigurableCharConsumer.class")
             );

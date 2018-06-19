@@ -53,7 +53,7 @@
 				<configuration>
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
-						<Export-Package>org.simpleflatmapper.lightningcsv,org.simpleflatmapper.csv.property,org.simpleflatmapper.lightningcsv.parser</Export-Package>
+						<Export-Package>org.simpleflatmapper.lightningcsv,org.simpleflatmapper.lightningcsv.parser</Export-Package>
 						<Import-Package>
 							org.simpleflatmapper.*
 						</Import-Package>
@@ -270,17 +270,17 @@
 									<fork>true</fork>
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.mapper=org.simpleflatmapper.lightningcsv.test</arg>
+										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.mapper=org.simpleflatmapper.lightningcsv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.impl=org.simpleflatmapper.lightningcsv.test</arg>
+										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.impl=org.simpleflatmapper.lightningcsv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.impl.cellreader=org.simpleflatmapper.lightningcsv.test</arg>
+										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.impl.cellreader=org.simpleflatmapper.lightningcsv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.impl.primitive=org.simpleflatmapper.lightningcsv.test</arg>
+										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.impl.primitive=org.simpleflatmapper.lightningcsv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.impl.writer=org.simpleflatmapper.lightningcsv.test</arg>
+										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.impl.writer=org.simpleflatmapper.lightningcsv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.lightningcsv.parser=org.simpleflatmapper.lightningcsv.test</arg>
+										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.parser=org.simpleflatmapper.lightningcsv.test</arg>
 									</compilerArgs>
 								</configuration>
 								<goals>

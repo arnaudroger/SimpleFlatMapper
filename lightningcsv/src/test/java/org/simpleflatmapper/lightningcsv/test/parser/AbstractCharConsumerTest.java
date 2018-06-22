@@ -1,7 +1,7 @@
 package org.simpleflatmapper.lightningcsv.test.parser;
 
 import org.junit.Test;
-import org.simpleflatmapper.lightningcsv.impl.CharConsumerFactory;
+import org.simpleflatmapper.lightningcsv.parser.CharConsumerFactory;
 import org.simpleflatmapper.lightningcsv.parser.AbstractCharConsumer;
 import org.simpleflatmapper.lightningcsv.parser.CharSequenceCharBuffer;
 import org.simpleflatmapper.lightningcsv.parser.ConfigurableCharConsumer;

@@ -1,9 +1,7 @@
-package org.simpleflatmapper.lightningcsv.impl;
+package org.simpleflatmapper.lightningcsv.parser;
 
-import org.simpleflatmapper.lightningcsv.parser.AbstractCharConsumer;
-import org.simpleflatmapper.lightningcsv.parser.CellPreProcessor;
-import org.simpleflatmapper.lightningcsv.parser.CharBuffer;
-import org.simpleflatmapper.lightningcsv.parser.TextFormat;
+import org.simpleflatmapper.lightningcsv.impl.AsmCharConsumerFactory;
+import org.simpleflatmapper.lightningcsv.impl.ConfigurableCharConsumerFactory;
 
 public abstract class CharConsumerFactory {
     public abstract AbstractCharConsumer newCharConsumer(TextFormat textFormat, CharBuffer charBuffer, CellPreProcessor cellTransformer, boolean specialisedCharConsumer);

@@ -1,6 +1,6 @@
 package org.simpleflatmapper.lightningcsv;
 
-import org.simpleflatmapper.lightningcsv.impl.CharConsumerFactory;
+import org.simpleflatmapper.lightningcsv.parser.CharConsumerFactory;
 import org.simpleflatmapper.lightningcsv.parser.AbstractCharConsumer;
 import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
 import org.simpleflatmapper.lightningcsv.parser.CellPreProcessor;

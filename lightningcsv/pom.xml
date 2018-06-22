@@ -33,6 +33,7 @@
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-util</artifactId>
 			<version>3.18.2-SNAPSHOT</version>
+			<classifier>${jar.classifier}</classifier>
 		</dependency>
 
 		<dependency>

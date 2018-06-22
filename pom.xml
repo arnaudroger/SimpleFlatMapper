@@ -639,7 +639,7 @@
                 <module>sfm-test-proto</module>
                 <module>sfm-test-osgi</module>
                 <!--<module>sfm-test-immutables</module>-->
-                <!--<module>sfm-jmh</module> what ?-->
+                <module>sfm-jmh</module>
                 <!--<module>sfm-examples/sfm-jooq</module>-->
             </modules>
         </profile>

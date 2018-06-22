@@ -17,7 +17,7 @@ matrix:
   include:
     - jdk: oraclejdk9
       install: . ./.travis/install-jdk-9.sh
-      script: mvn -version && mvn package -B
+      script: mvn -version && mvn -X package -B
     - jdk: oraclejdk8
       script:  mvn test javadoc:javadoc -B -Pdev && mvn -P travis,!dev -DserviceName=travis-ci jacoco:report coveralls:report
     - jdk: openjdk7

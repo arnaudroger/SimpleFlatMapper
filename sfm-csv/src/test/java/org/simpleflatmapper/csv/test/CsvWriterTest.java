@@ -2,13 +2,13 @@ package org.simpleflatmapper.csv.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.csv.CsvWriter;
+import org.simpleflatmapper.lightningcsv.CsvCellWriter;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.property.RenameProperty;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
 import org.simpleflatmapper.map.property.DateFormatProperty;
 import org.simpleflatmapper.map.property.EnumOrdinalFormatProperty;
 import org.simpleflatmapper.util.TypeReference;

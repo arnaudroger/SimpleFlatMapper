@@ -31,6 +31,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>lightning-csv</artifactId>
+			<version>3.18.2-SNAPSHOT</version>
+			<classifier>${jar.classifier}</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-map</artifactId>
 			<version>3.18.2-SNAPSHOT</version>
 			<classifier>${jar.classifier}</classifier>

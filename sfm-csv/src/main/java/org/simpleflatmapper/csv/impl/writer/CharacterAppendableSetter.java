@@ -1,6 +1,6 @@
 package org.simpleflatmapper.csv.impl.writer;
 
-import org.simpleflatmapper.csv.CellWriter;
+import org.simpleflatmapper.lightningcsv.CellWriter;
 import org.simpleflatmapper.reflect.primitive.CharacterSetter;
 
 public class CharacterAppendableSetter implements CharacterSetter<Appendable> {

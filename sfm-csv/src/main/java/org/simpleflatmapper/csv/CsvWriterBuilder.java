@@ -2,14 +2,11 @@ package org.simpleflatmapper.csv;
 
 
 import org.simpleflatmapper.csv.impl.writer.CellSeparatorAppender;
-import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
 import org.simpleflatmapper.csv.impl.writer.EndOfRowAppender;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
-import org.simpleflatmapper.map.MapperBuilderErrorHandler;
+import org.simpleflatmapper.lightningcsv.CellWriter;
+import org.simpleflatmapper.lightningcsv.CsvCellWriter;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.PropertyWithGetter;
-import org.simpleflatmapper.map.context.KeySourceGetter;
-import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
@@ -17,13 +14,8 @@ import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.BiInstantiator;
-import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.util.Consumer;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<Appendable, T, CsvColumnKey, CsvWriterBuilder<T>> {

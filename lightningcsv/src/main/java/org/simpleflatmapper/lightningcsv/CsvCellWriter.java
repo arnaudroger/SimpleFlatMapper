@@ -1,7 +1,5 @@
-package org.simpleflatmapper.csv.impl.writer;
+package org.simpleflatmapper.lightningcsv;
 
-
-import org.simpleflatmapper.csv.CellWriter;
 
 import java.io.IOException;
 

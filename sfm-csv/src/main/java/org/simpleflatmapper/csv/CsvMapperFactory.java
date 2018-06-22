@@ -4,6 +4,7 @@ import org.simpleflatmapper.csv.impl.CellValueReaderFactoryImpl;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
 import org.simpleflatmapper.csv.impl.TransformCsvMapper;
+import org.simpleflatmapper.lightningcsv.StringReader;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.Result;
 import org.simpleflatmapper.map.ResultFieldMapperErrorHandler;

@@ -1,7 +1,8 @@
 package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.*;
-import org.simpleflatmapper.csv.parser.CellConsumer;
+import org.simpleflatmapper.lightningcsv.CsvReader;
+import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;

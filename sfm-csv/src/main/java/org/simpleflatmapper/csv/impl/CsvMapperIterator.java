@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl;
 
-import org.simpleflatmapper.csv.CsvReader;
-import org.simpleflatmapper.csv.parser.CellConsumer;
+import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
+import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.CheckedConsumer;
 

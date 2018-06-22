@@ -1,9 +1,23 @@
 package org.simpleflatmapper.csv;
 
-import org.simpleflatmapper.csv.impl.CharConsumerFactory;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
-import org.simpleflatmapper.csv.parser.*;
+import org.simpleflatmapper.lightningcsv.CloseableCsvReader;
+import org.simpleflatmapper.lightningcsv.CsvReader;
+import org.simpleflatmapper.lightningcsv.Row;
+import org.simpleflatmapper.lightningcsv.impl.CharConsumerFactory;
+import org.simpleflatmapper.lightningcsv.parser.AbstractCharConsumer;
+import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
+import org.simpleflatmapper.lightningcsv.parser.CellPreProcessor;
+import org.simpleflatmapper.lightningcsv.parser.CharBuffer;
+import org.simpleflatmapper.lightningcsv.parser.CharSequenceCharBuffer;
+import org.simpleflatmapper.lightningcsv.parser.NoopCellPreProcessor;
+import org.simpleflatmapper.lightningcsv.parser.ReaderCharBuffer;
+import org.simpleflatmapper.lightningcsv.parser.StringArrayCellConsumer;
+import org.simpleflatmapper.lightningcsv.parser.TextFormat;
+import org.simpleflatmapper.lightningcsv.parser.TrimCellPreProcessor;
+import org.simpleflatmapper.lightningcsv.parser.UnescapeCellPreProcessor;
+import org.simpleflatmapper.lightningcsv.parser.YamlCellPreProcessor;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.tuple.Tuple2;

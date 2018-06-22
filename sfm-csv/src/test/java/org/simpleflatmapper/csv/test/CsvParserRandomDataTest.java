@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.csv.CsvParser;
-import org.simpleflatmapper.csv.parser.CellConsumer;
+import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
 import org.simpleflatmapper.util.ListCollector;
 
 import java.io.CharArrayReader;

@@ -7,7 +7,7 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
-import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
+import org.simpleflatmapper.lightningcsv.CsvCellWriter;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;

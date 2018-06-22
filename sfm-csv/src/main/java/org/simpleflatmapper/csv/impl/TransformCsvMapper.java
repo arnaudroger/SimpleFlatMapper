@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.CsvMapper;
-import org.simpleflatmapper.csv.CsvReader;
+import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Function;

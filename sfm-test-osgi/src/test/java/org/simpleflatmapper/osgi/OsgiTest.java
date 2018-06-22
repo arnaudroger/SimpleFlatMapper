@@ -13,8 +13,10 @@ import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.poi.SheetMapper;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.tuple.Tuple2;
+import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
 
+import java.awt.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -49,6 +51,7 @@ public class OsgiTest {
 
             installFelix(hostApplication);
             installSfmMap(hostApplication);
+            hostApplication.deployBundleWithClass(org.simpleflatmapper.lightningcsv.CsvParser.class);
             hostApplication.deployBundleWithClass(CsvParser.class);
 
             InputStream is =
@@ -78,6 +81,7 @@ public class OsgiTest {
 
             hostApplication.deployWrapBundleWithClass(Cell.class);
             installSfmMap(hostApplication);
+            hostApplication.deployBundleWithClass(org.simpleflatmapper.lightningcsv.CsvParser.class);
             hostApplication.deployBundleWithClass(CsvParser.class);
             hostApplication.deployBundleWithClass(SheetMapper.class);
 

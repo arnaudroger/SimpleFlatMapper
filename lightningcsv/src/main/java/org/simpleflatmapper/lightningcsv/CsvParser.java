@@ -258,7 +258,7 @@ public final class CsvParser {
     }
 	//IFJAVA8_END
 
-	protected static abstract class AbstractDSL<D extends AbstractDSL<D>> {
+	public static abstract class AbstractDSL<D extends AbstractDSL<D>> {
 		protected final char separatorChar;
 		protected final char quoteChar;
 		protected final char escapeChar;
@@ -810,11 +810,11 @@ public final class CsvParser {
 				}
 			};
 
-	interface OnReaderFactory<T, D extends AbstractDSL<?>> {
+	public interface OnReaderFactory<T, D extends AbstractDSL<?>> {
 		T apply(Reader reader, D dsl) throws IOException;
 	}
 
-	protected static <R, D extends AbstractDSL<?>> R onReader(File file, D dsl, OnReaderFactory<R, ? super D> factory) throws IOException {
+	public static <R, D extends AbstractDSL<?>> R onReader(File file, D dsl, OnReaderFactory<R, ? super D> factory) throws IOException {
 		Reader reader = newReader(file);
 		try {
 			return factory.apply(reader, dsl);

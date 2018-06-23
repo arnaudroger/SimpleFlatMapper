@@ -5,18 +5,13 @@ import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
 import org.simpleflatmapper.lightningcsv.CloseableCsvReader;
 import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.lightningcsv.Row;
-import org.simpleflatmapper.lightningcsv.parser.AbstractCharConsumer;
+import org.simpleflatmapper.lightningcsv.CsvParser.OnReaderFactory;
 import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
 import org.simpleflatmapper.lightningcsv.parser.CellPreProcessor;
 import org.simpleflatmapper.lightningcsv.parser.CharBuffer;
 import org.simpleflatmapper.lightningcsv.parser.CharConsumerFactory;
-import org.simpleflatmapper.lightningcsv.parser.CharSequenceCharBuffer;
-import org.simpleflatmapper.lightningcsv.parser.NoopCellPreProcessor;
-import org.simpleflatmapper.lightningcsv.parser.ReaderCharBuffer;
 import org.simpleflatmapper.lightningcsv.parser.StringArrayCellConsumer;
 import org.simpleflatmapper.lightningcsv.parser.TextFormat;
-import org.simpleflatmapper.lightningcsv.parser.TrimCellPreProcessor;
-import org.simpleflatmapper.lightningcsv.parser.UnescapeCellPreProcessor;
 import org.simpleflatmapper.lightningcsv.parser.YamlCellPreProcessor;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -28,7 +23,6 @@ import org.simpleflatmapper.tuple.Tuple6;
 import org.simpleflatmapper.tuple.Tuple7;
 import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
-import org.simpleflatmapper.util.ParallelReader;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.CloseableIterator;
@@ -48,6 +42,8 @@ import java.util.*;
 //IFJAVA8_START
 import java.util.function.Function;
 import java.util.stream.Stream;
+
+import static org.simpleflatmapper.lightningcsv.CsvParser.onReader;
 //IFJAVA8_END
 
 /**
@@ -321,184 +317,13 @@ public final class CsvParser {
     }
 	//IFJAVA8_END
 
-	protected static abstract class AbstractDSL<D extends AbstractDSL<D>> {
-		protected final char separatorChar;
-		protected final char quoteChar;
-		protected final char escapeChar;
-		protected final int bufferSize;
-		protected final int skip;
-		protected final int limit;
-		protected final int maxBufferSize;
-		protected final StringPostProcessing stringPostProcessing;
-		protected final org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper;
-		protected final boolean yamlComment;
-		protected final boolean parallelReader;
-		protected final boolean specialisedCharConsumer;
-		
-		protected enum StringPostProcessing { NONE, UNESCAPE, TRIM_AND_UNESCAPE}
+	protected static abstract class AbstractDSL<D extends AbstractDSL<D>> extends org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL<D> {
 
-		protected AbstractDSL() {
-			separatorChar = ',';
-			quoteChar= '"';
-			escapeChar = '"';
-			bufferSize = DEFAULT_BUFFER_SIZE_4K;
-			skip = 0;
-			limit = -1;
-			maxBufferSize = DEFAULT_MAX_BUFFER_SIZE_8M;
-			stringPostProcessing = StringPostProcessing.UNESCAPE;
-			cellConsumerWrapper = null;
-			yamlComment = false;
-			parallelReader = false;
-			specialisedCharConsumer = true;
+		public AbstractDSL() {
 		}
 
-		protected AbstractDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader, boolean specialisedCharConsumer) {
-			this.separatorChar = separatorChar;
-			this.quoteChar = quoteChar;
-			this.escapeChar = escapeChar;
-			this.bufferSize = bufferSize;
-			this.skip = skip;
-			this.limit = limit;
-			this.maxBufferSize = maxBufferSize;
-			this.stringPostProcessing = stringPostProcessing;
-			this.cellConsumerWrapper = cellConsumerWrapper;
-			this.yamlComment = yamlComment;
-			this.parallelReader = parallelReader;
-			this.specialisedCharConsumer = specialisedCharConsumer;
-		}
-
-		/**
-		 * Parse the content from the reader as a csv and call back the cellConsumer with the cell values.
-		 * @param reader the reader
-		 * @param cellConsumer the callback object for each cell value
-		 * @param <CC> the type of the cell consumer
-		 * @return cellConsumer
-		 * @throws IOException if and error occurs in the reader
-		 */
-		public final <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
-			return parse(charBuffer(reader), cellConsumer);
-		}
-
-		public final <CC extends CellConsumer> CC parse(String content, CC cellConsumer) throws IOException {
-			return parse(charBuffer(content), cellConsumer);
-		}
-
-		public final <CC extends CellConsumer> CC parse(CharSequence content, CC cellConsumer) throws IOException {
-			return parse(charBuffer(content), cellConsumer);
-		}
-
-		private <CC extends CellConsumer> CC parse(CharBuffer charBuffer, CC cellConsumer) throws IOException {
-			CsvReader csvreader = reader(charBuffer);
-
-			if (limit == -1) {
-				return csvreader.parseAll(cellConsumer);
-			} else {
-				return csvreader.parseRows(cellConsumer, limit);
-			}
-		}
-
-		public final <CC extends CellConsumer> CC parse(File file, CC cellConsumer) throws IOException {
-			Reader reader = newReader(file);
-			try {
-				return parse(reader, cellConsumer);
-			} finally {
-				try { reader.close(); } catch(IOException e) { /* ignore*/ }
-			}
-		}
-
-		/**
-		 * Create a CsvReader and the specified reader. Will skip the number of specified rows.
-		 * @param reader the content
-		 * @return a CsvReader on the reader.
-		 * @throws IOException if an io error occurs
-		 */
-		public final CsvReader reader(Reader reader) throws IOException {
-			return reader(charBuffer(parallelReader ? new ParallelReader(reader) : reader));
-		}
-
-		public final CsvReader reader(CharSequence content) throws IOException {
-			return reader(charBuffer(content));
-		}
-
-		public final CsvReader reader(String content) throws IOException {
-			return reader(charBuffer(content));
-		}
-
-		private CsvReader reader(CharBuffer charBuffer) throws IOException {
-			CsvReader csvReader = new CsvReader(charConsumer(charBuffer), cellConsumerWrapper);
-			csvReader.skipRows(skip);
-			return csvReader;
-		}
-
-		protected CharBuffer charBuffer(Reader reader) throws IOException {
-			return new ReaderCharBuffer(bufferSize, maxBufferSize, reader);
-		}
-
-		protected CharBuffer charBuffer(CharSequence content) throws IOException {
-			return new CharSequenceCharBuffer(content);
-		}
-
-		protected CharBuffer charBuffer(String content) throws IOException {
-			return new CharSequenceCharBuffer(content);
-		}
-
-		public final CloseableCsvReader reader(File file) throws IOException {
-			return onReader(file, this, CREATE_CLOSEABLE_CSV_READER);
-		}
-
-		public final Iterator<String[]> iterator(Reader reader) throws IOException {
-			return reader(reader).iterator();
-		}
-
-		public final Iterator<String[]> iterator(CharSequence content) throws IOException {
-			return reader(content).iterator();
-		}
-
-		public final Iterator<String[]> iterator(String content) throws IOException {
-			return reader(content).iterator();
-		}
-
-		public final CloseableIterator<String[]> iterator(File file) throws IOException {
-			return onReader(file, this, CREATE_CLOSEABLE_ITERATOR);
-		}
-
-		public final Iterator<Row> rowIterator(Reader reader) throws IOException {
-			return reader(reader).rowIterator();
-		}
-
-		public final Iterator<Row> rowIterator(CharSequence content) throws IOException {
-			return reader(content).rowIterator();
-		}
-
-		public final Iterator<Row> rowIterator(String content) throws IOException {
-			return reader(content).rowIterator();
-		}
-
-		public final CloseableIterator<Row> rowIterator(File file) throws IOException {
-			return onReader(file, this, CREATE_CLOSEABLE_ROW_ITERATOR);
-		}
-		
-
-		public final <H extends CheckedConsumer<String[]>> H forEach(Reader reader, H consumer) throws IOException {
-			return reader(reader).read(consumer);
-		}
-
-		public final <H extends CheckedConsumer<String[]>> H forEach(CharSequence content, H consumer) throws IOException {
-			return reader(content).read(consumer);
-		}
-
-		public final <H extends CheckedConsumer<String[]>> H forEach(String content, H consumer) throws IOException {
-			return reader(content).read(consumer);
-		}
-
-		public final <H extends CheckedConsumer<String[]>> H forEach(File file, H consumer) throws IOException {
-			CloseableCsvReader csvReader = reader(file);
-			try {
-				csvReader.read(consumer);
-			} finally {
-				csvReader.close();
-			}
-			return consumer;
+		public AbstractDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader, boolean specialisedCharConsumer) {
+			super(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 		public final <T> MapToDSL<T> mapTo(Type target) {
@@ -544,212 +369,6 @@ public final class CsvParser {
 		public final <T> MapWithDSL<T> mapWith(CsvMapper<T> mapper) {
 			return new MapWithDSL<T>(this, mapper);
 		}
-
-		//IFJAVA8_START
-		public final Stream<String[]> stream(Reader reader) throws IOException {
-			return reader(reader).stream();
-		}
-
-		public final Stream<String[]> stream(CharSequence content) throws IOException {
-			return reader(content).stream();
-		}
-
-		public final Stream<String[]> stream(String content) throws IOException {
-			return reader(content).stream();
-		}
-
-		public final Stream<Row> rowStream(Reader reader) throws IOException {
-			return reader(reader).rowStream();
-		}
-
-		public final Stream<Row> rowStream(CharSequence content) throws IOException {
-			return reader(content).rowStream();
-		}
-
-		public final Stream<Row> rowStream(String content) throws IOException {
-			return reader(content).rowStream();
-		}
-		//IFJAVA8_END
-		/**
-		 * Use @see AbstractDSL#stream(File, Function).
- 		 * @param file the file
-		 * @return a stream of String[]
-		 */
-		//IFJAVA8_START
-		@Deprecated
-		public final Stream<String[]> stream(File file) throws IOException {
-			return onReader(file, this, (reader, dsl) -> dsl.stream(reader).onClose(() -> { try { reader.close(); } catch (IOException e) {} }));
-		}
-
-		public final <R> R stream(File file, Function<Stream<String[]>, R> function) throws IOException {
-			Reader reader = newReader(file);
-			try {
-				return function.apply(stream(reader));
-			} catch(IOException ioe) {
-				try { reader.close(); } catch(IOException ioe2) { }
-				throw ioe;
-			}
-		}
-
-		public final <R> R rowStream(File file, Function<Stream<Row>, R> function) throws IOException {
-			Reader reader = newReader(file);
-			try {
-				return function.apply(rowStream(reader));
-			} catch(IOException ioe) {
-				try { reader.close(); } catch(IOException ioe2) { }
-				throw ioe;
-			}
-		}
-		//IFJAVA8_END
-
-		protected final AbstractCharConsumer charConsumer(CharBuffer charBuffer) {
-			final TextFormat textFormat = getTextFormat();
-			CellPreProcessor cellTransformer = getCellTransformer(textFormat, stringPostProcessing);
-			
-			return CHAR_CONSUMER_FACTORY.newCharConsumer(textFormat, charBuffer, cellTransformer, specialisedCharConsumer);
-		}
-
-
-		protected TextFormat getTextFormat() {
-			return new TextFormat(separatorChar, quoteChar, escapeChar, yamlComment);
-		}
-
-		protected CellPreProcessor getCellTransformer(TextFormat textFormat, StringPostProcessing stringPostProcessing) {
-			switch (stringPostProcessing) {
-				case TRIM_AND_UNESCAPE:
-					return new TrimCellPreProcessor(getUnescapeCellTransformer(textFormat));
-				case UNESCAPE:
-					return getUnescapeCellTransformer(textFormat);
-				case NONE:
-					return NoopCellPreProcessor.INSTANCE;
-				default:
-					throw new IllegalStateException("Could not instantiate char consumer " + stringPostProcessing);
-			}
-		}
-
-		protected CellPreProcessor getUnescapeCellTransformer(TextFormat textFormat) {
-			return new UnescapeCellPreProcessor(textFormat.escapeChar, textFormat.quoteChar);
-		}
-
-		public final int maxBufferSize() {
-			return maxBufferSize;
-		}
-
-		public final int bufferSize() {
-			return bufferSize;
-		}
-
-		public final int limit() {
-			return limit;
-		}
-
-		public final int skip() {
-			return skip;
-		}
-
-		public final char separator() {
-			return separatorChar;
-		}
-
-		public final char quote() {
-			return quoteChar;
-		}
-
-
-		/**
-		 * set the separator character. the default value is ','.
-		 * @param c the new separator character
-		 * @return this
-		 */
-		public D separator(char c) {
-			return newDSL(c, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
-		}
-
-		/**
-		 * set the quote character. the default value is '"'.
-		 * @param c the quote character
-		 * @return this
-		 */
-		public D quote(char c) {
-			return newDSL(separatorChar, c, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
-		}
-
-		/**
-		 * set the quote character. the default value is '"'.
-		 * @param c the quote character
-		 * @return this
-		 */
-		public D escape(char c) {
-			return newDSL(separatorChar, quoteChar, c, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
-		}
-
-		/**
-		 * set the size of the char buffer to read from.
-		 * @param size the size in bytes
-		 * @return this
-		 */
-		public D bufferSize(int size) {
-			return newDSL(separatorChar, quoteChar, escapeChar, size, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
-		}
-
-		/**
-		 * set the number of line to skip.
-		 * @param skip number of line to skip.
-		 * @return this
-		 */
-		public D skip(int skip) {
-			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
-		}
-
-		/**
-		 * set the number of row to process. limit does not affect stream or iterator.
-		 * @param limit number of row to process
-		 * @return this
-		 */
-		public D limit(int limit) {
-			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
-		}
-
-
-		/**
-		 * on parsing from a reader the Reader will be fetched from a another thread. Use only if you have spare cores and the file is big enough.
-		 * <p>
-		 * On java 8 and over it will use the ForkJoinPool by default if the number of core is greater than 1, otherwise it will create a new Thread every time.
-		 * </p><p>
-		 * On java 6 and 7 it will create a shared ExecutorService with the number of threads set to the number of cores if it is greater than 1, otherwise it will create a new Thread every time.
-		 * </p><p>
-		 * If you wish to customize the org.simpleflatmapper.util.ParallelReader further for example to specify which Executor to user or the size of the ring buffer or read buffer you will need to wrap the Reader manually.
-		 * </p>
-		 * @return this
-		 */
-		public D parallelReader() {
-			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, true, specialisedCharConsumer);
-		}
-		
-		/**
-		 * deactivate the parallelReader.
-		 * @return this
-		 */
-		public D serialReader() {
-			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, false, specialisedCharConsumer);
-		}
-		
-		public D disableSpecialisedCharConsumer() {
-			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, false);
-		}
-		
-		/**
-		 * set the maximum size of the content the parser will handle before failing to avoid OOM.
-		 * @param maxBufferSize the maximum size the buffer will grow, default 8M
-		 * @return this
-		 */
-		public D maxBufferSize(int maxBufferSize) {
-			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
-		}
-
-
-		protected abstract D newDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader, boolean specialisedCharConsumer);
-
 
 	}
     /**
@@ -901,10 +520,10 @@ public final class CsvParser {
 		private final Type mapToClass;
 		private final CsvColumnDefinitionProviderImpl columnDefinitionProvider;
 
-		public MapToDSL(AbstractDSL dsl, Type mapToClass) {
+		public MapToDSL(org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL dsl, Type mapToClass) {
 			this(dsl, ReflectionService.newInstance().<T>getClassMeta(mapToClass), mapToClass, new CsvColumnDefinitionProviderImpl());
 		}
-		private MapToDSL(AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+		private MapToDSL(org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 			super(dsl, new DynamicCsvMapper<T>(mapToClass, classMeta, columnDefinitionProvider));
 			this.mapToClass = mapToClass;
 			this.classMeta = classMeta;
@@ -919,7 +538,7 @@ public final class CsvParser {
 			return headers(headers, getDsl().skip(1));
 		}
 
-		private StaticMapToDSL<T> headers(String[] headers, AbstractDSL csvDsl) {
+		private StaticMapToDSL<T> headers(String[] headers, org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL csvDsl) {
 			return new StaticMapToDSL<T>(csvDsl, classMeta, mapToClass, getColumnDefinitions(headers), columnDefinitionProvider);
 		}
 
@@ -931,7 +550,7 @@ public final class CsvParser {
 			return defaultHeaders(getDsl().skip(1));
 		}
 
-		private StaticMapToDSL<T> defaultHeaders(AbstractDSL csvDsl) {
+		private StaticMapToDSL<T> defaultHeaders(org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL csvDsl) {
 			return new StaticMapToDSL<T>(
 					csvDsl,
 					classMeta,
@@ -1010,7 +629,7 @@ public final class CsvParser {
 		private final List<Tuple2<String, CsvColumnDefinition>> columns;
 
 
-		private StaticMapToDSL(AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass,  CsvMapper<T> mapper, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+		private StaticMapToDSL(org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass,  CsvMapper<T> mapper, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 			super(dsl, mapper);
 			this.classMeta = classMeta;
 			this.mapToClass = mapToClass;
@@ -1018,7 +637,7 @@ public final class CsvParser {
 			this.columnDefinitionProvider = columnDefinitionProvider;
 		}
 
-		private StaticMapToDSL(AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass, List<Tuple2<String, CsvColumnDefinition>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+		private StaticMapToDSL(org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass, List<Tuple2<String, CsvColumnDefinition>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 			super(dsl, newStaticMapper(mapToClass, classMeta, columns, columnDefinitionProvider));
 			this.classMeta = classMeta;
 			this.mapToClass = mapToClass;
@@ -1047,15 +666,15 @@ public final class CsvParser {
      * @see CsvMapper
      */
     public static class MapWithDSL<T> {
-		private final AbstractDSL<?> dsl;
+		private final org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL<?> dsl;
 		private final CsvMapper<T> mapper;
 
-		public MapWithDSL(AbstractDSL dsl, CsvMapper<T> mapper) {
+		public MapWithDSL(org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL dsl, CsvMapper<T> mapper) {
 			this.dsl = dsl;
 			this.mapper = mapper;
 		}
 
-        protected final AbstractDSL getDsl() {
+        protected final org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL getDsl() {
             return dsl;
         }
 
@@ -1072,10 +691,10 @@ public final class CsvParser {
 		}
 
 		public final CloseableIterator<T> iterator(File file) throws IOException {
-			OnReaderFactory<CloseableIterator<T>, AbstractDSL<?>> factory =
-					new OnReaderFactory<CloseableIterator<T>, AbstractDSL<?>>() {
+			OnReaderFactory<CloseableIterator<T>, org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL<?>> factory =
+					new OnReaderFactory<CloseableIterator<T>, org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL<?>>() {
 						@Override
-						public CloseableIterator<T> apply(Reader reader, AbstractDSL<?> dsl) throws IOException {
+						public CloseableIterator<T> apply(Reader reader, org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL<?> dsl) throws IOException {
 							return new CloseableIterator<T>(iterator(reader), reader);
 						}
 					};
@@ -1104,10 +723,10 @@ public final class CsvParser {
 		}
 
 		private <H extends CheckedConsumer<T>> H forEach(H consumer, CsvReader csvReader) throws IOException {
-			if (dsl.limit == -1) {
+			if (dsl.limit() == -1) {
                 mapper.forEach(csvReader, consumer);
             } else {
-                mapper.forEach(csvReader, consumer, dsl.limit);
+                mapper.forEach(csvReader, consumer, dsl.limit());
             }
 			return consumer;
 		}
@@ -1133,10 +752,10 @@ public final class CsvParser {
 		//IFJAVA8_START
 		@Deprecated
 		public final Stream<T> stream(File file) throws IOException {
-			OnReaderFactory<Stream<T>, AbstractDSL<?>> factory =
-					new OnReaderFactory<Stream<T>, AbstractDSL<?>>() {
+			OnReaderFactory<Stream<T>, org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL<?>> factory =
+					new OnReaderFactory<Stream<T>, org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL<?>>() {
 						@Override
-						public Stream<T> apply(Reader reader, AbstractDSL<?> dsl) throws IOException {
+						public Stream<T> apply(Reader reader, org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL<?> dsl) throws IOException {
 							return stream(reader).onClose(() -> {
 								try {
 									reader.close();
@@ -1160,45 +779,7 @@ public final class CsvParser {
 		}
 		//IFJAVA8_END
 	}
-
-
-	private static final OnReaderFactory<CloseableCsvReader, AbstractDSL<?>> CREATE_CLOSEABLE_CSV_READER =
-			new OnReaderFactory<CloseableCsvReader, AbstractDSL<?>>() {
-				@Override
-				public CloseableCsvReader apply(Reader reader, AbstractDSL<?> dsl) throws IOException {
-					return new CloseableCsvReader(dsl.reader(reader), reader);
-				}
-			};
-	private static final OnReaderFactory<CloseableIterator<String[]>, AbstractDSL<?>> CREATE_CLOSEABLE_ITERATOR =
-			new OnReaderFactory<CloseableIterator<String[]>, AbstractDSL<?>>() {
-				@Override
-				public CloseableIterator<String[]> apply(Reader reader, AbstractDSL<?> dsl) throws IOException {
-					return new CloseableIterator<String[]>(dsl.iterator(reader), reader);
-				}
-			};
-
-	private static final OnReaderFactory<CloseableIterator<Row>, AbstractDSL<?>> CREATE_CLOSEABLE_ROW_ITERATOR =
-			new OnReaderFactory<CloseableIterator<Row>, AbstractDSL<?>>() {
-				@Override
-				public CloseableIterator<Row> apply(Reader reader, AbstractDSL<?> dsl) throws IOException {
-					return new CloseableIterator<Row>(dsl.rowIterator(reader), reader);
-				}
-			};
-
-	interface OnReaderFactory<T, D extends AbstractDSL<?>> {
-		T apply(Reader reader, D dsl) throws IOException;
-	}
-
-	protected static <R, D extends AbstractDSL<?>> R onReader(File file, D dsl, OnReaderFactory<R, ? super D> factory) throws IOException {
-		Reader reader = newReader(file);
-		try {
-			return factory.apply(reader, dsl);
-		} catch(IOException ioe) {
-			try { reader.close(); } catch(IOException ioe2) { /* ignore*/ }
-			throw ioe;
-		}
-	}
-
+	
 	private static <T> CsvMapper<T> newDefaultStaticMapper(Type mapToClass, ClassMeta<T> classMeta, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta, columnDefinitionProvider);
 		builder.addDefaultHeaders();

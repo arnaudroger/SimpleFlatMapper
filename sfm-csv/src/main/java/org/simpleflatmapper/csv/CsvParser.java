@@ -39,11 +39,12 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.*;
+import static org.simpleflatmapper.lightningcsv.CsvParser.onReader;
+
 //IFJAVA8_START
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static org.simpleflatmapper.lightningcsv.CsvParser.onReader;
 //IFJAVA8_END
 
 /**

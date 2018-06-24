@@ -35,12 +35,6 @@
 			<version>3.18.2-SNAPSHOT</version>
 			<classifier>${jar.classifier}</classifier>
 		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>ow2asm</artifactId>
-			<version>3.18.2-SNAPSHOT</version>
-			<classifier>s${jar.classifier}</classifier>
-		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -71,6 +65,30 @@
 						</manifestEntries>
 					</archive>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>copy-asm</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.simpleflatmapper</groupId>
+									<artifactId>lightning-csv-ow2asm</artifactId>
+									<version>6.2</version>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>target/classes</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

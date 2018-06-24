@@ -1,0 +1,70 @@
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <groupId>org.simpleflatmapper</groupId>
+  <name>ASM Core</name>
+  <version>6.1.1</version>
+  <artifactId>ow2asm</artifactId>
+  <packaging>jar</packaging>
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <maven.source.skip>true</maven.source.skip>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+  </properties>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>6.1.1</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.6.0</version>
+        <configuration>
+          <source>8</source>
+          <target>8</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <relocations>
+                <relocation>
+                  <pattern>org.objectweb.asm</pattern>
+                  <shadedPattern>org.simpleflatmapper.ow2asm</shadedPattern>
+                </relocation>
+              </relocations>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>arnaudroger-maven-plugin-repository</id>
+      <url>https://arnaudroger.github.io/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
+</project>

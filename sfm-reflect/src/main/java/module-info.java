@@ -1,6 +1,5 @@
 module org.simpleflatmapper.reflect {
         requires transitive org.simpleflatmapper.util;
-        requires transitive org.simpleflatmapper.ow2asm;
         requires transitive org.simpleflatmapper.converter;
 
         exports org.simpleflatmapper.reflect;
@@ -11,6 +10,8 @@ module org.simpleflatmapper.reflect {
         exports org.simpleflatmapper.reflect.setter;
         exports org.simpleflatmapper.reflect.primitive;
         exports org.simpleflatmapper.reflect.property;
+        exports org.simpleflatmapper.ow2asm;
+        exports org.simpleflatmapper.ow2asm.signature;
 
         uses org.simpleflatmapper.reflect.meta.AliasProviderProducer;
         uses org.simpleflatmapper.reflect.ReflectionService.ClassMetaFactoryProducer;

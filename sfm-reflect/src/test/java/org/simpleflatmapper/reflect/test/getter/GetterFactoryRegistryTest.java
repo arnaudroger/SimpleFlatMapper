@@ -28,10 +28,10 @@ public class GetterFactoryRegistryTest {
         getterFactoryRegistry.put(Long.class, gf1);
     }
 
-    @Test
-    public void testIndirectLookup() {
-        assertSame(gf1, getterFactoryRegistry.findFactoryFor(Number.class));
-    }
+//    @Test
+//    public void testIndirectLookup() {
+//        assertSame(gf1, getterFactoryRegistry.findFactoryFor(Number.class));
+//    }
 
     @Test
     public void testDirectLookup() {

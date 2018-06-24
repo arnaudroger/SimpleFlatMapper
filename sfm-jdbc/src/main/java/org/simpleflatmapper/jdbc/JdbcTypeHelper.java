@@ -27,6 +27,7 @@ public class JdbcTypeHelper {
     private static final Map<String, Class<?>> javaTypeToSqlType = new HashMap<String, Class<?>>();
 
     static {
+        javaTypeToSqlType.put("java.lang.Number", BigDecimal.class);
         javaTypeToSqlType.put("java.util.Date", Timestamp.class);
         javaTypeToSqlType.put("java.util.Calendar", Timestamp.class);
         javaTypeToSqlType.put("java.sql.Timestamp", Timestamp.class);

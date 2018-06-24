@@ -31,6 +31,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>ow2asm</artifactId>
+			<version>3.18.2-SNAPSHOT</version>
+			<classifier>s${jar.classifier}</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-util</artifactId>
 			<version>3.18.2-SNAPSHOT</version>
 			<classifier>${jar.classifier}</classifier>
@@ -75,9 +81,7 @@
 							org.simpleflatmapper.reflect.getter,
 							org.simpleflatmapper.reflect.setter,
 							org.simpleflatmapper.reflect.primitive,
-							org.simpleflatmapper.reflect.property,
-							org.simpleflatmapper.ow2asm,
-							org.simpleflatmapper.ow2asm.signature
+							org.simpleflatmapper.reflect.property
 						</Export-Package>
 						<Import-Package>org.simpleflatmapper.util</Import-Package>
 
@@ -117,30 +121,6 @@
 						<param>org.simpleflatmapper.*</param>
 					</targetTests>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.0.2</version>
-				<executions>
-					<execution>
-						<id>copy-asm</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>org.simpleflatmapper</groupId>
-									<artifactId>ow2asm</artifactId>
-									<version>6.2</version>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>target/classes</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -182,30 +162,6 @@
 						<groupId>com.google.code.maven-replacer-plugin</groupId>
 						<artifactId>replacer</artifactId>
 					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>3.0.2</version>
-						<executions>
-							<execution>
-								<id>copy-asm</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>org.simpleflatmapper</groupId>
-											<artifactId>ow2asm</artifactId>
-											<version>5.2</version>
-										</artifactItem>
-									</artifactItems>
-									<outputDirectory>target/classes</outputDirectory>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -232,30 +188,6 @@
 					<plugin>
 						<groupId>com.google.code.maven-replacer-plugin</groupId>
 						<artifactId>replacer</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>3.0.2</version>
-						<executions>
-							<execution>
-								<id>copy-asm</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>org.simpleflatmapper</groupId>
-											<artifactId>ow2asm</artifactId>
-											<version>5.2</version>
-										</artifactItem>
-									</artifactItems>
-									<outputDirectory>target/classes</outputDirectory>
-								</configuration>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>

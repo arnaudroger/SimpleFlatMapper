@@ -120,6 +120,7 @@
 
             <modules>
                 <module>sfm-util</module>
+                <module>ow2asm</module>
                 <module>sfm-reflect</module>
                 <module>sfm-map</module>
                 <module>sfm-tuples</module>
@@ -442,6 +443,7 @@
 
             <modules>
                 <module>sfm-util</module>
+                <module>ow2asm</module>
                 <module>sfm-reflect</module>
                 <module>sfm-map</module>
                 <module>sfm-tuples</module>

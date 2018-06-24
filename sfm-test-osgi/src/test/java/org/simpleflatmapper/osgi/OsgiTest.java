@@ -102,6 +102,7 @@ public class OsgiTest {
     }
 
     public void installSfmMap(HostApplication hostApplication) throws BundleException, IOException {
+        hostApplication.deployBundleWithClass(org.simpleflatmapper.ow2asm.ClassReader.class);
         hostApplication.deployBundleWithClass(Tuple2.class);
         hostApplication.deployBundleWithClass(ErrorHelper.class);
         hostApplication.deployBundleWithClass(Converter.class);

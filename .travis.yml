@@ -17,15 +17,15 @@ matrix:
   include:
     - jdk: oraclejdk9
       install: . ./.travis/install-jdk-9.sh
-      script: mvn -version && mvn package -B
+      script: mvn package -B -Pasm
     - jdk: oraclejdk8
-      script:  mvn test javadoc:javadoc -B -Pdev && mvn -P travis,!dev -DserviceName=travis-ci jacoco:report coveralls:report
+      script:  mvn package javadoc:javadoc -B -Pdev && mvn -P travis,!dev -DserviceName=travis-ci jacoco:report coveralls:report
     - jdk: openjdk7
-      script:  mvn test javadoc:javadoc -B    
+      script:  mvn package javadoc:javadoc -B -Pasm 
       install: . ./.travis/install-jdk-7.sh
-    - script:  mvn package -B -Pjdk19
+    - script:  mvn package -B -Pasm,jdk19
       install: . ./.travis/install-jdk-10.sh
-    - script:  mvn package -B -Pjdk19 -DskipTests
+    - script:  mvn package -B -Pasm,jdk19 -DskipTests
       install: . ./.travis/install-jdk-11.sh
     
 

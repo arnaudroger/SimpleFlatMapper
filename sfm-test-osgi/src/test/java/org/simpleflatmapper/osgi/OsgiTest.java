@@ -10,6 +10,7 @@ import org.osgi.framework.Constants;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.csv.CsvParser;
+import org.simpleflatmapper.ow2asm.ClassReader;
 import org.simpleflatmapper.poi.SheetMapper;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.tuple.Tuple2;
@@ -102,6 +103,7 @@ public class OsgiTest {
     }
 
     public void installSfmMap(HostApplication hostApplication) throws BundleException, IOException {
+        hostApplication.deployBundleWithClass(ClassReader.class);
         hostApplication.deployBundleWithClass(Tuple2.class);
         hostApplication.deployBundleWithClass(ErrorHelper.class);
         hostApplication.deployBundleWithClass(Converter.class);

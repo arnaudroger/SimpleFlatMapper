@@ -141,6 +141,18 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 							method.getGenericReturnType(),
 							ScoredGetter.ofMethod(method, methodGetter),
 							ScoredSetter.<T, Object>nullSetter(), getDefineProperties(method));
+					if ((method.getReturnType().equals(boolean.class) 
+							|| method.getReturnType().equals(Boolean.class)) 
+							&& name.startsWith("is")
+							) {
+						// is there a constructor on the name
+						if (findProperty(constructorProperties, name, method.getReturnType()) != -1) {
+							register(name,
+									method.getGenericReturnType(),
+									ScoredGetter.ofMethod(method, methodGetter),
+									ScoredSetter.<T, Object>nullSetter(), getDefineProperties(method));
+						};
+					}
 				}
 			}
 

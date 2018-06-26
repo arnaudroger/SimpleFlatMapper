@@ -113,13 +113,6 @@
 
     <profiles>
         <profile>
-            <id>asm</id>
-            <modules>
-                <module>ow2.asm/ASM_5_2</module>
-                <module>ow2.asm/ASM_6_2</module>
-            </modules>
-        </profile>
-        <profile>
             <id>non-java9</id>
             <activation>
                 <jdk>[1.6,1.9)</jdk>

@@ -20,9 +20,16 @@
       <url>https://asm.ow2.io/license.html</url>
     </license>
   </licenses>
+
+    <scm>
+        <url>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</url>
+        <connection>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</connection>
+        <developerConnection>scm:git:git@github.com:arnaudroger/SimpleFlatMapper.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
   <properties>
-    <maven.source.skip>true</maven.source.skip>
-    <maven.javadoc.skip>true</maven.javadoc.skip>
+
   </properties>
 
   <dependencies>
@@ -91,5 +98,102 @@
     </plugins>
 
   </build>
-
+<profiles>
+      <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <staging.repository />
+                <release.arguments />
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <configuration>
+                            <passphrase>${gpg.passphrase}</passphrase>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <configuration>
+                            <classifier>${source.classifier}</classifier>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>2.5.4</version>
+                        <configuration>
+                            <goals>deploy nexus-staging:release</goals>
+                            <arguments>-Dgpg.passphrase=${gpg.passphrase} ${release.arguments}</arguments>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>sonatype-nexus-staging</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                            <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
+                            <stagingRepositoryId>${staging.repository}</stagingRepositoryId>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+</profiles>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus snapshot repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Sonatype Nexus release repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 </project>

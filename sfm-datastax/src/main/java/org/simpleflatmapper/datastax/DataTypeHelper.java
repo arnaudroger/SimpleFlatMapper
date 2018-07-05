@@ -124,6 +124,7 @@ public class DataTypeHelper {
         defaultTypes.put("java.time.YearMonth", Date.class);
         defaultTypes.put("java.time.Year", Date.class);
         defaultTypes.put("org.joda.time.LocalDate", Date.class);
+        defaultTypes.put("java.lang.Number", BigDecimal.class);
     }
     public static Class<?> asJavaClass(DataType dataType, Type target) {
         if (dataType != null) {

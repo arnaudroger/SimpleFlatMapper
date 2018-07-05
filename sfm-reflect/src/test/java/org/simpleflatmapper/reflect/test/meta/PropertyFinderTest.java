@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect.test.meta;
 import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.reflect.TypeAffinity;
+import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -135,6 +136,42 @@ public class PropertyFinderTest {
             this.arg1 = arg1;
             this.arg2 = null;
             this.arg3 = arg3;
+        }
+    }
+    
+    @Test
+    public void testIsEnabled531() {
+        ClassMeta<O531> classMeta = ReflectionService.newInstance().getClassMeta(O531.class);
+
+        PropertyFinder<O531> propertyFinder = classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+            @Override
+            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                return !NullGetter.isNull(propertyMeta.getGetter());
+            }
+        });
+        propertyFinder.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity) null);
+        PropertyMeta<O531, Object> property = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("is_enabled"), new Object[0], (TypeAffinity) null);
+
+        assertNotNull(property);
+
+    }
+    
+    public static class O531 {
+        private final boolean isEnabled;
+
+        public O531(boolean isEnabled, int id) {
+            this.isEnabled = isEnabled;
+            this.id = id;
+        }
+
+        private final int id;
+
+        public boolean isEnabled() {
+            return isEnabled;
+        }
+
+        public int getId() {
+            return id;
         }
     }
 }

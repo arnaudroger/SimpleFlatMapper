@@ -203,5 +203,41 @@ public class JdbcTemplateCrudTest {
 
 
 	}
+	
+	@Test
+	public void test530() {
+		try {
+			template.execute("DROP TABLE TEST_530");
+		} catch(Exception e) {
+		}
+
+		template.execute("create table TEST_530("
+				+ " id integer primary key, is_enabled boolean)");
+		template.execute("insert into TEST_530 values(1, true)");
+		
+		JdbcTemplateCrud<O531, Integer> objectCrud =
+				JdbcTemplateMapperFactory.newInstance()
+						.<O531, Integer>crud(O531.class, Integer.class)
+						.to(template, "TEST_530");
+
+
+	}
+
+	public static class O531 {
+		private final boolean isEnabled;
+		private final int id;
+		public O531(boolean isEnabled, int id) {
+			this.isEnabled = isEnabled;
+			this.id = id;
+		}
+
+		public boolean isEnabled() {
+			return isEnabled;
+		}
+
+		public int getId() {
+			return id;
+		}
+	}
 
 }

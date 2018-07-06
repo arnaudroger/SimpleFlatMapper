@@ -4,16 +4,16 @@ import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.UnaryFactory;
 
-public class JoinMapper<ROW, ROWS, T, EX extends Exception> extends AbstractEnumarableDelegateMapper<ROW, ROWS, T, EX> {
+public class JoinMapper<ROW, ROWS, T, EX extends Exception> extends AbstractEnumerableDelegateMapper<ROW, ROWS, T, EX> {
 
     private final SourceFieldMapper<ROW, T> mapper;
     private final MappingContextFactory<? super ROW> mappingContextFactory;
-    private final UnaryFactory<ROWS, Enumarable<ROW>> factory;
+    private final UnaryFactory<ROWS, Enumerable<ROW>> factory;
 
-    public JoinMapper(SourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<ROWS, Enumarable<ROW>> factory) {
+    public JoinMapper(SourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<ROWS, Enumerable<ROW>> factory) {
         super(errorHandler);
         this.mapper = mapper;
         this.mappingContextFactory = mappingContextFactory;
@@ -27,11 +27,11 @@ public class JoinMapper<ROW, ROWS, T, EX extends Exception> extends AbstractEnum
     }
 
     @Override
-    protected final Enumarable<T> newEnumarableOfT(ROWS source) throws EX {
-        return new JoinMapperEnumarable<ROW, T>(mapper,  mappingContextFactory.newContext(), newSourceEnumarable(source));
+    public final Enumerable<T> enumerate(ROWS source) throws EX {
+        return new JoinMapperEnumerable<ROW, T>(mapper,  mappingContextFactory.newContext(), enumerateRows(source));
     }
 
-    private Enumarable<ROW> newSourceEnumarable(ROWS source) {
+    private Enumerable<ROW> enumerateRows(ROWS source) {
         return factory.newInstance(source);
     }
 

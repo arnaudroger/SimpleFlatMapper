@@ -1,13 +1,15 @@
 package org.simpleflatmapper.map.mapper;
 
 
+import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 
-public abstract class AbstractEnumarableDelegateMapper<ROW, ROWS, T, E extends Exception> extends AbstractEnumarableMapper<ROWS, T, E> implements SourceMapper<ROW, T> {
-    public AbstractEnumarableDelegateMapper(ConsumerErrorHandler errorHandler) {
+public abstract class AbstractEnumerableDelegateMapper<ROW, SET, T, E extends Exception> extends AbstractEnumerableMapper<SET, T, E> implements SetRowMapper<ROW, SET, T, E> {
+    
+    public AbstractEnumerableDelegateMapper(ConsumerErrorHandler errorHandler) {
         super(errorHandler);
     }
 

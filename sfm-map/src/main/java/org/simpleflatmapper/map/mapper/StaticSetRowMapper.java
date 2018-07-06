@@ -6,24 +6,24 @@ import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
-import org.simpleflatmapper.map.impl.StaticMapperEnumarable;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.map.impl.StaticMapperEnumerable;
+import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.UnaryFactory;
 
-public class StaticSetRowMapper<ROW, SET, T, E extends Exception> extends AbstractEnumarableMapper<SET, T, E> implements SetRowMapper<ROW, SET, T, E> {
+public class StaticSetRowMapper<ROW, SET, T, E extends Exception> extends AbstractEnumerableMapper<SET, T, E> implements SetRowMapper<ROW, SET, T, E> {
 
 	private final SourceMapper<ROW, T> mapper;
 	private final MappingContextFactory<? super ROW> mappingContextFactory;
-	private final UnaryFactory<SET, Enumarable<ROW>> enumarableFactory;
+	private final UnaryFactory<SET, Enumerable<ROW>> enumerableFactory;
 
 	public StaticSetRowMapper(final SourceMapper<ROW, T> mapper,
 							  final ConsumerErrorHandler errorHandler,
 							  final MappingContextFactory<? super ROW> mappingContextFactory,
-							  UnaryFactory<SET, Enumarable<ROW>> enumarableFactory) {
+							  UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
 		super(errorHandler);
 		this.mapper = mapper;
 		this.mappingContextFactory = mappingContextFactory;
-		this.enumarableFactory = enumarableFactory;
+		this.enumerableFactory = enumerableFactory;
 	}
 
 	@Override
@@ -42,8 +42,8 @@ public class StaticSetRowMapper<ROW, SET, T, E extends Exception> extends Abstra
 	}
 
 	@Override
-	protected final Enumarable<T> newEnumarableOfT(SET source) throws E {
-		return new StaticMapperEnumarable<ROW, T>(mapper, mappingContextFactory.newContext(), enumarableFactory.newInstance(source));
+	public final Enumerable<T> enumerate(SET source) throws E {
+		return new StaticMapperEnumerable<ROW, T>(mapper, mappingContextFactory.newContext(), enumerableFactory.newInstance(source));
 	}
 
 	protected MappingContextFactory<? super ROW> getMappingContextFactory() {

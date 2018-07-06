@@ -1,36 +1,37 @@
 package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
-import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.mapper.MapperBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.map.mapper.AbstractMapperBuilder;
-import org.simpleflatmapper.map.mapper.JoinMapper;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
-import org.simpleflatmapper.map.mapper.StaticSetRowMapper;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
+import org.simpleflatmapper.util.CheckedConsumer;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.UnaryFactory;
-import org.simpleflatmapper.jdbc.impl.ResultSetEnumarable;
+import org.simpleflatmapper.jdbc.impl.ResultSetEnumerable;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 /**
  * @param <T> the targeted type of the jdbcMapper
  */
-public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet, T, JdbcColumnKey, JdbcMapper<T>, JdbcMapperBuilder<T>> {
+public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultSet, T, JdbcColumnKey, SQLException, JdbcMapper<T>, JdbcMapperBuilder<T>> {
 
     private static final MapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
             new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class,  ResultSetGetterFactory.INSTANCE);
@@ -40,6 +41,8 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
             return new JdbcColumnKey(name, i);
         }
     };
+    
+    private final MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> mappingContextFactoryBuilder;
 
 
     /**
@@ -90,7 +93,16 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
                 parentBuilder,
                 mapperConfig,
                 FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
-                KEY_FACTORY, 1);
+                KEY_FACTORY, 
+                new ResultSetEnumerableFactory(),
+                new Function<SetRowMapper<ResultSet, ResultSet, T, SQLException>, JdbcMapper<T>>() {
+                    @Override
+                    public JdbcMapper<T> apply(SetRowMapper<ResultSet, ResultSet, T, SQLException> setRowMapper) {
+                        return new JdbcMapperImpl<T>(setRowMapper, parentBuilder.newFactory());
+                    }
+                },
+                1);
+        this.mappingContextFactoryBuilder = parentBuilder;   
     }
 
 
@@ -153,16 +165,6 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
         return new JdbcSourceFieldMapperImpl<T>(super.sourceFieldMapper(), mappingContextFactoryBuilder.newFactory());
     }
     
-    @Override
-    protected JdbcMapper<T> newJoinMapper(SourceFieldMapper<ResultSet, T> mapper) {
-        return new JoinJdbcMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
-    }
-
-    @Override
-    protected JdbcMapper<T> newStaticMapper(SourceFieldMapper<ResultSet, T> mapper) {
-        return new StaticJdbcSetRowMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
-    }
-    
     private static class JdbcSourceFieldMapperImpl<T> implements JdbcSourceFieldMapper<T> {
         private final SourceFieldMapper<ResultSet, T> sourceFieldMapper;
         private final MappingContextFactory<? super ResultSet> mappingContextFactory;
@@ -193,35 +195,64 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
         }
     }
     
-    private static class JoinJdbcMapper<T> extends JoinMapper<ResultSet, ResultSet, T, SQLException>
-            implements JdbcMapper<T> {
-        public JoinJdbcMapper(SourceFieldMapper<ResultSet, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ResultSet> mappingContextFactory) {
-            super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
+    private static class JdbcMapperImpl<T> implements JdbcMapper<T> {
+        private final SetRowMapper<ResultSet, ResultSet, T, SQLException> setRowMapper;
+        private final MappingContextFactory<? super ResultSet> mappingContextFactory;
+
+        private JdbcMapperImpl(SetRowMapper<ResultSet, ResultSet, T, SQLException> setRowMapper, MappingContextFactory<? super ResultSet> mappingContextFactory) {
+            this.setRowMapper = setRowMapper;
+            this.mappingContextFactory = mappingContextFactory;
         }
 
         @Override
-        public MappingContext<? super ResultSet> newMappingContext(ResultSet rs) {
-            return getMappingContextFactory().newContext();
-        }
-    }
-
-    private static class ResultSetEnumarableFactory implements UnaryFactory<ResultSet, Enumarable<ResultSet>> {
-        @Override
-        public Enumarable<ResultSet> newInstance(ResultSet rows) {
-            return new ResultSetEnumarable(rows);
-        }
-    }
-
-
-    private static class StaticJdbcSetRowMapper<T> extends StaticSetRowMapper<ResultSet, ResultSet, T, SQLException> implements  JdbcMapper<T> {
-
-        public StaticJdbcSetRowMapper(SourceMapper<ResultSet, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ResultSet> mappingContextFactory) {
-            super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
+        public T map(ResultSet source) throws MappingException {
+            return setRowMapper.map(source);
         }
 
         @Override
-        public MappingContext<? super ResultSet> newMappingContext(ResultSet resultSet) {
-            return getMappingContextFactory().newContext();
+        public T map(ResultSet source, MappingContext<? super ResultSet> context) throws MappingException {
+            return setRowMapper.map(source, context);
+        }
+
+        @Override
+        public <H extends CheckedConsumer<? super T>> H forEach(ResultSet source, H handler) throws SQLException, MappingException {
+            return setRowMapper.forEach(source, handler);
+        }
+
+        @Override
+        public Iterator<T> iterator(ResultSet source) throws SQLException, MappingException {
+            return setRowMapper.iterator(source);
+        }
+
+        @Override
+        public Enumerable<T> enumerate(ResultSet source) throws SQLException, MappingException {
+            return setRowMapper.enumerate(source);
+        }
+
+        @Override
+        public Stream<T> stream(ResultSet source) throws SQLException, MappingException {
+            return setRowMapper.stream(source);
+        }
+
+        @Override
+        public MappingContext<? super ResultSet> newMappingContext(ResultSet resultSet) throws SQLException {
+            return mappingContextFactory.newContext();
+        }
+
+        @Override
+        public String toString() {
+            return "JdbcMapperImpl{" +
+                    "setRowMapper=" + setRowMapper +
+                    ", mappingContextFactory=" + mappingContextFactory +
+                    '}';
         }
     }
+
+    private static class ResultSetEnumerableFactory implements UnaryFactory<ResultSet, Enumerable<ResultSet>> {
+        @Override
+        public Enumerable<ResultSet> newInstance(ResultSet rows) {
+            return new ResultSetEnumerable(rows);
+        }
+    }
+    
 }

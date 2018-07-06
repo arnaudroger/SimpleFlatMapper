@@ -2,8 +2,8 @@ package org.simpleflatmapper.poi;
 
 
 import org.apache.poi.ss.usermodel.Row;
-import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.SourceMapper;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.simpleflatmapper.map.SetRowMapper;
 
-public interface RowMapper<T> extends SheetMapper<T>, SourceMapper<Row, T>, FieldMapper<Row, T> {
+public interface RowMapper<T> extends SheetMapper<T>, SetRowMapper<Row, Sheet, T, RuntimeException> {
 }

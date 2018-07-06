@@ -1,7 +1,7 @@
 package org.simpleflatmapper.util;
 
 
-public interface Enumarable<T> {
+public interface Enumerable<T> {
     boolean next();
     T currentValue();
 }

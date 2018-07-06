@@ -12,8 +12,8 @@ import org.simpleflatmapper.map.mapper.DiscriminatorMapper;
 import org.simpleflatmapper.test.beans.Person;
 import org.simpleflatmapper.test.beans.ProfessorGS;
 import org.simpleflatmapper.test.beans.StudentGS;
-import org.simpleflatmapper.util.ArrayEnumarable;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.ArrayEnumerable;
+import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
@@ -120,10 +120,10 @@ public class DiscriminatorMapperTest {
 
         mapper =
                 new DiscriminatorMapper<Object[], Object[][], Person, RuntimeException>(mappers,
-                        new UnaryFactory<Object[][], Enumarable<Object[]>>() {
+                        new UnaryFactory<Object[][], Enumerable<Object[]>>() {
                             @Override
-                            public Enumarable<Object[]> newInstance(Object[][] objects) {
-                                return new ArrayEnumarable<Object[]>(objects);
+                            public Enumerable<Object[]> newInstance(Object[][] objects) {
+                                return new ArrayEnumerable<Object[]>(objects);
                             }
                         }, new UncheckedConverter<Object[], String>() {
                     @Override

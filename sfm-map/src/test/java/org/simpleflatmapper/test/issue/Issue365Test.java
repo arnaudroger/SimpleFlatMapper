@@ -1,11 +1,10 @@
 package org.simpleflatmapper.test.issue;
 
 import org.junit.Test;
+import org.simpleflatmapper.map.EnumerableMapper;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
-import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.GetterProperty;
@@ -18,7 +17,6 @@ import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.test.map.mapper.AbstractConstantTargetMapperBuilderTest;
 import org.simpleflatmapper.test.map.mapper.AbstractMapperBuilderTest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,20 +63,20 @@ public class Issue365Test {
     }
 
     @Test
-    public void testMapOnCustomSetter() throws IOException {
+    public void testMapOnCustomSetter() throws Exception {
 
         ClassMeta<Data> classMeta = ReflectionService.newInstance().getClassMeta(Data.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<Data> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Data>(classMeta, mapperConfig());
 
-        SourceMapper<Object[], Data> mapper =
+        EnumerableMapper<Object[][], Data, ?> mapper =
                 builder
                         .addMapping("score")
                         .addMapping("benchmark")
                         .mapper();
 
-        Data data = mapper.map(new Object[]{3.455, "algo.type"});
+        Data data = mapper.iterator(new Object[][]{{3.455, "algo.type"}}).next();
 
         assertEquals(3.455, data.score, 0.0);
         assertEquals("algo", data.algorithm);
@@ -114,20 +112,20 @@ public class Issue365Test {
 
 
     @Test
-    public void testMapOnCustomSetterSubProperty() throws IOException {
+    public void testMapOnCustomSetterSubProperty() throws Exception {
 
         ClassMeta<DataHolder> classMeta = ReflectionService.newInstance().getClassMeta(DataHolder.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<DataHolder> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<DataHolder>(classMeta, mapperConfig());
 
-        SourceMapper<Object[], DataHolder> mapper =
+        EnumerableMapper<Object[][], DataHolder, ?> mapper =
                 builder
                         .addMapping("data_score")
                         .addMapping("data_benchmark")
                         .mapper();
 
-        DataHolder data = mapper.map(new Object[]{3.455, "algo.type"});
+        DataHolder data = mapper.iterator(new Object[][]{{3.455, "algo.type"}}).next();
 
         assertEquals(3.455, data.data.score, 0.0);
         assertEquals("algo", data.data.algorithm);

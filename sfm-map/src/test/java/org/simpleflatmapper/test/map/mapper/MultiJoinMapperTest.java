@@ -47,20 +47,19 @@ public class MultiJoinMapperTest {
     }
 
     @Test
-    public void testMultiJoin() {
+    public void testMultiJoin() throws Exception {
         ClassMeta<Root> classMeta = ReflectionService.newInstance().getClassMeta(Root.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<Root> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, mapperConfig());
 
-        SourceMapper<Object[], Root> rowMapper =
-                builder
-                        .addMapping("id")
-                        .addKey("ll_id")
-                        .addKey("ls_id")
-                        .mapper();
-        JoinMapper<Object[], Object[][], Root, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], Root, RuntimeException>) rowMapper;
+        JoinMapper<Object[], Object[][], Root, ?> mapper =
+                (JoinMapper<Object[], Object[][], Root, ?>)  
+                        builder
+                                .addMapping("id")
+                                .addKey("ll_id")
+                                .addKey("ls_id")
+                                .mapper();
 
         List<Root> list = mapper.forEach(data, new ListCollector<Root>()).getList();
 
@@ -82,20 +81,19 @@ public class MultiJoinMapperTest {
         public Element2 element;
     }
     @Test
-    public void testMultiJoinOnNullNoKey() {
+    public void testMultiJoinOnNullNoKey() throws Exception {
         ClassMeta<Root2> classMeta = ReflectionService.newInstance().getClassMeta(Root2.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<Root2> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Root2>(classMeta, mapperConfig());
 
-        SourceMapper<Object[], Root2> rowMapper =
-                builder
+    
+        JoinMapper<Object[], Object[][], Root2, ?> mapper =
+                (JoinMapper<Object[], Object[][], Root2, ?>) builder
                         .addKey("id")
                         .addKey("ll_id")
                         .addKey("ls_element_id")
                         .mapper();
-        JoinMapper<Object[], Object[][], Root2, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], Root2, RuntimeException>) rowMapper;
        Object[][] data = new Object[][] {
                 {1, "1", null, null},
                 {1, "2", null, null}
@@ -116,15 +114,14 @@ public class MultiJoinMapperTest {
             {1, 1, 2, "b"}
     };
     @Test
-    public void testMultiJoinSameIdDiffContent() {
+    public void testMultiJoinSameIdDiffContent() throws Exception {
         ClassMeta<Root> classMeta = ReflectionService.newInstance().getClassMeta(Root.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<Root> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, mapperConfig());
 
-        SourceMapper<Object[], Root> rowMapper = builder.addMapping("id").addKey("ll_id").addKey("ll_elements_id").addMapping("ll_elements_value").mapper();
-        JoinMapper<Object[], Object[][], Root, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], Root, RuntimeException>) rowMapper;
+        JoinMapper<Object[], Object[][], Root, ?> mapper =
+                (JoinMapper<Object[], Object[][], Root, ?>)  builder.addMapping("id").addKey("ll_id").addKey("ll_elements_id").addMapping("ll_elements_value").mapper();
 
         List<Root> list = mapper.forEach(data_diffvalue, new ListCollector<Root>()).getList();
 
@@ -202,19 +199,18 @@ public class MultiJoinMapperTest {
     }
 
     @Test
-    public void testMultiJoinC() {
+    public void testMultiJoinC() throws Exception {
         ClassMeta<RootC> classMeta = ReflectionService.newInstance(false).getClassMeta(RootC.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<RootC> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<RootC>(classMeta, mapperConfig());
 
-        SourceMapper<Object[], RootC> rowMapper = builder
-                .addMapping("id")
-                .addMapping("ll_id")
-                .addMapping("ls_id")
-                .mapper();
-        JoinMapper<Object[], Object[][], RootC, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], RootC, RuntimeException>) rowMapper;
+        JoinMapper<Object[], Object[][], RootC, ?> mapper =
+                (JoinMapper<Object[], Object[][], RootC, ?>) builder
+                        .addMapping("id")
+                        .addMapping("ll_id")
+                        .addMapping("ls_id")
+                        .mapper();
 
         List<RootC> list = mapper.forEach(data, new ListCollector<RootC>()).getList();
 
@@ -243,14 +239,14 @@ public class MultiJoinMapperTest {
     };
 
     @Test
-    public void testMultiJoinTuples() {
+    public void testMultiJoinTuples() throws Exception {
         ClassMeta<Tuple2<A, List<Tuple2<B, List<C>>>>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple2<A, List<Tuple2<B, List<C>>>>>() {}.getType());
 
         AbstractMapperBuilderTest.SampleMapperBuilder<Tuple2<A, List<Tuple2<B, List<C>>>>> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Tuple2<A, List<Tuple2<B, List<C>>>>>(classMeta, mapperConfig());
 
-        JoinMapper<Object[], Object[][], Tuple2<A, List<Tuple2<B, List<C>>>>, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], Tuple2<A, List<Tuple2<B, List<C>>>>, RuntimeException>)
+        JoinMapper<Object[], Object[][], Tuple2<A, List<Tuple2<B, List<C>>>>, ?> mapper =
+                (JoinMapper<Object[], Object[][], Tuple2<A, List<Tuple2<B, List<C>>>>, ?>)
                         builder
                                 .addMapping("id", KeyProperty.DEFAULT)
                                 .addMapping("elt1_elt0_elt0_id", KeyProperty.DEFAULT)

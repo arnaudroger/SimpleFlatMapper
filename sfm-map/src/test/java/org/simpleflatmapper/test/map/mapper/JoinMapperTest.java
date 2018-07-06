@@ -2,7 +2,6 @@ package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
 import org.simpleflatmapper.map.SourceFieldMapper;
-import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.test.map.SampleFieldKey;
@@ -17,9 +16,11 @@ import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ListCollector;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 //IFJAVA8_START
+import java.util.Set;
 import java.util.stream.Collectors;
 //IFJAVA8_END
 
@@ -59,13 +60,11 @@ public class JoinMapperTest {
 
         }
     };
-    private final KeyDefinition<Object[], SampleFieldKey> keyDefinition = new KeyDefinition<Object[], SampleFieldKey>(new SampleFieldKey[] {new SampleFieldKey("id", 0) },
-            new KeySourceGetter<SampleFieldKey, Object[]>() {
-        @Override
-        public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
-            return source[key.getIndex()];
-        }
-    }, 0);
+    private final KeyDefinition<Object[], SampleFieldKey> keyDefinition = 
+            new KeyDefinition<Object[], SampleFieldKey>(
+                    new SampleFieldKey[] {new SampleFieldKey("id", 0) },
+                    new SampleFieldKeyObjectKeySourceGetter(), 
+                    0);
 
     @SuppressWarnings("unchecked")
     @Test
@@ -74,12 +73,14 @@ public class JoinMapperTest {
                 new JoinMapper<Object[], Object[][], DbListObject, RuntimeException>(
                         dbListObjectMapper, RethrowConsumerErrorHandler.INSTANCE,
                         new BreakDetectorMappingContextFactory<Object[]>(keyDefinition, new KeyDefinition[] {keyDefinition}, MappingContext.EMPTY_FACTORY),
-                        SetRowMapperTest.ENUMARABLE_UNARY_FACTORY
+                        SetRowMapperTest.ENUMERABLE_UNARY_FACTORY
                         );
 
 
         checkJoins(joinMapper);
     }
+    
+
 
     private void checkJoins(JoinMapper<Object[], Object[][], DbListObject, RuntimeException> joinMapper) {
         Object[][] data = new Object[][] {
@@ -116,4 +117,10 @@ public class JoinMapperTest {
         assertEquals("name3", list.get(1).getObjects().get(0).getName());
     }
 
+    private static class SampleFieldKeyObjectKeySourceGetter implements KeySourceGetter<SampleFieldKey, Object[]> {
+        @Override
+        public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
+            return source[key.getIndex()];
+        }
+    }
 }

@@ -4,6 +4,7 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.UnaryFactory;
 import org.simpleflatmapper.util.CheckedConsumer;
@@ -67,6 +68,11 @@ public class DynamicSetRowMapper<ROW, SET, T, E extends Exception, K extends Fie
 	@Override
 	public final Stream<T> stream(SET set) throws E, MappingException {
 		return getMapperFromSet(set).stream(set);
+	}
+
+	@Override
+	public Enumerable<T> enumerate(SET source) throws E, MappingException {
+		return getMapperFromSet(source).enumerate(source);
 	}
 	//IFJAVA8_END
 

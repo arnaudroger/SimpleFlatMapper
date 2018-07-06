@@ -1,11 +1,11 @@
 package org.simpleflatmapper.util;
 
-public class ArrayEnumarable<T> implements Enumarable<T> {
+public class ArrayEnumerable<T> implements Enumerable<T> {
 
     private final T[] objects;
     private int currentIndex = -1;
 
-    public ArrayEnumarable(T[] objects) {
+    public ArrayEnumerable(T[] objects) {
         this.objects = objects;
     }
 

@@ -2,15 +2,15 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.Enumerable;
 
-public class RowEnumarable implements Enumarable<Row> {
+public class RowEnumerable implements Enumerable<Row> {
 
 
     private int currentRowIndex;
     private final Sheet sheet;
 
-    public RowEnumarable(int startRow, Sheet sheet) {
+    public RowEnumerable(int startRow, Sheet sheet) {
         this.currentRowIndex = startRow - 1;
         this.sheet = sheet;
     }

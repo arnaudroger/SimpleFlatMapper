@@ -1,15 +1,15 @@
 package org.simpleflatmapper.jdbc.impl;
 
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ResultSetEnumarable implements Enumarable<ResultSet> {
+public class ResultSetEnumerable implements Enumerable<ResultSet> {
     private final ResultSet resultSet;
 
-    public ResultSetEnumarable(ResultSet resultSet) {
+    public ResultSetEnumerable(ResultSet resultSet) {
         this.resultSet = resultSet;
     }
 

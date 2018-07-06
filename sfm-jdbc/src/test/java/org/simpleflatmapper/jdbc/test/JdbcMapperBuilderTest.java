@@ -83,17 +83,24 @@ public class JdbcMapperBuilderTest {
 	}
 
 	private SourceMapper<ResultSet, DbObject> getSubMapper(JdbcMapper<DbObject> mapper) throws Exception {
-		Field field;
+
+		Field setRowMapperField = mapper.getClass().getDeclaredField("setRowMapper");
+		setRowMapperField.setAccessible(true);
+		
+		
+		Object setRowMapper = setRowMapperField.get(mapper); 
+		
+		Field mapperField;
 
 		try {
-			field = mapper.getClass().getDeclaredField("mapper");
+			mapperField = setRowMapper.getClass().getDeclaredField("mapper");
 		} catch(NoSuchFieldException e) {
-			field = mapper.getClass().getSuperclass().getDeclaredField("mapper");
+			mapperField = setRowMapper.getClass().getSuperclass().getDeclaredField("mapper");
 		}
-		field.setAccessible(true);
+		mapperField.setAccessible(true);
 		return
-				new FieldGetter<JdbcMapper<?>, MapperImpl<ResultSet, DbObject>>(field)
-						.get(mapper);
+				new FieldGetter<Object, MapperImpl<ResultSet, DbObject>>(mapperField)
+						.get(setRowMapper);
 	}
 
 	static class StaticLongGetter<T> implements LongGetter<T>, Getter<T, Long> {

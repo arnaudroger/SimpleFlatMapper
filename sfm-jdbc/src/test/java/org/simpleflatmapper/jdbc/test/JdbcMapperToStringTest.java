@@ -21,7 +21,7 @@ public class JdbcMapperToStringTest {
         JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.noAsm()
                 .newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper();
 
-        assertTrue(mapper.toString().startsWith("Static"));
+        assertTrue(mapper.toString().startsWith("JdbcMapperImpl"));
     }
 
     @Test
@@ -31,7 +31,7 @@ public class JdbcMapperToStringTest {
 
         String input = mapper.toString();
 
-        assertTrue(input.startsWith("Static"));
+        assertTrue(input.startsWith("JdbcMapperImpl"));
     }
 
 

@@ -4,15 +4,12 @@ package org.simpleflatmapper.jdbc;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.UncheckedConverter;
 import org.simpleflatmapper.converter.UncheckedConverterHelper;
-import org.simpleflatmapper.jdbc.impl.ResultSetEnumarable;
+import org.simpleflatmapper.jdbc.impl.ResultSetEnumerable;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.Result;
-import org.simpleflatmapper.map.SourceFieldMapper;
-import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
 import org.simpleflatmapper.map.mapper.DiscriminatorMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.Predicate;
@@ -101,10 +98,10 @@ public class DiscriminatorJdbcBuilder<T> {
 
         DiscriminatorJdbcMapper<T> discriminatorMapper = new DiscriminatorJdbcMapper<T>(
                 mappers,
-                new UnaryFactory<ResultSet, Enumarable<ResultSet>>() {
+                new UnaryFactory<ResultSet, Enumerable<ResultSet>>() {
                     @Override
-                    public Enumarable<ResultSet> newInstance(ResultSet resultSet) {
-                        return new ResultSetEnumarable(resultSet);
+                    public Enumerable<ResultSet> newInstance(ResultSet resultSet) {
+                        return new ResultSetEnumerable(resultSet);
                     }
                 },
                 UncheckedConverterHelper.<ResultSet, String>toUnchecked(
@@ -123,10 +120,10 @@ public class DiscriminatorJdbcBuilder<T> {
             implements JdbcMapper<T> {
 
         public DiscriminatorJdbcMapper(List<PredicatedMapper<ResultSet, ResultSet, T, SQLException>> predicatedMappers,
-                                       UnaryFactory<ResultSet, Enumarable<ResultSet>> rowEnumarableFactory,
+                                       UnaryFactory<ResultSet, Enumerable<ResultSet>> rowEnumerableFactory,
                                        UncheckedConverter<ResultSet, String> errorConverter,
                                        ConsumerErrorHandler consumerErrorHandler) {
-            super(predicatedMappers, rowEnumarableFactory, errorConverter, consumerErrorHandler);
+            super(predicatedMappers, rowEnumerableFactory, errorConverter, consumerErrorHandler);
         }
 
         @Override

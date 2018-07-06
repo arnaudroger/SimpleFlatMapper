@@ -5,26 +5,26 @@ import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.util.List;
 
-public class DiscriminatorMapper<ROW, ROWS, T, EX extends Exception> extends AbstractEnumarableDelegateMapper<ROW, ROWS, T, EX> {
+public class DiscriminatorMapper<ROW, ROWS, T, EX extends Exception> extends AbstractEnumerableDelegateMapper<ROW, ROWS, T, EX> {
 
     private final List<PredicatedMapper<ROW, ROWS, T, EX>> mappers;
     private final UncheckedConverter<ROW, String> errorConverter;
-    private final UnaryFactory<ROWS, Enumarable<ROW>> rowEnumarableFactory;
+    private final UnaryFactory<ROWS, Enumerable<ROW>> rowEnumerableFactory;
 
     public DiscriminatorMapper(List<PredicatedMapper<ROW, ROWS, T, EX>> mappers,
-                               UnaryFactory<ROWS, Enumarable<ROW>> rowEnumarableFactory,
+                               UnaryFactory<ROWS, Enumerable<ROW>> rowEnumerableFactory,
                                UncheckedConverter<ROW, String> errorConverter,
                                ConsumerErrorHandler consumerErrorHandler) {
         super(consumerErrorHandler);
         this.mappers = mappers;
         this.errorConverter = errorConverter;
-        this.rowEnumarableFactory = rowEnumarableFactory;
+        this.rowEnumerableFactory = rowEnumerableFactory;
     }
 
     @Override
@@ -40,7 +40,8 @@ public class DiscriminatorMapper<ROW, ROWS, T, EX extends Exception> extends Abs
 
 
     @SuppressWarnings("unchecked")
-    protected DiscriminatorEnumerable<ROW, T> newEnumarableOfT(ROWS rows) throws EX {
+    @Override
+    public DiscriminatorEnumerable<ROW, T> enumerate(ROWS rows) throws EX {
         DiscriminatorEnumerable.PredicatedMapperWithContext<ROW, T>[] mapperDiscriminators =
                 new DiscriminatorEnumerable.PredicatedMapperWithContext[this.mappers.size()];
 
@@ -56,7 +57,7 @@ public class DiscriminatorMapper<ROW, ROWS, T, EX extends Exception> extends Abs
 
         return new DiscriminatorEnumerable<ROW, T>(
                 mapperDiscriminators,
-                rowEnumarableFactory.newInstance(rows),
+                rowEnumerableFactory.newInstance(rows),
                 errorConverter);
     }
 

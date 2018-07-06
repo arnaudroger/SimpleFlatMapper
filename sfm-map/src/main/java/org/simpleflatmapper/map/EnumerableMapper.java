@@ -1,6 +1,7 @@
 package org.simpleflatmapper.map;
 
 import org.simpleflatmapper.util.CheckedConsumer;
+import org.simpleflatmapper.util.Enumerable;
 
 import java.util.Iterator;
 //IFJAVA8_START
@@ -9,11 +10,11 @@ import java.util.stream.Stream;
 
 /**
  *
- * @param <S> Enumerable Source type
+ * @param <SET> Enumerable Source type
  * @param <T> Target type
  * @param <E> Source exception type
  */
-public interface EnumarableMapper<S, T, E extends Exception> {
+public interface EnumerableMapper<SET, T, E extends Exception> {
 
     /**
      * Loop over the resultSet, map each row to a new newInstance of T and call back the handler
@@ -32,9 +33,8 @@ public interface EnumarableMapper<S, T, E extends Exception> {
      * @throws MappingException if an error occurs during the mapping
      *
      */
-    <H extends CheckedConsumer<? super T>> H forEach(final S source, final H handler)
+    <H extends CheckedConsumer<? super T>> H forEach(final SET source, final H handler)
             throws E, MappingException;
-
     /**
      *
      * @param source the source
@@ -42,8 +42,9 @@ public interface EnumarableMapper<S, T, E extends Exception> {
      * @throws E if source error occurs
      * @throws MappingException if an error occurs during the mapping
      */
-    Iterator<T> iterator(S source)
+    Iterator<T> iterator(SET source)
             throws E, MappingException;
+    
     /**
      *
      * @param source the source
@@ -52,7 +53,11 @@ public interface EnumarableMapper<S, T, E extends Exception> {
      * @throws MappingException if an error occurs during the mapping
      */
     //IFJAVA8_START
-    Stream<T> stream(S source) throws E, MappingException;
+    Stream<T> stream(SET source) throws E, MappingException;
     //IFJAVA8_END
+
+    Enumerable<T> enumerate(SET source)
+            throws E, MappingException;
+    
 
 }

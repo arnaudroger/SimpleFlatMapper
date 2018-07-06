@@ -28,7 +28,7 @@ public class Issue477Test {
 
 
     @Test
-    public void testIssue() {
+    public void testIssue() throws Exception {
         ClassMeta<ListOfPojo> classMeta = reflectionService().getClassMeta(ListOfPojo.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<ListOfPojo> builder =
@@ -39,10 +39,8 @@ public class Issue477Test {
         builder.addMapping("list_pojoB_id", KeyProperty.DEFAULT);
 
 
-        SourceMapper<Object[], ListOfPojo> rowMapper = builder.mapper();
-
-        JoinMapper<Object[], Object[][],ListOfPojo, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], ListOfPojo, RuntimeException>) rowMapper;
+        JoinMapper<Object[], Object[][],ListOfPojo, ?> mapper =
+                (JoinMapper<Object[], Object[][], ListOfPojo, ?>) builder.mapper();
 
         List<ListOfPojo> list = mapper.forEach(dataSimple, new ListCollector<ListOfPojo>()).getList();
 

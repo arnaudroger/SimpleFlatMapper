@@ -1,15 +1,15 @@
 package org.simpleflatmapper.map.impl;
 
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
 
-public class TransformEnumarable<I, O> implements Enumarable<O> {
+public class TransformEnumerable<I, O> implements Enumerable<O> {
 
-    private final Enumarable<I> delegate;
-    private final Function<I, O> transformer;
+    private final Enumerable<I> delegate;
+    private final Function<? super I, ? extends  O> transformer;
 
 
-    public TransformEnumarable(Enumarable<I> delegate, Function<I, O> transformer) {
+    public TransformEnumerable(Enumerable<I> delegate, Function<? super I, ? extends  O> transformer) {
         this.delegate = delegate;
         this.transformer = transformer;
     }
@@ -26,7 +26,7 @@ public class TransformEnumarable<I, O> implements Enumarable<O> {
 
     @Override
     public String toString() {
-        return "TransformEnumarable{" +
+        return "TransformEnumerable{" +
                 "delegate=" + delegate +
                 ", transformer=" + transformer +
                 '}';

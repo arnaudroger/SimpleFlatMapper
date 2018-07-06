@@ -6,9 +6,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
+import org.simpleflatmapper.map.EnumerableMapper;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.SourceFieldMapper;
-import org.simpleflatmapper.map.SourceMapper;
+import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
@@ -38,10 +38,10 @@ import org.simpleflatmapper.test.beans.FinalObjectWith1ParamConstructionWithLoop
 import org.simpleflatmapper.test.beans.ObjectWith1ParamConstruction;
 import org.simpleflatmapper.test.beans.ObjectWith1ParamConstructionWithLoop;
 import org.simpleflatmapper.tuple.Tuple2;
-import org.simpleflatmapper.util.ArrayEnumarable;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.ConstantPredicate;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.Enumerable;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeHelper;
@@ -49,7 +49,10 @@ import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -65,48 +68,48 @@ import static org.junit.Assert.*;
 public class AbstractMapperBuilderTest {
 
     @Test
-    public void testConversionDateToJodaTime() {
+    public void testConversionDateToJodaTime() throws Exception {
         ClassMeta<List<DateTime>> classMeta =
                 ReflectionService.disableAsm().<List<DateTime>>getClassMeta(new TypeReference<List<DateTime>>() {}.getType());
 
-        SourceMapper<Object[] , List<DateTime>> mapper =
+        EnumerableMapper<Object[][] , List<DateTime>, ?> mapper =
                 new SampleMapperBuilder<List<DateTime>>(classMeta)
                     .addMapping(new SampleFieldKey("0", 0, new Class[0], Date.class)).mapper();
 
         Object[] objects = new Object[] { new Date() };
-        List<DateTime> map = mapper.map(objects);
+        List<DateTime> map = mapper.iterator(new Object[][] {objects}).next();
         assertEquals(objects[0], map.get(0).toDate());
     }
 
     @Test
-    public void testConversionCharacterToJodaTime() {
+    public void testConversionCharacterToJodaTime() throws Exception {
         ClassMeta<List<DateTime>> classMeta =
                 ReflectionService.disableAsm().<List<DateTime>>getClassMeta(new TypeReference<List<DateTime>>() {}.getType());
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyyMMdd HH:mm:ss.SSSS Z");
 
-        SourceMapper<Object[] , List<DateTime>> mapper =
+        EnumerableMapper<Object[][] , List<DateTime>, ?> mapper =
                 new SampleMapperBuilder<List<DateTime>>(classMeta)
                         .addMapping(new SampleFieldKey("0", 0, new Class[0], String.class), dateTimeFormatter).mapper();
 
         DateTime now = DateTime.now();
         Object[] objects = new Object[] { dateTimeFormatter.print(now) };
-        List<DateTime> map = mapper.map(objects);
+        List<DateTime> map = mapper.iterator(new Object[][] {objects}).next();
         assertEquals(now, map.get(0));
     }
 
     //IFJAVA8_START
     @Test
-    public void testOptionalDbObject() {
+    public void testOptionalDbObject() throws Exception {
         ClassMeta<Optional<DbObject>> classMeta =
                 ReflectionService.disableAsm().<Optional<DbObject>>getClassMeta(new TypeReference<Optional<DbObject>>() {}.getType());
-        SourceMapper<Object[], Optional<DbObject>> mapper =
+        EnumerableMapper<Object[][], Optional<DbObject>, ?> mapper =
                 new SampleMapperBuilder<Optional<DbObject>>(classMeta)
                         .addMapping("id")
                         .addMapping("name")
                         .mapper();
 
-        Optional<DbObject> map = mapper.map(new Object[]{1l, "name1"});
+        Optional<DbObject> map = mapper.iterator(new Object[][]{{1l, "name1"}}).next();
 
         assertEquals(1l, map.get().getId());
         assertEquals("name1", map.get().getName());
@@ -114,10 +117,10 @@ public class AbstractMapperBuilderTest {
     //IFJAVA8_END
 
     @Test
-    public void testArrayDbObject() {
+    public void testArrayDbObject() throws Exception {
         ClassMeta<DbObject[]> classMeta =
                 ReflectionService.disableAsm().<DbObject[]>getClassMeta(DbObject[].class);
-        SourceMapper<Object[], DbObject[]> mapper =
+        EnumerableMapper<Object[][], DbObject[], ?> mapper =
                 new SampleMapperBuilder<DbObject[]>(classMeta)
                         .addMapping("1_id")
                         .addMapping("1_name")
@@ -125,7 +128,7 @@ public class AbstractMapperBuilderTest {
                         .addMapping("2_name")
                         .mapper();
 
-        DbObject[] map = mapper.map(new Object[]{1l, "name1", 2l, "name2"});
+        DbObject[] map = mapper.iterator(new Object[][]{{1l, "name1", 2l, "name2"}}).next();
 
         assertEquals(3, map.length);
         assertEquals(1l, map[1].getId());
@@ -134,10 +137,10 @@ public class AbstractMapperBuilderTest {
         assertEquals("name2", map[2].getName());
     }
     @Test
-    public void testListDbObject() {
+    public void testListDbObject() throws Exception {
         ClassMeta<List<DbObject>> classMeta =
                 ReflectionService.disableAsm().<List<DbObject>>getClassMeta(new TypeReference<List<DbObject>>() {}.getType());
-        SourceMapper<Object[], List<DbObject>> mapper =
+        EnumerableMapper<Object[][], List<DbObject>, ?> mapper =
                 new SampleMapperBuilder<List<DbObject>>(classMeta)
                         .addMapping("1_id")
                         .addMapping("1_name")
@@ -145,7 +148,7 @@ public class AbstractMapperBuilderTest {
                         .addMapping("2_name")
                         .mapper();
 
-        List<DbObject> map = mapper.map(new Object[]{1l, "name1", 2l, "name2"});
+        List<DbObject> map = mapper.iterator(new Object[][]{{1l, "name1", 2l, "name2"}}).next();
 
         assertEquals(3, map.size());
         assertEquals(1l, map.get(1).getId());
@@ -155,10 +158,10 @@ public class AbstractMapperBuilderTest {
     }
 
     @Test
-    public void testSetDbObject() {
+    public void testSetDbObject() throws Exception {
         ClassMeta<Set<DbObject>> classMeta =
                 ReflectionService.disableAsm().<Set<DbObject>>getClassMeta(new TypeReference<Set<DbObject>>() {}.getType());
-        SourceMapper<Object[], Set<DbObject>> mapper =
+        EnumerableMapper<Object[][], Set<DbObject>, ?> mapper =
                 new SampleMapperBuilder<Set<DbObject>>(classMeta)
                         .addMapping("1_id")
                         .addMapping("1_name")
@@ -166,7 +169,7 @@ public class AbstractMapperBuilderTest {
                         .addMapping("2_name")
                         .mapper();
 
-        Set<DbObject> map = mapper.map(new Object[]{1l, "name1", 2l, "name2"});
+        Set<DbObject> map = mapper.iterator(new Object[][]{{1l, "name1", 2l, "name2"}}).next();
 
         assertEquals(2, map.size());
 
@@ -189,10 +192,10 @@ public class AbstractMapperBuilderTest {
     }
 
     @Test
-    public void testMapDbObject() {
+    public void testMapDbObject() throws Exception {
         ClassMeta<Map<Long, DbObject>> classMeta =
                 ReflectionService.disableAsm().<Map<Long, DbObject>>getClassMeta(new TypeReference<Map<Long, DbObject>>() {}.getType());
-        SourceMapper<Object[], Map<Long, DbObject>> mapper =
+        EnumerableMapper<Object[][], Map<Long, DbObject>, ?> mapper =
                 new SampleMapperBuilder<Map<Long, DbObject>>(classMeta)
                         .addMapping("1_id")
                         .addMapping("1_name")
@@ -200,7 +203,7 @@ public class AbstractMapperBuilderTest {
                         .addMapping("2_name")
                         .mapper();
 
-        Map<Long, DbObject> map = mapper.map(new Object[]{1l, "name1", 2l, "name2"});
+        Map<Long, DbObject> map = mapper.iterator(new Object[][]{{1l, "name1", 2l, "name2"}}).next();
 
         assertEquals(2, map.size());
         assertEquals(1l, map.get(1l).getId());
@@ -209,17 +212,17 @@ public class AbstractMapperBuilderTest {
         assertEquals("name2", map.get(2l).getName());
     }
     @Test
-    public void testFinalObjectWithOneConstructor() {
+    public void testFinalObjectWithOneConstructor() throws Exception {
         ClassMeta<FinalObjectWith1ParamConstruction> classMeta = ReflectionService.newInstance().<FinalObjectWith1ParamConstruction>getClassMeta(FinalObjectWith1ParamConstruction.class);
 
-        SourceMapper<Object[], FinalObjectWith1ParamConstruction> mapper =
+        EnumerableMapper<Object[][], FinalObjectWith1ParamConstruction, ?> mapper =
                 new SampleMapperBuilder<FinalObjectWith1ParamConstruction>(classMeta)
                         .addMapping("id")
                         .addMapping("o1p")
                         .addMapping("o2p")
                         .mapper();
 
-        FinalObjectWith1ParamConstruction map = mapper.map(new Object[]{1l, "v1", "v2"});
+        FinalObjectWith1ParamConstruction map = mapper.iterator(new Object[][]{{1l, "v1", "v2"}}).next();
 
         assertEquals(1l, map.id);
         assertEquals("v1", map.o1p.getValue());
@@ -228,17 +231,17 @@ public class AbstractMapperBuilderTest {
 
 
     @Test
-    public void testObjectWithOneConstructor() {
+    public void testObjectWithOneConstructor() throws Exception {
         ClassMeta<ObjectWith1ParamConstruction> classMeta = ReflectionService.newInstance().<ObjectWith1ParamConstruction>getClassMeta(ObjectWith1ParamConstruction.class);
 
-        SourceMapper<Object[], ObjectWith1ParamConstruction> mapper =
+        EnumerableMapper<Object[][], ObjectWith1ParamConstruction, ?> mapper =
                 new SampleMapperBuilder<ObjectWith1ParamConstruction>(classMeta)
                         .addMapping("id")
                         .addMapping("o1p")
                         .addMapping("o2p")
                         .mapper();
 
-        ObjectWith1ParamConstruction map = mapper.map(new Object[]{1l, "v1", "v2"});
+        ObjectWith1ParamConstruction map = mapper.iterator(new Object[][]{{1l, "v1", "v2"}}).next();
 
         assertEquals(1l, map.id);
         assertEquals("v1", map.o1p.getValue());
@@ -250,7 +253,7 @@ public class AbstractMapperBuilderTest {
 
         try {
             ClassMeta<ObjectWith1ParamConstructionWithLoop> classMeta = ReflectionService.newInstance().<ObjectWith1ParamConstructionWithLoop>getClassMeta(ObjectWith1ParamConstructionWithLoop.class);
-            SourceMapper<Object[], ObjectWith1ParamConstructionWithLoop> mapper =
+            EnumerableMapper<Object[][], ObjectWith1ParamConstructionWithLoop, ?> mapper =
                     new SampleMapperBuilder<ObjectWith1ParamConstructionWithLoop>(classMeta)
                             .addMapping("id")
                             .addMapping("o1p")
@@ -262,7 +265,7 @@ public class AbstractMapperBuilderTest {
 
         try {
             ClassMeta<FinalObjectWith1ParamConstructionWithLoop> classMeta = ReflectionService.newInstance().<FinalObjectWith1ParamConstructionWithLoop>getClassMeta(FinalObjectWith1ParamConstructionWithLoop.class);
-            SourceMapper<Object[], FinalObjectWith1ParamConstructionWithLoop> mapper =
+            EnumerableMapper<Object[][], FinalObjectWith1ParamConstructionWithLoop, ?> mapper =
                     new SampleMapperBuilder<FinalObjectWith1ParamConstructionWithLoop>(classMeta)
                             .addMapping("id")
                             .addMapping("o1p")
@@ -275,7 +278,7 @@ public class AbstractMapperBuilderTest {
 
         ClassMeta<DbFinal1DeepObject> classMeta = ReflectionService.newInstance().<DbFinal1DeepObject>getClassMeta(DbFinal1DeepObject.class);
 
-        SourceMapper<Object[], DbFinal1DeepObject> mapper =
+        EnumerableMapper<Object[][], DbFinal1DeepObject, ?> mapper =
                 new SampleMapperBuilder<DbFinal1DeepObject>(classMeta)
                         .addMapping("id")
                         .addMapping("value")
@@ -283,7 +286,7 @@ public class AbstractMapperBuilderTest {
                         .addMapping("dbObject_name")
                         .mapper();
 
-        DbFinal1DeepObject map = mapper.map(new Object[]{1, "vvv", 2l, "wwww"});
+        DbFinal1DeepObject map = mapper.iterator(new Object[][]{{1, "vvv", 2l, "wwww"}}).next();
 
         assertEquals(1, map.getId());
         assertEquals("vvv", map.getValue());
@@ -297,8 +300,8 @@ public class AbstractMapperBuilderTest {
         ClassMeta<DbListObject> classMeta = ReflectionService.newInstance(false).<DbListObject>getClassMeta(DbListObject.class);
 
         SampleMapperBuilder<DbListObject> builder = new SampleMapperBuilder<DbListObject>(classMeta);
-        JoinMapper<Object[], Object[][], DbListObject, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], DbListObject, RuntimeException>) builder
+        JoinMapper<Object[], Object[][], DbListObject, ?> mapper =
+                (JoinMapper<Object[], Object[][], DbListObject, ?>) builder
                         .addKey("id")
                         .addKey("objects_id")
                         .addMapping("objects_name")
@@ -313,8 +316,8 @@ public class AbstractMapperBuilderTest {
     public void testJoinDbListObjectMissingKey() throws Exception {
         ClassMeta<DbListObject> classMeta = ReflectionService.newInstance().<DbListObject>getClassMeta(DbListObject.class);
 
-        JoinMapper<Object[], Object[][], DbListObject, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], DbListObject, RuntimeException>) new SampleMapperBuilder<DbListObject>(classMeta)
+        JoinMapper<Object[], Object[][], DbListObject, ?> mapper =
+                (JoinMapper<Object[], Object[][], DbListObject, ?>) new SampleMapperBuilder<DbListObject>(classMeta)
                         .addKey("id")
                         .addMapping("objects_id")
                         .addMapping("objects_name")
@@ -325,7 +328,7 @@ public class AbstractMapperBuilderTest {
 
     }
 
-    private void checkDbListJoinMapper(JoinMapper<Object[], Object[][], DbListObject, RuntimeException> mapper) {
+    private void checkDbListJoinMapper(JoinMapper<Object[], Object[][], DbListObject, ?> mapper) throws Exception {
         Iterator<DbListObject> iterator = mapper.iterator(new Object[][]{
                 {1, 1l, "n1"},
                 {1, 2l, "n2"},
@@ -359,13 +362,13 @@ public class AbstractMapperBuilderTest {
 
         MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig =
                 MapperConfig.<SampleFieldKey>fieldMapperConfig().columnDefinitions(definitionProvider);
-        SourceMapper<Object[], DbObject> mapper =
+        EnumerableMapper<Object[][], DbObject, ?> mapper =
                 new SampleMapperBuilder<DbObject>(classMeta, mapperConfig)
                         .addMapping("id")
                         .mapper();
-        Object[] data = new Object[] {3l};
+        Object[][] data = new Object[][] {{3l}};
 
-        DbObject dbObject = mapper.map(data);
+        DbObject dbObject = mapper.iterator(data).next();
 
         assertEquals(3l, dbObject.getId());
         assertEquals(DbObject.Type.type4, dbObject.getTypeName());
@@ -449,7 +452,7 @@ public class AbstractMapperBuilderTest {
     public void testCustomization() throws Exception {
         ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
 
-        SourceMapper<Object[], DbObject> mapper =
+        EnumerableMapper<Object[][], DbObject, ?> mapper =
                 new SampleMapperBuilder<DbObject>(classMeta)
                     .addKey("id")
                     .addMapper(new FieldMapper<Object[], DbObject>() {
@@ -465,7 +468,7 @@ public class AbstractMapperBuilderTest {
                         }
                     })).mapper();
 
-        DbObject dbObject = mapper.map(new Object[] { 1l });
+        DbObject dbObject = mapper.iterator(new Object[][] { {1l} }).next();
         assertEquals(1, dbObject.getId());
         assertEquals("fieldMapper", dbObject.getName());
         assertEquals("getterEmail", dbObject.getEmail());
@@ -490,7 +493,7 @@ public class AbstractMapperBuilderTest {
                                             return "getterName";
                                         }
                         }))).mapper();
-        dbObject = mapper.map(new Object[] { 1l});
+        dbObject = mapper.iterator(new Object[][] { {1l}}).next();
         assertEquals(1, dbObject.getId());
         assertEquals("getterEmail", dbObject.getEmail());
         assertEquals("getterName", dbObject.getName());
@@ -518,13 +521,114 @@ public class AbstractMapperBuilderTest {
             row[i] = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str), new Object[0], (TypeAffinity)null).getGetter().get(instance1);
 
         }
-        SourceMapper<Object[], T> mapper = builder.mapper();
+        EnumerableMapper<Object[][], T, ?> mapper = builder.mapper();
 
-        assertEquals(instance1, mapper.map(row));
-        Assert.assertEquals(instance1, builderIndexed.mapper().map(row));
+        assertEquals(instance1, mapper.iterator(new Object[][] {row}).next());
+        Assert.assertEquals(instance1, builderIndexed.mapper().iterator(new Object[][] {row}).next());
 
         assertNotEquals(instance1, instance2);
+        
+    }
 
+    @Test
+    public void testImmutableSet() throws Exception {
+        ClassMeta<A.Builder> classMeta = ReflectionService.newInstance(false).getClassMeta(A.Builder.class);
+        SampleMapperBuilder<A.Builder> builder = new SampleMapperBuilder<A.Builder>(classMeta);
+
+        EnumerableMapper<Object[][], A, ?> mapper = new TransformEnumerableMapper<>(builder.addKey("id").addMapping("bs_v").mapper(), 
+                new Function<A.Builder, A>() {
+            @Override
+            public A apply(A.Builder builder) {
+                return builder.build();
+            }
+        });
+
+        A a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+        
+        assertEquals(new HashSet<B>(Arrays.asList(new B("v1"), new B("v2"))), a.bs);
+
+//        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(false).getClassMeta(A.class));
+//
+//        mapper = builderA.addKey("id").addMapping("bs_v").mapper();
+//        
+//        a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+//
+//        assertEquals(new HashSet<B>(Arrays.asList(new B("v1"), new B("v2"))), a.bs);
+
+    }
+
+    public static class A {
+        private final int id;
+        private final Set<B> bs;
+
+        private A(int id, Set<B> bs) {
+            this.id = id;
+            this.bs = Collections.unmodifiableSet(new HashSet<B>(bs));
+        }
+
+        public Set<B> getBs() {
+            return bs;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        @Override
+        public String toString() {
+            return "A{" +
+                    "id=" + id +
+                    ", bs=" + bs +
+                    '}';
+        }
+        public static Builder builder() {
+            return new Builder();
+        }
+        public static class Builder {
+            private int id;
+            private Set<B> bs;
+
+            public void setId(int id) {
+                this.id = id;
+            }
+
+            public void setBs(Set<B> bs) {
+                this.bs = bs;
+            }
+            public A build() {
+                return new A(id, bs);
+            }
+        }
+    }
+    public static class B {
+        private final String v;
+
+        public B(String v) {
+            this.v = v;
+        }
+
+
+        @Override
+        public String toString() {
+            return "B{" +
+                    "v='" + v + '\'' +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            B b = (B) o;
+
+            return v != null ? v.equals(b.v) : b.v == null;
+        }
+
+        @Override
+        public int hashCode() {
+            return v != null ? v.hashCode() : 0;
+        }
     }
 
 
@@ -609,7 +713,7 @@ public class AbstractMapperBuilderTest {
         }
     };
 
-    public static class SampleMapperBuilder<T> extends AbstractMapperBuilder<Object[], T, SampleFieldKey, SourceMapper<Object[], T>, SampleMapperBuilder<T>> {
+    public static class SampleMapperBuilder<T> extends MapperBuilder<Object[], Object[][], T, SampleFieldKey, Exception, SetRowMapper<Object[], Object[][], T, Exception>, SampleMapperBuilder<T>> {
 
         public SampleMapperBuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig) {
             super(classMeta, new MappingContextFactoryBuilder<Object[], SampleFieldKey>(new KeySourceGetter<SampleFieldKey, Object[]>() {
@@ -618,37 +722,39 @@ public class AbstractMapperBuilderTest {
                             return source[key.getIndex()];
                         }
                     }), mapperConfig.failOnAsm(true), new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, GETTER_FACTORY),
-                    KEY_FACTORY, 0);
+                    KEY_FACTORY, new UnaryFactory<Object[][], Enumerable<Object[]>>() {
+                        @Override
+                        public Enumerable<Object[]> newInstance(final Object[][] objects) {
+                            return new Enumerable<Object[]>() {
+                                int i = -1;
+                                @Override
+                                public boolean next() {
+                                    int n = i + 1;
+                                    if (n < objects.length) {
+                                        i = n;
+                                        return true;
+                                        
+                                    }
+                                    return false;
+                                }
+
+                                @Override
+                                public Object[] currentValue() {
+                                    return objects[i];
+                                }
+                            };
+                        }
+                    }, new Function<SetRowMapper<Object[], Object[][], T, Exception>, SetRowMapper<Object[], Object[][], T, Exception>>() {
+                        @Override
+                        public SetRowMapper<Object[], Object[][], T, Exception> apply(SetRowMapper<Object[], Object[][], T, Exception> setRowMapper) {
+                            return setRowMapper;
+                        }
+                    }, 0);
         }
         public SampleMapperBuilder(ClassMeta<T> classMeta) {
             this(classMeta, MapperConfig.<SampleFieldKey>fieldMapperConfig());
         }
 
-        @Override
-        protected SourceMapper<Object[], T> newJoinMapper(SourceFieldMapper<Object[], T> mapper) {
-            return new JoinMapper<Object[], Object[][], T, RuntimeException>(mapper,
-                    mapperConfig.consumerErrorHandler(),
-                    mappingContextFactoryBuilder.newFactory(),
-                    new UnaryFactory<Object[][], Enumarable<Object[]>>() {
-                @Override
-                public Enumarable<Object[]> newInstance(Object[][] objects) {
-                    return new ArrayEnumarable<Object[]>(objects);
-                }
-            });
-        }
-
-        @Override
-        protected SourceMapper<Object[], T> newStaticMapper(SourceFieldMapper<Object[], T> mapper) {
-            return new StaticSetRowMapper<Object[], Object[][], T, Exception>(mapper,
-                    mapperConfig.consumerErrorHandler(),
-                    mappingContextFactoryBuilder.newFactory(),
-                    new UnaryFactory<Object[][], Enumarable<Object[]>>() {
-                        @Override
-                        public Enumarable<Object[]> newInstance(Object[][] objects) {
-                            return new ArrayEnumarable<Object[]>(objects);
-                        }
-                    });
-        }
     }
 
 }

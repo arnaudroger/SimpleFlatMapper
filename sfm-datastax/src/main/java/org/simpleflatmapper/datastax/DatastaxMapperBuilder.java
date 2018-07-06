@@ -2,29 +2,31 @@ package org.simpleflatmapper.datastax;
 
 import com.datastax.driver.core.*;
 import com.datastax.driver.core.exceptions.DriverException;
-import org.simpleflatmapper.map.ConsumerErrorHandler;
-import org.simpleflatmapper.map.SourceFieldMapper;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.mapper.MapperBuilder;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
-import org.simpleflatmapper.datastax.impl.ResultSetEnumarable;
-import org.simpleflatmapper.map.SourceMapper;
+import org.simpleflatmapper.datastax.impl.ResultSetEnumerable;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.map.mapper.AbstractMapperBuilder;
-import org.simpleflatmapper.map.mapper.JoinMapper;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
-import org.simpleflatmapper.map.mapper.StaticSetRowMapper;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.CheckedConsumer;
+import org.simpleflatmapper.util.Enumerable;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.UnaryFactory;
+
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 /**
  * @see DatastaxMapperFactory
  * @param <T> the targeted type of the jdbcMapper
  */
-public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T, DatastaxColumnKey, DatastaxMapper<T>, DatastaxMapperBuilder<T>> {
+public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet, T, DatastaxColumnKey, DriverException, DatastaxMapper<T>, DatastaxMapperBuilder<T>> {
 
     public static final KeyFactory<DatastaxColumnKey> KEY_FACTORY = new KeyFactory<DatastaxColumnKey>() {
         @Override
@@ -44,7 +46,19 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
             MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig,
             GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory,
             MappingContextFactoryBuilder<GettableByIndexData, DatastaxColumnKey> parentBuilder) {
-        super(classMeta, parentBuilder, mapperConfig, new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, getterFactory), KEY_FACTORY, 0);
+        super(classMeta,
+                parentBuilder,
+                mapperConfig,
+                new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, getterFactory),
+                KEY_FACTORY,
+                new ResultSetEnumerableFactory(),
+                new Function<SetRowMapper<Row, ResultSet, T, DriverException>, DatastaxMapper<T>>() {
+                    @Override
+                    public DatastaxMapper<T> apply(SetRowMapper<Row, ResultSet, T, DriverException> setRowMapper) {
+                        return new DatastaxMapperImpl<T>(setRowMapper);
+                    }
+                },
+                0);
     }
 
 
@@ -75,33 +89,49 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
         return this;
     }
 
-    @Override
-    protected DatastaxMapper<T> newJoinMapper(SourceFieldMapper<Row, T> mapper) {
-        return new JoinDatastaxMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
-    }
-
-    private static class JoinDatastaxMapper<T> extends JoinMapper<Row, ResultSet, T, DriverException> implements DatastaxMapper<T> {
-        public JoinDatastaxMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
-            super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
-        }
-    }
-
-    private static class ResultSetEnumarableFactory implements UnaryFactory<ResultSet, Enumarable<Row>> {
+    private static class ResultSetEnumerableFactory implements UnaryFactory<ResultSet, Enumerable<Row>> {
         @Override
-        public Enumarable<Row> newInstance(ResultSet rows) {
-            return new ResultSetEnumarable(rows);
+        public Enumerable<Row> newInstance(ResultSet rows) {
+            return new ResultSetEnumerable(rows);
         }
     }
+    
+    
+    private static class DatastaxMapperImpl<T> implements DatastaxMapper<T> {
+        private final SetRowMapper<Row, ResultSet, T, DriverException> setRowMapper;
 
-    @Override
-    protected DatastaxMapper<T> newStaticMapper(SourceFieldMapper<Row, T> mapper) {
-        return new StaticDatastaxMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
-    }
+        private DatastaxMapperImpl(SetRowMapper<Row, ResultSet, T, DriverException> setRowMapper) {
+            this.setRowMapper = setRowMapper;
+        }
 
-    public static class StaticDatastaxMapper<T> extends StaticSetRowMapper<Row, ResultSet, T, DriverException> implements DatastaxMapper<T> {
+        @Override
+        public T map(Row source) throws MappingException {
+            return setRowMapper.map(source);
+        }
 
-        public StaticDatastaxMapper(SourceMapper<Row, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
-            super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
+        @Override
+        public T map(Row source, MappingContext<? super Row> context) throws MappingException {
+            return setRowMapper.map(source, context);
+        }
+
+        @Override
+        public <H extends CheckedConsumer<? super T>> H forEach(ResultSet source, H handler) throws DriverException, MappingException {
+            return setRowMapper.forEach(source, handler);
+        }
+
+        @Override
+        public Iterator<T> iterator(ResultSet source) throws DriverException, MappingException {
+            return setRowMapper.iterator(source);
+        }
+
+        @Override
+        public Enumerable<T> enumerate(ResultSet source) throws DriverException, MappingException {
+            return setRowMapper.enumerate(source);
+        }
+        
+        @Override
+        public Stream<T> stream(ResultSet source) throws DriverException, MappingException {
+            return setRowMapper.stream(source);
         }
     }
 }

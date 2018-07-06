@@ -3,15 +3,15 @@ package org.simpleflatmapper.util;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class EnumarableIterator<T> implements Iterator<T> {
+public class EnumerableIterator<T> implements Iterator<T> {
 
-    private final Enumarable<T> enumarable;
+    private final Enumerable<T> enumerable;
 
     private boolean fetch = false;
     private boolean hasValue = false;
 
-    public EnumarableIterator(Enumarable<T> enumarable) {
-        this.enumarable = enumarable;
+    public EnumerableIterator(Enumerable<T> enumerable) {
+        this.enumerable = enumerable;
     }
 
     @Override
@@ -23,7 +23,7 @@ public class EnumarableIterator<T> implements Iterator<T> {
     }
 
     private void fetch() {
-        hasValue = enumarable.next();
+        hasValue = enumerable.next();
         fetch = true;
     }
 
@@ -37,7 +37,7 @@ public class EnumarableIterator<T> implements Iterator<T> {
             fetch = false;
             hasValue = false;
 
-            return enumarable.currentValue();
+            return enumerable.currentValue();
         } else {
             throw new NoSuchElementException();
         }

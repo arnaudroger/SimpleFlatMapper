@@ -2,14 +2,14 @@ package org.simpleflatmapper.datastax.impl;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.Enumerable;
 
 
-public class ResultSetEnumarable implements Enumarable<Row> {
+public class ResultSetEnumerable implements Enumerable<Row> {
     private final ResultSet resultSet;
     private Row currentRow;
 
-    public ResultSetEnumarable(ResultSet resultSet) {
+    public ResultSetEnumerable(ResultSet resultSet) {
         this.resultSet = resultSet;
     }
 

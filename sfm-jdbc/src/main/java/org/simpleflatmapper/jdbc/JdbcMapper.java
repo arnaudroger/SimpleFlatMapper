@@ -1,6 +1,5 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;

@@ -3,19 +3,19 @@ package org.simpleflatmapper.util;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public class EnumarableSpliterator<T> implements Spliterator<T> {
+public class EnumerableSpliterator<T> implements Spliterator<T> {
 
-    private final Enumarable<T> enumarable;
+    private final Enumerable<T> enumerable;
 
-    public EnumarableSpliterator(Enumarable<T> enumarable) {
-        this.enumarable = enumarable;
+    public EnumerableSpliterator(Enumerable<T> enumerable) {
+        this.enumerable = enumerable;
     }
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-        Enumarable<T> lEnumarable = this.enumarable;
-        if (lEnumarable.next()) {
-            action.accept(lEnumarable.currentValue());
+        Enumerable<T> lEnumerable = this.enumerable;
+        if (lEnumerable.next()) {
+            action.accept(lEnumerable.currentValue());
             return true;
         } else {
             return false;
@@ -24,9 +24,9 @@ public class EnumarableSpliterator<T> implements Spliterator<T> {
 
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
-        Enumarable<T> lEnumarable = this.enumarable;
-        while(lEnumarable.next()) {
-            action.accept(lEnumarable.currentValue());
+        Enumerable<T> lEnumerable = this.enumerable;
+        while(lEnumerable.next()) {
+            action.accept(lEnumerable.currentValue());
         }
     }
 

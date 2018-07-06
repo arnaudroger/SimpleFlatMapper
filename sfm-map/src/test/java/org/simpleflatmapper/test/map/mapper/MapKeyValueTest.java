@@ -1,7 +1,7 @@
 package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
-import org.simpleflatmapper.map.SourceMapper;
+import org.simpleflatmapper.map.EnumerableMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.mapper.JoinMapper;
@@ -48,7 +48,7 @@ public class MapKeyValueTest {
 
 
     @Test
-    public void testMapKeyValue() {
+    public void testMapKeyValue() throws Exception {
         ClassMeta<PojoWithMap> classMeta = reflectionService().getClassMeta(PojoWithMap.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<PojoWithMap> builder =
@@ -59,10 +59,7 @@ public class MapKeyValueTest {
         builder.addMapping("map_value");
 
 
-        SourceMapper<Object[], PojoWithMap> rowMapper = builder.mapper();
-
-        SetRowMapper<Object[], Object[][],PojoWithMap, RuntimeException> mapper =
-                (SetRowMapper<Object[], Object[][], PojoWithMap, RuntimeException>) rowMapper;
+        EnumerableMapper<Object[][], PojoWithMap, ?> mapper = builder.mapper();
 
         List<PojoWithMap> list = mapper.forEach(dataSimple, new ListCollector<PojoWithMap>()).getList();
 
@@ -73,7 +70,7 @@ public class MapKeyValueTest {
     }
 
     @Test
-    public void testMapKeyValueJoin() {
+    public void testMapKeyValueJoin() throws Exception {
         ClassMeta<PojoWithMap> classMeta = reflectionService().getClassMeta(PojoWithMap.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<PojoWithMap> builder =
@@ -84,10 +81,9 @@ public class MapKeyValueTest {
         builder.addMapping("map_value");
 
 
-        SourceMapper<Object[], PojoWithMap> rowMapper = builder.mapper();
 
-        JoinMapper<Object[], Object[][],PojoWithMap, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], PojoWithMap, RuntimeException>) rowMapper;
+        JoinMapper<Object[], Object[][],PojoWithMap, ?> mapper =
+                (JoinMapper<Object[], Object[][], PojoWithMap, ?>) builder.mapper();
 
         List<PojoWithMap> list = mapper.forEach(dataSimpleJoin, new ListCollector<PojoWithMap>()).getList();
 
@@ -99,7 +95,7 @@ public class MapKeyValueTest {
     
 
     @Test
-    public void testMapComplexKeyValue() {
+    public void testMapComplexKeyValue() throws Exception {
         ClassMeta<ComplexPojoWithMap> classMeta = reflectionService().getClassMeta(ComplexPojoWithMap.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<ComplexPojoWithMap> builder =
@@ -112,10 +108,9 @@ public class MapKeyValueTest {
         builder.addMapping("map_value_elt1");
 
 
-        SourceMapper<Object[], ComplexPojoWithMap> rowMapper = builder.mapper();
 
-        SetRowMapper<Object[], Object[][],ComplexPojoWithMap, RuntimeException> mapper =
-                (SetRowMapper<Object[], Object[][], ComplexPojoWithMap, RuntimeException>) rowMapper;
+        SetRowMapper<Object[], Object[][],ComplexPojoWithMap, ?> mapper =
+                (SetRowMapper<Object[], Object[][], ComplexPojoWithMap, ?>)  builder.mapper();
 
         List<ComplexPojoWithMap> list = mapper.forEach(dataComplex, new ListCollector<ComplexPojoWithMap>()).getList();
 
@@ -126,7 +121,7 @@ public class MapKeyValueTest {
     }
 
     @Test
-    public void testMapComplexKeyValueJoin() {
+    public void testMapComplexKeyValueJoin() throws Exception {
         ClassMeta<ComplexPojoWithMap> classMeta = reflectionService().getClassMeta(ComplexPojoWithMap.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<ComplexPojoWithMap> builder =
@@ -139,10 +134,9 @@ public class MapKeyValueTest {
         builder.addMapping("map_value_elt1");
 
 
-        SourceMapper<Object[], ComplexPojoWithMap> rowMapper = builder.mapper();
 
-        JoinMapper<Object[], Object[][],ComplexPojoWithMap, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], ComplexPojoWithMap, RuntimeException>) rowMapper;
+        JoinMapper<Object[], Object[][],ComplexPojoWithMap, ?> mapper =
+                (JoinMapper<Object[], Object[][], ComplexPojoWithMap, ?>) builder.mapper();
 
         List<ComplexPojoWithMap> list = mapper.forEach(dataComplexJoin, new ListCollector<ComplexPojoWithMap>()).getList();
 
@@ -153,7 +147,7 @@ public class MapKeyValueTest {
     }
 
     @Test
-    public void testListComplexKeyValueJoin() {
+    public void testListComplexKeyValueJoin() throws Exception {
         ClassMeta<ComplexPojoWithList> classMeta = reflectionService().getClassMeta(ComplexPojoWithList.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<ComplexPojoWithList> builder =
@@ -166,10 +160,8 @@ public class MapKeyValueTest {
         builder.addMapping("map_elt0_elt1_elt1");
 
 
-        SourceMapper<Object[], ComplexPojoWithList> rowMapper = builder.mapper();
-
-        JoinMapper<Object[], Object[][],ComplexPojoWithList, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], ComplexPojoWithList, RuntimeException>) rowMapper;
+        JoinMapper<Object[], Object[][],ComplexPojoWithList, ?> mapper =
+                (JoinMapper<Object[], Object[][], ComplexPojoWithList, ?>) builder.mapper();
 
         List<ComplexPojoWithList> list = mapper.forEach(dataComplexJoin, new ListCollector<ComplexPojoWithList>()).getList();
 

@@ -20,7 +20,9 @@ import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.util.Iterator;
+//IFJAVA8_START
 import java.util.stream.Stream;
+//IFJAVA8_END
 
 /**
  * @see DatastaxMapperFactory
@@ -128,10 +130,13 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
         public Enumerable<T> enumerate(ResultSet source) throws DriverException, MappingException {
             return setRowMapper.enumerate(source);
         }
-        
+
+        //IFJAVA8_START
         @Override
         public Stream<T> stream(ResultSet source) throws DriverException, MappingException {
             return setRowMapper.stream(source);
         }
+        //IFJAVA8_END
+
     }
 }

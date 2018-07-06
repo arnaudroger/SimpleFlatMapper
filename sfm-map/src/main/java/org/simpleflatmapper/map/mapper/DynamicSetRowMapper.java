@@ -70,12 +70,14 @@ public class DynamicSetRowMapper<ROW, SET, T, E extends Exception, K extends Fie
 		return getMapperFromSet(set).stream(set);
 	}
 
+
+	//IFJAVA8_END
+
 	@Override
 	public Enumerable<T> enumerate(SET source) throws E, MappingException {
 		return getMapperFromSet(source).enumerate(source);
 	}
-	//IFJAVA8_END
-
+	
 	@Override
 	public final <H extends CheckedConsumer<? super T>> H forEach(SET set, H handler) throws E, MappingException {
 		return getMapperFromSet(set).forEach(set, handler);

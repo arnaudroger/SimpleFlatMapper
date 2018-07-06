@@ -535,7 +535,7 @@ public class AbstractMapperBuilderTest {
         ClassMeta<A.Builder> classMeta = ReflectionService.newInstance(false).getClassMeta(A.Builder.class);
         SampleMapperBuilder<A.Builder> builder = new SampleMapperBuilder<A.Builder>(classMeta);
 
-        EnumerableMapper<Object[][], A, ?> mapper = new TransformEnumerableMapper<>(builder.addKey("id").addMapping("bs_v").mapper(), 
+        EnumerableMapper<Object[][], A, ?> mapper = new TransformEnumerableMapper<Object, Object[][], A.Builder, A, Exception>(builder.addKey("id").addMapping("bs_v").mapper(), 
                 new Function<A.Builder, A>() {
             @Override
             public A apply(A.Builder builder) {

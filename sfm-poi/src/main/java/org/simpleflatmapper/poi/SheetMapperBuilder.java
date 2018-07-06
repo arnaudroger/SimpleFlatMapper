@@ -3,13 +3,10 @@ package org.simpleflatmapper.poi;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
 import org.simpleflatmapper.poi.impl.JoinSheetMapper;
-import org.simpleflatmapper.poi.impl.RowEnumerable;
 import org.simpleflatmapper.poi.impl.StaticSheetMapper;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
@@ -21,13 +18,9 @@ import org.simpleflatmapper.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.poi.impl.CsvColumnKeyRowKeySourceGetter;
 import org.simpleflatmapper.poi.impl.RowGetterFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.UnaryFactory;
-
-import java.util.Iterator;
-import java.util.stream.Stream;
 
 public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColumnKey, RuntimeException, RowMapper<T>,  SheetMapperBuilder<T>> {
 

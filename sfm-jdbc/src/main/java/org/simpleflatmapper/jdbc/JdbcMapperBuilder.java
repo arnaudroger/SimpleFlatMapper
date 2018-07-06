@@ -26,8 +26,10 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.stream.Stream;
 
+//IFJAVA8_START
+import java.util.stream.Stream;
+//IFJAVA8_END
 /**
  * @param <T> the targeted type of the jdbcMapper
  */
@@ -86,9 +88,9 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
      */
     public JdbcMapperBuilder(
              final ClassMeta<T> classMeta,
-             MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig,
-             GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
-             MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
+             final MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig,
+             final GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
+             final MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
         super(classMeta,
                 parentBuilder,
                 mapperConfig,
@@ -229,10 +231,12 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
             return setRowMapper.enumerate(source);
         }
 
+        //IFJAVA8_START
         @Override
         public Stream<T> stream(ResultSet source) throws SQLException, MappingException {
             return setRowMapper.stream(source);
         }
+        //IFJAVA8_END
 
         @Override
         public MappingContext<? super ResultSet> newMappingContext(ResultSet resultSet) throws SQLException {

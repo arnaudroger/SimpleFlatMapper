@@ -1,4 +1,4 @@
-package org.simpleflatmapper.reflect.impl;
+package org.simpleflatmapper.reflect;
 
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;

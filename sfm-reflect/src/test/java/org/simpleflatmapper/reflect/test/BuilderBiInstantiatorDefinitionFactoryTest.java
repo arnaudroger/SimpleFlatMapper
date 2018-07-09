@@ -7,7 +7,7 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
-import org.simpleflatmapper.reflect.impl.BuilderBiInstantiator;
+import org.simpleflatmapper.reflect.BuilderBiInstantiator;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.util.BiFunction;

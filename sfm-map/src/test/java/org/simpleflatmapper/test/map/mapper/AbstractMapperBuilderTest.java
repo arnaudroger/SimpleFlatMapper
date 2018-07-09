@@ -578,7 +578,7 @@ public class AbstractMapperBuilderTest {
 
         A2 a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
 
-        //assertEquals(new HashSet<B>(Arrays.asList(new B("v1"), new B("v2"))), a.bs);
+        assertEquals(new HashSet<B>(Arrays.asList(new B("v1"), new B("v2"))), a.bs);
 
     }
 

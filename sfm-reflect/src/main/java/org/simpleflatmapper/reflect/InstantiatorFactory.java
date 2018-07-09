@@ -2,7 +2,6 @@ package org.simpleflatmapper.reflect;
 
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.getter.IdentityGetter;
-import org.simpleflatmapper.reflect.impl.BuilderBiInstantiator;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiator;
 import org.simpleflatmapper.reflect.impl.EmptyConstructorBiInstantiator;
 import org.simpleflatmapper.reflect.impl.EmptyConstructorInstantiator;

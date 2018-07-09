@@ -10,10 +10,11 @@ import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.Enumerable;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.UnaryFactory;
 
 public class DefaultSetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Exception> 
-        extends SetRowMapperBuilder<SetRowMapper<ROW, SET, T, E>, ROW, SET, T, K, E> {
+        extends SetRowMapperBuilderImpl<SetRowMapper<ROW, SET, T, E>, ROW, SET, T, K, E> {
     /**
      * @param classMeta           the meta for the target class.
      * @param parentBuilder       the parent builder, null if none.
@@ -48,6 +49,11 @@ public class DefaultSetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E ex
         @Override
         public SetRowMapper<ROW, SET, T, E> newStaticMapper(SourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
             return  new StaticSetRowMapper<ROW, SET, T, E>(mapper, consumerErrorHandler,mappingContextFactory, enumerableFactory);
+        }
+
+        @Override
+        public <I> SetRowMapper<ROW, SET, T, E> newTransformer(SetRowMapper<ROW, SET, I, E> setRowMapper, Function<I, T> transform) {
+            return new TransformSetRowMapper<ROW, SET, I, T, E>(setRowMapper, transform);
         }
     }
 }

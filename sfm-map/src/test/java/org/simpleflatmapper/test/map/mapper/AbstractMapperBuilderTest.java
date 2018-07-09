@@ -531,32 +531,84 @@ public class AbstractMapperBuilderTest {
     }
 
     @Test
-    public void testImmutableSet() throws Exception {
+    public void testImmutableSetManual() throws Exception {
         ClassMeta<A.Builder> classMeta = ReflectionService.newInstance(false).getClassMeta(A.Builder.class);
         SampleMapperBuilder<A.Builder> builder = new SampleMapperBuilder<A.Builder>(classMeta);
 
-        EnumerableMapper<Object[][], A, ?> mapper = new TransformEnumerableMapper<Object, Object[][], A.Builder, A, Exception>(builder.addKey("id").addMapping("bs_v").mapper(), 
+        EnumerableMapper<Object[][], A, ?> mapper = new TransformEnumerableMapper<Object, Object[][], A.Builder, A, Exception>(builder.addKey("id").addMapping("bs_v").mapper(),
                 new Function<A.Builder, A>() {
-            @Override
-            public A apply(A.Builder builder) {
-                return builder.build();
-            }
-        });
+                    @Override
+                    public A apply(A.Builder builder) {
+                        return builder.build();
+                    }
+                });
 
         A a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
-        
+
         assertEquals(new HashSet<B>(Arrays.asList(new B("v1"), new B("v2"))), a.bs);
 
-//        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(false).getClassMeta(A.class));
-//
-//        mapper = builderA.addKey("id").addMapping("bs_v").mapper();
-//        
-//        a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
-//
-//        assertEquals(new HashSet<B>(Arrays.asList(new B("v1"), new B("v2"))), a.bs);
+
+    }
+    
+    @Test
+    public void testImmutableSetWithBuilder() throws Exception {
+
+        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(false).getClassMeta(A.class));
+        
+        builderA.addKey("id").addMapping("bs_v");
+
+        EnumerableMapper<Object[][], A, ?> mapper =
+                builderA.mapper();
+
+        A a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(new HashSet<B>(Arrays.asList(new B("v1"), new B("v2"))), a.bs);
 
     }
 
+    @Test
+    public void testImmutableSetNoBuilder() throws Exception {
+
+        SampleMapperBuilder<A2> builderA = new SampleMapperBuilder<A2>(ReflectionService.newInstance(false).getClassMeta(A2.class));
+
+        builderA.addKey("id").addMapping("bs_v");
+
+        EnumerableMapper<Object[][], A2, ?> mapper =
+                builderA.mapper();
+
+        A2 a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        //assertEquals(new HashSet<B>(Arrays.asList(new B("v1"), new B("v2"))), a.bs);
+
+    }
+
+    public static class A2 {
+        private final int id;
+        private final Set<B> bs;
+
+        public A2(int id, Set<B> bs) {
+            this.id = id;
+            this.bs = Collections.unmodifiableSet(new HashSet<B>(bs));
+        }
+
+        public Set<B> getBs() {
+            return bs;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        @Override
+        public String toString() {
+            return "A2{" +
+                    "id=" + id +
+                    ", bs=" + bs +
+                    '}';
+        }
+
+    }
+    
     public static class A {
         private final int id;
         private final Set<B> bs;

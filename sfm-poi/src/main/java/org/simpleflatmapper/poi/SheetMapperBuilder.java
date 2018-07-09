@@ -4,12 +4,14 @@ package org.simpleflatmapper.poi;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
-import org.simpleflatmapper.map.mapper.SetRowMapperBuilder;
+import org.simpleflatmapper.map.mapper.SetRowMapperBuilderImpl;
 import org.simpleflatmapper.poi.impl.JoinSheetMapper;
 import org.simpleflatmapper.poi.impl.StaticSheetMapper;
+import org.simpleflatmapper.poi.impl.TransformRowMapper;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.map.MapperConfig;
@@ -40,7 +42,7 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
                               MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
                               GetterFactory<Row, CsvColumnKey> getterFactory) {
         super(KEY_FACTORY, 
-                new SetRowMapperBuilder<RowMapper<T> , Row, Sheet, T, CsvColumnKey, RuntimeException>(
+                new SetRowMapperBuilderImpl<RowMapper<T> , Row, Sheet, T, CsvColumnKey, RuntimeException>(
                         classMeta,
                         new MappingContextFactoryBuilder<Row, CsvColumnKey>(new CsvColumnKeyRowKeySourceGetter()),
                         mapperConfig,
@@ -63,7 +65,7 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
         );
     }
 
-    private static class RowMapperFactory<T> implements SetRowMapperBuilder.SetRowMapperFactory<RowMapper<T>, Row, Sheet, T, RuntimeException> {
+    private static class RowMapperFactory<T> implements SetRowMapperBuilderImpl.SetRowMapperFactory<RowMapper<T>, Row, Sheet, T, RuntimeException> {
         @Override
         public RowMapper<T> newJoinMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory, UnaryFactory<Sheet, Enumerable<Row>> enumerableFactory) {
             return new JoinSheetMapper<T>(mapper, consumerErrorHandler, mappingContextFactory);
@@ -72,6 +74,11 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
         @Override
         public RowMapper<T> newStaticMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory, UnaryFactory<Sheet, Enumerable<Row>> enumerableFactory) {
             return new StaticSheetMapper<T>(mapper, consumerErrorHandler, mappingContextFactory);
+        }
+
+        @Override
+        public <I> RowMapper<T> newTransformer(SetRowMapper<Row, Sheet, I, RuntimeException> setRowMapper, Function<I, T> transform) {
+            return new TransformRowMapper((RowMapper<T>)setRowMapper, transform);
         }
     }
 }

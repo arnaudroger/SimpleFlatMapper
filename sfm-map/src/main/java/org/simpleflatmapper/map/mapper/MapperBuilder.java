@@ -2,56 +2,37 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
-import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
-import org.simpleflatmapper.util.UnaryFactory;
 
 /**
  * @param <T> the targeted type of the mapper
  */
-public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Exception, M extends SetRowMapper<ROW, SET, T, E>, B extends MapperBuilder<ROW, SET, T, K, E, M, B>>  {
+public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Exception, IM extends SetRowMapper<ROW, SET, T, E>, OM extends SetRowMapper<ROW, SET, T, E>, B extends MapperBuilder<ROW, SET, T, K, E, IM, OM, B>>  {
 
 
     protected final KeyFactory<K> keyFactory;
-    protected final SetRowMapperBuilder<ROW, SET, T, K, E> setRowMapperBuilder;
-    protected final Function<SetRowMapper<ROW, SET, T, E>, M> specialisedMapper;
+    protected final SetRowMapperBuilder<IM, ROW, SET, T, K, E> setRowMapperBuilder;
+    protected final Function<IM, OM> specialisedMapper;
     private int calculatedIndex;
-
-    /**
-     * @param classMeta                  the meta for the target class.
-     * @param parentBuilder              the parent builder, null if none.
-     * @param mapperConfig               the mapperConfig.
-     * @param mapperSource               the Mapper source.
-     * @param keyFactory
-     * @param enumerableFactory
-     * @param specialisedMapper
-     * @param startIndex                 the first property index
-     */
+    
     public MapperBuilder(
-            final ClassMeta<T> classMeta,
-            MappingContextFactoryBuilder<? super ROW, K> parentBuilder,
-            MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
-            MapperSource<? super ROW, K> mapperSource,
-            KeyFactory<K> keyFactory,
-            UnaryFactory<SET, Enumerable<ROW>> enumerableFactory, 
-            Function<SetRowMapper<ROW, SET, T, E>, M> specialisedMapper,
-            int startIndex) {
-        this.specialisedMapper = specialisedMapper;
-        this.setRowMapperBuilder = new SetRowMapperBuilder<ROW, SET, T, K, E>(classMeta, parentBuilder, mapperConfig, mapperSource, keyFactory, enumerableFactory);
+            KeyFactory<K> keyFactory, 
+            SetRowMapperBuilder<IM, ROW, SET, T, K, E> setRowMapperBuilder, 
+            Function<IM, OM> specialisedMapper, 
+            int calculatedIndex) {
         this.keyFactory = keyFactory;
-        this.calculatedIndex = startIndex;
+        this.setRowMapperBuilder = setRowMapperBuilder;
+        this.specialisedMapper = specialisedMapper;
+        this.calculatedIndex = calculatedIndex;
     }
 
     /**
      * @return a new newInstance of the jdbcMapper based on the current state of the builder.
      */
-    public M mapper() {
+    public final OM mapper() {
         return specialisedMapper.apply(setRowMapperBuilder.mapper());
     }
     

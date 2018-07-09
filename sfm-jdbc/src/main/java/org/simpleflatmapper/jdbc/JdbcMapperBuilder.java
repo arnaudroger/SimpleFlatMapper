@@ -1,11 +1,14 @@
 package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.Result;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.mapper.DefaultSetRowMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
+import org.simpleflatmapper.map.mapper.SetRowMapperBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
@@ -33,7 +36,7 @@ import java.util.stream.Stream;
 /**
  * @param <T> the targeted type of the jdbcMapper
  */
-public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultSet, T, JdbcColumnKey, SQLException, JdbcMapper<T>, JdbcMapperBuilder<T>> {
+public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultSet, T, JdbcColumnKey, SQLException, SetRowMapper<ResultSet, ResultSet, T, SQLException>, JdbcMapper<T>, JdbcMapperBuilder<T>> {
 
     private static final MapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
             new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class,  ResultSetGetterFactory.INSTANCE);
@@ -91,19 +94,18 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
              final MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig,
              final GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
              final MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
-        super(classMeta,
-                parentBuilder,
-                mapperConfig,
-                FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
-                KEY_FACTORY, 
-                new ResultSetEnumerableFactory(),
+        
+        super(KEY_FACTORY, 
+                new DefaultSetRowMapperBuilder<ResultSet, ResultSet, T, JdbcColumnKey, SQLException>(
+                        classMeta, parentBuilder, mapperConfig, 
+                        FIELD_MAPPER_SOURCE.getterFactory(getterFactory), KEY_FACTORY, new ResultSetEnumerableFactory()
+                ),
                 new Function<SetRowMapper<ResultSet, ResultSet, T, SQLException>, JdbcMapper<T>>() {
                     @Override
                     public JdbcMapper<T> apply(SetRowMapper<ResultSet, ResultSet, T, SQLException> setRowMapper) {
                         return new JdbcMapperImpl<T>(setRowMapper, parentBuilder.newFactory());
                     }
-                },
-                1);
+                },1 );
         this.mappingContextFactoryBuilder = parentBuilder;   
     }
 

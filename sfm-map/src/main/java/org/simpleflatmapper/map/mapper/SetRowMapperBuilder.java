@@ -1,10 +1,12 @@
 package org.simpleflatmapper.map.mapper;
 
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
@@ -14,13 +16,14 @@ import org.simpleflatmapper.util.UnaryFactory;
 /**
  * @param <T> the targeted type of the mapper
  */
-public final class SetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Exception>  {
+public class SetRowMapperBuilder<IM extends SetRowMapper<ROW, SET, T, E>, ROW, SET, T, K extends FieldKey<K>, E extends Exception>  {
 
     private final ConstantSourceMapperBuilder<ROW, T, K> constantSourceMapperBuilder;
 
     protected final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
     protected final MappingContextFactoryBuilder<? super ROW, K> mappingContextFactoryBuilder;
     private final UnaryFactory<SET, Enumerable<ROW>> enumerableFactory;
+    private final SetRowMapperFactory<IM, ROW, SET, T, E> setRowMapperFactory;
 
     /**
      * @param classMeta                  the meta for the target class.
@@ -36,10 +39,10 @@ public final class SetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E ext
             MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
             MapperSource<? super ROW, K> mapperSource,
             KeyFactory<K> keyFactory,
-            UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
+            UnaryFactory<SET, Enumerable<ROW>> enumerableFactory, 
+            SetRowMapperFactory<IM, ROW, SET, T, E> setRowMapperFactory) {
+        this.setRowMapperFactory = setRowMapperFactory;
         this.enumerableFactory = enumerableFactory;
-
-
         this.constantSourceMapperBuilder =
                 new ConstantSourceMapperBuilder<ROW, T, K>(
                         mapperSource,
@@ -54,15 +57,15 @@ public final class SetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E ext
     /**
      * @return a new newInstance of the jdbcMapper based on the current state of the builder.
      */
-    public final SetRowMapper<ROW, SET, T, E> mapper() {
+    public final IM mapper() {
         SourceFieldMapper<ROW, T> mapper = sourceFieldMapper();
 
-        SetRowMapper<ROW, SET, T, E> m;
+        IM m;
         
         if (constantSourceMapperBuilder.hasJoin()) {
-            m = new JoinMapper<ROW, SET, T, E>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory);
+            m = setRowMapperFactory.newJoinMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory);
         } else {
-            m = new StaticSetRowMapper<ROW, SET, T, E>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory);
+            m = setRowMapperFactory.newStaticMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory);
         }
         
         return m;
@@ -96,4 +99,12 @@ public final class SetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E ext
     public MappingContextFactoryBuilder<? super ROW, K> getMappingContextFactoryBuilder() {
         return mappingContextFactoryBuilder;
     }
+
+    public interface SetRowMapperFactory<M extends SetRowMapper<ROW, SET, T, E>, ROW, SET, T, E extends Exception> {
+
+        M newJoinMapper(SourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory);
+
+        M newStaticMapper(SourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory);
+    }
+
 }

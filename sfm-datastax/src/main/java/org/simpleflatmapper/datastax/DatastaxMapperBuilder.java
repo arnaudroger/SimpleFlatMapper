@@ -5,6 +5,7 @@ import com.datastax.driver.core.exceptions.DriverException;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.mapper.DefaultSetRowMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.impl.ResultSetEnumerable;
@@ -28,7 +29,7 @@ import java.util.stream.Stream;
  * @see DatastaxMapperFactory
  * @param <T> the targeted type of the jdbcMapper
  */
-public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet, T, DatastaxColumnKey, DriverException, DatastaxMapper<T>, DatastaxMapperBuilder<T>> {
+public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet, T, DatastaxColumnKey, DriverException, SetRowMapper<Row, ResultSet, T, DriverException>, DatastaxMapper<T>, DatastaxMapperBuilder<T>> {
 
     public static final KeyFactory<DatastaxColumnKey> KEY_FACTORY = new KeyFactory<DatastaxColumnKey>() {
         @Override
@@ -48,12 +49,11 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
             MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig,
             GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory,
             MappingContextFactoryBuilder<GettableByIndexData, DatastaxColumnKey> parentBuilder) {
-        super(classMeta,
-                parentBuilder,
-                mapperConfig,
-                new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, getterFactory),
-                KEY_FACTORY,
-                new ResultSetEnumerableFactory(),
+        super(KEY_FACTORY, 
+                new DefaultSetRowMapperBuilder<Row, ResultSet, T, DatastaxColumnKey, DriverException>(
+                        classMeta, parentBuilder, mapperConfig,
+                        new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, getterFactory), 
+                        KEY_FACTORY, new ResultSetEnumerableFactory()),
                 new Function<SetRowMapper<Row, ResultSet, T, DriverException>, DatastaxMapper<T>>() {
                     @Override
                     public DatastaxMapper<T> apply(SetRowMapper<Row, ResultSet, T, DriverException> setRowMapper) {

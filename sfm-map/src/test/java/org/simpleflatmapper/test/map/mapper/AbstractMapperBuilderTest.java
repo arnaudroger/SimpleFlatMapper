@@ -713,43 +713,54 @@ public class AbstractMapperBuilderTest {
         }
     };
 
-    public static class SampleMapperBuilder<T> extends MapperBuilder<Object[], Object[][], T, SampleFieldKey, Exception, SetRowMapper<Object[], Object[][], T, Exception>, SampleMapperBuilder<T>> {
+    public static class SampleMapperBuilder<T> extends MapperBuilder<Object[], Object[][], T, SampleFieldKey, Exception, SetRowMapper<Object[], Object[][], T, Exception>, SetRowMapper<Object[], Object[][], T, Exception>, SampleMapperBuilder<T>> {
 
         public SampleMapperBuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig) {
-            super(classMeta, new MappingContextFactoryBuilder<Object[], SampleFieldKey>(new KeySourceGetter<SampleFieldKey, Object[]>() {
-                        @Override
-                        public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
-                            return source[key.getIndex()];
-                        }
-                    }), mapperConfig.failOnAsm(true), new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, GETTER_FACTORY),
-                    KEY_FACTORY, new UnaryFactory<Object[][], Enumerable<Object[]>>() {
-                        @Override
-                        public Enumerable<Object[]> newInstance(final Object[][] objects) {
-                            return new Enumerable<Object[]>() {
-                                int i = -1;
+            super(KEY_FACTORY, 
+                    new DefaultSetRowMapperBuilder<Object[], Object[][], T, SampleFieldKey, Exception>(
+                            classMeta,
+                            new MappingContextFactoryBuilder<Object[], SampleFieldKey>(new KeySourceGetter<SampleFieldKey, Object[]>() {
                                 @Override
-                                public boolean next() {
-                                    int n = i + 1;
-                                    if (n < objects.length) {
-                                        i = n;
-                                        return true;
-                                        
-                                    }
-                                    return false;
+                                public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
+                                    return source[key.getIndex()];
                                 }
+                            }), 
+                            mapperConfig,
+                            new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, GETTER_FACTORY),
+                            KEY_FACTORY,
+                            new UnaryFactory<Object[][], Enumerable<Object[]>>() {
+                                @Override
+                                public Enumerable<Object[]> newInstance(final Object[][] objects) {
+                                    return new Enumerable<Object[]>() {
+                                        int i = -1;
 
-                                @Override
-                                public Object[] currentValue() {
-                                    return objects[i];
+                                        @Override
+                                        public boolean next() {
+                                            int n = i + 1;
+                                            if (n < objects.length) {
+                                                i = n;
+                                                return true;
+
+                                            }
+                                            return false;
+                                        }
+
+                                        @Override
+                                        public Object[] currentValue() {
+                                            return objects[i];
+                                        }
+                                    };
                                 }
-                            };
-                        }
-                    }, new Function<SetRowMapper<Object[], Object[][], T, Exception>, SetRowMapper<Object[], Object[][], T, Exception>>() {
+                            }
+                                
+                    ),
+                    new Function<SetRowMapper<Object[], Object[][], T, Exception>, SetRowMapper<Object[], Object[][], T, Exception>>() {
                         @Override
                         public SetRowMapper<Object[], Object[][], T, Exception> apply(SetRowMapper<Object[], Object[][], T, Exception> setRowMapper) {
                             return setRowMapper;
                         }
-                    }, 0);
+                    },
+                            0);
         }
         public SampleMapperBuilder(ClassMeta<T> classMeta) {
             this(classMeta, MapperConfig.<SampleFieldKey>fieldMapperConfig());

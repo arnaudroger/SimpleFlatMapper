@@ -3,9 +3,11 @@ package org.simpleflatmapper.poi;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.SourceFieldMapper;
+import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
+import org.simpleflatmapper.map.mapper.SetRowMapperBuilder;
 import org.simpleflatmapper.poi.impl.JoinSheetMapper;
 import org.simpleflatmapper.poi.impl.StaticSheetMapper;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
@@ -22,7 +24,7 @@ import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.UnaryFactory;
 
-public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColumnKey, RuntimeException, RowMapper<T>,  SheetMapperBuilder<T>> {
+public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColumnKey, RuntimeException, RowMapper<T>, RowMapper<T>, SheetMapperBuilder<T>> {
 
     public static final MapperSourceImpl<Row, CsvColumnKey> FIELD_MAPPER_SOURCE =
             new MapperSourceImpl<Row, CsvColumnKey>(Row.class, new RowGetterFactory());
@@ -37,32 +39,39 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
     public SheetMapperBuilder(ClassMeta<T> classMeta,
                               MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
                               GetterFactory<Row, CsvColumnKey> getterFactory) {
-        super(classMeta, new MappingContextFactoryBuilder<Row, CsvColumnKey>(new CsvColumnKeyRowKeySourceGetter()),
-                mapperConfig, FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
-                KEY_FACTORY, new UnaryFactory<Sheet, Enumerable<Row>>() {
+        super(KEY_FACTORY, 
+                new SetRowMapperBuilder<RowMapper<T> , Row, Sheet, T, CsvColumnKey, RuntimeException>(
+                        classMeta,
+                        new MappingContextFactoryBuilder<Row, CsvColumnKey>(new CsvColumnKeyRowKeySourceGetter()),
+                        mapperConfig,
+                        FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
+                        KEY_FACTORY,
+                        new UnaryFactory<Sheet, Enumerable<Row>>() {
+                            @Override
+                            public Enumerable<Row> newInstance(Sheet rows) {
+                                throw new UnsupportedOperationException();
+                            }
+                        },
+                        new RowMapperFactory<T>()
+                ),  new Function<RowMapper<T>, RowMapper<T>>() {
                     @Override
-                    public Enumerable<Row> newInstance(Sheet rows) {
-                        throw new UnsupportedOperationException();
+                    public RowMapper<T> apply(RowMapper<T> setRowMapper) {
+                        return setRowMapper;
                     }
-                }, new Function<SetRowMapper<Row, Sheet, T, RuntimeException>, RowMapper<T>>() {
-                    @Override
-                    public RowMapper<T> apply(SetRowMapper<Row, Sheet, T, RuntimeException> setRowMapper) {
-                        throw new UnsupportedOperationException();
-                    }
-                }, 0);
-        
-        
+                }, 0
+                
+        );
     }
 
+    private static class RowMapperFactory<T> implements SetRowMapperBuilder.SetRowMapperFactory<RowMapper<T>, Row, Sheet, T, RuntimeException> {
+        @Override
+        public RowMapper<T> newJoinMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory, UnaryFactory<Sheet, Enumerable<Row>> enumerableFactory) {
+            return new JoinSheetMapper<T>(mapper, consumerErrorHandler, mappingContextFactory);
+        }
 
-    @Override
-    public RowMapper<T> mapper() {
-        SourceFieldMapper<Row, T> fieldMapper = setRowMapperBuilder.sourceFieldMapper();
-        
-        if (setRowMapperBuilder.hasJoin()) {
-            return new JoinSheetMapper<T>(fieldMapper, setRowMapperBuilder.mapperConfig().consumerErrorHandler(), setRowMapperBuilder.getMappingContextFactoryBuilder().newFactory());
-        } else {
-            return new StaticSheetMapper<T>(fieldMapper, setRowMapperBuilder.mapperConfig().consumerErrorHandler(), setRowMapperBuilder.getMappingContextFactoryBuilder().newFactory());
+        @Override
+        public RowMapper<T> newStaticMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory, UnaryFactory<Sheet, Enumerable<Row>> enumerableFactory) {
+            return new StaticSheetMapper<T>(mapper, consumerErrorHandler, mappingContextFactory);
         }
     }
 }

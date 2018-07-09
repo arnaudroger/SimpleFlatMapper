@@ -229,7 +229,12 @@ public class BiInstantiatorBuilder {
             if (function == null) {
                 newInstanceNullFunction(mv, p);
             } else {
-                invokeBiFunction(targetType, function, classType, s1, s2, mv, null, false);
+                invokeBiFunction(targetType, function, classType, s1, s2, mv,  new Consumer<MethodVisitor>() {
+                    @Override
+                    public void accept(MethodVisitor mv) {
+                        mv.visitVarInsn(AsmUtils.getLoadOps(function.parameter.getType()), 4);
+                    }
+                }, false);
             }
         }
 
@@ -280,10 +285,8 @@ public class BiInstantiatorBuilder {
                         new Consumer<MethodVisitor>() {
                             @Override
                             public void accept(MethodVisitor mv) {
-                                if (checkIfNull) {
-                                    mv.visitVarInsn(ALOAD, 3);
-                                    mv.visitVarInsn(AsmUtils.getLoadOps(injectionPoint.parameter.getType()), 4);
-                                }
+                                mv.visitVarInsn(ALOAD, 3);
+                                mv.visitVarInsn(AsmUtils.getLoadOps(injectionPoint.parameter.getType()), 4);
                                 AsmUtils.invoke(mv, TypeHelper.toClass(builderClass), e.getValue().getName(),
                                         AsmUtils.toSignature(e.getValue()));
                                 if (!Void.TYPE.equals(e.getValue().getReturnType())) {
@@ -345,9 +348,10 @@ public class BiInstantiatorBuilder {
                 mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(wrapperClass));
             }
 
+            mv.visitVarInsn(ASTORE, 4);
+
             Label label = new Label();
             if (ignoreNullValues) {
-                mv.visitVarInsn(ASTORE, 4);
 
                 mv.visitVarInsn(ALOAD, 4);
                 mv.visitJumpInsn(IFNULL, label);
@@ -369,6 +373,7 @@ public class BiInstantiatorBuilder {
             }
             // iframe?
         } else {
+            mv.visitVarInsn(AsmUtils.getStoreOps(injectionPoint.parameter.getType()), 4);
             if (consumer != null) {
                 consumer.accept(mv);
             }
@@ -377,9 +382,7 @@ public class BiInstantiatorBuilder {
 
     private static void changeToPrimitiveIfNeeded(InjectionPoint injectionPoint, MethodVisitor mv, Class<?> wrapperClass, boolean ignoreNullValues) {
         if (TypeHelper.isPrimitive(injectionPoint.parameter.getType())) {
-            if (ignoreNullValues) {
-                mv.visitVarInsn(ALOAD, 4);
-            }
+            mv.visitVarInsn(ALOAD, 4);
             String methodSuffix = getPrimitiveMethodSuffix(injectionPoint.parameter);
             String valueMethodPrefix = methodSuffix.toLowerCase();
             if ("character".equals(valueMethodPrefix)) {
@@ -387,9 +390,7 @@ public class BiInstantiatorBuilder {
             }
             String valueMethod = valueMethodPrefix + "Value";
             AsmUtils.invoke(mv, wrapperClass, valueMethod, "()" + AsmUtils.toAsmType(injectionPoint.parameter.getType()));
-            if (ignoreNullValues) {
-                mv.visitVarInsn(AsmUtils.getStoreOps(injectionPoint.parameter.getType()), 4);
-            }
+            mv.visitVarInsn(AsmUtils.getStoreOps(injectionPoint.parameter.getType()), 4);
         }
     }
 

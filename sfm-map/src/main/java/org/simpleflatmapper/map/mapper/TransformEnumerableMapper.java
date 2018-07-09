@@ -2,7 +2,7 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.EnumerableMapper;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.impl.TransformEnumerable;
+import org.simpleflatmapper.map.TransformEnumerable;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;

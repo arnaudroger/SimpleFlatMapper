@@ -1,4 +1,4 @@
-package org.simpleflatmapper.map.impl;
+package org.simpleflatmapper.map;
 
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;

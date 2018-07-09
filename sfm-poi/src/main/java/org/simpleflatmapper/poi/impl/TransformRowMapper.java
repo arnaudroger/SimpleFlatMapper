@@ -4,7 +4,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.impl.TransformEnumerable;
+import org.simpleflatmapper.map.TransformEnumerable;
 import org.simpleflatmapper.poi.RowMapper;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Enumerable;

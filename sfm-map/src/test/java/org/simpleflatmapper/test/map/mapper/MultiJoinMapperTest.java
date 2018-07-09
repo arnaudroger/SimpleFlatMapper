@@ -1,6 +1,7 @@
 package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
+import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.annotation.Key;
@@ -205,8 +206,8 @@ public class MultiJoinMapperTest {
         AbstractMapperBuilderTest.SampleMapperBuilder<RootC> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<RootC>(classMeta, mapperConfig());
 
-        JoinMapper<Object[], Object[][], RootC, ?> mapper =
-                (JoinMapper<Object[], Object[][], RootC, ?>) builder
+        SetRowMapper<Object[], Object[][], RootC, ?> mapper =
+                builder
                         .addMapping("id")
                         .addMapping("ll_id")
                         .addMapping("ls_id")
@@ -245,8 +246,8 @@ public class MultiJoinMapperTest {
         AbstractMapperBuilderTest.SampleMapperBuilder<Tuple2<A, List<Tuple2<B, List<C>>>>> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Tuple2<A, List<Tuple2<B, List<C>>>>>(classMeta, mapperConfig());
 
-        JoinMapper<Object[], Object[][], Tuple2<A, List<Tuple2<B, List<C>>>>, ?> mapper =
-                (JoinMapper<Object[], Object[][], Tuple2<A, List<Tuple2<B, List<C>>>>, ?>)
+        SetRowMapper<Object[], Object[][], Tuple2<A, List<Tuple2<B, List<C>>>>, ?> mapper =
+                
                         builder
                                 .addMapping("id", KeyProperty.DEFAULT)
                                 .addMapping("elt1_elt0_elt0_id", KeyProperty.DEFAULT)

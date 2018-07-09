@@ -1,6 +1,7 @@
 package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
+import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.mapper.JoinMapper;
@@ -39,8 +40,8 @@ public class Issue477Test {
         builder.addMapping("list_pojoB_id", KeyProperty.DEFAULT);
 
 
-        JoinMapper<Object[], Object[][],ListOfPojo, ?> mapper =
-                (JoinMapper<Object[], Object[][], ListOfPojo, ?>) builder.mapper();
+        SetRowMapper<Object[], Object[][],ListOfPojo, ?> mapper =
+            builder.mapper();
 
         List<ListOfPojo> list = mapper.forEach(dataSimple, new ListCollector<ListOfPojo>()).getList();
 

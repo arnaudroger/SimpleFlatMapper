@@ -7,6 +7,7 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
 import org.simpleflatmapper.map.fieldmapper.MapperFieldMapper;
+import org.simpleflatmapper.map.impl.GenericBuilder;
 import org.simpleflatmapper.map.impl.GetterMapper;
 import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.map.property.DefaultValueProperty;
@@ -173,24 +174,81 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         }
 
         FieldMapper<S, T>[] fields = fields();
-        InstantiatorAndFieldMappers constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
+        InstantiatorAndFieldMappers<S, T> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
 
-        if (hasJoin() && fields.length == 0) {
+        if (hasJoin() && fields.length == 0 && !constructorFieldMappersAndInstantiator.constructorInjections.parameterGetterMap.isEmpty()) {
             // already has mutable builder
             if (constructorFieldMappersAndInstantiator.instantiator instanceof BuilderBiInstantiator 
                 && ((BuilderBiInstantiator)constructorFieldMappersAndInstantiator.instantiator).isMutable()) {
                 BuilderBiInstantiator builderBiInstantiator = (BuilderBiInstantiator) constructorFieldMappersAndInstantiator.instantiator;
                 return builderWithTransformer(constructorFieldMappersAndInstantiator, builderBiInstantiator);
             } else {
-                return buildMapper(fields, constructorFieldMappersAndInstantiator, getTargetClass());
+                final ConstructorInjections constructorInjections = constructorFieldMappersAndInstantiator.constructorInjections;
+                
+                final BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder = targetInstantiatorFromGenericBuilder(constructorFieldMappersAndInstantiator);
+
+
+                final Class<?> targetClass = GenericBuilder.class;
+                final Method buildMethod = GenericBuilder.BUILD;
+                
+                final Function f = new Function() {
+                    @Override
+                    public Object apply(Object o) {
+                        try {
+                            return buildMethod.invoke(o);
+                        } catch (Exception e) {
+                            return ErrorHelper.rethrow(e);
+                        }
+                    }
+                };
+
+                final int size = constructorInjections.maxIndex();
+                InstantiatorAndFieldMappers newConstantSourceMapperBuilder =
+                        new InstantiatorAndFieldMappers(constructorFieldMappersAndInstantiator.constructorInjections, constructorFieldMappersAndInstantiator.fieldMappers, new BiInstantiator() {
+                            @Override
+                            public Object newInstance(Object o, Object o2) throws Exception {
+                                GenericBuilder genericBuilder = new GenericBuilder(size + 1, targetInstantiatorFromGenericBuilder);
+
+                                for(Map.Entry<Parameter, BiFunction<? super S, ? super MappingContext<? super S>, ?>> e : constructorInjections.parameterGetterMap.entrySet()) {
+                                    BiFunction biFunction = e.getValue();
+                                    genericBuilder.objects[e.getKey().getIndex()] = biFunction.apply(o, o2);
+                                }
+
+                                return genericBuilder;
+                            }
+                        });
+                SourceFieldMapper delegate = buildMapper(new FieldMapper[0], newConstantSourceMapperBuilder, targetClass);
+                return new TransformSourceFieldMapper<S, Object, T>(delegate, f);
             }
         } else {
             return buildMapper(fields, constructorFieldMappersAndInstantiator, getTargetClass());
         }
     }
 
+    private BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder(InstantiatorAndFieldMappers<S, T> constructorFieldMappersAndInstantiator) {
+        InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
+
+
+        Map<Parameter, BiFunction<? super Object[], ? super Object, ?>> params = new HashMap<Parameter, BiFunction<? super Object[], ? super Object, ?>>();
+
+        for(Map.Entry<Parameter, BiFunction<? super S, ? super MappingContext<? super S>, ?>> e : constructorFieldMappersAndInstantiator.constructorInjections.parameterGetterMap.entrySet()) {
+            final int index = e.getKey().getIndex();
+            params.put(e.getKey(), new BiFunction<Object[], Object, Object>() {
+                @Override
+                public Object apply(Object[] objects, Object o) {
+                    return objects[index];
+                }
+            });
+        }
+
+        BiInstantiator<Object[], Object, Object> targetInstantiator = instantiatorFactory.getBiInstantiator(getTargetClass(), Object[].class, Object.class,
+                propertyMappingsBuilder.getPropertyFinder().getEligibleInstantiatorDefinitions(), params, true, reflectionService.builderIgnoresNullValues());
+        
+        return targetInstantiator;
+    }
+
     @SuppressWarnings("unchecked")
-    private SourceFieldMapper<S, T> builderWithTransformer(InstantiatorAndFieldMappers constructorFieldMappersAndInstantiator, BuilderBiInstantiator builderBiInstantiator) {
+    private SourceFieldMapper<S, T> builderWithTransformer(final InstantiatorAndFieldMappers constructorFieldMappersAndInstantiator, final BuilderBiInstantiator builderBiInstantiator) {
         final Method buildMethod = builderBiInstantiator.buildMethod;
         final Class<?> targetClass = buildMethod.getDeclaringClass();
         final Function f = new Function() {
@@ -204,7 +262,8 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             }
         };
 
-        InstantiatorAndFieldMappers newConstantSourceMapperBuilder = new InstantiatorAndFieldMappers(constructorFieldMappersAndInstantiator.fieldMappers, new BiInstantiator() {
+        InstantiatorAndFieldMappers newConstantSourceMapperBuilder = 
+                new InstantiatorAndFieldMappers(constructorFieldMappersAndInstantiator.constructorInjections, constructorFieldMappersAndInstantiator.fieldMappers, new BiInstantiator() {
             @Override
             public Object newInstance(Object o, Object o2) throws Exception {
                 return builderBiInstantiator.newInitialisedBuilderInstace(o, o2);
@@ -272,7 +331,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                     mapperBiInstantiatorFactory.
                             <S, T, K, FieldMapperColumnDefinition<K>>
                                     getBiInstantiator(mapperSource.source(), target, propertyMappingsBuilder, injections, getterFactory, reflectionService.builderIgnoresNullValues());
-            return new InstantiatorAndFieldMappers(constructorInjections.fieldMappers, instantiator);
+            return new InstantiatorAndFieldMappers(constructorInjections, constructorInjections.fieldMappers, instantiator);
 		} catch(Exception e) {
             return ErrorHelper.rethrow(e);
 		}
@@ -547,10 +606,12 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         return keys;
     }
     private class InstantiatorAndFieldMappers<S, T> {
+        private final ConstructorInjections constructorInjections;
         private final FieldMapper<S, T>[] fieldMappers;
         private final BiInstantiator<S, MappingContext<? super S>, T> instantiator;
 
-        private InstantiatorAndFieldMappers(FieldMapper<S, T>[] fieldMappers, BiInstantiator<S, MappingContext<? super S>, T> instantiator) {
+        private InstantiatorAndFieldMappers(ConstructorInjections constructorInjections, FieldMapper<S, T>[] fieldMappers, BiInstantiator<S, MappingContext<? super S>, T> instantiator) {
+            this.constructorInjections = constructorInjections;
             this.fieldMappers = fieldMappers;
             this.instantiator = instantiator;
         }
@@ -562,6 +623,16 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         private ConstructorInjections(Map<Parameter, BiFunction<? super S, ? super MappingContext<? super S>, ?>> parameterGetterMap, FieldMapper<S, T>[] fieldMappers) {
             this.parameterGetterMap = parameterGetterMap;
             this.fieldMappers = fieldMappers;
+        }
+        
+        public int maxIndex() {
+            int maxIndex = -1;
+            
+            for(Map.Entry<Parameter, BiFunction<? super S, ? super MappingContext<? super S>, ?>> e : parameterGetterMap.entrySet()) {
+                maxIndex = Math.max(maxIndex, e.getKey().getIndex());
+            }
+            
+            return maxIndex;
         }
     }
 

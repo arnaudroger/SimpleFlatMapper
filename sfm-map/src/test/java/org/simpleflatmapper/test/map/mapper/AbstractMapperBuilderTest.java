@@ -566,10 +566,42 @@ public class AbstractMapperBuilderTest {
 
     }
 
+
+    @Test
+    public void testImmutableSetWithBuilderAsm() throws Exception {
+
+        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(true).getClassMeta(A.class));
+
+        builderA.addKey("id").addMapping("bs_v");
+
+        EnumerableMapper<Object[][], A, ?> mapper =
+                builderA.mapper();
+
+        A a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(new HashSet<B>(Arrays.asList(new B("v1"), new B("v2"))), a.bs);
+
+    }
     @Test
     public void testImmutableSetNoBuilder() throws Exception {
 
         SampleMapperBuilder<A2> builderA = new SampleMapperBuilder<A2>(ReflectionService.newInstance(false).getClassMeta(A2.class));
+
+        builderA.addKey("id").addMapping("bs_v");
+
+        EnumerableMapper<Object[][], A2, ?> mapper =
+                builderA.mapper();
+
+        A2 a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(new HashSet<B>(Arrays.asList(new B("v1"), new B("v2"))), a.bs);
+
+    }
+
+    @Test
+    public void testImmutableSetNoBuilderAsm() throws Exception {
+
+        SampleMapperBuilder<A2> builderA = new SampleMapperBuilder<A2>(ReflectionService.newInstance(true).getClassMeta(A2.class));
 
         builderA.addKey("id").addMapping("bs_v");
 

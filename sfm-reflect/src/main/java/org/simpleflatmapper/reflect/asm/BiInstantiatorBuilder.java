@@ -222,7 +222,7 @@ public class BiInstantiatorBuilder {
         StringBuilder sb = new StringBuilder();
 
         for (Parameter p : parameters) {
-            InjectionPoint function = findFunctionCalls(p, injectionPoints);
+            final InjectionPoint function = findFunctionCalls(p, injectionPoints);
 
             sb.append(AsmUtils.toTargetTypeDeclaration(p.getType()));
 

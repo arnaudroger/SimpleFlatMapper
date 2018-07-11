@@ -1,5 +1,9 @@
 package org.simpleflatmapper.reflect.meta;
 
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.impl.list.mutable.FastList;
+import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.getter.IndexedBooleanArrayGetter;
@@ -30,6 +34,7 @@ import org.simpleflatmapper.reflect.setter.IndexedShortArraySetter;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BooleanSupplier;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.IntFactory;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
@@ -44,16 +49,46 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	private final Type elementTarget;
 	private final ClassMeta<E> elementClassMeta;
 	private final Type type;
-	private final Class<?> implementationType;
-	private final InstantiatorDefinition constructor;
+	private final InstantiatorDefinitionAndIntermediatType instInfo;
 
 	public ArrayClassMeta(Type type, Type elementTarget, ReflectionService reflectionService) {
 		this.type = type;
 		this.elementTarget = elementTarget;
 		this.reflectionService = reflectionService;
 		this.elementClassMeta = reflectionService.getClassMeta(elementTarget);
-		this.implementationType = findImpl(type);
-		this.constructor = getConstructor(type);
+		this.instInfo = getInstantiatorDefinitionAndIntermediateType(type);
+	}
+
+	private InstantiatorDefinitionAndIntermediatType getInstantiatorDefinitionAndIntermediateType(Type type) {
+		Class<?> clazz = TypeHelper.toClass(type);
+
+		if (clazz.isArray()) {
+			return new InstantiatorDefinitionAndIntermediatType(null, clazz);
+		}
+
+		if (clazz.isInterface()) {
+			if (List.class.equals(clazz) || Collection.class.equals(clazz) || Iterable.class.equals(clazz)) {
+				return new InstantiatorDefinitionAndIntermediatType(getConstructor(ArrayList.class), ArrayList.class);
+			} else if (Set.class.equals(clazz)) {
+				return new InstantiatorDefinitionAndIntermediatType(getConstructor(HashSet.class), HashSet.class);
+			} else if (MutableList.class.equals(clazz)) {
+				return new InstantiatorDefinitionAndIntermediatType(getConstructor(FastList.class), FastList.class);
+			} else if (ImmutableList.class.equals(clazz)) {
+				try {
+					return new InstantiatorDefinitionAndIntermediatType(
+							new BuilderInstantiatorDefinition(getConstructor(FastList.class),
+									new HashMap<org.simpleflatmapper.reflect.Parameter, java.lang.reflect.Method>(),
+									FastList.class.getMethod("toImmutable")),
+							FastList.class);
+				} catch (Exception e) {
+					ErrorHelper.rethrow(e);
+				}
+			}
+		} else if (!Modifier.isAbstract(clazz.getModifiers())) {
+			return new InstantiatorDefinitionAndIntermediatType(getConstructor(type), type);
+		}
+
+		throw new IllegalArgumentException("Unknown List impl for " + type);
 	}
 
 	private InstantiatorDefinition getConstructor(Type type) {
@@ -61,33 +96,13 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 			return null;
 		} else {
 			try {
-				return new ExecutableInstantiatorDefinition(implementationType.getDeclaredConstructor());
+				return new ExecutableInstantiatorDefinition(TypeHelper.toClass(type).getDeclaredConstructor());
 			} catch (NoSuchMethodException e) {
-				throw new IllegalArgumentException("No empty constructor for " + implementationType);
+				throw new IllegalArgumentException("No empty constructor for " + type);
 			}
 		}
 	}
 
-	private Class<?> findImpl(Type type) {
-
-		Class<?> clazz = TypeHelper.toClass(type);
-
-		if (clazz.isArray()) {
-			return clazz;
-		}
-
-		if (clazz.isInterface()) {
-			if (List.class.equals(clazz) || Collection.class.equals(clazz) || Iterable.class.equals(clazz)) {
-				return ArrayList.class;
-			} else if (Set.class.equals(clazz)) {
-				return HashSet.class;
-			}
-		} else if (!Modifier.isAbstract(clazz.getModifiers())) {
-			return clazz;
-		}
-
-		throw new IllegalArgumentException("Unknown List impl for " + type);
-	}
 
 	public ClassMeta<E> getElementClassMeta() {
 		return elementClassMeta;
@@ -111,14 +126,10 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 		return type;
 	}
 
-    public boolean isArray() {
-        return TypeHelper.isArray(type);
-    }
-
 	@Override
 	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
-		if (constructor != null) {
-			return Arrays.asList(constructor);
+		if (instInfo != null) {
+			return Arrays.asList(instInfo.instantiatorDefinition);
 		} else {
 			return Collections.emptyList();
 		}
@@ -137,59 +148,57 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	@SuppressWarnings("unchecked")
 	public <T, E> IntFactory<Setter<T, E>> newSetterFactory(final BooleanSupplier appendSetter) {
 		if (TypeHelper.isArray(type)) {
-			Type elementType = TypeHelper.getComponentTypeOfListOrArray(type);
-
-			if (TypeHelper.isPrimitive(elementType)) {
-				if (boolean.class.equals(elementType)) {
+			if (TypeHelper.isPrimitive(elementTarget)) {
+				if (boolean.class.equals(elementTarget)) {
 					return new IntFactory<Setter<T, E>>() {
 						@Override
 						public Setter<T, E> newInstance(int i) {
 							return (Setter<T, E>) new IndexedBooleanArraySetter(i);
 						}
 					};
-				} else if (byte.class.equals(elementType)) {
+				} else if (byte.class.equals(elementTarget)) {
 					return new IntFactory<Setter<T, E>>() {
 						@Override
 						public Setter<T, E> newInstance(int i) {
 							return (Setter<T, E>) new IndexedByteArraySetter(i);
 						}
 					};
-				} else if (char.class.equals(elementType)) {
+				} else if (char.class.equals(elementTarget)) {
 					return new IntFactory<Setter<T, E>>() {
 						@Override
 						public Setter<T, E> newInstance(int i) {
 							return (Setter<T, E>) new IndexedCharArraySetter(i);
 						}
 					};
-				} else if (short.class.equals(elementType)) {
+				} else if (short.class.equals(elementTarget)) {
 					return new IntFactory<Setter<T, E>>() {
 						@Override
 						public Setter<T, E> newInstance(int i) {
 							return (Setter<T, E>) new IndexedShortArraySetter(i);
 						}
 					};
-				} else if (int.class.equals(elementType)) {
+				} else if (int.class.equals(elementTarget)) {
 					return new IntFactory<Setter<T, E>>() {
 						@Override
 						public Setter<T, E> newInstance(int i) {
 							return (Setter<T, E>) new IndexedIntArraySetter(i);
 						}
 					};
-				} else if (long.class.equals(elementType)) {
+				} else if (long.class.equals(elementTarget)) {
 					return new IntFactory<Setter<T, E>>() {
 						@Override
 						public Setter<T, E> newInstance(int i) {
 							return (Setter<T, E>) new IndexedLongArraySetter(i);
 						}
 					};
-				} else if (float.class.equals(elementType)) {
+				} else if (float.class.equals(elementTarget)) {
 					return new IntFactory<Setter<T, E>>() {
 						@Override
 						public Setter<T, E> newInstance(int i) {
 							return (Setter<T, E>) new IndexedFloatArraySetter(i);
 						}
 					};
-				} else if (double.class.equals(elementType)) {
+				} else if (double.class.equals(elementTarget)) {
 					return new IntFactory<Setter<T, E>>() {
 						@Override
 						public Setter<T, E> newInstance(int i) {
@@ -205,7 +214,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 					}
 				};
 			}
-		} else if (TypeHelper.isAssignable(List.class, implementationType)){
+		} else if (TypeHelper.isAssignable(List.class, instInfo.intermediateType)){
 			return new IntFactory<Setter<T, E>>() {
 				@Override
 				public Setter<T, E> newInstance(int i) {
@@ -216,7 +225,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 					}
 				}
 			};
-		} else if (TypeHelper.isAssignable(Collection.class, implementationType)) {
+		} else if (TypeHelper.isAssignable(Collection.class, instInfo.intermediateType)) {
 			return new IntFactory<Setter<T, E>>() {
 				@Override
 				public Setter<T, E> newInstance(int i) {
@@ -304,7 +313,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 				};
 			}
 
-		} else if (TypeHelper.isAssignable(List.class, implementationType)) {
+		} else if (TypeHelper.isAssignable(List.class, instInfo.intermediateType)) {
 			return new IntFactory<Getter<T, E>>() {
 				@Override
 				public Getter<T, E> newInstance(int i) {
@@ -321,4 +330,13 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	}
 
 
+	private class InstantiatorDefinitionAndIntermediatType {
+		final InstantiatorDefinition instantiatorDefinition;
+		final Type intermediateType;
+
+		private InstantiatorDefinitionAndIntermediatType(InstantiatorDefinition instantiatorDefinition, Type intermediateType) {
+			this.instantiatorDefinition = instantiatorDefinition;
+			this.intermediateType = intermediateType;
+		}
+	}
 }

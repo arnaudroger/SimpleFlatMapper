@@ -4,7 +4,9 @@ import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.impl.JavaLangClassMetaFactoryProducer;
+import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
+import org.simpleflatmapper.reflect.instantiator.KotlinDefaultConstructorInstantiatorDefinition;
 import org.simpleflatmapper.reflect.meta.AliasProvider;
 import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
@@ -215,6 +217,10 @@ public class ReflectionService {
 		} else {
 			list = ReflectionInstantiatorDefinitionFactory.extractDefinitions(target);
 		}
+		
+		if (TypeHelper.isKotlinClass(target)) {
+			kotlinReducationForDefaultValue(list);
+		}
 
 		if (extraInstantiator == null) {
 			list.addAll(BuilderInstantiatorDefinitionFactory.extractDefinitions(target));
@@ -235,6 +241,84 @@ public class ReflectionService {
 		Collections.sort(list, InstantiatorDefinitions.COMPARATOR);
 
 		return list;
+	}
+
+	private void kotlinReducationForDefaultValue(List<InstantiatorDefinition> list) {
+		
+		// look for potential kotlin default value
+		List<ExecutableInstantiatorDefinition> potentialKotlinDefaultValue = kotlingDefaultValueConstructor(list);
+		
+		if (potentialKotlinDefaultValue.isEmpty()) return;
+		
+		// remove them from original list
+		list.removeAll(potentialKotlinDefaultValue);
+		
+		// match them to non default constructor
+		for(int i = 0; i < potentialKotlinDefaultValue.size(); i++) {
+			ExecutableInstantiatorDefinition def = potentialKotlinDefaultValue.get(i);
+		
+			for(int j = 0; j < list.size(); j++) {
+				InstantiatorDefinition id = list.get(j);
+				
+				if (isKotlinOriginalConstructor(def, id)) {
+					list.set(j, new KotlinDefaultConstructorInstantiatorDefinition((ExecutableInstantiatorDefinition) id, def));
+					break;
+				}
+			}
+		}
+		
+		
+	}
+
+	private List<ExecutableInstantiatorDefinition> kotlingDefaultValueConstructor(List<InstantiatorDefinition> list) {
+		List<ExecutableInstantiatorDefinition> potentialKotlinDefaultValue = new ArrayList<ExecutableInstantiatorDefinition>();
+
+		for(int i = 0; i < list.size(); i++) {
+			InstantiatorDefinition id = list.get(i);
+			
+			if (id instanceof ExecutableInstantiatorDefinition && 
+					((ExecutableInstantiatorDefinition)id).getExecutable() instanceof Constructor) {
+				Constructor c = (Constructor) ((ExecutableInstantiatorDefinition)id).getExecutable();
+				if (c.isSynthetic()) {
+					Class[] parameterTypes = c.getParameterTypes();
+					if (parameterTypes[parameterTypes.length -1].getName().equals("kotlin.jvm.internal.DefaultConstructorMarker")) {
+						// got one
+						potentialKotlinDefaultValue.add((ExecutableInstantiatorDefinition) id);
+					}
+				}
+			}
+		}
+		return potentialKotlinDefaultValue;
+	}
+
+	private boolean isKotlinOriginalConstructor(ExecutableInstantiatorDefinition def, InstantiatorDefinition id) {
+		if (id instanceof ExecutableInstantiatorDefinition) {
+			ExecutableInstantiatorDefinition eid = (ExecutableInstantiatorDefinition) id;
+			if (eid.getExecutable() instanceof Constructor) {
+				int nbParams = eid.getParameters().length;
+				int syntheticParameters = (nbParams / Integer.SIZE) + 1 + /* DefaultConstructorMarker */ 1;
+				
+				if (nbParams + syntheticParameters != def.getParameters().length) {
+					return false;
+				}
+				
+				for(int i = 0; i < nbParams; i++) {
+					if (!def.getParameters()[i].getType().equals(id.getParameters()[i].getType())) {
+						return false;
+					}
+				}
+				
+				for(int i = nbParams; i < nbParams + syntheticParameters - 1; i++ ) {
+					if (!def.getParameters()[i].getType().equals(int.class)) {
+						return false;
+					}
+				}
+				
+				return true;
+						
+			}
+		}
+		return false;
 	}
 
 	public static ReflectionService newInstance() {

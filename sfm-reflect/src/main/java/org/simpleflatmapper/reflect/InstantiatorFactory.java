@@ -14,6 +14,7 @@ import org.simpleflatmapper.reflect.impl.InjectStaticMethodBiInstantiator;
 import org.simpleflatmapper.reflect.impl.InjectStaticMethodInstantiator;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
+import org.simpleflatmapper.reflect.instantiator.KotlinDefaultConstructorInstantiatorDefinition;
 import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ErrorHelper;
 
@@ -105,6 +106,14 @@ public class InstantiatorFactory {
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<S> source, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) {
 		checkParameters(instantiatorDefinition, injections.keySet());
+		
+		if (instantiatorDefinition instanceof KotlinDefaultConstructorInstantiatorDefinition) {
+			KotlinDefaultConstructorInstantiatorDefinition kid = (KotlinDefaultConstructorInstantiatorDefinition) instantiatorDefinition;
+			injections = new HashMap<Parameter, Getter<? super S, ?>>(injections);
+			kid.addDefaultValueFlag(injections);
+			instantiatorDefinition = kid.getDefaultValueConstructor();
+		}
+		
 		if (asmFactory != null  && useAsmIfEnabled) {
 			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
 				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;

@@ -227,8 +227,9 @@ public class InstantiatorBuilder {
         mv.visitFieldInsn(GETFIELD, classType, "getter_" + p.getName(), AsmUtils.toTargetTypeDeclaration(getterType));
         mv.visitVarInsn(ALOAD, 1);
 
+        Type paramType = TypeHelper.getGenericParameterForClass(getterCall.getterType, Getter.class)[0];
         if (getterCall.isPrimitive) {
-            AsmUtils.invoke(mv, getterCall.getterType, getterCall.methodName, "(" + AsmUtils.toTargetTypeDeclaration(sourceType) + ")" + AsmUtils.toAsmType(p.getType()));
+            AsmUtils.invoke(mv, getterCall.getterType, getterCall.methodName, "(" + AsmUtils.toTargetTypeDeclaration(paramType) + ")" + AsmUtils.toAsmType(p.getType()));
             if (consumer != null) {
                 consumer.accept(mv);
             }

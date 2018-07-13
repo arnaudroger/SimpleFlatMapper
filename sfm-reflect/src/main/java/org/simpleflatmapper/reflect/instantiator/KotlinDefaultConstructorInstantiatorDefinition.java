@@ -72,7 +72,7 @@ public class KotlinDefaultConstructorInstantiatorDefinition implements Instantia
                 }
             }
             
-            Integer ff = flag;
+            final Integer ff = flag;
             injections.put(defaulted.getParameters()[nbParams + i], new BiFunction<Object, Object, Integer>() {
                 @Override
                 public Integer apply(Object o, Object o2) {

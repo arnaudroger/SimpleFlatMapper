@@ -7,7 +7,7 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
-import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
+import org.simpleflatmapper.csv.CsvCellWriter;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
@@ -26,7 +26,6 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.ConstantPredicate;
-import org.simpleflatmapper.util.Predicate;
 
 import java.text.DecimalFormat;
 import java.util.UUID;

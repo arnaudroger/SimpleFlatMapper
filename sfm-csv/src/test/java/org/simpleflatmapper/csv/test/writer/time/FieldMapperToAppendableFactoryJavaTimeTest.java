@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.test.writer.time;
 
 import org.junit.Test;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
+import org.simpleflatmapper.csv.CsvCellWriter;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
@@ -17,7 +17,6 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.ConstantPredicate;
-import org.simpleflatmapper.util.Predicate;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;

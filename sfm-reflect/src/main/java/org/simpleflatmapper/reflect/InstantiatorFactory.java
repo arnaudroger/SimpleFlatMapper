@@ -56,6 +56,14 @@ public class InstantiatorFactory {
 	@SuppressWarnings("unchecked")
 	public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> s1, Class<?> s2, Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) {
 		checkParameters(instantiatorDefinition, injections.keySet());
+
+		if (instantiatorDefinition instanceof KotlinDefaultConstructorInstantiatorDefinition) {
+			KotlinDefaultConstructorInstantiatorDefinition kid = (KotlinDefaultConstructorInstantiatorDefinition) instantiatorDefinition;
+			injections =  new HashMap<Parameter, BiFunction<? super S1, ? super S2, ?>>(injections);
+			kid.addDefaultValueFlagBi(injections);
+			instantiatorDefinition = kid.getDefaultValueConstructor();
+		}
+		
 		if (asmFactory != null  && useAsmIfEnabled) {
 			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
 				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;

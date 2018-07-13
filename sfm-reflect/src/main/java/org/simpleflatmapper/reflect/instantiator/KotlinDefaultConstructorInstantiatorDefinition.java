@@ -4,6 +4,7 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.getter.ConstantIntGetter;
+import org.simpleflatmapper.util.BiFunction;
 
 import java.lang.reflect.Member;
 import java.util.Arrays;
@@ -58,6 +59,29 @@ public class KotlinDefaultConstructorInstantiatorDefinition implements Instantia
         return new ExecutableInstantiatorDefinition(defaulted.getExecutable(), mergedParam);
     }
 
+    public <S1, S2> void addDefaultValueFlagBi(Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections) {
+        int nbParams = original.getParameters().length;
+        int nbDefaulting = defaulted.getParameters().length - nbParams - 1;
+        for(int i = 0; i < nbDefaulting; i++) {
+            int startingParam = i  * Integer.SIZE;
+            int endParam = Math.min(startingParam + Integer.SIZE, nbParams);
+            int flag = 0;
+            for(int j = startingParam; j <  endParam; j++) {
+                if (!injections.containsKey(original.getParameters()[j])) {
+                    flag |= 1 << (j - startingParam);
+                }
+            }
+            
+            Integer ff = flag;
+            injections.put(defaulted.getParameters()[nbParams + i], new BiFunction<Object, Object, Integer>() {
+                @Override
+                public Integer apply(Object o, Object o2) {
+                    return ff;
+                }
+            });
+        }
+    }
+
     public <S> void addDefaultValueFlag(Map<Parameter, Getter<? super S, ?>> injections) {
         int nbParams = original.getParameters().length;
         int nbDefaulting = defaulted.getParameters().length - nbParams - 1;
@@ -73,4 +97,5 @@ public class KotlinDefaultConstructorInstantiatorDefinition implements Instantia
             injections.put(defaulted.getParameters()[nbParams + i], new ConstantIntGetter<Object>(flag));
         }
     }
+    
 }

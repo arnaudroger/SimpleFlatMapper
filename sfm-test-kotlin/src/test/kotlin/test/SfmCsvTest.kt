@@ -7,7 +7,7 @@ import test.CsvLine
 import kotlin.test.assertEquals
 
 
-class SfmTest {
+class SfmCsvTest {
     @Test
     fun test() {
 

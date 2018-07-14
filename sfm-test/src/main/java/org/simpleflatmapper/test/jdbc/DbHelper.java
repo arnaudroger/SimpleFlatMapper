@@ -14,6 +14,7 @@ import java.sql.*;
 import java.text.ParseException;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class DbHelper {
@@ -38,7 +39,7 @@ public class DbHelper {
 	}
 	
 	public static final String TEST_DB_OBJECT_QUERY = "select id, name, email, creation_time, type_ordinal, type_name from TEST_DB_OBJECT where id = 1 ";
-	private static boolean objectDb;
+	private static AtomicBoolean objectDb = new AtomicBoolean();
 
 	public static Connection getDbConnection(TargetDB targetDB) throws SQLException {
 		try {
@@ -60,7 +61,7 @@ public class DbHelper {
 	public static Connection objectDb() throws SQLException {
 		Connection c = newHsqlDbConnection();
 		
-		if (!objectDb) {
+		if (objectDb.compareAndSet(false, true)) {
 			Statement st = c.createStatement();
 			
 			try {
@@ -103,6 +104,8 @@ public class DbHelper {
 
 				ps = c.prepareStatement("insert into issue318 values (?, ?)");
 
+
+
 				try {
 					ps.setString(1, UUID.randomUUID().toString());
 					ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
@@ -111,14 +114,15 @@ public class DbHelper {
 					ps.close();
 				}
 
+				st.execute("create table issue537(currencyAndAmount_number double, currencyAndAmount_currency  varchar(10) )");
+				st.execute("insert into issue537(currencyAndAmount_number, currencyAndAmount_currency) values(100, 'USD')");
+				
 				c.commit();
 			} finally {
 				st.close();
 			}
 		}
 	
-		
-		objectDb = true;
 		return c;
 	}
 

@@ -106,6 +106,10 @@ public class ReflectionService {
 			metaCache.put(classMeta.getType(), classMeta);
 		}
 	}
+	
+	public void registerClassMeta(Type type, ClassMeta<?> classMeta) {
+		metaCache.put(type, classMeta);
+	}
 
 	public ObjectSetterFactory getObjectSetterFactory() {
 		return objectSetterFactory;

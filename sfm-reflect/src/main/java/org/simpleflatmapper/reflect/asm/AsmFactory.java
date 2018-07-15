@@ -187,7 +187,8 @@ public class AsmFactory {
             if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
                 bytes = BiInstantiatorBuilder.createInstantiator(className, s1, s2, (ExecutableInstantiatorDefinition)instantiatorDefinition, injections);
             }  else {
-                builderInstantiator = createInstantiator(Void.class, ((BuilderInstantiatorDefinition)instantiatorDefinition).getBuilderInstantiator(), new HashMap<Parameter, Getter<? super Void, ?>>(), builderIgnoresNullValues);
+                InstantiatorDefinition biii = ((BuilderInstantiatorDefinition) instantiatorDefinition).getBuilderInstantiator();
+                builderInstantiator = createInstantiator(Void.class, biii, new HashMap<Parameter, Getter<? super Void, ?>>(), builderIgnoresNullValues);
                 bytes = BiInstantiatorBuilder.createInstantiator(
                         className,
                         s1, s2,
@@ -206,6 +207,10 @@ public class AsmFactory {
         if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
             return (BiInstantiator<S1, S2, T>) instantiator.getConstructor(Map.class).newInstance(factoryPerName);
         } else {
+            if (builderInstantiator == null) {
+                InstantiatorDefinition biii = ((BuilderInstantiatorDefinition) instantiatorDefinition).getBuilderInstantiator();
+                builderInstantiator = createInstantiator(Void.class, biii, new HashMap<Parameter, Getter<? super Void, ?>>(), builderIgnoresNullValues);
+            }
             return (BiInstantiator<S1, S2, T>) instantiator.getConstructor(Map.class, Instantiator.class).newInstance(factoryPerName, builderInstantiator);
         }
     }

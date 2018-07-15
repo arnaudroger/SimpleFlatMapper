@@ -37,11 +37,7 @@ public class Issue537Test {
     @Test
     public void testMonetaryAmount() throws SQLException, NoSuchMethodException {
 
-        ReflectionService reflectionService = ReflectionService.newInstance();
-        reflectionService.registerClassMeta(MonetaryAmount.class, 
-                reflectionService.getClassMetaExtraInstantiator(MonetaryAmount.class, Monetary.class.getDeclaredMethod("getDefaultAmountFactory")));
-        reflectionService.registerClassMeta(CurrencyUnit.class,
-                reflectionService.getClassMetaExtraInstantiator(CurrencyUnit.class, Monetary.class.getDeclaredMethod("getCurrency", String.class, String[].class)));
+        ReflectionService reflectionService = getReflectionService();
         
         SfmRecordMapperProvider recordMapperProvider = new SfmRecordMapperProvider(MapperConfig.<JooqFieldKey>fieldMapperConfig(), reflectionService);
 
@@ -65,14 +61,10 @@ public class Issue537Test {
     }
 
     @Test
-    public void testHsqlDb() throws SQLException, NoSuchMethodException {
+    public void testHsqlDb() throws SQLException {
 
 
-        ReflectionService reflectionService = ReflectionService.disableAsm();
-        reflectionService.registerClassMeta(MonetaryAmount.class,
-                reflectionService.getClassMetaExtraInstantiator(MonetaryAmount.class, Monetary.class.getDeclaredMethod("getDefaultAmountFactory")));
-        reflectionService.registerClassMeta(CurrencyUnit.class,
-                reflectionService.getClassMetaExtraInstantiator(CurrencyUnit.class, Monetary.class.getDeclaredMethod("getCurrency", String.class, String[].class)));
+        ReflectionService reflectionService = getReflectionService();
 
         SfmRecordMapperProvider recordMapperProvider = new SfmRecordMapperProvider(MapperConfig.<JooqFieldKey>fieldMapperConfig(), reflectionService);
         Connection conn = DbHelper.objectDb();
@@ -82,8 +74,11 @@ public class Issue537Test {
                         .set(SQLDialect.HSQLDB)
                         .set(recordMapperProvider));
 
-        List<Issue537> list = dsl.select()
-                .from("issue537").fetchInto(Issue537.class);
+        List<Issue537> list = 
+                dsl
+                .select()
+                .from("issue537")
+                .fetchInto(Issue537.class);
 
         assertEquals(1, list.size());
 
@@ -94,7 +89,12 @@ public class Issue537Test {
 
     }
 
-    
+    private ReflectionService getReflectionService() {
+        ReflectionService reflectionService = ReflectionService.newInstance();
+        reflectionService.registerBuilder(MonetaryAmount.class.getName(), new ReflectionService.DefaultBuilderSupplier(Monetary.class.getName(), "getDefaultAmountFactory"));
+        return reflectionService;
+    }
+
 
     public static class Issue537 {
         public final MonetaryAmount currencyAndAmount;

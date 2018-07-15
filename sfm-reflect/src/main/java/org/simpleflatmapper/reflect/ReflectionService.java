@@ -20,7 +20,9 @@ import org.simpleflatmapper.reflect.meta.OptionalClassMeta;
 import org.simpleflatmapper.reflect.meta.PassThroughClassMeta;
 import org.simpleflatmapper.reflect.meta.TupleClassMeta;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ProducerServiceLoader;
+import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TupleHelper;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
@@ -72,6 +74,7 @@ public class ReflectionService {
 	private final boolean selfScoreFullName;
 
 	private final ConcurrentMap<Type, ClassMeta<?>> metaCache = new ConcurrentHashMap<Type, ClassMeta<?>>();
+	private final ConcurrentMap<String,  UnaryFactory<Type, Member>> builderMethods = new ConcurrentHashMap<String,  UnaryFactory<Type, Member>>();
 
 	public ReflectionService(final AsmFactory asmFactory) {
 		this(
@@ -170,7 +173,19 @@ public class ReflectionService {
 		} else if (Collection.class.isAssignableFrom(clazz) || Iterable.class.equals(clazz)) {
 			return newCollectionMeta(target);
 		}
-		return new ObjectClassMeta<T>(target, this);
+		return new ObjectClassMeta<T>(target, getBuilderInstantiator(target), this);
+	}
+
+	private Member getBuilderInstantiator(Type target) {
+		String typeName = TypeHelper.toClass(target).getName();
+
+		UnaryFactory<Type, Member> builderSupplier = builderMethods.get(typeName);
+		
+		if (builderSupplier != null) {
+			return builderSupplier.newInstance(target);
+		}
+
+		return null;
 	}
 
 	public <T> ClassMeta<T> getClassMetaExtraInstantiator(Type target, Member builderInstantiator) {
@@ -392,12 +407,43 @@ public class ReflectionService {
 		return selfScoreFullName;
 	}
 
-    public interface ClassMetaFactoryProducer extends ProducerServiceLoader.Producer<UnaryFactory<ReflectionService, ClassMeta<?>>> {
+	public void registerBuilder(String name, DefaultBuilderSupplier defaultBuilderSupplier) {
+		builderMethods.put(name, defaultBuilderSupplier);
+	}
+
+	public interface ClassMetaFactoryProducer extends ProducerServiceLoader.Producer<UnaryFactory<ReflectionService, ClassMeta<?>>> {
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.TYPE})
 	public @interface PassThrough {
 		String value() default "value";
+	}
+	
+	public static class DefaultBuilderSupplier implements UnaryFactory<Type, Member> {
+
+		private final String clazzName;
+		private final String methodName;
+
+		public DefaultBuilderSupplier(String clazzName, String methodName) {
+			this.clazzName = clazzName;
+			this.methodName = methodName;
+		}
+
+		@Override
+		public Member newInstance(Type type) {
+			try {
+				Class<?> builderClazz = TypeHelper.toClass(type).getClassLoader().loadClass(clazzName);
+				if (methodName != null) {
+					return builderClazz.getMethod(methodName);
+				} else {
+					return builderClazz.getConstructor();
+				}
+			} catch (ClassNotFoundException e) {
+				return ErrorHelper.rethrow(e);
+			} catch (NoSuchMethodException e) {
+				return ErrorHelper.rethrow(e);
+			}
+		}
 	}
 }

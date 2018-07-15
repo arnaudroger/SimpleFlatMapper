@@ -6,5 +6,6 @@ module org.simpleflatmapper.jooq.test {
         requires junit;
         requires sfm.test;
         requires org.mockito;
+        requires java.money;
 
  }

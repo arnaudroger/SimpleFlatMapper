@@ -15,9 +15,12 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 
+//IFJAVA8_START
+
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
+//IFJAVA8_END
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -30,6 +33,7 @@ import static org.mockito.Mockito.when;
 
 public class Issue537Test {
 
+    //IFJAVA8_START
     @Test
     public void testMonetaryAmount() throws SQLException, NoSuchMethodException {
 
@@ -107,5 +111,6 @@ public class Issue537Test {
         when(field.getType()).thenReturn(aClass);
         return field;
     }
+    //IFJAVA8_END
 
 }

@@ -9,10 +9,8 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
-import org.simpleflatmapper.jooq.JooqFieldKey;
 import org.simpleflatmapper.jooq.SfmRecordMapperProvider;
-import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.jooq.SfmRecordMapperProviderFactory;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 
 //IFJAVA8_START
@@ -37,9 +35,7 @@ public class Issue537Test {
     @Test
     public void testMonetaryAmount() throws SQLException, NoSuchMethodException {
 
-        ReflectionService reflectionService = getReflectionService();
-        
-        SfmRecordMapperProvider recordMapperProvider = new SfmRecordMapperProvider(MapperConfig.<JooqFieldKey>fieldMapperConfig(), reflectionService);
+        SfmRecordMapperProvider recordMapperProvider = SfmRecordMapperProviderFactory.newInstance().newProvider();
 
         CurrencyUnit usd = Monetary.getCurrency("USD");
 
@@ -64,9 +60,8 @@ public class Issue537Test {
     public void testHsqlDb() throws SQLException {
 
 
-        ReflectionService reflectionService = getReflectionService();
 
-        SfmRecordMapperProvider recordMapperProvider = new SfmRecordMapperProvider(MapperConfig.<JooqFieldKey>fieldMapperConfig(), reflectionService);
+        SfmRecordMapperProvider recordMapperProvider = SfmRecordMapperProviderFactory.newInstance().newProvider();
         Connection conn = DbHelper.objectDb();
 
         DSLContext dsl = DSL
@@ -89,10 +84,6 @@ public class Issue537Test {
 
     }
 
-    private ReflectionService getReflectionService() {
-        ReflectionService reflectionService = ReflectionService.newInstance();
-        return reflectionService;
-    }
 
 
     public static class Issue537 {

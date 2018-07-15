@@ -11,7 +11,6 @@ import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
 import org.simpleflatmapper.jooq.JooqFieldKey;
 import org.simpleflatmapper.jooq.SfmRecordMapperProvider;
-import org.simpleflatmapper.jooq.SfmRecordMapperProviderFactory;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.test.jdbc.DbHelper;
@@ -21,12 +20,10 @@ import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.ZoneId;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

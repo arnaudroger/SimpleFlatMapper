@@ -91,7 +91,6 @@ public class Issue537Test {
 
     private ReflectionService getReflectionService() {
         ReflectionService reflectionService = ReflectionService.newInstance();
-        reflectionService.registerBuilder(MonetaryAmount.class.getName(), new ReflectionService.DefaultBuilderSupplier(Monetary.class.getName(), "getDefaultAmountFactory"));
         return reflectionService;
     }
 

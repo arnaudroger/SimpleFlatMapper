@@ -19,10 +19,10 @@ import org.simpleflatmapper.reflect.meta.OptionalClassMeta;
 //IFJAVA8_END
 import org.simpleflatmapper.reflect.meta.PassThroughClassMeta;
 import org.simpleflatmapper.reflect.meta.TupleClassMeta;
+import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ProducerServiceLoader;
-import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TupleHelper;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
@@ -44,6 +44,33 @@ public class ReflectionService {
 
 	private static final UnaryFactory<ReflectionService, ClassMeta<?>>[] predefined =
 			getPredifinedClassMetaFactory();
+	private static final Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>[] predefinedBuilderProducers = 
+			getPredifinedBuilderProducers();
+
+	private static Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>[] getPredifinedBuilderProducers() {
+		final List<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>> list = new ArrayList<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>>();
+		Consumer<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>> consumer = new Consumer<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>>() {
+			@Override
+			public void accept(Consumer<BiConsumer<String, UnaryFactory<Type, Member>>> biConsumerConsumer) {
+				list.add(biConsumerConsumer);
+			}
+		};
+
+		ProducerServiceLoader.produceFromServiceLoader(
+				BuilderProducer.class,
+				consumer
+		);
+		
+		consumer.accept(new Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>() {
+			@Override
+			public void accept(BiConsumer<String, UnaryFactory<Type, Member>> biConsumer) {
+				biConsumer.accept("javax.money.MonetaryAmount", 
+						new DefaultBuilderSupplier("javax.money.Monetary", "getDefaultAmountFactory"));
+			}
+		});
+
+		return list.toArray(new Consumer[0]);
+	}
 
 	@SuppressWarnings("unchecked")
 	private static UnaryFactory<ReflectionService, ClassMeta<?>>[] getPredifinedClassMetaFactory() {
@@ -107,6 +134,14 @@ public class ReflectionService {
 		for (UnaryFactory<ReflectionService, ClassMeta<?>> factory : predefined) {
 			ClassMeta<?> classMeta = factory.newInstance(this);
 			metaCache.put(classMeta.getType(), classMeta);
+		}
+		for(Consumer<BiConsumer<String, UnaryFactory<Type, Member>>> factory : predefinedBuilderProducers) {
+			factory.accept(new BiConsumer<String, UnaryFactory<Type, Member>>() {
+				@Override
+				public void accept(String s, UnaryFactory<Type, Member> typeMemberUnaryFactory) {
+					builderMethods.put(s, typeMemberUnaryFactory);
+				}
+			});
 		}
 	}
 	
@@ -413,6 +448,11 @@ public class ReflectionService {
 
 	public interface ClassMetaFactoryProducer extends ProducerServiceLoader.Producer<UnaryFactory<ReflectionService, ClassMeta<?>>> {
 	}
+
+	public interface BuilderProducer extends ProducerServiceLoader.Producer<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>> {
+		
+	}
+
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.TYPE})

@@ -128,7 +128,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 
 	@Override
 	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
-		if (instInfo != null) {
+		if (instInfo.instantiatorDefinition != null) {
 			return Arrays.asList(instInfo.instantiatorDefinition);
 		} else {
 			return Collections.emptyList();

@@ -16,10 +16,6 @@ import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 import java.util.List;
 
 public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<Appendable, T, CsvColumnKey, CsvWriterBuilder<T>> {

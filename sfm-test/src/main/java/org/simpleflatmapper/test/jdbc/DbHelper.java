@@ -116,7 +116,12 @@ public class DbHelper {
 
 				st.execute("create table issue537(currencyAndAmount_number double, currencyAndAmount_currency  varchar(10) )");
 				st.execute("insert into issue537(currencyAndAmount_number, currencyAndAmount_currency) values(100, 'USD')");
-				
+
+
+
+				st.execute("create table issue537_b(amount double, currencyCode  varchar(10) )");
+				st.execute("insert into issue537_b(amount, currencyCode) values(100, 'USD')");
+
 				c.commit();
 			} finally {
 				st.close();

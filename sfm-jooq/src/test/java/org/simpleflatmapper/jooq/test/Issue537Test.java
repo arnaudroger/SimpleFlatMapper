@@ -11,6 +11,7 @@ import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
 import org.simpleflatmapper.jooq.SfmRecordMapperProvider;
 import org.simpleflatmapper.jooq.SfmRecordMapperProviderFactory;
+import org.simpleflatmapper.map.property.RenameProperty;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 
 //IFJAVA8_START
@@ -74,6 +75,38 @@ public class Issue537Test {
                 .select()
                 .from("issue537")
                 .fetchInto(Issue537.class);
+
+        assertEquals(1, list.size());
+
+        Issue537 value = list.get(0);
+
+        assertEquals(100, value.currencyAndAmount.getNumber().doubleValue(), 0.00001);
+        assertEquals("USD", value.currencyAndAmount.getCurrency().getCurrencyCode());
+
+    }
+
+    @Test
+    public void testHsqlDbAsIssue() throws SQLException {
+
+
+
+        SfmRecordMapperProvider recordMapperProvider = SfmRecordMapperProviderFactory
+                .newInstance()
+                .addColumnProperty( k -> k.getField().getName().equalsIgnoreCase("amount"), new RenameProperty("currencyAndAmount_number"))
+                .addColumnProperty( k -> k.getField().getName().equalsIgnoreCase("currencyCode"), new RenameProperty("currencyAndAmount_currency"))
+                .newProvider();
+        Connection conn = DbHelper.objectDb();
+
+        DSLContext dsl = DSL
+                .using(new DefaultConfiguration().set(conn)
+                        .set(SQLDialect.HSQLDB)
+                        .set(recordMapperProvider));
+
+        List<Issue537> list =
+                dsl
+                        .select()
+                        .from("issue537_b")
+                        .fetchInto(Issue537.class);
 
         assertEquals(1, list.size());
 

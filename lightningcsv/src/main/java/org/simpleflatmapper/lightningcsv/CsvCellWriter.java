@@ -2,6 +2,7 @@ package org.simpleflatmapper.lightningcsv;
 
 
 import java.io.IOException;
+import java.util.Iterator;
 
 public final class CsvCellWriter implements CellWriter {
 
@@ -29,6 +30,32 @@ public final class CsvCellWriter implements CellWriter {
         }
         return endOfLine;
     }
+
+    public void writeRow(CharSequence[] values, Appendable appendable) throws IOException {
+        if (values != null && values.length > 0) {
+            writeValue(values[0], appendable);
+
+            for(int i = 1; i < values.length; i++) {
+                nextCell(appendable);
+                writeValue(values[1], appendable);
+            }
+        }
+        endOfRow(appendable);
+    }
+
+    public void writeRow(Iterable<? extends CharSequence> values, Appendable appendable) throws IOException {
+        Iterator<? extends CharSequence> iterator = values.iterator();
+        if (iterator.hasNext()) {
+            writeValue(iterator.next(), appendable);
+
+            while(iterator.hasNext()) {
+                nextCell(appendable);
+                writeValue(iterator.next(), appendable);
+            }
+        }
+        endOfRow(appendable);
+    }
+
 
     @Override
     public void writeValue(CharSequence sequence, Appendable appendable) throws IOException {

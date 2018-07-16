@@ -4,7 +4,9 @@ import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.impl.JavaLangClassMetaFactoryProducer;
+import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
+import org.simpleflatmapper.reflect.instantiator.KotlinDefaultConstructorInstantiatorDefinition;
 import org.simpleflatmapper.reflect.meta.AliasProvider;
 import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
@@ -17,7 +19,9 @@ import org.simpleflatmapper.reflect.meta.OptionalClassMeta;
 //IFJAVA8_END
 import org.simpleflatmapper.reflect.meta.PassThroughClassMeta;
 import org.simpleflatmapper.reflect.meta.TupleClassMeta;
+import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ProducerServiceLoader;
 import org.simpleflatmapper.util.TupleHelper;
 import org.simpleflatmapper.util.TypeHelper;
@@ -40,6 +44,33 @@ public class ReflectionService {
 
 	private static final UnaryFactory<ReflectionService, ClassMeta<?>>[] predefined =
 			getPredifinedClassMetaFactory();
+	private static final Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>[] predefinedBuilderProducers = 
+			getPredifinedBuilderProducers();
+
+	private static Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>[] getPredifinedBuilderProducers() {
+		final List<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>> list = new ArrayList<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>>();
+		Consumer<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>> consumer = new Consumer<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>>() {
+			@Override
+			public void accept(Consumer<BiConsumer<String, UnaryFactory<Type, Member>>> biConsumerConsumer) {
+				list.add(biConsumerConsumer);
+			}
+		};
+
+		ProducerServiceLoader.produceFromServiceLoader(
+				BuilderProducer.class,
+				consumer
+		);
+		
+		consumer.accept(new Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>() {
+			@Override
+			public void accept(BiConsumer<String, UnaryFactory<Type, Member>> biConsumer) {
+				biConsumer.accept("javax.money.MonetaryAmount", 
+						new DefaultBuilderSupplier("javax.money.Monetary", "getDefaultAmountFactory"));
+			}
+		});
+
+		return list.toArray(new Consumer[0]);
+	}
 
 	@SuppressWarnings("unchecked")
 	private static UnaryFactory<ReflectionService, ClassMeta<?>>[] getPredifinedClassMetaFactory() {
@@ -70,6 +101,7 @@ public class ReflectionService {
 	private final boolean selfScoreFullName;
 
 	private final ConcurrentMap<Type, ClassMeta<?>> metaCache = new ConcurrentHashMap<Type, ClassMeta<?>>();
+	private final ConcurrentMap<String,  UnaryFactory<Type, Member>> builderMethods = new ConcurrentHashMap<String,  UnaryFactory<Type, Member>>();
 
 	public ReflectionService(final AsmFactory asmFactory) {
 		this(
@@ -103,6 +135,18 @@ public class ReflectionService {
 			ClassMeta<?> classMeta = factory.newInstance(this);
 			metaCache.put(classMeta.getType(), classMeta);
 		}
+		for(Consumer<BiConsumer<String, UnaryFactory<Type, Member>>> factory : predefinedBuilderProducers) {
+			factory.accept(new BiConsumer<String, UnaryFactory<Type, Member>>() {
+				@Override
+				public void accept(String s, UnaryFactory<Type, Member> typeMemberUnaryFactory) {
+					builderMethods.put(s, typeMemberUnaryFactory);
+				}
+			});
+		}
+	}
+	
+	public void registerClassMeta(Type type, ClassMeta<?> classMeta) {
+		metaCache.put(type, classMeta);
 	}
 
 	public ObjectSetterFactory getObjectSetterFactory() {
@@ -164,7 +208,19 @@ public class ReflectionService {
 		} else if (Collection.class.isAssignableFrom(clazz) || Iterable.class.equals(clazz)) {
 			return newCollectionMeta(target);
 		}
-		return new ObjectClassMeta<T>(target, this);
+		return new ObjectClassMeta<T>(target, getBuilderInstantiator(target), this);
+	}
+
+	private Member getBuilderInstantiator(Type target) {
+		String typeName = TypeHelper.toClass(target).getName();
+
+		UnaryFactory<Type, Member> builderSupplier = builderMethods.get(typeName);
+		
+		if (builderSupplier != null) {
+			return builderSupplier.newInstance(target);
+		}
+
+		return null;
 	}
 
 	public <T> ClassMeta<T> getClassMetaExtraInstantiator(Type target, Member builderInstantiator) {
@@ -215,6 +271,10 @@ public class ReflectionService {
 		} else {
 			list = ReflectionInstantiatorDefinitionFactory.extractDefinitions(target);
 		}
+		
+		if (TypeHelper.isKotlinClass(target)) {
+			kotlinReducationForDefaultValue(list);
+		}
 
 		if (extraInstantiator == null) {
 			list.addAll(BuilderInstantiatorDefinitionFactory.extractDefinitions(target));
@@ -235,6 +295,84 @@ public class ReflectionService {
 		Collections.sort(list, InstantiatorDefinitions.COMPARATOR);
 
 		return list;
+	}
+
+	private void kotlinReducationForDefaultValue(List<InstantiatorDefinition> list) {
+		
+		// look for potential kotlin default value
+		List<ExecutableInstantiatorDefinition> potentialKotlinDefaultValue = kotlingDefaultValueConstructor(list);
+		
+		if (potentialKotlinDefaultValue.isEmpty()) return;
+		
+		// remove them from original list
+		list.removeAll(potentialKotlinDefaultValue);
+		
+		// match them to non default constructor
+		for(int i = 0; i < potentialKotlinDefaultValue.size(); i++) {
+			ExecutableInstantiatorDefinition def = potentialKotlinDefaultValue.get(i);
+		
+			for(int j = 0; j < list.size(); j++) {
+				InstantiatorDefinition id = list.get(j);
+				
+				if (isKotlinOriginalConstructor(def, id)) {
+					list.set(j, new KotlinDefaultConstructorInstantiatorDefinition((ExecutableInstantiatorDefinition) id, def));
+					break;
+				}
+			}
+		}
+		
+		
+	}
+
+	private List<ExecutableInstantiatorDefinition> kotlingDefaultValueConstructor(List<InstantiatorDefinition> list) {
+		List<ExecutableInstantiatorDefinition> potentialKotlinDefaultValue = new ArrayList<ExecutableInstantiatorDefinition>();
+
+		for(int i = 0; i < list.size(); i++) {
+			InstantiatorDefinition id = list.get(i);
+			
+			if (id instanceof ExecutableInstantiatorDefinition && 
+					((ExecutableInstantiatorDefinition)id).getExecutable() instanceof Constructor) {
+				Constructor c = (Constructor) ((ExecutableInstantiatorDefinition)id).getExecutable();
+				if (c.isSynthetic()) {
+					Class[] parameterTypes = c.getParameterTypes();
+					if (parameterTypes[parameterTypes.length -1].getName().equals("kotlin.jvm.internal.DefaultConstructorMarker")) {
+						// got one
+						potentialKotlinDefaultValue.add((ExecutableInstantiatorDefinition) id);
+					}
+				}
+			}
+		}
+		return potentialKotlinDefaultValue;
+	}
+
+	private boolean isKotlinOriginalConstructor(ExecutableInstantiatorDefinition def, InstantiatorDefinition id) {
+		if (id instanceof ExecutableInstantiatorDefinition) {
+			ExecutableInstantiatorDefinition eid = (ExecutableInstantiatorDefinition) id;
+			if (eid.getExecutable() instanceof Constructor) {
+				int nbParams = eid.getParameters().length;
+				int syntheticParameters = (nbParams / Integer.SIZE) + 1 + /* DefaultConstructorMarker */ 1;
+				
+				if (nbParams + syntheticParameters != def.getParameters().length) {
+					return false;
+				}
+				
+				for(int i = 0; i < nbParams; i++) {
+					if (!def.getParameters()[i].getType().equals(id.getParameters()[i].getType())) {
+						return false;
+					}
+				}
+				
+				for(int i = nbParams; i < nbParams + syntheticParameters - 1; i++ ) {
+					if (!def.getParameters()[i].getType().equals(int.class)) {
+						return false;
+					}
+				}
+				
+				return true;
+						
+			}
+		}
+		return false;
 	}
 
 	public static ReflectionService newInstance() {
@@ -304,12 +442,48 @@ public class ReflectionService {
 		return selfScoreFullName;
 	}
 
-    public interface ClassMetaFactoryProducer extends ProducerServiceLoader.Producer<UnaryFactory<ReflectionService, ClassMeta<?>>> {
+	public void registerBuilder(String name, DefaultBuilderSupplier defaultBuilderSupplier) {
+		builderMethods.put(name, defaultBuilderSupplier);
 	}
+
+	public interface ClassMetaFactoryProducer extends ProducerServiceLoader.Producer<UnaryFactory<ReflectionService, ClassMeta<?>>> {
+	}
+
+	public interface BuilderProducer extends ProducerServiceLoader.Producer<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>> {
+		
+	}
+
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.TYPE})
 	public @interface PassThrough {
 		String value() default "value";
+	}
+	
+	public static class DefaultBuilderSupplier implements UnaryFactory<Type, Member> {
+
+		private final String clazzName;
+		private final String methodName;
+
+		public DefaultBuilderSupplier(String clazzName, String methodName) {
+			this.clazzName = clazzName;
+			this.methodName = methodName;
+		}
+
+		@Override
+		public Member newInstance(Type type) {
+			try {
+				Class<?> builderClazz = TypeHelper.toClass(type).getClassLoader().loadClass(clazzName);
+				if (methodName != null) {
+					return builderClazz.getMethod(methodName);
+				} else {
+					return builderClazz.getConstructor();
+				}
+			} catch (ClassNotFoundException e) {
+				return ErrorHelper.rethrow(e);
+			} catch (NoSuchMethodException e) {
+				return ErrorHelper.rethrow(e);
+			}
+		}
 	}
 }

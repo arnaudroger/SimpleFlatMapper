@@ -2,12 +2,13 @@ package org.simpleflatmapper.jooq;
 
 import org.jooq.Field;
 import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class JooqFieldKey extends FieldKey<JooqFieldKey> {
+public class JooqFieldKey extends FieldKey<JooqFieldKey> implements TypeAffinity {
 	private final Field<?> field;
 
 	public JooqFieldKey(Field<?> field, int index) {
@@ -69,5 +70,10 @@ public class JooqFieldKey extends FieldKey<JooqFieldKey> {
 		int result = field.hashCode();
 		result = 31 * result + index;
 		return result;
+	}
+
+	@Override
+	public Class<?>[] getAffinities() {
+		return new Class[] { field.getType() };
 	}
 }

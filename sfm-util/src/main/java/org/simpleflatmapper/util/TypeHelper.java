@@ -1,6 +1,7 @@
 package org.simpleflatmapper.util;
 
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
@@ -241,6 +242,18 @@ public final class TypeHelper {
 		return Object.class;
 	}
 
+	public static boolean isKotlinClass(Type target) {
+		Annotation[] annotations = TypeHelper.toClass(target).getDeclaredAnnotations();
+		if (annotations != null) {
+			for(int i = 0; i < annotations.length;i++) {
+				Annotation a = annotations[i];
+				if (a.annotationType().getName().equals("kotlin.Metadata")) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 
 	public static class MapEntryTypes {

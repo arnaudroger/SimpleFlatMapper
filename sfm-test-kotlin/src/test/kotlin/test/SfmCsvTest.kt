@@ -2,11 +2,12 @@ import org.junit.Test
 import org.simpleflatmapper.csv.CsvParser
 import org.simpleflatmapper.tuple.Tuple2
 import org.simpleflatmapper.util.TypeReference
+import test.CsvLine
 
 import kotlin.test.assertEquals
 
 
-class SfmTest {
+class SfmCsvTest {
     @Test
     fun test() {
 
@@ -34,6 +35,17 @@ class SfmTest {
     fun test488() {
         val p = CsvParser.mapTo(object: TypeReference<Tuple2<String, List<Tuple2<Integer, Long>>>>() {})
                 .iterator("elt0,elt1_elt0_elt0,elt1_elt0_elt1\n1,2,3").next()
+        println(p);
+    }
+    
+    @Test
+    fun test538() {
+        val p = CsvParser
+                .dsl()
+                .mapTo(CsvLine::class.java)
+                .iterator("field1,field2\na,b")
+                .next();
+        
         println(p);
     }
 }

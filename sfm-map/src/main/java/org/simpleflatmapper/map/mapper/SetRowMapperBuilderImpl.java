@@ -66,7 +66,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
             TransformSourceFieldMapper transformSourceFieldMapper = (TransformSourceFieldMapper) mapper;
             M m;
 
-            if (constantSourceMapperBuilder.hasJoin()) {
+            if (constantSourceMapperBuilder.isRootAggregate()) {
                 m = (M) setRowMapperFactory.newTransformer(setRowMapperFactory.newJoinMapper(transformSourceFieldMapper.delegate, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory), transformSourceFieldMapper.transform);
             } else {
                 m = (M) setRowMapperFactory.newTransformer(setRowMapperFactory.newStaticMapper(transformSourceFieldMapper.delegate, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory), transformSourceFieldMapper.transform);
@@ -78,7 +78,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
             M m;
 
-            if (constantSourceMapperBuilder.hasJoin()) {
+            if (constantSourceMapperBuilder.isRootAggregate()) {
                 m = setRowMapperFactory.newJoinMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory);
             } else {
                 m = setRowMapperFactory.newStaticMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory);
@@ -96,8 +96,8 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
     }
     
     @Override
-    public boolean hasJoin() {
-        return constantSourceMapperBuilder.hasJoin();
+    public boolean isRootAggregate() {
+        return constantSourceMapperBuilder.isRootAggregate();
     }
 
 

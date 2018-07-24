@@ -13,7 +13,7 @@ public interface SetRowMapperBuilder<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
     SourceFieldMapper<ROW, T> sourceFieldMapper();
 
-    boolean hasJoin();
+    boolean isRootAggregate();
 
     void addMapper(FieldMapper<ROW, T> mapper);
 

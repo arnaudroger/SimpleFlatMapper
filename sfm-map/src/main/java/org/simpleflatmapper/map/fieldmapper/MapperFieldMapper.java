@@ -10,11 +10,11 @@ import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public final class MapperFieldMapper<S, T, P, M extends SourceMapper<S, P> & FieldMapper<S, P>> implements FieldMapper<S, T> {
 
-	private final M mapper;
-	private final Setter<? super T, ? super P> propertySetter;
-    private final Predicate<? super S> nullChecker;
+	public final M mapper;
+    public final Setter<? super T, ? super P> propertySetter;
+    public final Predicate<? super S> nullChecker;
 
-    private final int currentValueIndex;
+    public final int currentValueIndex;
 
     public MapperFieldMapper(M mapper, Setter<? super T, ? super P> propertySetter, Predicate<? super S> nullChecker, int currentValueIndex) {
         this.mapper = requireNonNull("jdbcMapper", mapper);

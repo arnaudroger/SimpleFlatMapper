@@ -9,9 +9,9 @@ import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public final class MapperBiFunctionAdapter<S, P> implements BiFunction<S, MappingContext<? super S>, P> {
 
-	private final SourceMapper<S, P> mapper;
-    private final Predicate<S> nullChecker;
-    private final int valueIndex;
+	public final SourceMapper<S, P> mapper;
+    public final Predicate<S> nullChecker;
+    public final int valueIndex;
 	
 	public MapperBiFunctionAdapter(SourceMapper<S, P> mapper, Predicate<S> nullChecker, int valueIndex) {
 		this.mapper = requireNonNull("jdbcMapper", mapper);

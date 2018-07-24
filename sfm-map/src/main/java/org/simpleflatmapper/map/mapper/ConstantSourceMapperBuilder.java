@@ -176,71 +176,135 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         FieldMapper<S, T>[] fields = fields();
         InstantiatorAndFieldMappers<S, T> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
 
-        if (hasJoin() && fields.length == 0 && !constructorFieldMappersAndInstantiator.constructorInjections.parameterGetterMap.isEmpty()) {
-            // already has mutable builder
-            if (constructorFieldMappersAndInstantiator.instantiator instanceof BuilderBiInstantiator 
-                && ((BuilderBiInstantiator)constructorFieldMappersAndInstantiator.instantiator).isMutable()) {
-                BuilderBiInstantiator builderBiInstantiator = (BuilderBiInstantiator) constructorFieldMappersAndInstantiator.instantiator;
-                return builderWithTransformer(constructorFieldMappersAndInstantiator, builderBiInstantiator);
-            } else {
-                final ConstructorInjections constructorInjections = constructorFieldMappersAndInstantiator.constructorInjections;
-                
-                final BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder = targetInstantiatorFromGenericBuilder(constructorFieldMappersAndInstantiator);
-
-
-                final Class<?> targetClass = GenericBuilder.class;
-                final Method buildMethod = GenericBuilder.BUILD;
-                
-                final Function f = new Function() {
-                    @Override
-                    public Object apply(Object o) {
-                        try {
-                            return buildMethod.invoke(o);
-                        } catch (Exception e) {
-                            return ErrorHelper.rethrow(e);
-                        }
-                    }
-                };
-
-                final int size = constructorInjections.maxIndex();
-                InstantiatorAndFieldMappers newConstantSourceMapperBuilder =
-                        new InstantiatorAndFieldMappers(constructorFieldMappersAndInstantiator.constructorInjections, constructorFieldMappersAndInstantiator.fieldMappers, new BiInstantiator() {
-                            @Override
-                            public Object newInstance(Object o, Object o2) throws Exception {
-                                GenericBuilder genericBuilder = new GenericBuilder(size + 1, targetInstantiatorFromGenericBuilder);
-
-                                for(Map.Entry<Parameter, BiFunction<? super S, ? super MappingContext<? super S>, ?>> e : constructorInjections.parameterGetterMap.entrySet()) {
-                                    BiFunction biFunction = e.getValue();
-                                    genericBuilder.objects[e.getKey().getIndex()] = biFunction.apply(o, o2);
-                                }
-
-                                return genericBuilder;
-                            }
-                        });
-                SourceFieldMapper delegate = buildMapper(new FieldMapper[0], newConstantSourceMapperBuilder, targetClass);
-                return new TransformSourceFieldMapper<S, Object, T>(delegate, f);
-            }
+        if (isTargetForTransformer(fields, constructorFieldMappersAndInstantiator)) {
+            return buildMapperWithTransformer(fields, constructorFieldMappersAndInstantiator);
         } else {
             return buildMapper(fields, constructorFieldMappersAndInstantiator, getTargetClass());
         }
     }
 
-    private BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder(InstantiatorAndFieldMappers<S, T> constructorFieldMappersAndInstantiator) {
+    private boolean isTargetForTransformer(FieldMapper<S, T>[] fields, InstantiatorAndFieldMappers<S, T> constructorFieldMappersAndInstantiator) {
+        return
+                propertyMappingsBuilder.getClassMeta().needTransformer() ||
+                // is aggregate and constructor only
+                        (isRootAggregate() && fields.length == 0 && !constructorFieldMappersAndInstantiator.constructorInjections.parameterGetterMap.isEmpty());
+    }
+
+    @SuppressWarnings("unchecked")
+    private SourceFieldMapper<S, T> buildMapperWithTransformer(FieldMapper<S, T>[] fields, InstantiatorAndFieldMappers<S, T> constructorFieldMappersAndInstantiator) {
+        // already has mutable builder
+        if (constructorFieldMappersAndInstantiator.instantiator instanceof BuilderBiInstantiator 
+            && ((BuilderBiInstantiator)constructorFieldMappersAndInstantiator.instantiator).isMutable()) {
+            BuilderBiInstantiator builderBiInstantiator = (BuilderBiInstantiator) constructorFieldMappersAndInstantiator.instantiator;
+            return builderWithTransformer(fields, constructorFieldMappersAndInstantiator, builderBiInstantiator);
+        } else {
+            final ConstructorInjections constructorInjections = constructorFieldMappersAndInstantiator.constructorInjections;
+            final Class<?> targetClass = GenericBuilder.class;
+            
+            final Function transformFunction = new Function() {
+                @Override
+                public Object apply(Object o) {
+                    try {
+                        return ((GenericBuilder)o).build();
+                    } catch (Exception e) {
+                        return ErrorHelper.rethrow(e);
+                    }
+                }
+            };
+
+            int nbParams = constructorInjections.parameterGetterMap.size();
+            final BiFunction[] biFunctions = new BiFunction[nbParams];
+            final Parameter[] indexMapping = new Parameter[nbParams];
+            final Function[] transformers = new Function[nbParams];
+
+            int i = 0;
+            for(Map.Entry<Parameter, BiFunction<? super S, ? super MappingContext<? super S>, ?>> e : constructorInjections.parameterGetterMap.entrySet()) {
+                BiFunction<? super S, ? super MappingContext<? super S>, ?> biFunction = e.getValue();
+                
+                // unpack bifunction with transformer
+                if (biFunction instanceof MapperBiFunctionAdapter) {
+                    MapperBiFunctionAdapter mapperBiFunctionAdapter = (MapperBiFunctionAdapter) biFunction;
+                    if (mapperBiFunctionAdapter.mapper instanceof TransformSourceFieldMapper) {
+                        TransformSourceFieldMapper transformSourceFieldMapper = (TransformSourceFieldMapper) mapperBiFunctionAdapter.mapper;
+                        
+                        biFunction = new MapperBiFunctionAdapter(transformSourceFieldMapper.delegate, mapperBiFunctionAdapter.nullChecker, mapperBiFunctionAdapter.valueIndex);
+                        transformers[i] = transformSourceFieldMapper.transform;
+                    }
+                }
+                biFunctions[i] = biFunction;
+                indexMapping[i] = e.getKey();
+                i++;
+            }
+            
+            // unpack fields
+           // FieldMapper<S, T>[] newFields = Arrays.copyOf(fields, fields.length);
+
+            final BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder = targetInstantiatorFromGenericBuilder(indexMapping, transformers);
+
+
+            BiInstantiator genericBuilderInstantiator = new BiInstantiator() {
+                @Override
+                public Object newInstance(Object o, Object o2) throws Exception {
+                    GenericBuilder genericBuilder = new GenericBuilder(biFunctions.length, targetInstantiatorFromGenericBuilder);
+                    for (int i = 0; i < biFunctions.length; i++) {
+                        genericBuilder.objects[i] = biFunctions[i].apply(o, o2);
+                    }
+                    return genericBuilder;
+                }
+            };
+
+            FieldMapper[] fieldMappers = Arrays.copyOf(constructorFieldMappersAndInstantiator.fieldMappers, constructorFieldMappersAndInstantiator.fieldMappers.length);
+            
+            for(int j = 0; j < fieldMappers.length; j ++) {
+                FieldMapper fm = fieldMappers[j];
+                if (fm instanceof MapperFieldMapper) {
+                    MapperFieldMapper mapperFieldMapper = (MapperFieldMapper) fm;
+                    if (mapperFieldMapper.mapper instanceof TransformSourceFieldMapper) {
+                        TransformSourceFieldMapper tsfm = (TransformSourceFieldMapper) mapperFieldMapper.mapper;
+                        fieldMappers[j] = new MapperFieldMapper(tsfm.delegate, mapperFieldMapper.propertySetter, mapperFieldMapper.nullChecker, mapperFieldMapper.currentValueIndex);
+                    }
+                }
+            }
+            
+            InstantiatorAndFieldMappers newConstantSourceMapperBuilder =
+                    new InstantiatorAndFieldMappers(
+                            constructorFieldMappersAndInstantiator.constructorInjections,
+                            fieldMappers,
+                            genericBuilderInstantiator);
+            
+            SourceFieldMapper delegate = buildMapper(new FieldMapper[0], newConstantSourceMapperBuilder, targetClass);
+            
+            return new TransformSourceFieldMapper<S, Object, T>(delegate, transformFunction);
+        }
+    }
+    
+
+    private BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder(Parameter[] indexMapping, Function[] transformers) {
         InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 
 
         Map<Parameter, BiFunction<? super Object[], ? super Object, ?>> params = new HashMap<Parameter, BiFunction<? super Object[], ? super Object, ?>>();
 
-        for(Map.Entry<Parameter, BiFunction<? super S, ? super MappingContext<? super S>, ?>> e : constructorFieldMappersAndInstantiator.constructorInjections.parameterGetterMap.entrySet()) {
-            final int index = e.getKey().getIndex();
-            params.put(e.getKey(), new BiFunction<Object[], Object, Object>() {
-                @Override
-                public Object apply(Object[] objects, Object o) {
-                    return objects[index];
-                }
-            });
+        for(int i = 0; i < indexMapping.length; i++) {
+            Parameter parameter = indexMapping[i];
+            final int builderIndex = i;
+            Function transformer = transformers[i];
+            if (transformer == null) {
+                params.put(parameter, new BiFunction<Object[], Object, Object>() {
+                    @Override
+                    public Object apply(Object[] objects, Object o) {
+                        return objects[builderIndex];
+                    }
+                });
+            } else {
+                params.put(parameter, new BiFunction<Object[], Object, Object>() {
+                    @Override
+                    public Object apply(Object[] objects, Object o) {
+                        return transformer.apply(objects[builderIndex]);
+                    }
+                });
+            }
         }
-
         BiInstantiator<Object[], Object, Object> targetInstantiator = instantiatorFactory.getBiInstantiator(getTargetClass(), Object[].class, Object.class,
                 propertyMappingsBuilder.getPropertyFinder().getEligibleInstantiatorDefinitions(), params, true, reflectionService.builderIgnoresNullValues());
         
@@ -248,7 +312,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private SourceFieldMapper<S, T> builderWithTransformer(final InstantiatorAndFieldMappers constructorFieldMappersAndInstantiator, final BuilderBiInstantiator builderBiInstantiator) {
+    private SourceFieldMapper<S, T> builderWithTransformer(FieldMapper[] fields, final InstantiatorAndFieldMappers constructorFieldMappersAndInstantiator, final BuilderBiInstantiator builderBiInstantiator) {
         final Method buildMethod = builderBiInstantiator.buildMethod;
         final Class<?> targetClass = buildMethod.getDeclaringClass();
         final Function f = new Function() {
@@ -269,7 +333,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 return builderBiInstantiator.newInitialisedBuilderInstace(o, o2);
             }
         });
-        SourceFieldMapper delegate = buildMapper(new FieldMapper[0], newConstantSourceMapperBuilder, targetClass);
+        SourceFieldMapper delegate = buildMapper(fields, newConstantSourceMapperBuilder, targetClass);
         return new TransformSourceFieldMapper<S, Object, T>(delegate, f);
     }
 
@@ -310,7 +374,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         return mapper;
     }
 
-    public boolean hasJoin() {
+    public boolean isRootAggregate() {
         return mappingContextFactoryBuilder.isRoot()
                 && !mappingContextFactoryBuilder.hasNoDependentKeys();
     }

@@ -32,8 +32,8 @@ public class TransfromerSetRowMapperBuilder<MO extends SetRowMapper<ROW, SET, O,
     }
 
     @Override
-    public final boolean hasJoin() {
-        return delegate.hasJoin();
+    public final boolean isRootAggregate() {
+        return delegate.isRootAggregate();
     }
 
     public final void addMapper(FieldMapper<ROW, O> mapper) {

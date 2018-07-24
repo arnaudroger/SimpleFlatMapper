@@ -34,16 +34,17 @@ public class ECCollectionMapperTest {
     @Test
     public void testImmutableList() throws Exception {
 
-//        AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableA> builderA = new AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableA>(ReflectionService.newInstance(false).getClassMeta(ImmutableA.class));
-//
-//        builderA.addKey("id").addMapping("bs_v");
-//
-//        EnumerableMapper<Object[][], ImmutableA, ?> mapper =
-//                builderA.mapper();
-//
-//        ImmutableA a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
-//
-//        assertEquals(Lists.immutable.of(new B("v1"), new B("v2")), a.bs);
+        AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableA> builderA = 
+                new AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableA>(ReflectionService.newInstance(false).getClassMeta(ImmutableA.class));
+
+        builderA.addKey("id").addMapping("bs_v");
+
+        EnumerableMapper<Object[][], ImmutableA, ?> mapper =
+                builderA.mapper();
+
+        ImmutableA a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(Lists.immutable.of(new B("v1"), new B("v2")), a.bs);
 
     }
 

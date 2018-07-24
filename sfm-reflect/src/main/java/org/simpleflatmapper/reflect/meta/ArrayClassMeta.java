@@ -45,19 +45,36 @@ import java.util.*;
 
 public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 
+	public static boolean supports(Type target) {
+		Class<?> clazz = TypeHelper.toClass(target);
+		if (Collection.class.isAssignableFrom(clazz) || Iterable.class.equals(clazz)) {
+			return true;
+		}
+		return ImmutableList.class.equals(clazz);
+	}
+	
+	
+
 	private final ReflectionService reflectionService;
 	private final Type elementTarget;
 	private final ClassMeta<E> elementClassMeta;
 	private final Type type;
 	private final InstantiatorDefinitionAndIntermediatType instInfo;
+	private final boolean needTransformer;
 
 	public ArrayClassMeta(Type type, Type elementTarget, ReflectionService reflectionService) {
 		this.type = type;
 		this.elementTarget = elementTarget;
 		this.reflectionService = reflectionService;
+		this.needTransformer = getNeedTransformer(type);
 		this.elementClassMeta = reflectionService.getClassMeta(elementTarget);
 		this.instInfo = getInstantiatorDefinitionAndIntermediateType(type);
 	}
+
+	private boolean getNeedTransformer(Type type) {
+		return ImmutableList.class.equals(TypeHelper.toClass(type));
+	}
+
 
 	private InstantiatorDefinitionAndIntermediatType getInstantiatorDefinitionAndIntermediateType(Type type) {
 		Class<?> clazz = TypeHelper.toClass(type);
@@ -143,6 +160,11 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	@Override
 	public int getNumberOfProperties() {
 		return 10000;
+	}
+
+	@Override
+	public boolean needTransformer() {
+		return needTransformer;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -88,4 +88,9 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 	public int getNumberOfProperties() {
 		return 10000;
 	}
+
+	@Override
+	public boolean needTransformer() {
+		return false;
+	}
 }

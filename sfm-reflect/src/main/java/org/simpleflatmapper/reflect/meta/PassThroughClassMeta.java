@@ -79,4 +79,9 @@ public class PassThroughClassMeta<T, V> implements ClassMeta<T> {
 		return 1;
 	}
 
+	@Override
+	public boolean needTransformer() {
+		return false;
+	}
+
 }

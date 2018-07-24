@@ -88,6 +88,11 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 		return 1;
 	}
 
+	@Override
+	public boolean needTransformer() {
+		return false;
+	}
+
 
 	private static class OptionalGetter<T> implements Getter<Optional<T>, Object> {
 		@Override

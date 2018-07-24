@@ -7,9 +7,6 @@ import org.junit.Test;
 import org.simpleflatmapper.map.EnumerableMapper;
 import org.simpleflatmapper.reflect.ReflectionService;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 import static org.junit.Assert.assertEquals;
 
 
@@ -46,6 +43,41 @@ public class ECCollectionMapperTest {
 
         assertEquals(Lists.immutable.of(new B("v1"), new B("v2")), a.bs);
 
+    }
+
+    @Test
+    public void testImmutableWrapperList() throws Exception {
+
+        AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableAWrapper> builderA =
+                new AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableAWrapper>(ReflectionService.newInstance(false).getClassMeta(ImmutableAWrapper.class));
+
+        builderA.addKey("a_id").addMapping("a_bs_v");
+
+        EnumerableMapper<Object[][], ImmutableAWrapper, ?> mapper =
+                builderA.mapper();
+
+        ImmutableAWrapper a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(Lists.immutable.of(new B("v1"), new B("v2")), a.a.bs);
+
+    }
+    
+    public static class ImmutableAWrapper {
+        private final String str;
+        private final ImmutableA a;
+
+        public ImmutableAWrapper(String str, ImmutableA a) {
+            this.str = str;
+            this.a = a;
+        }
+
+        public String getStr() {
+            return str;
+        }
+
+        public ImmutableA getA() {
+            return a;
+        }
     }
 
     public static class ImmutableA {

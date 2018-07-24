@@ -187,7 +187,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         return
                 propertyMappingsBuilder.getClassMeta().needTransformer() ||
                 // is aggregate and constructor only
-                        (isRootAggregate() && fields.length == 0 && !constructorFieldMappersAndInstantiator.constructorInjections.parameterGetterMap.isEmpty());
+                        (!mappingContextFactoryBuilder.hasNoDependentKeys() 
+                                && fields.length == 0 
+                                && !constructorFieldMappersAndInstantiator.constructorInjections.parameterGetterMap.isEmpty());
     }
 
     @SuppressWarnings("unchecked")
@@ -201,16 +203,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             final ConstructorInjections constructorInjections = constructorFieldMappersAndInstantiator.constructorInjections;
             final Class<?> targetClass = GenericBuilder.class;
             
-            final Function transformFunction = new Function() {
-                @Override
-                public Object apply(Object o) {
-                    try {
-                        return ((GenericBuilder)o).build();
-                    } catch (Exception e) {
-                        return ErrorHelper.rethrow(e);
-                    }
-                }
-            };
+            final Function transformFunction = new GenericBuilderTransformFunction();
 
             int nbParams = constructorInjections.parameterGetterMap.size();
             final BiFunction[] biFunctions = new BiFunction[nbParams];
@@ -274,10 +267,19 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             
             SourceFieldMapper delegate = buildMapper(new FieldMapper[0], newConstantSourceMapperBuilder, targetClass);
             
-            return new TransformSourceFieldMapper<S, Object, T>(delegate, transformFunction);
+            return new TransformSourceFieldMapper<S, Object, T>(delegate, merge(constructorFieldMappersAndInstantiator.fieldMappers, fields), transformFunction);
         }
     }
-    
+
+    private FieldMapper<S, T>[] merge(FieldMapper<S, T>[] fieldMappers, FieldMapper<S, T>[] fields) {
+        FieldMapper<S, T>[] f = new FieldMapper[fieldMappers.length + fields.length];
+        
+        System.arraycopy(fieldMappers, 0, f, 0, fieldMappers.length);
+        System.arraycopy(fields, 0, f, fieldMappers.length, fields.length);
+        
+        return f;
+    }
+
 
     private BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder(Parameter[] indexMapping, Function[] transformers) {
         InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
@@ -334,7 +336,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             }
         });
         SourceFieldMapper delegate = buildMapper(fields, newConstantSourceMapperBuilder, targetClass);
-        return new TransformSourceFieldMapper<S, Object, T>(delegate, f);
+        return new TransformSourceFieldMapper<S, Object, T>(delegate, fields, f);
     }
 
     private <T> SourceFieldMapper<S, T> buildMapper(FieldMapper<S, T>[] fields, InstantiatorAndFieldMappers<S, T> constructorFieldMappersAndInstantiator, Class<T> target) {
@@ -669,6 +671,19 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
         return keys;
     }
+
+    private static class GenericBuilderTransformFunction implements Function {
+        @Override
+        public Object apply(Object o) {
+            try {
+                if (o == null) return null;
+                return ((GenericBuilder)o).build();
+            } catch (Exception e) {
+                return ErrorHelper.rethrow(e);
+            }
+        }
+    }
+
     private class InstantiatorAndFieldMappers<S, T> {
         private final ConstructorInjections constructorInjections;
         private final FieldMapper<S, T>[] fieldMappers;

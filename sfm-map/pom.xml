@@ -62,6 +62,13 @@
 			<classifier>${jar.classifier}</classifier>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.collections</groupId>
+			<artifactId>eclipse-collections</artifactId>
+			<version>7.1.2</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

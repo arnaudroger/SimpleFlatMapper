@@ -1,8 +1,5 @@
 package org.simpleflatmapper.reflect.meta;
 
-import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.impl.list.mutable.FastList;
 import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Setter;
@@ -45,16 +42,6 @@ import java.util.*;
 
 public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 
-	public static boolean supports(Type target) {
-		Class<?> clazz = TypeHelper.toClass(target);
-		if (Collection.class.isAssignableFrom(clazz) || Iterable.class.equals(clazz)) {
-			return true;
-		}
-		return ImmutableList.class.equals(clazz);
-	}
-	
-	
-
 	private final ReflectionService reflectionService;
 	private final Type elementTarget;
 	private final ClassMeta<E> elementClassMeta;
@@ -62,65 +49,15 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	private final InstantiatorDefinitionAndIntermediatType instInfo;
 	private final boolean needTransformer;
 
-	public ArrayClassMeta(Type type, Type elementTarget, ReflectionService reflectionService) {
+	public ArrayClassMeta(Type type, Type elementTarget, ReflectionService reflectionService, InstantiatorDefinitionAndIntermediatType typeInfo) {
 		this.type = type;
 		this.elementTarget = elementTarget;
 		this.reflectionService = reflectionService;
-		this.needTransformer = getNeedTransformer(type);
+		this.needTransformer = typeInfo.needTransform;
 		this.elementClassMeta = reflectionService.getClassMeta(elementTarget);
-		this.instInfo = getInstantiatorDefinitionAndIntermediateType(type);
+		this.instInfo = typeInfo;
 	}
-
-	private boolean getNeedTransformer(Type type) {
-		return ImmutableList.class.equals(TypeHelper.toClass(type));
-	}
-
-
-	private InstantiatorDefinitionAndIntermediatType getInstantiatorDefinitionAndIntermediateType(Type type) {
-		Class<?> clazz = TypeHelper.toClass(type);
-
-		if (clazz.isArray()) {
-			return new InstantiatorDefinitionAndIntermediatType(null, clazz);
-		}
-
-		if (clazz.isInterface()) {
-			if (List.class.equals(clazz) || Collection.class.equals(clazz) || Iterable.class.equals(clazz)) {
-				return new InstantiatorDefinitionAndIntermediatType(getConstructor(ArrayList.class), ArrayList.class);
-			} else if (Set.class.equals(clazz)) {
-				return new InstantiatorDefinitionAndIntermediatType(getConstructor(HashSet.class), HashSet.class);
-			} else if (MutableList.class.equals(clazz)) {
-				return new InstantiatorDefinitionAndIntermediatType(getConstructor(FastList.class), FastList.class);
-			} else if (ImmutableList.class.equals(clazz)) {
-				try {
-					return new InstantiatorDefinitionAndIntermediatType(
-							new BuilderInstantiatorDefinition(getConstructor(FastList.class),
-									new HashMap<org.simpleflatmapper.reflect.Parameter, java.lang.reflect.Method>(),
-									FastList.class.getMethod("toImmutable")),
-							FastList.class);
-				} catch (Exception e) {
-					ErrorHelper.rethrow(e);
-				}
-			}
-		} else if (!Modifier.isAbstract(clazz.getModifiers())) {
-			return new InstantiatorDefinitionAndIntermediatType(getConstructor(type), type);
-		}
-
-		throw new IllegalArgumentException("Unknown List impl for " + type);
-	}
-
-	private InstantiatorDefinition getConstructor(Type type) {
-		if (TypeHelper.isArray(type)) {
-			return null;
-		} else {
-			try {
-				return new ExecutableInstantiatorDefinition(TypeHelper.toClass(type).getDeclaredConstructor());
-			} catch (NoSuchMethodException e) {
-				throw new IllegalArgumentException("No empty constructor for " + type);
-			}
-		}
-	}
-
-
+	
 	public ClassMeta<E> getElementClassMeta() {
 		return elementClassMeta;
 	}
@@ -352,13 +289,157 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	}
 
 
-	private class InstantiatorDefinitionAndIntermediatType {
-		final InstantiatorDefinition instantiatorDefinition;
-		final Type intermediateType;
+	public static class InstantiatorDefinitionAndIntermediatType {
+		public final InstantiatorDefinition instantiatorDefinition;
+		public final Type intermediateType;
+		public final boolean needTransform;
 
-		private InstantiatorDefinitionAndIntermediatType(InstantiatorDefinition instantiatorDefinition, Type intermediateType) {
+		public InstantiatorDefinitionAndIntermediatType(InstantiatorDefinition instantiatorDefinition, Type intermediateType, boolean needTransform) {
 			this.instantiatorDefinition = instantiatorDefinition;
 			this.intermediateType = intermediateType;
+			this.needTransform = needTransform;
 		}
 	}
+	
+	public interface InstantiatorDefinitionAndIntermediatTypeFactory {
+		boolean supports(Type type);
+		InstantiatorDefinitionAndIntermediatType newTypeInfo(Type type);
+		
+	}
+	
+	
+	private static final List<InstantiatorDefinitionAndIntermediatTypeFactory> intermediatTypeFactories;
+	static {
+		intermediatTypeFactories = new ArrayList<InstantiatorDefinitionAndIntermediatTypeFactory>();
+
+
+		intermediatTypeFactories.add(new InstantiatorDefinitionAndIntermediatTypeFactory() {
+			@Override
+			public boolean supports(Type type) {
+				return TypeHelper.isArray(type);
+			}
+
+			@Override
+			public InstantiatorDefinitionAndIntermediatType newTypeInfo(Type type) {
+				return new InstantiatorDefinitionAndIntermediatType(null, type, false);
+			}
+		});
+
+
+		intermediatTypeFactories.add(new InstantiatorDefinitionAndIntermediatTypeFactory() {
+			@Override
+			public boolean supports(Type type) {
+				return TypeHelper.areEquals(type, List.class)
+						|| TypeHelper.areEquals(type, Collection.class)
+						|| TypeHelper.areEquals(type, Iterable.class)
+						;
+			}
+
+			@Override
+			public InstantiatorDefinitionAndIntermediatType newTypeInfo(Type type) {
+				return new InstantiatorDefinitionAndIntermediatType(getConstructor(ArrayList.class), ArrayList.class, false);
+			}
+		});
+
+		intermediatTypeFactories.add(new InstantiatorDefinitionAndIntermediatTypeFactory() {
+			@Override
+			public boolean supports(Type type) {
+				return TypeHelper.areEquals(type, Set.class)
+						;
+			}
+			@Override
+			public InstantiatorDefinitionAndIntermediatType newTypeInfo(Type type) {
+				return new InstantiatorDefinitionAndIntermediatType(getConstructor(HashSet.class), HashSet.class, false);
+			}
+		});
+
+		intermediatTypeFactories.add(new InstantiatorDefinitionAndIntermediatTypeFactory() {
+			@Override
+			public boolean supports(Type type) {
+				return "org.eclipse.collections.api.list.MutableList".equals(TypeHelper.toClass(type).getName());
+			}
+			@Override
+			public InstantiatorDefinitionAndIntermediatType newTypeInfo(Type type) {
+				try {
+					Class clazz = type.getClass().getClassLoader().loadClass("org.eclipse.collections.impl.list.mutable.FastList");
+					return new InstantiatorDefinitionAndIntermediatType(getConstructor(clazz), clazz, false);
+				} catch (ClassNotFoundException e) {
+					return ErrorHelper.rethrow(e);
+				}
+
+			}
+		});
+
+		intermediatTypeFactories.add(new InstantiatorDefinitionAndIntermediatTypeFactory() {
+			@Override
+			public boolean supports(Type type) {
+				return "org.eclipse.collections.api.list.ImmutableList".equals(TypeHelper.toClass(type).getName());
+			}
+			@Override
+			public InstantiatorDefinitionAndIntermediatType newTypeInfo(Type type) {
+				try {
+					Class clazz = type.getClass().getClassLoader().loadClass("org.eclipse.collections.impl.list.mutable.FastList");
+
+					return new InstantiatorDefinitionAndIntermediatType(
+							new BuilderInstantiatorDefinition(getConstructor(clazz),
+									new HashMap<org.simpleflatmapper.reflect.Parameter, java.lang.reflect.Method>(),
+									clazz.getMethod("toImmutable")),
+							clazz, true);
+				} catch (ClassNotFoundException e) {
+					return ErrorHelper.rethrow(e);
+				} catch (NoSuchMethodException e) {
+					return ErrorHelper.rethrow(e);
+				}
+			}
+		});
+	}
+
+
+	public static boolean supports(Type target) {
+		Class<?> clazz = TypeHelper.toClass(target);
+
+		for(InstantiatorDefinitionAndIntermediatTypeFactory factory  :intermediatTypeFactories) {
+			if (factory.supports(target)) {
+				return true;
+			}
+		}
+
+		return (Collection.class.isAssignableFrom(clazz) || Iterable.class.equals(clazz));
+	}
+
+	public static <T, E> ArrayClassMeta<T, E> of(Type type, Type elementTarget, ReflectionService reflectionService) {
+		InstantiatorDefinitionAndIntermediatType typeInfo = getTypeInfo(type);
+		return new ArrayClassMeta<T, E>(type, elementTarget, reflectionService, typeInfo);
+	}
+	
+	
+	public static InstantiatorDefinitionAndIntermediatType getTypeInfo(Type type) {
+		for(InstantiatorDefinitionAndIntermediatTypeFactory factory  :intermediatTypeFactories) {
+			if (factory.supports(type)) {
+				return factory.newTypeInfo(type);
+			}
+		}
+
+		Class<Object> clazz = TypeHelper.toClass(type);
+
+		if (!Modifier.isAbstract(clazz.getModifiers())) {
+			return new InstantiatorDefinitionAndIntermediatType(getConstructor(type), type, false);
+		}
+		throw new IllegalArgumentException("Unknown List impl for " + type);
+	}
+
+
+	private static InstantiatorDefinition getConstructor(Type type) {
+		if (TypeHelper.isArray(type)) {
+			return null;
+		} else {
+			try {
+				return new ExecutableInstantiatorDefinition(TypeHelper.toClass(type).getDeclaredConstructor());
+			} catch (NoSuchMethodException e) {
+				throw new IllegalArgumentException("No empty constructor for " + type);
+			}
+		}
+	}
+
+
 }

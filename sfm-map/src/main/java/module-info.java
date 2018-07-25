@@ -2,8 +2,6 @@ module org.simpleflatmapper.map {
         requires java.logging;
 
         requires transitive org.simpleflatmapper.reflect;
-        requires static org.eclipse.collections.impl;
-        requires static org.eclipse.collections.api;
 
         exports org.simpleflatmapper.map;
         exports org.simpleflatmapper.map.context;

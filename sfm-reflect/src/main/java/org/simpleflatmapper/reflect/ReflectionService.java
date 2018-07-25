@@ -232,11 +232,11 @@ public class ReflectionService {
 		return new MapClassMeta<Map<K, V>, K, V>(type, types.getKeyType(), types.getValueType(), this);
 	}
 	private <T, E> ClassMeta<T> newArrayMeta(Class<T> clazz) {
-		return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
+		return ArrayClassMeta.<T, E>of(clazz, clazz.getComponentType(), this);
 	}
 
 	private <T, E> ClassMeta<T> newCollectionMeta(Type type) {
-		return new ArrayClassMeta<T, E>(type, TypeHelper.getComponentTypeOfListOrArray(type), this);
+		return ArrayClassMeta.<T, E>of(type, TypeHelper.getComponentTypeOfListOrArray(type), this);
 	}
 
 	private <T> boolean isFastTuple(Class<T> clazz) {

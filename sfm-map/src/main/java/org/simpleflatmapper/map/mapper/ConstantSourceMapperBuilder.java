@@ -290,7 +290,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         for(int i = 0; i < indexMapping.length; i++) {
             Parameter parameter = indexMapping[i];
             final int builderIndex = i;
-            Function transformer = transformers[i];
+            final Function transformer = transformers[i];
             if (transformer == null) {
                 params.put(parameter, new BiFunction<Object[], Object, Object>() {
                     @Override

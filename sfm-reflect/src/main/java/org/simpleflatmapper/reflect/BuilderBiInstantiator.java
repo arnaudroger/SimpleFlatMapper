@@ -1,8 +1,5 @@
 package org.simpleflatmapper.reflect;
 
-import org.simpleflatmapper.reflect.BiInstantiator;
-import org.simpleflatmapper.reflect.Instantiator;
-import org.simpleflatmapper.reflect.MethodBiFunctionPair;
 import org.simpleflatmapper.util.ErrorHelper;
 
 import java.lang.reflect.InvocationTargetException;
@@ -56,9 +53,5 @@ public final class BuilderBiInstantiator<S1, S2, T> implements BiInstantiator<S1
 			}
 		}
 		return builder;
-	}
-
-	public boolean isMutable() {
-		return chainedArguments == null || chainedArguments.length == 0;
 	}
 }

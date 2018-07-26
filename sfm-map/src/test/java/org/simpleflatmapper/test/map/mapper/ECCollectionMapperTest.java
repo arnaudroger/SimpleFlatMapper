@@ -8,6 +8,7 @@ import org.simpleflatmapper.map.EnumerableMapper;
 import org.simpleflatmapper.reflect.ReflectionService;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class ECCollectionMapperTest {
@@ -26,6 +27,9 @@ public class ECCollectionMapperTest {
 
         assertEquals(Lists.mutable.of(new B("v1"), new B("v2")), a.bs);
 
+        assertEquals(1, a.id);
+
+
     }
 
     @Test
@@ -42,6 +46,45 @@ public class ECCollectionMapperTest {
         ImmutableA a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
 
         assertEquals(Lists.immutable.of(new B("v1"), new B("v2")), a.bs);
+        assertEquals(1, a.id);
+
+
+    }
+
+    @Test
+    public void testImmutableListObjectWithSetter() throws Exception {
+
+        AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableAA> builderA =
+                new AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableAA>(ReflectionService.newInstance(false).getClassMeta(ImmutableAA.class));
+
+        builderA.addKey("id").addMapping("bs_v");
+
+        EnumerableMapper<Object[][], ImmutableAA, ?> mapper =
+                builderA.mapper();
+
+        ImmutableAA a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(Lists.immutable.of(new B("v1"), new B("v2")), a.bs);
+        assertEquals(1, a.id);
+
+
+    }
+
+    @Test
+    public void testImmutableListObjectMixSetter() throws Exception {
+
+        AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableAAA> builderA =
+                new AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableAAA>(ReflectionService.newInstance(false).getClassMeta(ImmutableAAA.class));
+
+        builderA.addKey("id").addMapping("bs_v");
+
+        EnumerableMapper<Object[][], ImmutableAAA, ?> mapper =
+                builderA.mapper();
+
+        ImmutableAAA a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(Lists.immutable.of(new B("v1"), new B("v2")), a.bs);
+        assertEquals(1, a.id);
 
     }
 
@@ -59,6 +102,7 @@ public class ECCollectionMapperTest {
         ImmutableAWrapper a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
 
         assertEquals(Lists.immutable.of(new B("v1"), new B("v2")), a.a.bs);
+        assertEquals(1, a.a.id);
 
     }
     
@@ -106,7 +150,66 @@ public class ECCollectionMapperTest {
         }
 
     }
- 
+
+    public static class ImmutableAA {
+        private int id;
+        private final ImmutableList<B> bs;
+
+        public ImmutableAA(int id, ImmutableList<B> bs) {
+            this.id = id;
+            this.bs = bs;
+        }
+
+        public ImmutableList getBs() {
+            return bs;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return "A{" +
+                    "id=" + id +
+                    ", bs=" + bs +
+                    '}';
+        }
+
+    }
+    public static class ImmutableAAA {
+        private int id;
+        private final ImmutableList<B> bs;
+
+        public ImmutableAAA(ImmutableList<B> bs) {
+            this.bs = bs;
+        }
+
+        public ImmutableList getBs() {
+            return bs;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return "A{" +
+                    "id=" + id +
+                    ", bs=" + bs +
+                    '}';
+        }
+
+    }
 
     public static class MutableA {
         private final int id;
@@ -132,8 +235,8 @@ public class ECCollectionMapperTest {
                     ", bs=" + bs +
                     '}';
         }
-
     }
+    
     public static class B {
         private final String v;
 

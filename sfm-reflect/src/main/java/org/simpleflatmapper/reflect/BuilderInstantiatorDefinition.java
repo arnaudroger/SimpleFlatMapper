@@ -57,4 +57,13 @@ public final class BuilderInstantiatorDefinition implements InstantiatorDefiniti
 		return buildMethod.getDeclaringClass().getName();
 	}
 
+	public boolean isMutable() {
+		for(Method m : setters.values()) {
+			Class<?> returnType = m.getReturnType();
+			if (returnType != void.class && returnType != Void.class) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

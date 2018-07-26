@@ -392,6 +392,29 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 				}
 			}
 		});
+
+		intermediatTypeFactories.add(new InstantiatorDefinitionAndIntermediatTypeFactory() {
+			@Override
+			public boolean supports(Type type) {
+				return "com.google.common.collect.ImmutableList".equals(TypeHelper.toClass(type).getName());
+			}
+			@Override
+			public InstantiatorDefinitionAndIntermediatType newTypeInfo(Type type) {
+				try {
+					Class builderClass = type.getClass().getClassLoader().loadClass("com.google.common.collect.ImmutableList$Builder");
+					Class immutableClass = TypeHelper.toClass(type);
+					return new InstantiatorDefinitionAndIntermediatType(
+							new BuilderInstantiatorDefinition(getConstructor(ArrayList.class),
+									new HashMap<org.simpleflatmapper.reflect.Parameter, java.lang.reflect.Method>(),
+									builderClass.getMethod("build")),
+							ArrayList.class, true);
+				} catch (ClassNotFoundException e) {
+					return ErrorHelper.rethrow(e);
+				} catch (NoSuchMethodException e) {
+					return ErrorHelper.rethrow(e);
+				}
+			}
+		});
 	}
 
 

@@ -7,9 +7,9 @@ import org.simpleflatmapper.map.MappingContext;
 
 public final class FieldErrorHandlerMapper<S, T, K> implements FieldMapper<S, T> {
 
-	private final FieldMapper<S, T> delegate;
-	private final FieldMapperErrorHandler<? super K> errorHandler;
-	private final K key;
+	public final FieldMapper<S, T> delegate;
+	public final FieldMapperErrorHandler<? super K> errorHandler;
+	public final K key;
 	
 	public FieldErrorHandlerMapper(K key, FieldMapper<S, T> delegate,
 			FieldMapperErrorHandler<? super K> errorHandler) {

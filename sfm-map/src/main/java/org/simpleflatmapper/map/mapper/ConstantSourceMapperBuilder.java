@@ -486,9 +486,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         return newMapperFieldMapper(properties, (Setter<T, P>) meta.getSetter(), mapper, mappingContextFactoryBuilder);
     }
 
-    private <P, M extends SourceMapper<S, P> & FieldMapper<S, P>> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, Setter<T, P> setter, SourceMapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
-        final MapperFieldMapper<S, T, P, M> fieldMapper =
-                new MapperFieldMapper<S, T, P, M>((M)mapper,
+    private <P> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, Setter<T, P> setter, SourceMapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+        final MapperFieldMapper fieldMapper =
+                new MapperFieldMapper(mapper,
                         (Setter<T, P>)setter,
                         mappingContextFactoryBuilder.nullChecker(),
                         mappingContextFactoryBuilder.currentIndex());

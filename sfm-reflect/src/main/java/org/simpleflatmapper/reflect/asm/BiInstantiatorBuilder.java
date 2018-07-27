@@ -297,9 +297,17 @@ public class BiInstantiatorBuilder {
             }
         }
         mv.visitVarInsn(ALOAD, 3);
-        AsmUtils.invoke(mv, TypeHelper.toClass(builderClass),
-                instantiatorDefinition.getBuildMethod().getName(),
-                AsmUtils.toSignature(instantiatorDefinition.getBuildMethod()));
+        
+        Method buildMethod = instantiatorDefinition.getBuildMethod();
+        if (Modifier.isStatic(buildMethod.getModifiers())) {
+            mv.visitMethodInsn(INVOKESTATIC, 
+                    AsmUtils.toAsmType(buildMethod.getDeclaringClass()), 
+                    buildMethod.getName(), AsmUtils.toSignature(buildMethod), false);
+        } else {
+            AsmUtils.invoke(mv, TypeHelper.toClass(builderClass),
+                    buildMethod.getName(),
+                    AsmUtils.toSignature(buildMethod));
+        }
 
         mv.visitInsn(ARETURN);
         mv.visitMaxs(3 , 2);

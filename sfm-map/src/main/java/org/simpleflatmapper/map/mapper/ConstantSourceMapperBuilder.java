@@ -55,6 +55,7 @@ import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -334,16 +335,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         final FieldMapper[] fields = targetFieldMappers();
         final Method buildMethod = builder.getBuildMethod();
         final Class<?> targetClass = buildMethod.getDeclaringClass();
-        final Function f = new Function() {
-            @Override
-            public Object apply(Object o) {
-                try {
-                    return buildMethod.invoke(o);
-                } catch (Exception e) {
-                    return ErrorHelper.rethrow(e);
-                }
-            }
-        };
+        final Function f = Modifier.isStatic(buildMethod.getModifiers()) ? new StaticMethodFunction(buildMethod) : new MethodFunction(buildMethod);
 
         ConstructorInjections constructorInjections = toConstructorInjections(params);
         InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
@@ -563,6 +555,39 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
 		return fields;
 	}
+
+    private static class MethodFunction implements Function {
+        private final Method buildMethod;
+
+        public MethodFunction(Method buildMethod) {
+            this.buildMethod = buildMethod;
+        }
+
+        @Override
+        public Object apply(Object o) {
+            try {
+                return buildMethod.invoke(o);
+            } catch (Exception e) {
+                return ErrorHelper.rethrow(e);
+            }
+        }
+    }
+    private static class StaticMethodFunction implements Function {
+        private final Method buildMethod;
+
+        public StaticMethodFunction(Method buildMethod) {
+            this.buildMethod = buildMethod;
+        }
+
+        @Override
+        public Object apply(Object o) {
+            try {
+                return buildMethod.invoke(null, o);
+            } catch (Exception e) {
+                return ErrorHelper.rethrow(e);
+            }
+        }
+    }
 
     class FieldGenericBuilderInfo {
 

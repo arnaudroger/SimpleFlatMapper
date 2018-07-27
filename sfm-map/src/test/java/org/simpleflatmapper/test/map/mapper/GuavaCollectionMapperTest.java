@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 public class GuavaCollectionMapperTest {
 
 
-//    @Test
+    @Test
     public void testImmutableList() throws Exception {
 
         AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableA> builderA = 
@@ -30,7 +30,7 @@ public class GuavaCollectionMapperTest {
 
     }
 
-//    @Test
+    @Test
     public void testImmutableWrapperList() throws Exception {
 
         AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableAWrapper> builderA =

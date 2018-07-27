@@ -401,12 +401,11 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 			@Override
 			public InstantiatorDefinitionAndIntermediatType newTypeInfo(Type type) {
 				try {
-					Class builderClass = type.getClass().getClassLoader().loadClass("com.google.common.collect.ImmutableList$Builder");
-					Class immutableClass = TypeHelper.toClass(type);
+					Class builderClass = type.getClass().getClassLoader().loadClass("com.google.common.collect.ImmutableList");
 					return new InstantiatorDefinitionAndIntermediatType(
 							new BuilderInstantiatorDefinition(getConstructor(ArrayList.class),
 									new HashMap<org.simpleflatmapper.reflect.Parameter, java.lang.reflect.Method>(),
-									builderClass.getMethod("build")),
+									builderClass.getMethod("copyOf", Collection.class)),
 							ArrayList.class, true);
 				} catch (ClassNotFoundException e) {
 					return ErrorHelper.rethrow(e);

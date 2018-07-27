@@ -5,7 +5,7 @@ import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.CustomField;
 import org.jooq.impl.DefaultDataType;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
@@ -63,7 +63,7 @@ public class JooqMapperBuilder<E> {
 		return this;
 	}
 
-	public Mapper<Record, E> mapper() {
+	public SourceMapper<Record, E> mapper() {
 		return constantSourceMapperBuilder.mapper();
 	}
 

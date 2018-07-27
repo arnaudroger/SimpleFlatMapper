@@ -3,9 +3,7 @@ package org.simpleflatmapper.datastax.impl;
 import com.datastax.driver.core.*;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.reflect.getter.GetterFactoryRegistry;
-import org.simpleflatmapper.reflect.getter.GetterWithConverter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
-import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.datastax.DataTypeHelper;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 import org.simpleflatmapper.datastax.DatastaxMapperFactory;
@@ -84,9 +82,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                 final Class<?> javaClass = key.getDataType() != null ? DataTypeHelper.asJavaClass(key.getDataType()) : null;
 
                 if (javaClass == null || javaClass.equals(Byte.class)) {
-                    if (DataHelper.hasByteAccessor()) {
-                        return (Getter<GettableByIndexData, P>) new DatastaxByteGetter(key.getIndex());
-                    }
+                    return (Getter<GettableByIndexData, P>) new DatastaxByteGetter(key.getIndex());
                 } else if (javaClass != null && Number.class.isAssignableFrom(javaClass)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxGenericByteGetter(key.getIndex(), key.getDataType());
                 }
@@ -102,9 +98,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                 final Class<?> javaClass = key.getDataType() != null ? DataTypeHelper.asJavaClass(key.getDataType()) : null;
 
                 if (javaClass == null || javaClass.equals(Short.class)) {
-                    if (DataHelper.hasShortAccessor()) {
-                        return (Getter<GettableByIndexData, P>) new DatastaxShortGetter(key.getIndex());
-                    }
+                    return (Getter<GettableByIndexData, P>) new DatastaxShortGetter(key.getIndex());
                 } else if (javaClass != null && Number.class.isAssignableFrom(javaClass)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxGenericShortGetter(key.getIndex(), key.getDataType());
                 }
@@ -133,7 +127,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             @Override
             public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, Object... properties) {
                 final Class<?> javaClass = key.getDataType() != null ? DataTypeHelper.asJavaClass(key.getDataType()) : null;
-                if (key.getDataType() != null && DataTypeHelper.isTime(key.getDataType().getName())) {
+                if (key.getDataType() == DataType.time()) {
                     return (Getter<GettableByIndexData, P>) new DatastaxTimeGetter(key.getIndex());
                 } else if (javaClass == null || javaClass.equals(Long.class)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxLongGetter(key.getIndex());
@@ -232,15 +226,13 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             }
         });
 
-        if (DataTypeHelper.localDateClass != null) {
-            getterFactories.put(DataTypeHelper.localDateClass, new GetterFactory<GettableByIndexData, DatastaxColumnKey>() {
-                @SuppressWarnings("unchecked")
-                @Override
-                public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, Object... properties) {
-                    return (Getter<GettableByIndexData, P>) new DatastaxDateGetter(key.getIndex());
-                }
-            });
-        }
+        getterFactories.put(LocalDate.class, new GetterFactory<GettableByIndexData, DatastaxColumnKey>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, Object... properties) {
+                return (Getter<GettableByIndexData, P>) new DatastaxDateGetter(key.getIndex());
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -361,7 +353,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
         }
 
         if (TypeHelper.isEnum(target)) {
-            final Getter<GettableByIndexData, ? extends Enum> getter = enumGetter(key, TypeHelper.toClass(target));
+            final Getter<GettableByIndexData, ? extends Enum> getter = enumGetter(key, TypeHelper.<Enum<?>>toClass(target));
             if (getter != null) {
                 return (Getter<GettableByIndexData, P>)getter;
             }

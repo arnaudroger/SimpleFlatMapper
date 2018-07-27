@@ -2,7 +2,6 @@ package org.simpleflatmapper.reflect;
 
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.getter.IdentityGetter;
-import org.simpleflatmapper.reflect.impl.BuilderBiInstantiator;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiator;
 import org.simpleflatmapper.reflect.impl.EmptyConstructorBiInstantiator;
 import org.simpleflatmapper.reflect.impl.EmptyConstructorInstantiator;
@@ -217,7 +216,7 @@ public class InstantiatorFactory {
 
 
 	@SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
-	private <S1, S2, T> BiInstantiator<S1, S2, T>  builderBiInstantiator(BuilderInstantiatorDefinition instantiatorDefinition,
+	public <S1, S2, T> BuilderBiInstantiator<S1, S2, T>  builderBiInstantiator(BuilderInstantiatorDefinition instantiatorDefinition,
 																		 Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) {
 
 		final Instantiator<Void, ?> buildInstantiator =

@@ -22,4 +22,6 @@ public interface ClassMeta<T> {
 	void forEachProperties(Consumer<? super PropertyMeta<T, ?>> consumer);
 
     int getNumberOfProperties();
+
+    boolean needTransformer();
 }

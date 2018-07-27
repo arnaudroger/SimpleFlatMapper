@@ -4,33 +4,34 @@ package org.simpleflatmapper.poi.impl;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.context.MappingContextFactory;
-import org.simpleflatmapper.map.mapper.JoinMapperEnumarable;
+import org.simpleflatmapper.map.mapper.JoinMapperEnumerable;
 import org.simpleflatmapper.poi.RowMapper;
-import org.simpleflatmapper.util.Enumarable;
-import org.simpleflatmapper.util.EnumarableIterator;
 import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.util.Iterator;
+import org.simpleflatmapper.util.Enumerable;
+import org.simpleflatmapper.util.EnumerableIterator;
 
 //IFJAVA8_START
-import org.simpleflatmapper.util.EnumarableSpliterator;
+import org.simpleflatmapper.util.EnumerableSpliterator;
+
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END
 
 public class JoinSheetMapper<T> implements RowMapper<T> {
 
-    private final Mapper<Row, T> mapper;
+    private final SourceFieldMapper<Row, T> mapper;
     private final int startRow = 0;
 
     private final ConsumerErrorHandler consumerErrorHandler;
     private final MappingContextFactory<? super Row> mappingContextFactory;
 
-    public JoinSheetMapper(Mapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
+    public JoinSheetMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
         this.mapper = mapper;
         this.consumerErrorHandler = consumerErrorHandler;
         this.mappingContextFactory = mappingContextFactory;
@@ -43,23 +44,33 @@ public class JoinSheetMapper<T> implements RowMapper<T> {
 
     @Override
     public Iterator<T> iterator(int startRow, Sheet sheet) {
-        return new EnumarableIterator<T>(enumerable(startRow, sheet, newMappingContext()));
-    }
-
-    private Enumarable<T> enumerable(int startRow, Sheet sheet, MappingContext<? super Row> mappingContext) {
-        return new JoinMapperEnumarable<Row, T>(mapper, mappingContext, new RowEnumarable(startRow, sheet));
+        return new EnumerableIterator<T>(enumerable(startRow, sheet, newMappingContext()));
     }
 
     @Override
-    public <RH extends CheckedConsumer<T>> RH forEach(Sheet sheet, RH consumer) {
+    public Enumerable<T> enumerate(Sheet sheet) {
+        return enumerate(startRow, sheet);
+    }
+
+    @Override
+    public Enumerable<T> enumerate(int startRow, Sheet sheet) {
+        return enumerable(startRow, sheet, newMappingContext());
+    }
+
+    private Enumerable<T> enumerable(int startRow, Sheet sheet, MappingContext<? super Row> mappingContext) {
+        return new JoinMapperEnumerable<Row, T>(mapper, mappingContext, new RowEnumerable(startRow, sheet));
+    }
+
+    @Override
+    public <RH extends CheckedConsumer<? super T>> RH forEach(Sheet sheet, RH consumer) {
         return forEach(startRow, sheet, consumer);
     }
 
     @Override
-    public <RH extends CheckedConsumer<T>> RH forEach(int startRow, Sheet sheet, RH consumer) {
+    public <RH extends CheckedConsumer<? super T>> RH forEach(int startRow, Sheet sheet, RH consumer) {
         MappingContext<? super Row> mappingContext = newMappingContext();
 
-        Enumarable<T> enumarable = enumerable(startRow, sheet, mappingContext);
+        Enumerable<T> enumarable = enumerable(startRow, sheet, mappingContext);
 
         while(enumarable.next()) {
             try {
@@ -80,7 +91,7 @@ public class JoinSheetMapper<T> implements RowMapper<T> {
 
     @Override
     public Stream<T> stream(int startRow, Sheet sheet) {
-        return StreamSupport.stream(new EnumarableSpliterator<T>(enumerable(startRow, sheet, newMappingContext())), false);
+        return StreamSupport.stream(new EnumerableSpliterator<T>(enumerable(startRow, sheet, newMappingContext())), false);
     }
     //IFJAVA8_END
 
@@ -95,10 +106,6 @@ public class JoinSheetMapper<T> implements RowMapper<T> {
         return mapper.map(source, context);
     }
 
-    @Override
-    public void mapTo(Row source, T target, MappingContext<? super Row> context) throws Exception {
-        mapper.mapTo(source, target, context);
-    }
 
     private MappingContext<? super Row> newMappingContext() {
         return mappingContextFactory.newContext();

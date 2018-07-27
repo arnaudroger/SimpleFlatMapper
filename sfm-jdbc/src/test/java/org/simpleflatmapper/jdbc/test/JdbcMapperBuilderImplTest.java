@@ -6,6 +6,7 @@ import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.mapper.StaticSetRowMapper;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
@@ -15,6 +16,7 @@ import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.util.BiFunction;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.util.List;
@@ -42,12 +44,15 @@ public class JdbcMapperBuilderImplTest {
 
 	
 	@Test
-	public void testAsmFailureOnmapper() {
+	public void testAsmFailureOnmapper() throws NoSuchFieldException, IllegalAccessException {
 
 		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
 
 		final JdbcMapper<DbObject> mapper = builder.mapper();
-		assertTrue(mapper.getClass().getSimpleName().equals("StaticJdbcSetRowMapper"));
+		Field f = mapper.getClass().getDeclaredField("setRowMapper");
+		f.setAccessible(true);
+		Object subMapper = f.get(mapper);
+		assertEquals(StaticSetRowMapper.class, subMapper.getClass());
 	}
 
 	public AsmFactory newAsmFactoryFailsOnmapper() {

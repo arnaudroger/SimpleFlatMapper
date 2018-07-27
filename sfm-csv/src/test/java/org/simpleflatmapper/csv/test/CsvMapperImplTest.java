@@ -85,8 +85,9 @@ public class CsvMapperImplTest {
 	
 	@Test
 	public void test517() throws IOException {
-		CsvMapper<Result<T517, CsvColumnKey>> mapper = CsvMapperFactory.newInstance().fieldMapperErrorHandler(new ResultFieldMapperErrorHandler<CsvColumnKey>(null)).newMapper(new TypeReference<Result<T517, CsvColumnKey>>() {
-		});
+		CsvMapper<Result<T517, CsvColumnKey>> mapper = 
+				CsvMapperFactory.newInstance()
+					.newErrorCollectingMapper(T517.class);
 
 		Iterator<Result<T517, CsvColumnKey>> iterator = mapper.iterator(new StringReader("v1,v2\n1,a\na,2"));
 

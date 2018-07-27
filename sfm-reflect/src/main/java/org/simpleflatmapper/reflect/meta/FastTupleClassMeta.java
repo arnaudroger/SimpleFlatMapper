@@ -132,4 +132,9 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
         return delegate.getNumberOfProperties();
     }
 
+    @Override
+    public boolean needTransformer() {
+        return false;
+    }
+
 }

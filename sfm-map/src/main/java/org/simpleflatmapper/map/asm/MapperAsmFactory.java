@@ -2,10 +2,10 @@ package org.simpleflatmapper.map.asm;
 
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.mapper.AbstractMapper;
 import org.simpleflatmapper.reflect.BiInstantiator;
-import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 
 import java.lang.reflect.Constructor;
@@ -21,7 +21,7 @@ public class MapperAsmFactory {
 	}
 
 
-    private final ConcurrentMap<MapperKey, Class<? extends Mapper<?, ?>>> fieldMapperCache = new ConcurrentHashMap<MapperKey, Class<? extends Mapper<?, ?>>>();
+    private final ConcurrentMap<MapperKey, Class<? extends SourceMapper<?, ?>>> fieldMapperCache = new ConcurrentHashMap<MapperKey, Class<? extends SourceMapper<?, ?>>>();
 
     private <S, T> String generateClassNameForFieldMapper(final FieldMapper<S, T>[] mappers, final FieldMapper<S, T>[] constructorMappers, final Class<? super S> source, final Class<T> target) {
         StringBuilder sb = new StringBuilder();
@@ -45,24 +45,24 @@ public class MapperAsmFactory {
     }
 
     @SuppressWarnings("unchecked")
-    public <S, T> Mapper<S, T> createMapper(final FieldKey<?>[] keys,
-                                            final FieldMapper<S, T>[] mappers,
-                                            final FieldMapper<S, T>[] constructorMappers,
-                                            final BiInstantiator<S, MappingContext<? super S>, T> instantiator,
-                                            final Class<? super S> source,
-                                            final Class<T> target) throws Exception {
+    public <S, T> AbstractMapper<S, T> createMapper(final FieldKey<?>[] keys,
+                                                    final FieldMapper<S, T>[] mappers,
+                                                    final FieldMapper<S, T>[] constructorMappers,
+                                                    final BiInstantiator<S, MappingContext<? super S>, T> instantiator,
+                                                    final Class<? super S> source,
+                                                    final Class<T> target) throws Exception {
 
         MapperKey key = new MapperKey(keys, mappers, constructorMappers, instantiator, target, source);
-        Class<Mapper<S, T>> type = (Class<Mapper<S, T>>) fieldMapperCache.get(key);
+        Class<SourceMapper<S, T>> type = (Class<SourceMapper<S, T>>) fieldMapperCache.get(key);
         if (type == null) {
 
             final String className = generateClassNameForFieldMapper(mappers, constructorMappers, source, target);
             final byte[] bytes = MapperAsmBuilder.dump(className, mappers, constructorMappers, source, target);
 
-            type = (Class<Mapper<S, T>>) asmFactory.createClass(className, bytes, target.getClass().getClassLoader());
+            type = (Class<SourceMapper<S, T>>) asmFactory.createClass(className, bytes, target.getClass().getClassLoader());
             fieldMapperCache.put(key, type);
         }
         final Constructor<?> constructor = type.getDeclaredConstructors()[0];
-        return (Mapper<S, T>) constructor.newInstance(mappers, constructorMappers, instantiator);
+        return (AbstractMapper<S, T>) constructor.newInstance(mappers, constructorMappers, instantiator);
     }
 }

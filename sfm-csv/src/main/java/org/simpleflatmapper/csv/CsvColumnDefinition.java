@@ -2,10 +2,10 @@ package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.property.CustomReaderFactoryProperty;
 import org.simpleflatmapper.csv.property.CustomReaderProperty;
+import org.simpleflatmapper.lightningcsv.StringReader;
 import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.property.DateFormatProperty;
-import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.map.property.TimeZoneProperty;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Predicate;

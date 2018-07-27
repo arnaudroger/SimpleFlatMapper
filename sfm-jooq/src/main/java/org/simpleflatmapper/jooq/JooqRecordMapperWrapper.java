@@ -2,13 +2,13 @@ package org.simpleflatmapper.jooq;
 
 import org.jooq.Record;
 import org.jooq.RecordMapper;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 
 public class JooqRecordMapperWrapper<R extends Record, E> implements RecordMapper<R, E> {
 
-	private final Mapper<Record, E> mapper;
+	private final SourceMapper<Record, E> mapper;
 
-	public JooqRecordMapperWrapper(Mapper<Record, E> mapper) {
+	public JooqRecordMapperWrapper(SourceMapper<Record, E> mapper) {
 		this.mapper = mapper;
 	}
 
@@ -17,7 +17,7 @@ public class JooqRecordMapperWrapper<R extends Record, E> implements RecordMappe
 		return mapper.map(record);
 	}
 
-	public Mapper<Record, E> getMapper() {
+	public SourceMapper<Record, E> getMapper() {
 		return mapper;
 	}
 }

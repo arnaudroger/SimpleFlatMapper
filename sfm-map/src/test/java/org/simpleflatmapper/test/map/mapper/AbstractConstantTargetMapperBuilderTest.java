@@ -1,7 +1,7 @@
 package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.reflect.BiInstantiator;
@@ -14,7 +14,6 @@ import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
@@ -22,7 +21,6 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.ConstantPredicate;
-import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.TypeReference;
@@ -54,7 +52,9 @@ public class AbstractConstantTargetMapperBuilderTest {
         builder.addColumn("blop", new ConstantValueProperty<String>("blop", String.class));
 
         DbObject dbObject = DbObject.newInstance();
-        List<Object> list = builder.mapper().map(dbObject);
+        List<Object> list = new ArrayList<Object>();
+
+        builder.mapper().mapTo(dbObject, list, MappingContext.EMPTY_CONTEXT);
 
         assertEquals(list.get(0), dbObject.getId());
         assertEquals("blop", list.get(1));
@@ -76,9 +76,11 @@ public class AbstractConstantTargetMapperBuilderTest {
 
         }
 
-        Mapper<T, List<Object>> mapper = builder.mapper();
+        FieldMapper<T, List<Object>> mapper = builder.mapper();
 
-        assertArrayEquals(row, mapper.map(instance1).toArray());
+        List<Object> objects = new ArrayList<Object>();
+        mapper.mapTo(instance1, objects, MappingContext.EMPTY_CONTEXT);
+        assertArrayEquals(row, objects.toArray());
     }
 
     private static final SetterFactory<List<Object>, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>> SETTER_FACTORY = new SetterFactory<List<Object>, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>>() {

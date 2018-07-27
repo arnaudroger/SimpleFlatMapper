@@ -39,7 +39,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		lookForProperty(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer);
 
 		final String propName = propertyNameMatcher.toString();
-		if (allowSelfReference && (state == State.NONE || (state == State.SELF && propName.equals(selfName)))) {
+		if (allowSelfReference && !disallowSelfReference(properties) && (state == State.NONE || (state == State.SELF && propName.equals(selfName)))) {
 			matchingProperties.found(new SelfPropertyMeta(classMeta.getReflectionService(), classMeta.getType(), new BooleanProvider() {
 						@Override
 						public boolean getBoolean() {
@@ -49,6 +49,15 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 					selfPropertySelectionCallback(propName),
 					score.self(classMeta.getNumberOfProperties(), propName), typeAffinityScorer);
 		}
+	}
+
+	private boolean disallowSelfReference(Object[] properties) {
+    	for(Object p : properties) {
+    		if (p instanceof DisallowSelfReference) {
+    			return true;
+			}
+		}
+		return false;
 	}
 
 	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {

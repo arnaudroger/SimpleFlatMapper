@@ -52,7 +52,9 @@ public class DataTypeTest {
     @Test
     public void testAllDataTypeNameHaveAnAssignedType() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         for(DataType.Name name : DataType.Name.values()) {
-            assertNotNull(DataTypeHelper.asJavaClass(name));
+            if (name != DataType.Name.DURATION) {
+                assertNotNull("No asJavaClass for " + name, DataTypeHelper.asJavaClass(name));
+            }
         }
     }
 

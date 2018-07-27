@@ -143,6 +143,11 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
         return propertyMetas.size();
     }
 
+    @Override
+    public boolean needTransformer() {
+        return false;
+    }
+
     public int getTupleSize() {
 		return instantiatorDefinition.getParameters().length;
 	}

@@ -2,13 +2,12 @@ package org.simpleflatmapper.test.map.asm;
 
 import org.junit.Test;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
-import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.test.beans.DbObject;
 
@@ -23,7 +22,7 @@ public class MapperAsmFactoryTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAsmJdbcMapperFailedInstantiator() throws Exception {
-		Mapper<Object, DbObject> jdbcMapper =
+		SourceMapper<Object, DbObject> jdbcMapper =
 				asmFactory.createMapper(new SampleFieldKey[0],
 				(FieldMapper<Object, DbObject>[]) new FieldMapper[]{},
 				(FieldMapper<Object, DbObject>[]) new FieldMapper[]{},
@@ -46,7 +45,7 @@ public class MapperAsmFactoryTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testAsmJdbcMapperFailedGetter() throws Exception {
-		Mapper<Object, DbObject> jdbcMapper = asmFactory.createMapper(new SampleFieldKey[0],
+		SourceMapper<Object, DbObject> jdbcMapper = asmFactory.createMapper(new SampleFieldKey[0],
 				(FieldMapper<Object, DbObject>[]) new FieldMapper[]{
 						new FieldMapper<Object, DbObject>() {
 							@Override

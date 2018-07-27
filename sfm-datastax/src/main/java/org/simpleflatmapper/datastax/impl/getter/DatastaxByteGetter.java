@@ -1,7 +1,6 @@
 package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
-import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.primitive.ByteGetter;
 
@@ -23,6 +22,6 @@ public class DatastaxByteGetter implements ByteGetter<GettableByIndexData>, Gett
 
     @Override
     public byte getByte(GettableByIndexData target) throws Exception {
-        return DataHelper.getByte(index, target);
+        return target.getByte(index);
     }
 }

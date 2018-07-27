@@ -28,6 +28,6 @@ public final class EmptyStaticMethodInstantiator<S, T> implements Instantiator<S
 
     @Override
     public String toString() {
-        return "EmptyMethodInstantiator{}";
+        return "EmptyStaticMethodInstantiator{}";
     }
 }

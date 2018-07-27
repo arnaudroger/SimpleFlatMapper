@@ -1,10 +1,10 @@
 package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
-import org.simpleflatmapper.datastax.DataHelper;
+import com.datastax.driver.core.LocalDate;
 import org.simpleflatmapper.reflect.Getter;
 
-public class DatastaxDateGetter implements Getter<GettableByIndexData, Object> {
+public class DatastaxDateGetter implements Getter<GettableByIndexData, LocalDate> {
 
     private final int index;
 
@@ -13,7 +13,7 @@ public class DatastaxDateGetter implements Getter<GettableByIndexData, Object> {
     }
 
     @Override
-    public Object get(GettableByIndexData target) throws Exception {
-        return DataHelper.getDate(index, target);
+    public LocalDate get(GettableByIndexData target) throws Exception {
+        return target.getDate(index);
     }
 }

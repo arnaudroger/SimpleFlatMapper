@@ -1,15 +1,14 @@
 package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
-import org.simpleflatmapper.map.Mapper;
-import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.SourceMapper;
+import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.mapper.JoinMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.property.MapTypeProperty;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.util.ListCollector;
 
@@ -30,7 +29,7 @@ public class Issue477Test {
 
 
     @Test
-    public void testIssue() {
+    public void testIssue() throws Exception {
         ClassMeta<ListOfPojo> classMeta = reflectionService().getClassMeta(ListOfPojo.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<ListOfPojo> builder =
@@ -41,10 +40,8 @@ public class Issue477Test {
         builder.addMapping("list_pojoB_id", KeyProperty.DEFAULT);
 
 
-        Mapper<Object[], ListOfPojo> rowMapper = builder.mapper();
-
-        JoinMapper<Object[], Object[][],ListOfPojo, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], ListOfPojo, RuntimeException>) rowMapper;
+        SetRowMapper<Object[], Object[][],ListOfPojo, ?> mapper =
+            builder.mapper();
 
         List<ListOfPojo> list = mapper.forEach(dataSimple, new ListCollector<ListOfPojo>()).getList();
 

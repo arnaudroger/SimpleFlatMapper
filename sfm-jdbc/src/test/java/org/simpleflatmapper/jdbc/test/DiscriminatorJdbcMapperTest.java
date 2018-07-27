@@ -141,9 +141,6 @@ public class DiscriminatorJdbcMapperTest {
         mappingContext.broke(rs);
         rs.next();
         mappingContext.broke(rs);
-        mapper.mapTo(rs, professor, mappingContext);
-
-        validateProfessorMapTo((Professor)professor);
     }
 
 

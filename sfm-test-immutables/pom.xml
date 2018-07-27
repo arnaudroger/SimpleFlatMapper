@@ -27,6 +27,15 @@
 					<useIncrementalCompilation>false</useIncrementalCompilation>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<asm.dump.target.dir>target/asm</asm.dump.target.dir>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

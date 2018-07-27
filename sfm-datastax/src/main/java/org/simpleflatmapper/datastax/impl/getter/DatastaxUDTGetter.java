@@ -7,7 +7,7 @@ import org.simpleflatmapper.datastax.DatastaxMapperBuilder;
 import org.simpleflatmapper.datastax.DatastaxMapperFactory;
 import org.simpleflatmapper.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.simpleflatmapper.datastax.impl.RowGetterFactory;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
@@ -20,10 +20,10 @@ import java.util.Iterator;
 
 public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
 
-    private final Mapper<GettableByIndexData, T> mapper;
+    private final SourceMapper<GettableByIndexData, T> mapper;
     private final int index;
 
-    public DatastaxUDTGetter(Mapper<GettableByIndexData, T> mapper, int index) {
+    public DatastaxUDTGetter(SourceMapper<GettableByIndexData, T> mapper, int index) {
         this.mapper = mapper;
         this.index = index;
     }
@@ -35,11 +35,11 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
 
     @SuppressWarnings("unchecked")
     public static <P> Getter<GettableByIndexData, P> newInstance(DatastaxMapperFactory factory, Type target,  UserType tt, int index) {
-        Mapper<GettableByIndexData, P> mapper = newUDTMapper(target, tt, factory);
+        SourceMapper<GettableByIndexData, P> mapper = newUDTMapper(target, tt, factory);
         return new DatastaxUDTGetter<P>(mapper, index);
     }
 
-    public static <P> Mapper<GettableByIndexData, P> newUDTMapper(Type target, UserType tt, DatastaxMapperFactory factory) {
+    public static <P> SourceMapper<GettableByIndexData, P> newUDTMapper(Type target, UserType tt, DatastaxMapperFactory factory) {
         ConstantSourceMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> builder = newFieldMapperBuilder(factory, target);
 
         Iterator<UserType.Field> iterator = tt.iterator();

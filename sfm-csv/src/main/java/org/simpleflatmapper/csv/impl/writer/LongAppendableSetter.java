@@ -1,6 +1,6 @@
 package org.simpleflatmapper.csv.impl.writer;
 
-import org.simpleflatmapper.csv.CellWriter;
+import org.simpleflatmapper.lightningcsv.CellWriter;
 import org.simpleflatmapper.reflect.primitive.LongSetter;
 
 public class LongAppendableSetter implements LongSetter<Appendable> {

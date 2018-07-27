@@ -205,7 +205,7 @@ public class ReflectionService {
             return new FastTupleClassMeta<T>(target, this);
 		} else if (Map.class.isAssignableFrom(clazz)) {
 			return (ClassMeta<T>) newMapMeta(target);
-		} else if (Collection.class.isAssignableFrom(clazz) || Iterable.class.equals(clazz)) {
+		} else if (ArrayClassMeta.supports(target)) {
 			return newCollectionMeta(target);
 		}
 		return new ObjectClassMeta<T>(target, getBuilderInstantiator(target), this);
@@ -232,11 +232,11 @@ public class ReflectionService {
 		return new MapClassMeta<Map<K, V>, K, V>(type, types.getKeyType(), types.getValueType(), this);
 	}
 	private <T, E> ClassMeta<T> newArrayMeta(Class<T> clazz) {
-		return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
+		return ArrayClassMeta.<T, E>of(clazz, clazz.getComponentType(), this);
 	}
 
 	private <T, E> ClassMeta<T> newCollectionMeta(Type type) {
-		return new ArrayClassMeta<T, E>(type, TypeHelper.getComponentTypeOfListOrArray(type), this);
+		return ArrayClassMeta.<T, E>of(type, TypeHelper.getComponentTypeOfListOrArray(type), this);
 	}
 
 	private <T> boolean isFastTuple(Class<T> clazz) {

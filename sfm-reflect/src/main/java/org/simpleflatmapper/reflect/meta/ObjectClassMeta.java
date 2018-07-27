@@ -307,6 +307,11 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return constructorProperties.size() + properties.size();
 	}
 
+	@Override
+	public boolean needTransformer() {
+		return false;
+	}
+
 	public PropertyMeta<T, ?> getFirstProperty() {
 		if (!constructorProperties.isEmpty()) {
 			return constructorProperties.get(0);

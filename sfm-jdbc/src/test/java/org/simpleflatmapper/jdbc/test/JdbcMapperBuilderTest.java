@@ -4,9 +4,8 @@ import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
-import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -65,10 +64,10 @@ public class JdbcMapperBuilderTest {
 	@Test
 	public void testAsmFactoryJdbcMapperCache() throws Exception {
 
-		Mapper<ResultSet, DbObject> mapper1 = getSubMapper(JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper());
-		Mapper<ResultSet, DbObject> mapper2 = getSubMapper(JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper());
+		SourceMapper<ResultSet, DbObject> mapper1 = getSubMapper(JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper());
+		SourceMapper<ResultSet, DbObject> mapper2 = getSubMapper(JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper());
 		final FieldMapperColumnDefinition<JdbcColumnKey> columnDefinition = FieldMapperColumnDefinition.customGetter(new StaticLongGetter<ResultSet>(3));
-		Mapper<ResultSet, DbObject> mapper3 = getSubMapper(
+		SourceMapper<ResultSet, DbObject> mapper3 = getSubMapper(
 				JdbcMapperFactoryHelper.asm().fieldMapperErrorHandler(new LogFieldMapperErrorHandler<JdbcColumnKey>()).newBuilder(DbObject.class).addMapping("id",
 						columnDefinition).addMapping("name")
 						.mapper());
@@ -83,18 +82,25 @@ public class JdbcMapperBuilderTest {
 
 	}
 
-	private Mapper<ResultSet, DbObject> getSubMapper(JdbcMapper<DbObject> mapper) throws Exception {
-		Field field;
+	private SourceMapper<ResultSet, DbObject> getSubMapper(JdbcMapper<DbObject> mapper) throws Exception {
+
+		Field setRowMapperField = mapper.getClass().getDeclaredField("setRowMapper");
+		setRowMapperField.setAccessible(true);
+		
+		
+		Object setRowMapper = setRowMapperField.get(mapper); 
+		
+		Field mapperField;
 
 		try {
-			field = mapper.getClass().getDeclaredField("mapper");
+			mapperField = setRowMapper.getClass().getDeclaredField("mapper");
 		} catch(NoSuchFieldException e) {
-			field = mapper.getClass().getSuperclass().getDeclaredField("mapper");
+			mapperField = setRowMapper.getClass().getSuperclass().getDeclaredField("mapper");
 		}
-		field.setAccessible(true);
+		mapperField.setAccessible(true);
 		return
-				new FieldGetter<JdbcMapper<?>, MapperImpl<ResultSet, DbObject>>(field)
-						.get(mapper);
+				new FieldGetter<Object, MapperImpl<ResultSet, DbObject>>(mapperField)
+						.get(setRowMapper);
 	}
 
 	static class StaticLongGetter<T> implements LongGetter<T>, Getter<T, Long> {

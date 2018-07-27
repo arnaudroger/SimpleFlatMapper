@@ -2,7 +2,8 @@ package org.simpleflatmapper.jdbi.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.jdbi.SfmResultSetMapperFactory;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceFieldMapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.test.beans.DbObject;
@@ -39,11 +40,11 @@ public class ResultSetMapperFactoryTest {
     @Test
     public void testMapToDbObjectStatic() throws Exception {
         DBI dbi = new DBI(DbHelper.getHsqlDataSource());
-        dbi.registerMapper(new SfmResultSetMapperFactory(new UnaryFactory<Class<?>, Mapper< ResultSet, ?>>() {
+        dbi.registerMapper(new SfmResultSetMapperFactory(new UnaryFactory<Class<?>, SourceMapper< ResultSet, ?>>() {
 
             @Override
-            public Mapper<ResultSet, ?> newInstance(Class<?> aClass) {
-                return new Mapper<ResultSet, DbObject>() {
+            public SourceFieldMapper<ResultSet, ?> newInstance(Class<?> aClass) {
+                return new SourceFieldMapper<ResultSet, DbObject>() {
                     @Override
                     public DbObject map(ResultSet source) throws MappingException {
                         return map(source, null);

@@ -5,6 +5,7 @@ module org.simpleflatmapper.map.test {
         requires sfm.test;
         requires org.mockito;
         requires joda.time;
+        requires eclipse.collections;
 
 
         exports org.simpleflatmapper.test.core.mapper;

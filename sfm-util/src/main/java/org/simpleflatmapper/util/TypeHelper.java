@@ -124,7 +124,8 @@ public final class TypeHelper {
 		if (TypeHelper.areEquals(t, i)) {
 			return t;
 		}
-		for(Type it : TypeHelper.toClass(t).getGenericInterfaces()) {
+		Type[] genericInterfaces = TypeHelper.toClass(t).getGenericInterfaces();
+		for(Type it : genericInterfaces) {
 			if (isAssignable(i, it)) {
 				if (areEquals(it, i)) {
 					return it;
@@ -235,7 +236,10 @@ public final class TypeHelper {
 				}
 			}
 		}
-		return type;
+		if (typeParameters.length == 1 && type instanceof ParameterizedType && ((ParameterizedType) type).getActualTypeArguments().length == 1) {
+			return ((ParameterizedType) type).getActualTypeArguments()[0];
+		}
+		return Object.class;
 	}
 
 	public static boolean isKotlinClass(Type target) {

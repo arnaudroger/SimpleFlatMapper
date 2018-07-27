@@ -3,10 +3,11 @@ package org.simpleflatmapper.csv.mapper;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.map.RootCurrentInstanceProvider;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.util.ErrorHelper;
 
-public abstract class CsvMapperCellHandler<T> {
+public abstract class CsvMapperCellHandler<T> implements RootCurrentInstanceProvider {
     protected final Instantiator<CsvMapperCellHandler<T>, T> instantiator;
     protected final CsvColumnKey[] columns;
     protected final int totalLength;
@@ -57,8 +58,9 @@ public abstract class CsvMapperCellHandler<T> {
     protected final void fieldError(int cellIndex, Exception e) {
         if (fieldErrorHandler == null) {
             ErrorHelper.rethrow(e);
+        } else {
+            fieldErrorHandler.errorMappingField(getColumn(cellIndex), this, currentInstance, e);
         }
-        fieldErrorHandler.errorMappingField(getColumn(cellIndex), this, mapperCellConsumer.getRootCurrentInstance(), e);
     }
 
     private CsvColumnKey getColumn(int cellIndex) {
@@ -74,6 +76,10 @@ public abstract class CsvMapperCellHandler<T> {
         return currentInstance;
     }
 
+    public final Object rootCurrentInstance() {
+        return mapperCellConsumer.rootCurrentInstance();
+    }
+    
     public final void createInstanceIfNull() {
         if (currentInstance == null) {
             createInstance();

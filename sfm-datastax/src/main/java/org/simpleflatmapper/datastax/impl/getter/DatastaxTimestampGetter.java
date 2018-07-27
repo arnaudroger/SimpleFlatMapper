@@ -1,7 +1,6 @@
 package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
-import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.reflect.Getter;
 
 import java.util.Date;
@@ -16,6 +15,6 @@ public class DatastaxTimestampGetter implements Getter<GettableByIndexData, Date
 
     @Override
     public Date get(GettableByIndexData target) throws Exception {
-        return DataHelper.getTimestamp(index, target);
+        return target.getTimestamp(index);
     }
 }

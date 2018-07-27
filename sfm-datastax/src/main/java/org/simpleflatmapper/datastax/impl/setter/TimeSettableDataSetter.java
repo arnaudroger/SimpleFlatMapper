@@ -1,7 +1,6 @@
 package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.SettableByIndexData;
-import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.primitive.LongSetter;
 
@@ -14,7 +13,7 @@ public class TimeSettableDataSetter implements Setter<SettableByIndexData, Long>
 
     @Override
     public void setLong(SettableByIndexData target, long value) throws Exception {
-        DataHelper.setTime(index, value, target);
+        target.setTime(index, value);
     }
 
     @Override
@@ -22,7 +21,7 @@ public class TimeSettableDataSetter implements Setter<SettableByIndexData, Long>
         if (value == null) {
             target.setToNull(index);
         } else {
-            DataHelper.setTime(index, value, target);
+            setLong(target, value);
         }
     }
 }

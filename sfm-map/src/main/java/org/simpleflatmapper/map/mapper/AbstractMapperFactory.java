@@ -1,22 +1,16 @@
 package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
-import org.simpleflatmapper.map.property.GetterProperty;
-import org.simpleflatmapper.map.property.SetterProperty;
-import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
-import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.util.ConstantUnaryFactory;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
@@ -157,11 +151,11 @@ public abstract class AbstractMapperFactory<
 	/**
 	 * Associate an alias on the property key to rename to value.
 	 * @param column the column name to rename
-	 * @param value then name to rename to
+	 * @param actualPropertyName then name to rename to match the actual property name
 	 * @return the current factory
 	 */
-	public final MF addAlias(String column, String value) {
-		return addColumnDefinition(column,  identity.addRename(value));
+	public final MF addAlias(String column, String actualPropertyName) {
+		return addColumnDefinition(column,  identity.addRename(actualPropertyName));
 	}
 
     /**
@@ -333,4 +327,5 @@ public abstract class AbstractMapperFactory<
 	public ColumnDefinitionProvider<CD, K> columnDefinitions() {
 		return columnDefinitions;
 	}
+
 }

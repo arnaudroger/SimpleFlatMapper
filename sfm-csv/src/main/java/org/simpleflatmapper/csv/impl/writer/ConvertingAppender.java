@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.impl.writer;
 
 
 import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.csv.CellWriter;
+import org.simpleflatmapper.lightningcsv.CellWriter;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.reflect.Getter;

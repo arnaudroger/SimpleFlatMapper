@@ -1,7 +1,6 @@
 package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.SettableByIndexData;
-import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.reflect.Setter;
 
 import java.util.Date;
@@ -18,7 +17,7 @@ public class TimestampSettableDataSetter implements Setter<SettableByIndexData, 
         if (value == null) {
             target.setToNull(index);
         } else {
-            DataHelper.setTimestamp(index, value, target);
+            target.setTimestamp(index, value);
         }
     }
 }

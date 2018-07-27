@@ -15,6 +15,7 @@ import org.simpleflatmapper.poi.SheetMapperBuilder;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.csv.CsvColumnKeyMapperKeyComparator;
+import org.simpleflatmapper.util.Enumerable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -56,12 +57,22 @@ public class DynamicSheetMapper<T> implements SheetMapper<T> {
     }
 
     @Override
-    public <RH extends CheckedConsumer<T>> RH forEach(Sheet sheet, RH consumer) {
+    public Enumerable<T> enumerate(Sheet sheet) {
+        return getPoiMapper(startRow, sheet).enumerate(sheet);
+    }
+
+    @Override
+    public Enumerable<T> enumerate(int startRow, Sheet sheet) {
+        return getPoiMapper(startRow, sheet).enumerate(startRow, sheet);
+    }
+
+    @Override
+    public <RH extends CheckedConsumer<? super T>> RH forEach(Sheet sheet, RH consumer) {
         return forEach(startRow, sheet, consumer);
     }
 
     @Override
-    public <RH extends CheckedConsumer<T>> RH forEach(int startRow, Sheet sheet, RH consumer) {
+    public <RH extends CheckedConsumer<? super T>> RH forEach(int startRow, Sheet sheet, RH consumer) {
         return getPoiMapper(startRow, sheet).forEach(startRow + 1, sheet, consumer);
     }
 

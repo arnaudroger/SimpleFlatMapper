@@ -249,6 +249,10 @@ public class MappingContextFactoryBuilder<S, K> {
         return currentIndex;
     }
 
+    public boolean hasChildren() {
+        return children.isEmpty();
+    }
+
     private static class Counter {
         int value;
     }

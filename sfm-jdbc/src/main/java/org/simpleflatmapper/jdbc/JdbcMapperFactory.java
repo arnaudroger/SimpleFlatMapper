@@ -1,7 +1,8 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.jdbc.impl.PreparedStatementIndexedSetterFactory;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.SourceFieldMapper;
+import org.simpleflatmapper.map.mapper.DynamicSourceFieldMapper;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.jdbc.impl.JdbcColumnKeyMapperKeyComparator;
 import org.simpleflatmapper.jdbc.impl.PreparedStatementSetterFactory;
@@ -248,6 +249,36 @@ public final class JdbcMapperFactory
 		return new DynamicJdbcSetRowMapper<T>(new SetRowMapperFactory<T>(classMeta),  new MapperKeyFactory(),  new MapperKeyFactory());
 	}
 
+	public <T> JdbcSourceFieldMapper<T> newSourceFieldMapper(Type target) {
+		final ClassMeta<T> classMeta = getClassMeta(target);
+		return new DynamicJdbSourceFieldMapper<T>(new SourceFieldMapperFactory<T>(classMeta),  new MapperKeyFactory());
+	}
+	public static class DynamicJdbSourceFieldMapper<T>
+			extends DynamicSourceFieldMapper<ResultSet, T, JdbcColumnKey, SQLException>
+			implements JdbcSourceFieldMapper<T> {
+
+		public DynamicJdbSourceFieldMapper(
+				UnaryFactory<MapperKey<JdbcColumnKey>, SourceFieldMapper<ResultSet, T>> mapperFactory,
+				UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> mapperKeyFromRow) {
+			super(mapperFactory, mapperKeyFromRow, JdbcColumnKeyMapperKeyComparator.INSTANCE);
+		}
+
+		private JdbcSourceFieldMapper<T> getMapper(ResultSetMetaData metaData) throws SQLException {
+			return (JdbcSourceFieldMapper<T>) getMapper(JdbcColumnKey.mapperKey(metaData));
+		}
+
+		@Override
+		public String toString() {
+			return "DynamicJdbcSetRowMapper{}";
+		}
+
+		@Override
+		public MappingContext<? super ResultSet> newMappingContext(ResultSet resultSet) throws SQLException {
+			return getMapper(resultSet.getMetaData()).newMappingContext(resultSet);
+		}
+	}
+
+	
 	public static class DynamicJdbcSetRowMapper<T>
 			extends DynamicSetRowMapper<ResultSet, ResultSet, T, SQLException, JdbcColumnKey>
 			implements DynamicJdbcMapper<T> {
@@ -311,5 +342,23 @@ public final class JdbcMapperFactory
             }
             return builder.mapper();
         }
+	}
+
+	private class SourceFieldMapperFactory<T> implements UnaryFactory<MapperKey<JdbcColumnKey>, SourceFieldMapper<ResultSet, T>> {
+		private final ClassMeta<T> classMeta;
+
+		public SourceFieldMapperFactory(ClassMeta<T> classMeta) {
+			this.classMeta = classMeta;
+		}
+
+		@Override
+		public SourceFieldMapper<ResultSet, T> newInstance(MapperKey<JdbcColumnKey> jdbcColumnKeyMapperKey) {
+			final JdbcMapperBuilder<T> builder = newBuilder(classMeta);
+
+			for(JdbcColumnKey key : jdbcColumnKeyMapperKey.getColumns()) {
+				builder.addMapping(key);
+			}
+			return builder.newSourceFieldMapper();
+		}
 	}
 }

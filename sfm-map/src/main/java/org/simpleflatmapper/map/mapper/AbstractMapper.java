@@ -1,13 +1,12 @@
 package org.simpleflatmapper.map.mapper;
 
+import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.reflect.BiInstantiator;
-import org.simpleflatmapper.reflect.Instantiator;
-import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.util.ErrorHelper;
 
-public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
+public abstract class AbstractMapper<S, T> implements SourceFieldMapper<S, T> {
 	
 	private final BiInstantiator<? super S, MappingContext<? super S>, T> instantiator;
 

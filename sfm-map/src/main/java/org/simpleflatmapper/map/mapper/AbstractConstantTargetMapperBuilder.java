@@ -3,7 +3,6 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.PropertyWithGetter;
@@ -88,7 +87,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
     }
 
     @SuppressWarnings("unchecked")
-    public Mapper<T, S> mapper() {
+    public ContextualFieldMapper<T, S> mapper() {
 
         final List<FieldMapper<T, S>> mappers = new ArrayList<FieldMapper<T, S>>();
 
@@ -118,7 +117,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
         postMapperProcess(mappers);
 
 
-        Mapper<T, S> mapper;
+        AbstractMapper<T, S> mapper;
         FieldMapper[] fields = mappers.toArray(new FieldMapper[0]);
         BiInstantiator<T, MappingContext<? super T>, S> instantiator = getInstantiator();
         if (mappers.size() < 256) {
@@ -155,8 +154,11 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
                     instantiator);
         }
 
+        
+        
+
         return
-            new ContextualMapper<T, S>(mapper, mappingContextFactoryBuilder.newFactory());
+            new ContextualFieldMapper<T, S>(mapper, mappingContextFactoryBuilder.newFactory());
     }
 
     protected void postMapperProcess(List<FieldMapper<T,S>> mappers) {

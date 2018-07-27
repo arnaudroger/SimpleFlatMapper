@@ -2,20 +2,20 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 
 import java.util.Iterator;
 
 public class SheetIterator<T> implements Iterator<T> {
 
-    private final Mapper<Row, T> mapper;
+    private final SourceMapper<Row, T> mapper;
     private final Sheet sheet;
     private final MappingContext<? super Row> mappingContext;
 
     private int rowNum;
 
-    public SheetIterator(Mapper<Row, T> mapper, int startRow, Sheet sheet, MappingContext<? super Row> mappingContext) {
+    public SheetIterator(SourceMapper<Row, T> mapper, int startRow, Sheet sheet, MappingContext<? super Row> mappingContext) {
         this.mapper = mapper;
         this.rowNum = startRow;
         this.sheet = sheet;

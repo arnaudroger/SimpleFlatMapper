@@ -2,12 +2,13 @@ package org.simpleflatmapper.csv.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.csv.CsvWriter;
+import org.simpleflatmapper.lightningcsv.CsvCellWriter;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
+import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.property.RenameProperty;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.csv.CsvCellWriter;
 import org.simpleflatmapper.map.property.DateFormatProperty;
 import org.simpleflatmapper.map.property.EnumOrdinalFormatProperty;
 import org.simpleflatmapper.util.TypeReference;
@@ -188,7 +189,9 @@ public class CsvWriterTest {
     public void testFailOnListWithDefaultHeaderAndSkipHeaders() throws IOException {
         try {
             CsvWriter.from(new TypeReference<List<String>>() {
-            }).skipHeaders().to(new StringWriter());
+            })
+                    .skipHeaders()
+                    .to(new StringWriter());
             fail();
         } catch(IllegalStateException e) {
             // expected
@@ -218,7 +221,6 @@ public class CsvWriterTest {
     @Test
     public void testIssue461() throws IOException {
         CsvWriter.CsvWriterDSL<Pojo461> csvWriterConfig = CsvWriter.from(Pojo461.class)
-                .columns()
                 .column("timestamp", new RenameProperty("ts")) // OK
                 .column("action");
         
@@ -226,6 +228,17 @@ public class CsvWriterTest {
         csvWriterConfig.to(sb).append(new Pojo461(1, "add"));
 
         System.out.println("sb = " + sb);
+    }
+    
+    @Test
+    public void testIssue461Part2() throws IOException {
+        CsvWriter.CsvWriterDSL<Pojo461> dsl = CsvWriter.from(Pojo461.class);
+        try {
+            dsl.column("ts", new RenameProperty("timestamp"));
+            fail();
+        } catch (MappingException ex) {
+            // expected
+        }
     }
 
 

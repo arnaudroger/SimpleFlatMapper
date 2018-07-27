@@ -2,8 +2,8 @@ package org.simpleflatmapper.csv.property;
 
 
 import org.simpleflatmapper.csv.CellValueReader;
-import org.simpleflatmapper.csv.StringReader;
 import org.simpleflatmapper.csv.impl.CellValueReaderToStringReaderAdapter;
+import org.simpleflatmapper.lightningcsv.StringReader;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;

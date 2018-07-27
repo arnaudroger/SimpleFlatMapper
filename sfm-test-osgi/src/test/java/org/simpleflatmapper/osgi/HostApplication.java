@@ -104,38 +104,7 @@ public class HostApplication
             if (indexOfTarget >= 0) {
                 File root = new File(resource.getFile().substring(0, indexOfTarget + "target/classes".length()));
 
-                System.out.println("dir = " + root);
-
-                File tmp = File.createTempFile("tmp", "jar");
-
-                Manifest man;
-                File file = new File(root, "META-INF/MANIFEST.MF");
-                System.out.println("manifest = " + file + " " + file.exists());
-                try (FileInputStream is = new FileInputStream(file)) {
-                    man = new Manifest(is);
-                }
-
-                try (FileOutputStream fos = new FileOutputStream(tmp);
-                    JarOutputStream jarOutputStream = new JarOutputStream(fos, man)) {
-
-                    Files.walk(Paths.get(root.getPath())).forEach((p) -> {
-                      if (Files.isRegularFile(p) && !p.endsWith("MANIFEST.MF")) {
-                        ZipEntry zipEntry = new ZipEntry(p.toString().substring(root.getPath().length() + 1));
-                          try {
-                              jarOutputStream.putNextEntry(zipEntry);
-                              Files.copy(p, jarOutputStream);
-
-                          } catch (IOException e) {
-                              e.printStackTrace();
-                          }
-
-                      }
-                    });
-
-                }
-
-
-                b = install("file:" + tmp.getPath());
+                b = installBundle(root);
 
 
             } else {
@@ -157,6 +126,53 @@ public class HostApplication
         }
 
         debugBundle(b);
+    }
+    
+    public void installMavenLocalModule(String str) throws IOException, BundleException {
+
+        URL resource = getClass().getClassLoader().getResource(getClass().getName().replace(".", "/") + ".class");
+        File f = new File(resource.getFile()).getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+
+        File classes = new File(f, str + "/target/classes");
+
+        installBundle(classes);
+    }
+
+    private Bundle installBundle(File classes) throws IOException, BundleException {
+        Bundle b;
+        System.out.println("dir = " + classes);
+
+        File tmp = File.createTempFile("tmp", "jar");
+
+        Manifest man;
+        File file = new File(classes, "META-INF/MANIFEST.MF");
+        System.out.println("manifest = " + file + " " + file.exists());
+        try (FileInputStream is = new FileInputStream(file)) {
+            man = new Manifest(is);
+        }
+
+        try (FileOutputStream fos = new FileOutputStream(tmp);
+             JarOutputStream jarOutputStream = new JarOutputStream(fos, man)) {
+
+            Files.walk(Paths.get(classes.getPath())).forEach((p) -> {
+              if (Files.isRegularFile(p) && !p.endsWith("MANIFEST.MF")) {
+                ZipEntry zipEntry = new ZipEntry(p.toString().substring(classes.getPath().length() + 1));
+                  try {
+                      jarOutputStream.putNextEntry(zipEntry);
+                      Files.copy(p, jarOutputStream);
+
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+
+              }
+            });
+
+        }
+
+
+        b = install("file:" + tmp.getPath());
+        return b;
     }
 
 

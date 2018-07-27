@@ -2,14 +2,15 @@ package org.simpleflatmapper.datastax;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.SettableByIndexData;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.util.ErrorHelper;
 
 
 public class BoundStatementMapper<T> {
-    private final Mapper<T, SettableByIndexData> mapper;
+    private final FieldMapper<T, SettableByIndexData> mapper;
 
-    public BoundStatementMapper(Mapper<T, SettableByIndexData> mapper) {
+    public BoundStatementMapper(FieldMapper<T, SettableByIndexData> mapper) {
         this.mapper = mapper;
     }
 

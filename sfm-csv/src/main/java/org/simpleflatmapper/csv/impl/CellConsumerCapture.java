@@ -1,6 +1,6 @@
 package org.simpleflatmapper.csv.impl;
 
-import org.simpleflatmapper.csv.parser.CellConsumer;
+import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
 
 import java.util.Arrays;
 

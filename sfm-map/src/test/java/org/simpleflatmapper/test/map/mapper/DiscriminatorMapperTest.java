@@ -3,17 +3,17 @@ package org.simpleflatmapper.test.map.mapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.converter.UncheckedConverter;
-import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.mapper.DiscriminatorMapper;
 import org.simpleflatmapper.test.beans.Person;
 import org.simpleflatmapper.test.beans.ProfessorGS;
 import org.simpleflatmapper.test.beans.StudentGS;
-import org.simpleflatmapper.util.ArrayEnumarable;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.ArrayEnumerable;
+import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
@@ -32,7 +32,7 @@ public class DiscriminatorMapperTest {
 
     @Before
     public void setUp() {
-        Mapper<Object[], Person> studentMapper = new Mapper<Object[], Person>() {
+        SourceFieldMapper<Object[], Person> studentMapper = new SourceFieldMapper<Object[], Person>() {
             @Override
             public Person map(Object[] source) throws MappingException {
                 return map(source, null);
@@ -56,7 +56,7 @@ public class DiscriminatorMapperTest {
                 studentGS.setId((Integer) source[2]);
             }
         };
-        Mapper<Object[], Person> professorMapper = new Mapper<Object[], Person>() {
+        SourceFieldMapper<Object[], Person> professorMapper = new SourceFieldMapper<Object[], Person>() {
             @Override
             public Person map(Object[] source) throws MappingException {
                 return map(source, null);
@@ -97,7 +97,7 @@ public class DiscriminatorMapperTest {
                 new MappingContextFactoryFromRows<Object[], Object[][], RuntimeException>() {
                     @Override
                     public MappingContext<? super Object[]> newMappingContext(Object[][] objects) throws RuntimeException {
-                        return MappingContext.INSTANCE;
+                        return MappingContext.EMPTY_CONTEXT;
                     }
                 }
         ));
@@ -113,17 +113,17 @@ public class DiscriminatorMapperTest {
                 new MappingContextFactoryFromRows<Object[], Object[][], RuntimeException>() {
                     @Override
                     public MappingContext<? super Object[]> newMappingContext(Object[][] objects) throws RuntimeException {
-                        return MappingContext.INSTANCE;
+                        return MappingContext.EMPTY_CONTEXT;
                     }
                 }
         ));
 
         mapper =
                 new DiscriminatorMapper<Object[], Object[][], Person, RuntimeException>(mappers,
-                        new UnaryFactory<Object[][], Enumarable<Object[]>>() {
+                        new UnaryFactory<Object[][], Enumerable<Object[]>>() {
                             @Override
-                            public Enumarable<Object[]> newInstance(Object[][] objects) {
-                                return new ArrayEnumarable<Object[]>(objects);
+                            public Enumerable<Object[]> newInstance(Object[][] objects) {
+                                return new ArrayEnumerable<Object[]>(objects);
                             }
                         }, new UncheckedConverter<Object[], String>() {
                     @Override

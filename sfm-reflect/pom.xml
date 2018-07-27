@@ -31,6 +31,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>ow2-asm</artifactId>
+			<version>6.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-util</artifactId>
 			<version>3.19.1-SNAPSHOT</version>
 			<classifier>${jar.classifier}</classifier>
@@ -55,6 +60,7 @@
 			<classifier>${jar.classifier}</classifier>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -76,10 +82,8 @@
 							org.simpleflatmapper.reflect.setter,
 							org.simpleflatmapper.reflect.primitive,
 							org.simpleflatmapper.reflect.property,
-							org.simpleflatmapper.ow2asm,
-							org.simpleflatmapper.ow2asm.signature
 						</Export-Package>
-						<Import-Package>org.simpleflatmapper.util</Import-Package>
+						<Import-Package>org.simpleflatmapper.util,org.simpleflatmapper.ow2asm,org.simpleflatmapper.ow2asm.signature</Import-Package>
 
 						<Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
 						<Provide-Capability>osgi.serviceloader;osgi.serviceloader=org.simpleflatmapper.reflect.meta.AliasProviderProducer,org.simpleflatmapper.reflect.ReflectionService.ClassMetaFactoryProducer</Provide-Capability>
@@ -118,30 +122,6 @@
 					</targetTests>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.0.2</version>
-				<executions>
-					<execution>
-						<id>copy-asm</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>org.simpleflatmapper</groupId>
-									<artifactId>ow2asm</artifactId>
-									<version>6.1.1</version>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>target/classes</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 	<profiles>
@@ -158,11 +138,6 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<configuration>
-							<excludes>
-								<exclude>**/ow2asm/**</exclude>
-							</excludes>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>
@@ -172,6 +147,13 @@
 			<activation>
 				<jdk>1.6</jdk>
 			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.simpleflatmapper</groupId>
+					<artifactId>ow2-asm</artifactId>
+					<version>5.2</version>
+				</dependency>
+			</dependencies>
 			<build>
 				<plugins>
 					<plugin>
@@ -181,30 +163,6 @@
 					<plugin>
 						<groupId>com.google.code.maven-replacer-plugin</groupId>
 						<artifactId>replacer</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>3.0.2</version>
-						<executions>
-							<execution>
-								<id>copy-asm</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>org.simpleflatmapper</groupId>
-											<artifactId>ow2asm</artifactId>
-											<version>5_1</version>
-										</artifactItem>
-									</artifactItems>
-									<outputDirectory>target/classes</outputDirectory>
-								</configuration>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>
@@ -222,6 +180,11 @@
 					<optional>true</optional>
 					<scope>test</scope>
 				</dependency>
+				<dependency>
+					<groupId>org.simpleflatmapper</groupId>
+					<artifactId>ow2-asm</artifactId>
+					<version>5.2</version>
+				</dependency>
 			</dependencies>
 			<build>
 				<plugins>
@@ -232,30 +195,6 @@
 					<plugin>
 						<groupId>com.google.code.maven-replacer-plugin</groupId>
 						<artifactId>replacer</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>3.0.2</version>
-						<executions>
-							<execution>
-								<id>copy-asm</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>org.simpleflatmapper</groupId>
-											<artifactId>ow2asm</artifactId>
-											<version>5_1</version>
-										</artifactItem>
-									</artifactItems>
-									<outputDirectory>target/classes</outputDirectory>
-								</configuration>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>
@@ -349,17 +288,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						
-						<configuration>
-							<failOnError>false</failOnError>
-							<additionalDependencies>
-								<additionalDependency>
-									<groupId>org.simpleflatmapper</groupId>
-									<artifactId>ow2asm</artifactId>
-									<version>6.1.1</version>
-								</additionalDependency>
-							</additionalDependencies>	
-						</configuration>
 					</plugin>
 				</plugins>
 

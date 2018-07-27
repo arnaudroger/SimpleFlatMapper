@@ -1,10 +1,10 @@
 package org.simpleflatmapper.datastax.impl.setter;
 
+import com.datastax.driver.core.LocalDate;
 import com.datastax.driver.core.SettableByIndexData;
-import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.reflect.Setter;
 
-public class DateSettableDataSetter implements Setter<SettableByIndexData, Object>{
+public class DateSettableDataSetter implements Setter<SettableByIndexData, LocalDate>{
     private final int index;
 
     public DateSettableDataSetter(int index) {
@@ -12,11 +12,11 @@ public class DateSettableDataSetter implements Setter<SettableByIndexData, Objec
     }
 
     @Override
-    public void set(SettableByIndexData target, Object value) throws Exception {
+    public void set(SettableByIndexData target, LocalDate value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {
-            DataHelper.setDate(index, value, target);
+            target.setDate(index, value);
         }
     }
 }

@@ -1,7 +1,6 @@
 package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.SettableByIndexData;
-import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.primitive.ShortSetter;
 
@@ -14,7 +13,7 @@ public class ShortSettableDataSetter implements Setter<SettableByIndexData, Shor
 
     @Override
     public void setShort(SettableByIndexData target, short value) throws Exception {
-        DataHelper.setShort(index, value, target);
+        target.setShort(index, value);
     }
 
     @Override
@@ -22,7 +21,7 @@ public class ShortSettableDataSetter implements Setter<SettableByIndexData, Shor
         if (value == null) {
             target.setToNull(index);
         } else {
-            DataHelper.setShort(index, value, target);
+            setShort(target, value);
         }
     }
 }

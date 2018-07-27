@@ -4,7 +4,8 @@ import com.datastax.driver.core.*;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 import org.simpleflatmapper.datastax.SettableDataMapperBuilder;
 import org.simpleflatmapper.datastax.impl.SettableDataSetterFactory;
-import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
@@ -18,9 +19,9 @@ import java.util.Iterator;
 public class UDTObjectSettableDataSetter<T> implements Setter<SettableByIndexData, T> {
     private final int index;
     private final UserType udtType;
-    private final Mapper<T, SettableByIndexData> mapper;
+    private final FieldMapper<T, SettableByIndexData> mapper;
 
-    public UDTObjectSettableDataSetter(int index, UserType udtType, Mapper<T, SettableByIndexData> mapper) {
+    public UDTObjectSettableDataSetter(int index, UserType udtType, FieldMapper<T, SettableByIndexData> mapper) {
         this.index = index;
         this.udtType = udtType;
         this.mapper = mapper;
@@ -39,13 +40,13 @@ public class UDTObjectSettableDataSetter<T> implements Setter<SettableByIndexDat
 
     public static <T> Setter<SettableByIndexData, T> newInstance(Type target,  UserType tt, int index, MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
                                                                                       ReflectionService reflectionService) {
-        Mapper<T, SettableByIndexData> mapper = newUDTMapper(target, tt, config, reflectionService);
+        FieldMapper<T, SettableByIndexData> mapper = newUDTMapper(target, tt, config, reflectionService);
         return new UDTObjectSettableDataSetter<T>(index, tt, mapper);
     }
 
-    public static <T> Mapper<T, SettableByIndexData> newUDTMapper(Type target, UserType tt,
-                                                                                       MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
-                                                                                       ReflectionService reflectionService) {
+    public static <T> FieldMapper<T, SettableByIndexData> newUDTMapper(Type target, UserType tt,
+                                                                        MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
+                                                                        ReflectionService reflectionService) {
         SettableDataMapperBuilder<T> builder = newFieldMapperBuilder(config, reflectionService, target);
         Iterator<UserType.Field> iterator = tt.iterator();
         int i = 0;

@@ -2,8 +2,8 @@ package org.simpleflatmapper.csv.test.writer.time;
 
 import org.junit.Test;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.simpleflatmapper.csv.CsvCellWriter;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
+import org.simpleflatmapper.lightningcsv.CsvCellWriter;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.property.time.JavaDateTimeFormatterProperty;

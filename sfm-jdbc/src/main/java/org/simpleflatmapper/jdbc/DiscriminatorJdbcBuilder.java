@@ -4,12 +4,12 @@ package org.simpleflatmapper.jdbc;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.UncheckedConverter;
 import org.simpleflatmapper.converter.UncheckedConverterHelper;
-import org.simpleflatmapper.jdbc.impl.ResultSetEnumarable;
+import org.simpleflatmapper.jdbc.impl.ResultSetEnumerable;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.DiscriminatorMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.Predicate;
@@ -90,8 +90,7 @@ public class DiscriminatorJdbcBuilder<T> {
                 new ArrayList<DiscriminatorMapper.PredicatedMapper<ResultSet, ResultSet, T, SQLException>>();
 
         for(DiscriminatorJdbcSubBuilder subBuilder : builders) {
-            JdbcMapper<T> mapper = subBuilder.createMapper();
-
+            JdbcSourceFieldMapper<T> mapper = subBuilder.createMapper();
             Predicate<ResultSet> predicate = new ResultSetDiscriminatorPredicate(column, subBuilder.predicate);
             mappers.add(new DiscriminatorMapper.PredicatedMapper<ResultSet, ResultSet, T, SQLException>(predicate, mapper, mapper));
         }
@@ -99,10 +98,10 @@ public class DiscriminatorJdbcBuilder<T> {
 
         DiscriminatorJdbcMapper<T> discriminatorMapper = new DiscriminatorJdbcMapper<T>(
                 mappers,
-                new UnaryFactory<ResultSet, Enumarable<ResultSet>>() {
+                new UnaryFactory<ResultSet, Enumerable<ResultSet>>() {
                     @Override
-                    public Enumarable<ResultSet> newInstance(ResultSet resultSet) {
-                        return new ResultSetEnumarable(resultSet);
+                    public Enumerable<ResultSet> newInstance(ResultSet resultSet) {
+                        return new ResultSetEnumerable(resultSet);
                     }
                 },
                 UncheckedConverterHelper.<ResultSet, String>toUnchecked(
@@ -116,19 +115,20 @@ public class DiscriminatorJdbcBuilder<T> {
         return discriminatorMapper;
     }
 
+
     private static class DiscriminatorJdbcMapper<T> extends DiscriminatorMapper<ResultSet, ResultSet, T, SQLException>
             implements JdbcMapper<T> {
 
         public DiscriminatorJdbcMapper(List<PredicatedMapper<ResultSet, ResultSet, T, SQLException>> predicatedMappers,
-                                       UnaryFactory<ResultSet, Enumarable<ResultSet>> rowEnumarableFactory,
+                                       UnaryFactory<ResultSet, Enumerable<ResultSet>> rowEnumerableFactory,
                                        UncheckedConverter<ResultSet, String> errorConverter,
                                        ConsumerErrorHandler consumerErrorHandler) {
-            super(predicatedMappers, rowEnumarableFactory, errorConverter, consumerErrorHandler);
+            super(predicatedMappers, rowEnumerableFactory, errorConverter, consumerErrorHandler);
         }
 
         @Override
         public MappingContext<? super ResultSet> newMappingContext(ResultSet resultSet) throws SQLException {
-            return ((JdbcMapper<T>)getMapper(resultSet)).newMappingContext(resultSet);
+            return ((JdbcSourceFieldMapper<T>)getMapper(resultSet)).newMappingContext(resultSet);
         }
     }
 
@@ -271,11 +271,11 @@ public class DiscriminatorJdbcBuilder<T> {
             return DiscriminatorJdbcBuilder.this.when(predicate, type);
         }
 
-        private JdbcMapper<T> createMapper() {
+        private JdbcSourceFieldMapper<T> createMapper() {
             if (builder != null) {
-                return builder.mapper();
+                return builder.newSourceFieldMapper();
             } else {
-                return jdbcMapperFactory.newMapper(type);
+                return jdbcMapperFactory.newSourceFieldMapper(type);
             }
         }
     }

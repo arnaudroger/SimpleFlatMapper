@@ -378,7 +378,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 			@Override
 			public InstantiatorDefinitionAndIntermediatType newTypeInfo(Type type) {
 				try {
-					Class clazz = type.getClass().getClassLoader().loadClass("org.eclipse.collections.impl.list.mutable.FastList");
+					Class clazz = TypeHelper.toClass(type).getClassLoader().loadClass("org.eclipse.collections.impl.list.mutable.FastList");
 
 					return new InstantiatorDefinitionAndIntermediatType(
 							new BuilderInstantiatorDefinition(getConstructor(clazz),

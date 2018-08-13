@@ -54,6 +54,9 @@ public class MappingContextFactoryBuilder<S, K> {
         while(suppliers.size() <= index) {
             suppliers.add(null);
         }
+        if (suppliers.get(index) != null) {
+            throw new IllegalStateException("Conflicting suppliers");
+        }
         suppliers.set(index, supplier);
     }
 
@@ -76,14 +79,16 @@ public class MappingContextFactoryBuilder<S, K> {
 
         MappingContextFactory<S> context;
 
+        ArrayList<MappingContextFactoryBuilder<S, K>> builders = new ArrayList<MappingContextFactoryBuilder<S, K>>();
+        addAllBuilders(builders);
+        
+        copySuppliers(builders);
+
         if (suppliers.isEmpty()) {
             context = MappingContext.EMPTY_FACTORY;
         } else {
             context = new ValuedMappingContextFactory<S>(suppliers);
         }
-
-        ArrayList<MappingContextFactoryBuilder<S, K>> builders = new ArrayList<MappingContextFactoryBuilder<S, K>>();
-        addAllBuilders(builders);
 
         if (hasKeys(builders)) {
             KeyDefinitionBuilder<S, K>[] keyDefinitionsBuilder = new KeyDefinitionBuilder[builders.get(builders.size() - 1).currentIndex + 1];
@@ -101,6 +106,18 @@ public class MappingContextFactoryBuilder<S, K> {
         }
 
         return context;
+    }
+
+    private void copySuppliers(ArrayList<MappingContextFactoryBuilder<S, K>> builders) {
+        for (int i = 1; i < builders.size(); i++) {
+            MappingContextFactoryBuilder<S, K> builder = builders.get(i);
+            for(int j = 0; j < builder.suppliers.size(); j++) {
+                Supplier<?> supplier = builder.suppliers.get(j);
+                if (supplier != null) {
+                    addSupplier(j, supplier);
+                }
+            }
+        }
     }
 
     private KeyDefinitionBuilder<S, K> populateKey(KeyDefinitionBuilder<S, K>[] keyDefinitions, ArrayList<MappingContextFactoryBuilder<S, K>> builders, MappingContextFactoryBuilder<S, K> builder) {

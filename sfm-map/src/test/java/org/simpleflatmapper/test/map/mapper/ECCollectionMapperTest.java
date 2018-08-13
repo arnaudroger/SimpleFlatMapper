@@ -52,6 +52,25 @@ public class ECCollectionMapperTest {
     }
 
     @Test
+    public void testImmutableListWithBulilder() throws Exception {
+
+        AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableABuilder> builderA =
+                new AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableABuilder>(ReflectionService.newInstance(false).getClassMeta(ImmutableABuilder.class));
+
+        builderA.addKey("id").addMapping("bs_v");
+
+        EnumerableMapper<Object[][], ImmutableABuilder, ?> mapper =
+                builderA.mapper();
+
+        ImmutableABuilder a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(Lists.immutable.of(new B("v1"), new B("v2")), a.bs);
+        assertEquals(1, a.id);
+
+
+    }
+
+    @Test
     public void testImmutableListObjectWithSetter() throws Exception {
 
         AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableAA> builderA =
@@ -105,7 +124,27 @@ public class ECCollectionMapperTest {
         assertEquals(1, a.a.id);
 
     }
-    
+
+
+    @Test
+    public void testImmutableBuilderWrapperList() throws Exception {
+
+        AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableABuilderWrapper> builderA =
+                new AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableABuilderWrapper>(ReflectionService.newInstance(false).getClassMeta(ImmutableABuilderWrapper.class));
+
+        builderA.addKey("a_id").addMapping("a_bs_v");
+
+        EnumerableMapper<Object[][], ImmutableABuilderWrapper, ?> mapper =
+                builderA.mapper();
+
+        ImmutableABuilderWrapper a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(Lists.immutable.of(new B("v1"), new B("v2")), a.a.bs);
+        assertEquals(1, a.a.id);
+
+    }
+
+
     public static class ImmutableAWrapper {
         private final String str;
         private final ImmutableA a;
@@ -181,6 +220,95 @@ public class ECCollectionMapperTest {
         }
 
     }
+
+
+    public static class ImmutableABuilder {
+        private final int id;
+        private final ImmutableList<B> bs;
+
+        private ImmutableABuilder(int id, ImmutableList<B> bs) {
+            this.id = id;
+            this.bs = bs;
+        }
+
+        public ImmutableList getBs() {
+            return bs;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        @Override
+        public String toString() {
+            return "A{" +
+                    "id=" + id +
+                    ", bs=" + bs +
+                    '}';
+        }
+        
+        public static Builder builder() {
+            return new Builder();
+        }
+        
+        public static class Builder {
+            private int id;
+            private ImmutableList<B> bs;
+
+            public void setId(int id) {
+                this.id = id;
+            }
+
+            public void setBs(ImmutableList<B> bs) {
+                this.bs = bs;
+            }
+            
+            public ImmutableABuilder build() {
+                return new ImmutableABuilder(id, bs);
+            }
+        }
+
+    }
+
+    public static class ImmutableABuilderWrapper {
+        private final String str;
+        private final ImmutableABuilder a;
+
+        private ImmutableABuilderWrapper(String str, ImmutableABuilder a) {
+            this.str = str;
+            this.a = a;
+        }
+
+        public String getStr() {
+            return str;
+        }
+
+        public ImmutableABuilder getA() {
+            return a;
+        }
+        
+        public static Builder builder() {
+            return new Builder();
+        }
+        
+        public static class Builder {
+            private String str;
+            private ImmutableABuilder a;
+
+            public void setStr(String str) {
+                this.str = str;
+            }
+
+            public void setA(ImmutableABuilder a) {
+                this.a = a;
+            }
+            
+            public ImmutableABuilderWrapper build() {
+                return new ImmutableABuilderWrapper(str, a);
+            }
+        }
+    }
+
     public static class ImmutableAAA {
         private int id;
         private final ImmutableList<B> bs;

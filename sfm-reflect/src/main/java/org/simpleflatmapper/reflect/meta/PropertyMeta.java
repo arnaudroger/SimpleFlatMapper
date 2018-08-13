@@ -88,4 +88,5 @@ public abstract class PropertyMeta<O, P> {
 	public Object[] getDefinedProperties() {
 		return new Object[0];
 	}
+
 }

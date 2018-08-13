@@ -28,6 +28,8 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	private final Type target;
 
 	private final Map<String, String> fieldAliases;
+	private final boolean needTransformer;
+
 	public ObjectClassMeta(Type target, ReflectionService reflectService) {
 		this(target, null, reflectService);
 	}
@@ -35,6 +37,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	public ObjectClassMeta(Type target, Member builderInstantiator, ReflectionService reflectService) {
 		try {
 			this.target = target;
+			this.needTransformer = TypeHelper.toClass(target).isAnnotationPresent(ModifyInjectedParams.class);
 			this.reflectService = reflectService;
 			this.instantiatorDefinitions = reflectService.extractInstantiator(target, builderInstantiator);
 			this.constructorProperties = listConstructorProperties(instantiatorDefinitions, reflectService.builderIgnoresNullValues());
@@ -51,13 +54,15 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
                            List<ConstructorPropertyMeta<T, ?>> constructorProperties,
 						   Map<String, String> fieldAliases,
                            List<PropertyMeta<T, ?>> properties,
-                           ReflectionService reflectService) {
+                           ReflectionService reflectService, 
+						   boolean needTransformer) {
         this.target = target;
 		this.reflectService = reflectService;
 		this.instantiatorDefinitions = instantiatorDefinitions;
 		this.constructorProperties = constructorProperties;
 		this.fieldAliases = fieldAliases;
 		this.properties = properties;
+		this.needTransformer = needTransformer;
 	}
 
     private Map<String, String> aliases(final ReflectionService reflectService, Class<T> target) {
@@ -309,7 +314,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
 	@Override
 	public boolean needTransformer() {
-		return false;
+		return needTransformer;
 	}
 
 	public PropertyMeta<T, ?> getFirstProperty() {

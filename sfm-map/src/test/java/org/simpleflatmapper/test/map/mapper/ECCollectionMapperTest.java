@@ -124,7 +124,27 @@ public class ECCollectionMapperTest {
         assertEquals(1, a.a.id);
 
     }
-    
+
+
+    @Test
+    public void testImmutableBuilderWrapperList() throws Exception {
+
+        AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableABuilderWrapper> builderA =
+                new AbstractMapperBuilderTest.SampleMapperBuilder<ImmutableABuilderWrapper>(ReflectionService.newInstance(false).getClassMeta(ImmutableABuilderWrapper.class));
+
+        builderA.addKey("a_id").addMapping("a_bs_v");
+
+        EnumerableMapper<Object[][], ImmutableABuilderWrapper, ?> mapper =
+                builderA.mapper();
+
+        ImmutableABuilderWrapper a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(Lists.immutable.of(new B("v1"), new B("v2")), a.a.bs);
+        assertEquals(1, a.a.id);
+
+    }
+
+
     public static class ImmutableAWrapper {
         private final String str;
         private final ImmutableA a;
@@ -248,6 +268,45 @@ public class ECCollectionMapperTest {
             }
         }
 
+    }
+
+    public static class ImmutableABuilderWrapper {
+        private final String str;
+        private final ImmutableABuilder a;
+
+        private ImmutableABuilderWrapper(String str, ImmutableABuilder a) {
+            this.str = str;
+            this.a = a;
+        }
+
+        public String getStr() {
+            return str;
+        }
+
+        public ImmutableABuilder getA() {
+            return a;
+        }
+        
+        public static Builder builder() {
+            return new Builder();
+        }
+        
+        public static class Builder {
+            private String str;
+            private ImmutableABuilder a;
+
+            public void setStr(String str) {
+                this.str = str;
+            }
+
+            public void setA(ImmutableABuilder a) {
+                this.a = a;
+            }
+            
+            public ImmutableABuilderWrapper build() {
+                return new ImmutableABuilderWrapper(str, a);
+            }
+        }
     }
 
     public static class ImmutableAAA {

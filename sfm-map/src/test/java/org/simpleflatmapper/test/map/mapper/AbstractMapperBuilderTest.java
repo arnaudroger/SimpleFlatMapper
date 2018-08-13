@@ -13,6 +13,7 @@ import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.property.MandatoryProperty;
+import org.simpleflatmapper.reflect.ModifyInjectedParams;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.test.beans.DbListObject;
@@ -49,6 +50,7 @@ import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -553,7 +555,7 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testImmutableSetWithBuilder() throws Exception {
 
-        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(false).getClassMeta(A.class));
+        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(false).getClassMeta(A.class),  MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
         
         builderA.addKey("id").addMapping("bs_v");
 
@@ -570,7 +572,7 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testImmutableSetWithBuilderAsm() throws Exception {
 
-        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(true).getClassMeta(A.class));
+        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(true).getClassMeta(A.class),  MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
 
         builderA.addKey("id").addMapping("bs_v");
 
@@ -585,7 +587,7 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testImmutableSetNoBuilder() throws Exception {
 
-        SampleMapperBuilder<A2> builderA = new SampleMapperBuilder<A2>(ReflectionService.newInstance(false).getClassMeta(A2.class));
+        SampleMapperBuilder<A2> builderA = new SampleMapperBuilder<A2>(ReflectionService.newInstance(false).getClassMeta(A2.class),  MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
 
         builderA.addKey("id").addMapping("bs_v");
 
@@ -601,7 +603,7 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testImmutableSetNoBuilderAsm() throws Exception {
 
-        SampleMapperBuilder<A2> builderA = new SampleMapperBuilder<A2>(ReflectionService.newInstance(true).getClassMeta(A2.class));
+        SampleMapperBuilder<A2> builderA = new SampleMapperBuilder<A2>(ReflectionService.newInstance(true).getClassMeta(A2.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
 
         builderA.addKey("id").addMapping("bs_v");
 
@@ -611,6 +613,38 @@ public class AbstractMapperBuilderTest {
         A2 a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
 
         assertEquals(new HashSet<B>(Arrays.asList(new B("v1"), new B("v2"))), a.bs);
+
+    }
+
+    @Test
+    public void testImmutableListNoBuilderAsm() throws Exception {
+
+        SampleMapperBuilder<A3> builderA = new SampleMapperBuilder<A3>(ReflectionService.newInstance(true).getClassMeta(A3.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
+
+        builderA.addKey("id").addMapping("bs_v");
+
+        EnumerableMapper<Object[][], A3, ?> mapper =
+                builderA.mapper();
+
+        A3 a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(Arrays.asList(new B("v1"), new B("v2")), a.bs);
+
+    }
+
+    @Test
+    public void testImmutableListNoBuilderAsmAnnotation() throws Exception {
+
+        SampleMapperBuilder<A4> builderA = new SampleMapperBuilder<A4>(ReflectionService.newInstance(true).getClassMeta(A4.class));
+
+        builderA.addKey("id").addMapping("bs_v");
+
+        EnumerableMapper<Object[][], A4, ?> mapper =
+                builderA.mapper();
+
+        A4 a = mapper.iterator(new Object[][]{{1, "v1"}, {1, "v2"}}).next();
+
+        assertEquals(Arrays.asList(new B("v1"), new B("v2")), a.bs);
 
     }
 
@@ -634,6 +668,61 @@ public class AbstractMapperBuilderTest {
         @Override
         public String toString() {
             return "A2{" +
+                    "id=" + id +
+                    ", bs=" + bs +
+                    '}';
+        }
+
+    }
+
+    public static class A3 {
+        private final int id;
+        private final List<B> bs;
+
+        public A3(int id, Set<B> bs) {
+            this.id = id;
+            this.bs = Collections.unmodifiableList(new ArrayList<B>(bs));
+        }
+
+        public List<B> getBs() {
+            return bs;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        @Override
+        public String toString() {
+            return "A3{" +
+                    "id=" + id +
+                    ", bs=" + bs +
+                    '}';
+        }
+
+    }
+
+    @ModifyInjectedParams
+    public static class A4 {
+        private final int id;
+        private final List<B> bs;
+
+        public A4(int id, Set<B> bs) {
+            this.id = id;
+            this.bs = Collections.unmodifiableList(new ArrayList<B>(bs));
+        }
+
+        public List<B> getBs() {
+            return bs;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        @Override
+        public String toString() {
+            return "A4{" +
                     "id=" + id +
                     ", bs=" + bs +
                     '}';

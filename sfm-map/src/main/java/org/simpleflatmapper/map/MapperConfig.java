@@ -24,7 +24,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 false,
                 NO_ASM_MAPPER_THRESHOLD,
                 RethrowFieldMapperErrorHandler.INSTANCE,
-                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE);
+                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false);
     }
 
     public static <K extends FieldKey<K>, CD extends ColumnDefinition<K, CD>> MapperConfig<K, CD> config(ColumnDefinitionProvider<CD, K> columnDefinitionProvider) {
@@ -35,7 +35,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 false,
                 NO_ASM_MAPPER_THRESHOLD,
                 RethrowFieldMapperErrorHandler.INSTANCE,
-                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE);
+                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false);
     }
 
     private final ColumnDefinitionProvider<CD, K> columnDefinitions;
@@ -46,6 +46,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
     private final FieldMapperErrorHandler<? super K> fieldMapperErrorHandler;
     private final ConsumerErrorHandler consumerErrorHandler;
     private final int maxMethodSize;
+    private final boolean assumeInjectionModifiesValues;
 
 
     private MapperConfig(
@@ -55,7 +56,8 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
             boolean failOnAsm,
             int asmMapperNbFieldsLimit,
             FieldMapperErrorHandler<? super K> fieldMapperErrorHandler,
-            ConsumerErrorHandler consumerErrorHandler, int maxMethodSize) {
+            ConsumerErrorHandler consumerErrorHandler,
+            int maxMethodSize, boolean assumeInjectionModifiesValues) {
         this.columnDefinitions = columnDefinitions;
         this.propertyNameMatcherFactory = propertyNameMatcherFactory;
         this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
@@ -64,6 +66,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
         this.fieldMapperErrorHandler = fieldMapperErrorHandler;
         this.consumerErrorHandler = consumerErrorHandler;
         this.maxMethodSize = maxMethodSize;
+        this.assumeInjectionModifiesValues = assumeInjectionModifiesValues;
     }
 
     public ColumnDefinitionProvider<CD, K> columnDefinitions() {
@@ -81,6 +84,10 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
     public boolean failOnAsm() {
         return failOnAsm;
     }
+    
+    public boolean assumeInjectionModifiesValues() {
+        return assumeInjectionModifiesValues;
+    }
 
     public int asmMapperNbFieldsLimit() {
         return asmMapperNbFieldsLimit;
@@ -96,7 +103,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                    consumerErrorHandler, maxMethodSize);
+                    consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
     public MapperConfig<K, CD> propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
@@ -107,7 +114,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                consumerErrorHandler, maxMethodSize);
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
     public MapperConfig<K, CD> mapperBuilderErrorHandler(MapperBuilderErrorHandler mapperBuilderErrorHandler) {
@@ -118,7 +125,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                consumerErrorHandler, maxMethodSize);
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
     public MapperConfig<K, CD> failOnAsm(boolean failOnAsm) {
@@ -129,7 +136,20 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                consumerErrorHandler, maxMethodSize);
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
+    }
+
+
+
+    public MapperConfig<K, CD> assumeInjectionModifiesValues(boolean assumeInjectionModifiesValues) {
+        return new MapperConfig<K, CD>(
+                columnDefinitions,
+                propertyNameMatcherFactory,
+                mapperBuilderErrorHandler,
+                failOnAsm,
+                asmMapperNbFieldsLimit,
+                fieldMapperErrorHandler,
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
     public MapperConfig<K, CD> asmMapperNbFieldsLimit(int asmMapperNbFieldsLimit) {
@@ -140,7 +160,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                consumerErrorHandler, maxMethodSize);
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
     public MapperConfig<K, CD> fieldMapperErrorHandler(FieldMapperErrorHandler<? super K> fieldMapperErrorHandler) {
@@ -151,7 +171,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                consumerErrorHandler, maxMethodSize);
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
     public MapperConfig<K,CD> consumerErrorHandler(ConsumerErrorHandler consumerErrorHandler) {
@@ -163,7 +183,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
                 consumerErrorHandler,
-                maxMethodSize);
+                maxMethodSize, assumeInjectionModifiesValues);
     }
 
     public ConsumerErrorHandler consumerErrorHandler() {
@@ -201,7 +221,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
                 consumerErrorHandler,
-                maxMethodSize);
+                maxMethodSize, assumeInjectionModifiesValues);
     }
 
 

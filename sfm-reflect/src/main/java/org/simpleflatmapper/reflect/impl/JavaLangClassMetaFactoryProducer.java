@@ -36,7 +36,7 @@ public class JavaLangClassMetaFactoryProducer implements ReflectionService.Class
                         Collections.<ConstructorPropertyMeta<T, ?>>emptyList(),
                         Collections.<String, String>emptyMap(),
                         Collections.<PropertyMeta<T, ?>>emptyList(),
-                        reflectionService);
+                        reflectionService, false);
             }
         });
     }

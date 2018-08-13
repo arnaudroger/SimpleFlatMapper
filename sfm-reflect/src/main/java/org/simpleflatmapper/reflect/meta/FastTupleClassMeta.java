@@ -41,7 +41,8 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
                         Collections.<ConstructorPropertyMeta<T, ?>>emptyList(),
                         Collections.<String, String>emptyMap(),
                         properties,
-                        reflectionService);
+                        reflectionService, 
+                            false);
         } catch (NoSuchMethodException e) {
             ErrorHelper.rethrow(e);
             throw new IllegalStateException();

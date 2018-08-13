@@ -190,22 +190,16 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     private boolean isTargetForTransformer(List<InjectionParam> injectionParams) {
         return
-                propertyMappingsBuilder.getClassMeta().needTransformer() ||
-                // is aggregate and constructor only
-                    (!mappingContextFactoryBuilder.hasNoDependentKeys() && !injectionParams.isEmpty());
+                propertyMappingsBuilder.getClassMeta().needTransformer() 
+                        || needGenericBuilder(injectionParams)
+                // is aggregate and constructor injection
+                       || (mapperConfig.assumeInjectionModifiesValues() && (!mappingContextFactoryBuilder.hasNoDependentKeys() && !injectionParams.isEmpty()))
+                ;
     }
 
     @SuppressWarnings("unchecked")
     private SourceFieldMapper<S, T> buildMapperWithTransformer(List<InjectionParam> injections) {
-        boolean forceGenericBuilder = false;
-        
-        // handle builder with an injection needing transformation
-        for(InjectionParam ip : injections) { 
-            if (ip.propertyMeta.getPropertyClassMeta().needTransformer()) {
-                forceGenericBuilder = true;
-                break;
-            }
-        }
+        boolean forceGenericBuilder = needGenericBuilder(injections);
 
         BuilderInstantiatorDefinition mutableBuilder = getMutableBuilder();
 
@@ -216,6 +210,19 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         } else {
             return buildWithGenericBuilder(injections);
         }
+    }
+
+    private boolean needGenericBuilder(List<InjectionParam> injections) {
+        boolean forceGenericBuilder = false;
+
+        // handle builder with an injection needing transformation
+        for(InjectionParam ip : injections) { 
+            if (ip.needTransformer()) {
+                forceGenericBuilder = true;
+                break;
+            }
+        }
+        return forceGenericBuilder;
     }
 
     private BuilderInstantiatorDefinition getMutableBuilder() {
@@ -290,24 +297,11 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
         final Function<GenericBuilder<T>, T> transformFunction = new GenericBuilderTransformFunction<T>(fieldSetters.toArray(new Setter[0]));
 
-
         ConstructorInjections<T> constructorInjections = new ConstructorInjections<T>(parameterGetterMap, constructorFieldMapperGeneric.toArray(new FieldMapper[0]));
 
         final BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder = targetInstantiatorFromGenericBuilder(indexMapping, transformers);
 
-
-        //int contextIndex = mappingContextFactoryBuilder.currentIndex();
-        
         BiInstantiator genericBuilderInstantiator = new GenericBuildBiInstantiator(biFunctions, targetInstantiatorFromGenericBuilder, fields.size());
-
-       // final int nbFields = biFunctions.length + fields.size();
-
-//        mappingContextFactoryBuilder.addSupplier(contextIndex, new Supplier<Object>() {
-//            @Override
-//            public Object get() {
-//                return new GenericBuilder(nbFields, targetInstantiatorFromGenericBuilder);
-//            }
-//        });
 
         InstantiatorAndFieldMappers newConstantSourceMapperBuilder =
                 new InstantiatorAndFieldMappers(
@@ -897,12 +891,6 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
         @Override
         public Object newInstance(Object o, Object o2) throws Exception {
-            
-//            MappingContext mappingContext = (MappingContext) o2;
-//
-//            GenericBuilder genericBuilder = (GenericBuilder) mappingContext.context(contextIndex);
-//            
-//            genericBuilder.reset();
             GenericBuilder genericBuilder = new GenericBuilder(biFunctions.length + nbFields, targetInstantiatorFromGenericBuilder);
 
             for (int i = 0; i < biFunctions.length; i++) {
@@ -971,6 +959,18 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         abstract GetterAndFieldMapper getterAndfieldMapper();
 
         abstract GenericBuilderGetterAndFieldMapper getterAndfieldMapperGenericBuilder(int i);
+
+        public abstract boolean needTransformer();
+
+        boolean needTransformer(PropertyMeta<T, ?> propertyMeta) {
+            if (propertyMeta.isSubProperty()) {
+                SubPropertyMeta sb = (SubPropertyMeta) propertyMeta;
+                return needTransformer(sb.getOwnerProperty()) || needTransformer(sb.getSubProperty());
+            } else {
+                return propertyMeta.getPropertyClassMeta().needTransformer();
+            }
+        }
+
     }
     
     private class ConstructorParam extends InjectionParam {
@@ -1027,6 +1027,12 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
         }
 
+        @Override
+        public boolean needTransformer() {
+            return needTransformer(propertyMeta);
+        }
+
+
         private class GenericBuilderFieldMapper<S, T> implements FieldMapper<S, T> {
             private final int index;
             private final Getter<? super S, ?> getter;
@@ -1080,6 +1086,18 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             FieldMapper<S, T> fieldMapperAfterConstruct = newMapperFieldMapper(propertyMappings, propertyMeta, mapper, currentBuilder);
 
             return new GenericBuilderGetterAndFieldMapper(biFunction, fieldMapper, transform, fieldMapperAfterConstruct);
+        }
+
+        @Override
+        public boolean needTransformer() {
+            if (needTransformer(propertyMeta)) {
+                return true;   
+            }
+            
+            for(PropertyMapping pm : propertyMappings) {
+                if (needTransformer(pm.getPropertyMeta())) return true;
+            }
+            return false;
         }
 
         private SourceMapper<S, ?> getsSourceMapper(MappingContextFactoryBuilder currentBuilder) {

@@ -4,6 +4,7 @@ import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class GenericBuilder<T> {
 
@@ -26,6 +27,9 @@ public class GenericBuilder<T> {
     public T build() throws Exception {
         return instantiator.newInstance(objects, this);
     }
-    
-    
+
+
+    public void reset() {
+        Arrays.fill(objects, null);
+    }
 }

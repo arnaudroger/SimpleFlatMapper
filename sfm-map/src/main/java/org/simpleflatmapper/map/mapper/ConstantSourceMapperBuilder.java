@@ -197,10 +197,21 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     @SuppressWarnings("unchecked")
     private SourceFieldMapper<S, T> buildMapperWithTransformer(List<InjectionParam> injections) {
-        // already has mutable builder
-        BuilderInstantiatorDefinition mutableBuilder = getMutableBuilder();
+        boolean forceGenericBuilder = false;
         
-        if (mutableBuilder != null) {
+        // handle builder with an injection needing transformation
+        for(InjectionParam ip : injections) { 
+            if (ip.propertyMeta.getPropertyClassMeta().needTransformer()) {
+                forceGenericBuilder = true;
+                break;
+            }
+        }
+
+        BuilderInstantiatorDefinition mutableBuilder = getMutableBuilder();
+
+        // already has mutable builder
+        if (!forceGenericBuilder && 
+                mutableBuilder != null) {
             return builderWithTransformer(injections, mutableBuilder);
         } else {
             return buildWithGenericBuilder(injections);
@@ -285,9 +296,18 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         final BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder = targetInstantiatorFromGenericBuilder(indexMapping, transformers);
 
 
+        //int contextIndex = mappingContextFactoryBuilder.currentIndex();
+        
         BiInstantiator genericBuilderInstantiator = new GenericBuildBiInstantiator(biFunctions, targetInstantiatorFromGenericBuilder, fields.size());
 
-      
+       // final int nbFields = biFunctions.length + fields.size();
+
+//        mappingContextFactoryBuilder.addSupplier(contextIndex, new Supplier<Object>() {
+//            @Override
+//            public Object get() {
+//                return new GenericBuilder(nbFields, targetInstantiatorFromGenericBuilder);
+//            }
+//        });
 
         InstantiatorAndFieldMappers newConstantSourceMapperBuilder =
                 new InstantiatorAndFieldMappers(
@@ -877,7 +897,14 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
         @Override
         public Object newInstance(Object o, Object o2) throws Exception {
+            
+//            MappingContext mappingContext = (MappingContext) o2;
+//
+//            GenericBuilder genericBuilder = (GenericBuilder) mappingContext.context(contextIndex);
+//            
+//            genericBuilder.reset();
             GenericBuilder genericBuilder = new GenericBuilder(biFunctions.length + nbFields, targetInstantiatorFromGenericBuilder);
+
             for (int i = 0; i < biFunctions.length; i++) {
                 genericBuilder.objects[i] = biFunctions[i].apply(o, o2);
             }

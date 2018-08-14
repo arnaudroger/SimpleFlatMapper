@@ -44,6 +44,7 @@ public abstract class AbstractMapperFactory<
 
     private ReflectionService reflectionService = null;
 	private int maxMethodSize = MapperConfig.MAX_METHOD_SIZE;
+	private boolean assumeInjectionModifiesValues;
 
 
 	public AbstractMapperFactory(AbstractMapperFactory<K, CD, ?> config) {
@@ -62,6 +63,7 @@ public abstract class AbstractMapperFactory<
 		
 		this.reflectionService = config.reflectionService;
 		this.maxMethodSize = config.maxMethodSize;
+		this.assumeInjectionModifiesValues = config.assumeInjectionModifiesValues;
 	}
 
 
@@ -145,7 +147,8 @@ public abstract class AbstractMapperFactory<
 				.asmMapperNbFieldsLimit(asmMapperNbFieldsLimit)
 				.fieldMapperErrorHandler(fieldMapperErrorHandler)
 				.consumerErrorHandler(consumerErrorHandler)
-				.maxMethodSize(maxMethodSize);
+				.maxMethodSize(maxMethodSize)
+				.assumeInjectionModifiesValues(assumeInjectionModifiesValues);
 	}
 
 	/**
@@ -248,6 +251,18 @@ public abstract class AbstractMapperFactory<
         return (MF) this;
     }
 
+	/**
+	 * if set to true, it will assume any constructor that takes a list as a constructor argument will need
+	 * to be mapped using a builder to protect against the actual value being changed in the constructor.
+	 * 
+	 * @param b true to make the factory being paranoid about constructor injection of aggregation
+	 * @return the current factory
+	 */
+	public final MF assumeInjectionModifiesValues(boolean b) {
+    	this.assumeInjectionModifiesValues = b;
+    	return (MF) this;
+	}
+	
     /**
      * change the number of fields threshold after which an asm jdbcMapper is not generated.
      * <p>

@@ -9,8 +9,7 @@ public class ErrorDocTest {
 
     @Test
     public void testErrorDoc() {
-        assertNotNull(ErrorDoc.toUrl("aa"));
-        assertNotNull(ErrorDoc.toUrl(null));
+        assertEquals("https://github.com/arnaudroger/SimpleFlatMapper/wiki/Errors_CSFM_GETTER_NOT_FOUND", ErrorDoc.CSFM_GETTER_NOT_FOUND.toUrl());
     }
 
 }

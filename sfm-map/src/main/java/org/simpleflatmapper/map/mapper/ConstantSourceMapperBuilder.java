@@ -32,8 +32,10 @@ import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.BuilderBiInstantiator;
+import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
+import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
@@ -44,7 +46,6 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.BiFunction;
-import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Function;
@@ -60,6 +61,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
+import static org.simpleflatmapper.util.ErrorDoc.CSFM_GETTER_NOT_FOUND;
 
 public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
@@ -999,11 +1001,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             Getter<? super S, ?> getter =
                     fieldMapperFactory.getGetterFromSource(propertyMapping.getColumnKey(), propertyMeta.getPropertyType(), propertyMapping.getColumnDefinition(), propertyMeta.getPropertyClassMetaSupplier());
             if (NullGetter.isNull(getter)) {
+                PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping = this.propertyMapping;
                 mapperConfig.mapperBuilderErrorHandler()
-                        .accessorNotFound("Could not find getter for " + propertyMapping.getColumnKey() + " type "
-                                + propertyMapping.getPropertyMeta().getPropertyType()
-                                + " path " + propertyMapping.getPropertyMeta().getPath()
-                                + " See " + ErrorDoc.toUrl("FMMB_GETTER_NOT_FOUND"));
+                        .accessorNotFound(getterNotFoundErrorMessage(propertyMapping));
             }
             return getter;
         }
@@ -1047,6 +1047,34 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 ((GenericBuilder)target).objects[index] = getter.get(source);
             }
         }
+    }
+
+    public static String getterNotFoundErrorMessage(PropertyMapping propertyMapping) {
+        ClassMeta propertyClassMeta = propertyMapping.getPropertyMeta().getPropertyClassMeta();
+        String currentPath = propertyMapping.getPropertyMeta().getPath();
+        if (propertyClassMeta instanceof ArrayClassMeta) {
+
+            ArrayClassMeta arrayClassMeta = (ArrayClassMeta) propertyClassMeta;
+
+            ClassMeta elementClassMeta = arrayClassMeta.getElementClassMeta();
+            if (elementClassMeta.getNumberOfProperties() <= 1) {
+                String actualProp = "val";
+                if (elementClassMeta.getNumberOfProperties() == 1 && elementClassMeta instanceof ObjectClassMeta) {
+                    ObjectClassMeta objectClassMeta = (ObjectClassMeta) elementClassMeta;
+                    actualProp = objectClassMeta.getFirstProperty().getPath();
+                }
+                String expectedName = currentPath + "_" + actualProp;
+                return "Could not find getter for " + propertyMapping.getColumnKey() + " type "
+                        + propertyMapping.getPropertyMeta().getPropertyType()
+                        + ". If you meant to map to the element of the List you will need to rename the column to '" + expectedName + "' or call addAlias(\"" + currentPath + "\", \"" + expectedName + "\") on the Factory."
+                        + " See " + CSFM_GETTER_NOT_FOUND.toUrl();
+            }
+            
+        }
+        return "Could not find getter for " + propertyMapping.getColumnKey() + " type "
+                + propertyMapping.getPropertyMeta().getPropertyType()
+                + " path " + currentPath
+                + ". See " + CSFM_GETTER_NOT_FOUND.toUrl();
     }
 
     private class SubPropertyParam extends InjectionParam {

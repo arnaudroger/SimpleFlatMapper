@@ -19,7 +19,7 @@ public final class LogMapperBuilderErrorHandler implements
 
 	@Override
 	public void propertyNotFound(final Type target, final String property) {
-		logger.log(Level.WARNING, "Setter for " + property + " on  " + target + " not found See " + ErrorDoc.toUrl("PROPERTY_NOT_FOUND"));
+		logger.log(Level.WARNING, "Setter for " + property + " on  " + target + " not found See " + ErrorDoc.PROPERTY_NOT_FOUND.toUrl());
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package org.simpleflatmapper.map.fieldmapper;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.impl.JoinUtils;
+import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.property.ConverterProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
@@ -102,10 +103,8 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 				propertyMapping.getColumnDefinition(), propertyMeta.getPropertyClassMetaSupplier());
 
 		if (getter == null) {
-			mappingErrorHandler.accessorNotFound("Could not find getter for " + key 
-					+ " type " + propertyType 
-					+ " path " + propertyMapping.getPropertyMeta().getPath()
-					+ " See " + ErrorDoc.toUrl("CSFM_GETTER_NOT_FOUND"));
+			
+			mappingErrorHandler.accessorNotFound(ConstantSourceMapperBuilder.getterNotFoundErrorMessage(propertyMapping));
 			return null;
 		} else {
 			if (type.isPrimitive() ) {

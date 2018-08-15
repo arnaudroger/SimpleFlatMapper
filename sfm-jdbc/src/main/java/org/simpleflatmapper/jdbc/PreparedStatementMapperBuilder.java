@@ -202,7 +202,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
                             "Could not find setter for " + pm.getColumnKey() 
                                     + " type " + pm.getPropertyMeta().getPropertyType() 
                                     + " path " + pm.getPropertyMeta().getPath() 
-                                    + " See " + ErrorDoc.toUrl("PS_SETTER_NOT_FOUND"));
+                                    + " See " + ErrorDoc.CTFM_SETTER_NOT_FOUND.toUrl());
                 }
 
                 return setter;

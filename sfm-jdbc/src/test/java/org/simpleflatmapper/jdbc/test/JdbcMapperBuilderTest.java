@@ -34,6 +34,7 @@ import static org.mockito.Mockito.when;
 
 public class JdbcMapperBuilderTest {
 
+
 	@Test
 	public void testInstantiateBuilderOnType() throws SQLException {
 		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
@@ -199,9 +200,9 @@ public class JdbcMapperBuilderTest {
 
 
 	//IFJAVA8_END
+	
+	
 	@Test
-	
-	
 	public void test544() {
 		final String VALUES_VAL = "values_val";
 		final String VALUES = "values";
@@ -220,6 +221,59 @@ public class JdbcMapperBuilderTest {
 		private final List<String> values;
 		public C544(List<String> values) {
 			this.values = values;
+		}
+	}
+	
+
+	@Test
+	public void test543() {
+		final String VALUES = "values";
+
+		JdbcColumnKey valuesKeys = new JdbcColumnKey(VALUES, 1, Types.VARCHAR);
+		try {
+			JdbcMapperFactory.newInstance().newBuilder(C543.class).addMapping(valuesKeys).mapper();
+			fail();
+		} catch (MapperBuildingException e) {
+			assertTrue(e.getMessage().contains("If you meant to map to the element of the List you will need to rename the column to 'values_val' or call addAlias(\"values\", \"values_val\") on the Factory"));
+		}
+	}
+
+	@Test
+	public void test543_NamedParam() {
+		final String VALUES = "values";
+
+		JdbcColumnKey valuesKeys = new JdbcColumnKey(VALUES, 1, Types.VARCHAR);
+
+		try {
+			JdbcMapperFactory.newInstance().newBuilder(C543_NamedParam.class).addMapping(valuesKeys).mapper();
+			fail();
+		} catch (MapperBuildingException e) {
+			assertTrue(e.getMessage().contains("If you meant to map to the element of the List you will need to rename the column to 'values_name' or call addAlias(\"values\", \"values_name\") on the Factory"));
+		}
+	}
+
+
+	public static class C543 {
+		private final List<String> values;
+
+		public C543(List<String> values) {
+			this.values = values;
+		}
+	}
+
+	public static class C543_NamedParam {
+		private final List<C543Elt> values;
+
+		public C543_NamedParam(List<C543Elt> values) {
+			this.values = values;
+		}
+	}
+	
+	public static class C543Elt {
+		private final String name;
+
+		public C543Elt(String name) {
+			this.name = name;
 		}
 	}
 }

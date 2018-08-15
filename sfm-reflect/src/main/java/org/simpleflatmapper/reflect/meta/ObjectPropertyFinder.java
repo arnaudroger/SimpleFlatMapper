@@ -52,6 +52,8 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 
 	private boolean disallowSelfReference(Object[] properties) {
+    	if (classMeta.getNumberOfProperties() == 0) return false;
+    	
     	for(Object p : properties) {
     		if (p instanceof DisallowSelfReference) {
     			return true;

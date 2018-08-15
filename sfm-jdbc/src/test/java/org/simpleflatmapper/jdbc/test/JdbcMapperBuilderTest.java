@@ -4,6 +4,8 @@ import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
+import org.simpleflatmapper.jdbc.JdbcMapperFactory;
+import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
@@ -197,5 +199,27 @@ public class JdbcMapperBuilderTest {
 
 
 	//IFJAVA8_END
+	@Test
+	
+	
+	public void test544() {
+		final String VALUES_VAL = "values_val";
+		final String VALUES = "values";
 
+		JdbcColumnKey valuesKeys = new JdbcColumnKey(VALUES, 1, Types.VARCHAR);
+
+		JdbcMapperFactory
+				.newInstance()
+				.addAlias(VALUES, VALUES_VAL)
+				.newBuilder(C544.class)
+				.addMapping(valuesKeys)
+				.mapper();
+	}
+
+	public static class C544 {
+		private final List<String> values;
+		public C544(List<String> values) {
+			this.values = values;
+		}
+	}
 }

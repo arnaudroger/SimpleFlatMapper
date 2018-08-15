@@ -2,9 +2,9 @@ package org.simpleflatmapper.util;
 
 public enum ErrorDoc {
 
-    /**
-     * CS : Constant Source, ie ResultSet to <T> 
-     * CT : Constant Target, ie <T> to PreparedStatement
+    /*
+     * CS : Constant Source, ie ResultSet to T 
+     * CT : Constant Target, ie T to PreparedStatement
      * FM : Field Mapper
      */
     CSFM_GETTER_NOT_FOUND, // could not found a way to get the data from the source 

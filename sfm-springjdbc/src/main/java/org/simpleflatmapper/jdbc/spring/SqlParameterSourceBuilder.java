@@ -36,15 +36,15 @@ import java.time.*;
 public final class SqlParameterSourceBuilder<T> {
 
 
-    private final PropertyMappingsBuilder<T, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> builder;
-    private final MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig;
+    private final PropertyMappingsBuilder<T, JdbcColumnKey> builder;
+    private final MapperConfig<JdbcColumnKey> mapperConfig;
     private final ReflectionService reflectionService;
     private int index = 1;
 
 
     public SqlParameterSourceBuilder(
             ClassMeta<T> classMeta,
-            MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig) {
+            MapperConfig<JdbcColumnKey> mapperConfig) {
         this.mapperConfig = mapperConfig;
         this.reflectionService = classMeta.getReflectionService();
         this.builder =
@@ -86,10 +86,10 @@ public final class SqlParameterSourceBuilder<T> {
     public PlaceHolderValueGetterSource<T> buildSource() {
         final PlaceHolderValueGetter<T>[] parameters = new PlaceHolderValueGetter[builder.size()];
         builder.forEachProperties(
-                new ForEachCallBack<PropertyMapping<T,?,JdbcColumnKey,FieldMapperColumnDefinition<JdbcColumnKey>>>(){
+                new ForEachCallBack<PropertyMapping<T,?,JdbcColumnKey>>(){
                     int i = 0;
                     @Override
-                    public void handle(PropertyMapping<T, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
+                    public void handle(PropertyMapping<T, ?, JdbcColumnKey> pm) {
                         int parameterType =
                                 getParameterType(pm);
                         Getter<? super T, ?> getter = pm.getPropertyMeta().getGetter();
@@ -121,7 +121,7 @@ public final class SqlParameterSourceBuilder<T> {
                 ;
     }
 
-    private static int getParameterType(PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
+    private static int getParameterType(PropertyMapping<?, ?, JdbcColumnKey> pm) {
         Class<?> propertyType = TypeHelper.toClass(pm.getPropertyMeta().getPropertyType());
         
         if (pm.getColumnDefinition().has(SqlTypeColumnProperty.class)) {

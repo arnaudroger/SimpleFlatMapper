@@ -41,7 +41,7 @@ public class AbstractMapperFactoryTest {
     public void testDefaultMapperConfig() {
         MapperFactory mapperFactory = new MapperFactory();
 
-        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = mapperFactory.mapperConfig();
+        MapperConfig<SampleFieldKey> mapperConfig = mapperFactory.mapperConfig();
 
         final ArrayList<Object> properties = new ArrayList<Object>();
         mapperConfig.columnDefinitions().forEach(Object.class, new BiConsumer<Predicate<? super SampleFieldKey>, Object>() {
@@ -105,7 +105,7 @@ public class AbstractMapperFactoryTest {
         mapperFactory.consumerErrorHandler(consumerErrorHandler);
 
 
-        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = mapperFactory.mapperConfig();
+        MapperConfig<SampleFieldKey> mapperConfig = mapperFactory.mapperConfig();
 
         assertEquals(fieldMapperErrorHandler, mapperConfig.fieldMapperErrorHandler());
         assertEquals(mapperBuilderErrorHandler, mapperConfig.mapperBuilderErrorHandler());
@@ -135,7 +135,7 @@ public class AbstractMapperFactoryTest {
         assertFalse(reflectionService.isAsmActivated());
 
 
-        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = new MapperFactory()
+        MapperConfig<SampleFieldKey> mapperConfig = new MapperFactory()
                 .asmMapperNbFieldsLimit(33)
                 .failOnAsm(true)
                 .maxMethodSize(13)
@@ -269,12 +269,12 @@ public class AbstractMapperFactoryTest {
 
     }
 
-    static class MapperFactory extends AbstractMapperFactory<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>, MapperFactory> {
+    static class MapperFactory extends AbstractMapperFactory<SampleFieldKey, MapperFactory> {
         public MapperFactory() {
             super(new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>(), FieldMapperColumnDefinition.<SampleFieldKey>identity());
         }
 
-        public MapperFactory(AbstractMapperFactory<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>, ?> config) {
+        public MapperFactory(AbstractMapperFactory<SampleFieldKey, ?> config) {
             super(config);
         }
     }

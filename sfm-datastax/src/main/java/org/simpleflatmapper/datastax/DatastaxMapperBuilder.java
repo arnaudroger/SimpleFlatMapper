@@ -46,7 +46,7 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
      */
     public DatastaxMapperBuilder(
             final ClassMeta<T> classMeta,
-            MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig,
+            MapperConfig<DatastaxColumnKey> mapperConfig,
             GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory,
             MappingContextFactoryBuilder<GettableByIndexData, DatastaxColumnKey> parentBuilder) {
         super(KEY_FACTORY, 

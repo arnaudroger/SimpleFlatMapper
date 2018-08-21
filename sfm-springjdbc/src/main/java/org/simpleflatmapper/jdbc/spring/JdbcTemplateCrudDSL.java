@@ -5,7 +5,6 @@ import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.lang.reflect.Type;
 import java.sql.Connection;

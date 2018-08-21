@@ -248,7 +248,7 @@ public class DataTypeTest {
 
     public static <N> Setter<SettableByIndexData, N> getSetter(Class<N> target, DataType dataType) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
 
-        MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig = MapperConfig.<DatastaxColumnKey>fieldMapperConfig();
+        MapperConfig<DatastaxColumnKey> mapperConfig = MapperConfig.<DatastaxColumnKey>fieldMapperConfig();
         ReflectionService reflectionService = ReflectionService.newInstance();
         SettableDataSetterFactory factory = new SettableDataSetterFactory(mapperConfig, reflectionService);
 
@@ -258,11 +258,11 @@ public class DataTypeTest {
         return factory.getSetter(newPM(target, dataType, columnKey));
     }
     @SuppressWarnings("unchecked")
-    public static <T, P> PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> newPM(Type clazz, DataType datatype, DatastaxColumnKey columnKey) {
+    public static <T, P> PropertyMapping<?, ?, DatastaxColumnKey> newPM(Type clazz, DataType datatype, DatastaxColumnKey columnKey) {
         PropertyMeta<T, P> propertyMeta = mock(PropertyMeta.class);
         when(propertyMeta.getPropertyType()).thenReturn(clazz);
         return
-                new PropertyMapping<T, P, DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>>(
+                new PropertyMapping<T, P, DatastaxColumnKey>(
                         propertyMeta,
                         columnKey,
                         FieldMapperColumnDefinition.<DatastaxColumnKey>identity());

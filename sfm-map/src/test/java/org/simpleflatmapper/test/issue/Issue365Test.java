@@ -132,7 +132,7 @@ public class Issue365Test {
         assertEquals("type", data.data.type);
     }
 
-    private MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig() {
+    private MapperConfig<SampleFieldKey> mapperConfig() {
         FieldMapperColumnDefinitionProviderImpl<SampleFieldKey> provider =
                 new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>();
 

@@ -21,7 +21,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
     private final ConstantSourceMapperBuilder<ROW, T, K> constantSourceMapperBuilder;
 
-    protected final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
+    protected final MapperConfig<K> mapperConfig;
     protected final MappingContextFactoryBuilder<? super ROW, K> mappingContextFactoryBuilder;
     private final UnaryFactory<SET, Enumerable<ROW>> enumerableFactory;
     private final SetRowMapperFactory<M, ROW, SET, T, E> setRowMapperFactory;
@@ -37,7 +37,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
     public SetRowMapperBuilderImpl(
             final ClassMeta<T> classMeta,
             MappingContextFactoryBuilder<? super ROW, K> parentBuilder,
-            MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
+            MapperConfig<K> mapperConfig,
             MapperSource<? super ROW, K> mapperSource,
             KeyFactory<K> keyFactory,
             UnaryFactory<SET, Enumerable<ROW>> enumerableFactory, 
@@ -114,7 +114,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
 
     @Override
-    public MapperConfig<K, FieldMapperColumnDefinition<K>>  mapperConfig() {
+    public MapperConfig<K>  mapperConfig() {
         return mapperConfig;
     }
 

@@ -1,7 +1,6 @@
 package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.simpleflatmapper.csv.impl.cellreader.StringCellValueReader;
 import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
 import org.simpleflatmapper.map.mapper.MapperKey;
 

@@ -25,16 +25,15 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public abstract class AbstractMapperFactory<
 		K extends FieldKey<K>,
-		CD extends ColumnDefinition<K, CD>,
-		MF extends AbstractMapperFactory<K, CD, MF>> {
+		MF extends AbstractMapperFactory<K, MF>> {
 
 
 	private FieldMapperErrorHandler<K> fieldMapperErrorHandler = null;
     private MapperBuilderErrorHandler mapperBuilderErrorHandler = RethrowMapperBuilderErrorHandler.INSTANCE;
     private ConsumerErrorHandler consumerErrorHandler = RethrowConsumerErrorHandler.INSTANCE;
 
-    private final AbstractColumnDefinitionProvider<CD, K> columnDefinitions;
-	private final CD identity;
+    private final AbstractColumnDefinitionProvider<K> columnDefinitions;
+	private final ColumnDefinition<K, ?> identity;
 
 	private boolean useAsm = true;
     private boolean failOnAsm = false;
@@ -47,7 +46,7 @@ public abstract class AbstractMapperFactory<
 	private boolean assumeInjectionModifiesValues;
 
 
-	public AbstractMapperFactory(AbstractMapperFactory<K, CD, ?> config) {
+	public AbstractMapperFactory(AbstractMapperFactory<K, ?> config) {
 		this.fieldMapperErrorHandler = config.fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = config.mapperBuilderErrorHandler;
 		this.consumerErrorHandler = config.consumerErrorHandler;
@@ -67,7 +66,7 @@ public abstract class AbstractMapperFactory<
 	}
 
 
-	public AbstractMapperFactory(AbstractColumnDefinitionProvider<CD, K> columnDefinitions, CD identity) {
+	public AbstractMapperFactory(AbstractColumnDefinitionProvider<K> columnDefinitions, ColumnDefinition<K, ?> identity) {
 		this.columnDefinitions = columnDefinitions;
 		this.identity = identity;
 	}
@@ -138,9 +137,9 @@ public abstract class AbstractMapperFactory<
         return (MF) this;
     }
 
-	public final MapperConfig<K, CD> mapperConfig() {
+	public final MapperConfig<K> mapperConfig() {
 		return MapperConfig
-				.<K, CD>config(columnDefinitions)
+				.<K>config(columnDefinitions)
 				.mapperBuilderErrorHandler(mapperBuilderErrorHandler)
 				.propertyNameMatcherFactory(propertyNameMatcherFactory)
 				.failOnAsm(failOnAsm)
@@ -167,7 +166,7 @@ public abstract class AbstractMapperFactory<
      * @param columnDefinition the columnDefinition
      * @return the current factory
      */
-	public final MF addColumnDefinition(String column, CD columnDefinition) {
+	public final MF addColumnDefinition(String column, ColumnDefinition<K, ?> columnDefinition) {
 		columnDefinitions.addColumnDefinition(column, columnDefinition);
 		return (MF) this;
 	}
@@ -178,7 +177,7 @@ public abstract class AbstractMapperFactory<
      * @param columnDefinition the columnDefinition
      * @return the current factory
      */
-	public final MF addColumnDefinition(Predicate<? super K> predicate, CD columnDefinition) {
+	public final MF addColumnDefinition(Predicate<? super K> predicate, ColumnDefinition<K, ?> columnDefinition) {
 		columnDefinitions.addColumnDefinition(predicate, columnDefinition);
 		return (MF) this;
 	}
@@ -339,7 +338,7 @@ public abstract class AbstractMapperFactory<
 		return reflectionService;
 	}
 
-	public ColumnDefinitionProvider<CD, K> columnDefinitions() {
+	public ColumnDefinitionProvider<K> columnDefinitions() {
 		return columnDefinitions;
 	}
 

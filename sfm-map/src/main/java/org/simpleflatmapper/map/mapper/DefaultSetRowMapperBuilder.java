@@ -26,7 +26,7 @@ public class DefaultSetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E ex
     public DefaultSetRowMapperBuilder(
             ClassMeta<T> classMeta,
             MappingContextFactoryBuilder<? super ROW, K> parentBuilder, 
-            MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig, MapperSource<? super ROW, K> mapperSource, 
+            MapperConfig<K> mapperConfig, MapperSource<? super ROW, K> mapperSource, 
             KeyFactory<K> keyFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
         super(
                 classMeta, 

@@ -149,5 +149,7 @@ public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Excepti
     private K key(String column, int index) {
         return keyFactory.newKey(column, index);
     }
+    
+    
 
 }

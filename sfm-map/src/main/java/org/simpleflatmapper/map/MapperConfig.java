@@ -11,13 +11,13 @@ import org.simpleflatmapper.map.mapper.DefaultPropertyNameMatcherFactory;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
-public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefinition<K, CD>> {
+public final class MapperConfig<K extends FieldKey<K>> {
     public static final int NO_ASM_MAPPER_THRESHOLD = 792; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
     public static final int MAX_METHOD_SIZE = 128;
 
 
-    public static <K extends FieldKey<K>> MapperConfig<K, FieldMapperColumnDefinition<K>> fieldMapperConfig() {
-        return new MapperConfig<K, FieldMapperColumnDefinition<K>>(
+    public static <K extends FieldKey<K>> MapperConfig<K> fieldMapperConfig() {
+        return new MapperConfig<K>(
                 new IdentityFieldMapperColumnDefinitionProvider<K>(),
                 DefaultPropertyNameMatcherFactory.DEFAULT,
                 RethrowMapperBuilderErrorHandler.INSTANCE,
@@ -27,8 +27,8 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false);
     }
 
-    public static <K extends FieldKey<K>, CD extends ColumnDefinition<K, CD>> MapperConfig<K, CD> config(ColumnDefinitionProvider<CD, K> columnDefinitionProvider) {
-        return new MapperConfig<K, CD>(
+    public static <K extends FieldKey<K>> MapperConfig<K> config(ColumnDefinitionProvider<K> columnDefinitionProvider) {
+        return new MapperConfig<K>(
                 columnDefinitionProvider,
                 DefaultPropertyNameMatcherFactory.DEFAULT,
                 RethrowMapperBuilderErrorHandler.INSTANCE,
@@ -38,7 +38,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false);
     }
 
-    private final ColumnDefinitionProvider<CD, K> columnDefinitions;
+    private final ColumnDefinitionProvider<K> columnDefinitions;
     private final PropertyNameMatcherFactory propertyNameMatcherFactory;
     private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
     private final boolean failOnAsm;
@@ -50,7 +50,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
 
 
     private MapperConfig(
-            ColumnDefinitionProvider<CD, K> columnDefinitions,
+            ColumnDefinitionProvider<K> columnDefinitions,
             PropertyNameMatcherFactory propertyNameMatcherFactory,
             MapperBuilderErrorHandler mapperBuilderErrorHandler,
             boolean failOnAsm,
@@ -69,7 +69,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
         this.assumeInjectionModifiesValues = assumeInjectionModifiesValues;
     }
 
-    public ColumnDefinitionProvider<CD, K> columnDefinitions() {
+    public ColumnDefinitionProvider<K> columnDefinitions() {
         return columnDefinitions;
     }
 
@@ -93,10 +93,10 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
         return asmMapperNbFieldsLimit;
     }
 
-    public MapperConfig<K, CD> columnDefinitions(ColumnDefinitionProvider<CD, K> columnDefinitions) {
+    public MapperConfig<K> columnDefinitions(ColumnDefinitionProvider<K> columnDefinitions) {
         requireNonNull("columnDefinitions", columnDefinitions);
         return
-            new MapperConfig<K, CD>(
+            new MapperConfig<K>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
                 mapperBuilderErrorHandler,
@@ -106,8 +106,8 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                     consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
-    public MapperConfig<K, CD> propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
-        return new MapperConfig<K, CD>(
+    public MapperConfig<K> propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
+        return new MapperConfig<K>(
                 columnDefinitions,
                 requireNonNull("propertyNameMatcherFactory", propertyNameMatcherFactory),
                 mapperBuilderErrorHandler,
@@ -117,8 +117,8 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
-    public MapperConfig<K, CD> mapperBuilderErrorHandler(MapperBuilderErrorHandler mapperBuilderErrorHandler) {
-        return new MapperConfig<K, CD>(
+    public MapperConfig<K> mapperBuilderErrorHandler(MapperBuilderErrorHandler mapperBuilderErrorHandler) {
+        return new MapperConfig<K>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
                 requireNonNull("mapperBuilderErrorHandler", mapperBuilderErrorHandler),
@@ -128,8 +128,8 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
-    public MapperConfig<K, CD> failOnAsm(boolean failOnAsm) {
-        return new MapperConfig<K, CD>(
+    public MapperConfig<K> failOnAsm(boolean failOnAsm) {
+        return new MapperConfig<K>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
                 mapperBuilderErrorHandler,
@@ -141,8 +141,8 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
 
 
 
-    public MapperConfig<K, CD> assumeInjectionModifiesValues(boolean assumeInjectionModifiesValues) {
-        return new MapperConfig<K, CD>(
+    public MapperConfig<K> assumeInjectionModifiesValues(boolean assumeInjectionModifiesValues) {
+        return new MapperConfig<K>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
                 mapperBuilderErrorHandler,
@@ -152,8 +152,8 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
-    public MapperConfig<K, CD> asmMapperNbFieldsLimit(int asmMapperNbFieldsLimit) {
-        return new MapperConfig<K, CD>(
+    public MapperConfig<K> asmMapperNbFieldsLimit(int asmMapperNbFieldsLimit) {
+        return new MapperConfig<K>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
                 mapperBuilderErrorHandler,
@@ -163,8 +163,8 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
-    public MapperConfig<K, CD> fieldMapperErrorHandler(FieldMapperErrorHandler<? super K> fieldMapperErrorHandler) {
-        return new MapperConfig<K, CD>(
+    public MapperConfig<K> fieldMapperErrorHandler(FieldMapperErrorHandler<? super K> fieldMapperErrorHandler) {
+        return new MapperConfig<K>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
                 mapperBuilderErrorHandler,
@@ -174,8 +174,8 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues);
     }
 
-    public MapperConfig<K,CD> consumerErrorHandler(ConsumerErrorHandler consumerErrorHandler) {
-        return new MapperConfig<K, CD>(
+    public MapperConfig<K> consumerErrorHandler(ConsumerErrorHandler consumerErrorHandler) {
+        return new MapperConfig<K>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
                 mapperBuilderErrorHandler,
@@ -191,7 +191,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
     }
 
     @Deprecated
-    public MapperConfig<K,CD> rowHandlerErrorHandler(ConsumerErrorHandler rowHandlerErrorHandler) {
+    public MapperConfig<K> rowHandlerErrorHandler(ConsumerErrorHandler rowHandlerErrorHandler) {
         return consumerErrorHandler(rowHandlerErrorHandler);
     }
 
@@ -212,8 +212,8 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
         return maxMethodSize;
     }
 
-    public MapperConfig<K,CD> maxMethodSize(int maxMethodSize) {
-        return new MapperConfig<K, CD>(
+    public MapperConfig<K> maxMethodSize(int maxMethodSize) {
+        return new MapperConfig<K>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
                 mapperBuilderErrorHandler,

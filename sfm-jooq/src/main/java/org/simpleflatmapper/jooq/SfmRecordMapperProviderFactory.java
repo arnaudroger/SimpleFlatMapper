@@ -6,7 +6,7 @@ import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 
 public class SfmRecordMapperProviderFactory
-        extends AbstractMapperFactory<JooqFieldKey, FieldMapperColumnDefinition<JooqFieldKey>, SfmRecordMapperProviderFactory> {
+        extends AbstractMapperFactory<JooqFieldKey, SfmRecordMapperProviderFactory> {
 
 
     public static SfmRecordMapperProviderFactory newInstance() {
@@ -14,15 +14,15 @@ public class SfmRecordMapperProviderFactory
     }
 
     public static SfmRecordMapperProviderFactory newInstance(
-            AbstractMapperFactory<JooqFieldKey, FieldMapperColumnDefinition<JooqFieldKey>, ?> config) {
+            AbstractMapperFactory<JooqFieldKey, ?> config) {
         return new SfmRecordMapperProviderFactory(config);
     }
 
-    public SfmRecordMapperProviderFactory(AbstractMapperFactory<JooqFieldKey, FieldMapperColumnDefinition<JooqFieldKey>, ?> config) {
+    public SfmRecordMapperProviderFactory(AbstractMapperFactory<JooqFieldKey, ?> config) {
         super(config);
     }
 
-    public SfmRecordMapperProviderFactory(AbstractColumnDefinitionProvider<FieldMapperColumnDefinition<JooqFieldKey>, JooqFieldKey> columnDefinitions, FieldMapperColumnDefinition<JooqFieldKey> identity) {
+    public SfmRecordMapperProviderFactory(AbstractColumnDefinitionProvider<JooqFieldKey> columnDefinitions, FieldMapperColumnDefinition<JooqFieldKey> identity) {
         super(columnDefinitions, identity);
     }
 

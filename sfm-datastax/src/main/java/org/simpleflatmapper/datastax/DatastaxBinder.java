@@ -15,13 +15,13 @@ import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 public class DatastaxBinder<T> {
-    private final MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config;
+    private final MapperConfig<DatastaxColumnKey> config;
     private final ClassMeta<T> classMeta;
 
     private final MapperCache<DatastaxColumnKey, BoundStatementMapper<T>> cache =
             new MapperCache<DatastaxColumnKey, BoundStatementMapper<T>>(DatastaxMapperKeyComparator.INSTANCE);
 
-    public DatastaxBinder(ClassMeta<T> classMeta, MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config) {
+    public DatastaxBinder(ClassMeta<T> classMeta, MapperConfig<DatastaxColumnKey> config) {
         this.classMeta = classMeta;
         this.config = config;
     }

@@ -12,6 +12,7 @@ import org.simpleflatmapper.map.impl.GetterMapper;
 import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.map.property.DefaultValueProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperProperty;
 import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.impl.FieldErrorHandlerMapper;
@@ -72,13 +73,13 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
 	private final ConstantSourceFieldMapperFactory<S, K> fieldMapperFactory;
 
-	protected final PropertyMappingsBuilder<T, K,FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
+	protected final PropertyMappingsBuilder<T, K> propertyMappingsBuilder;
 	protected final ReflectionService reflectionService;
 
 	private final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
 
     private final MapperSource<? super S, K> mapperSource;
-    private final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
+    private final MapperConfig<K> mapperConfig;
     protected final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder;
 
     private final KeyFactory<K> keyFactory;
@@ -87,7 +88,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     public ConstantSourceMapperBuilder(
             final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
-            final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
+            final MapperConfig<K> mapperConfig,
             MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder,
             KeyFactory<K> keyFactory) throws MapperBuildingException {
                 this(mapperSource, classMeta, mapperConfig, mappingContextFactoryBuilder, keyFactory, null);
@@ -96,7 +97,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     public ConstantSourceMapperBuilder(
             final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
-            final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
+            final MapperConfig<K> mapperConfig,
             MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder,
             KeyFactory<K> keyFactory, PropertyFinder<T> propertyFinder) throws MapperBuildingException {
         this.mapperSource = requireNonNull("fieldMapperSource", mapperSource);
@@ -118,9 +119,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         if (columnDefinition.getCustomFieldMapper() != null) {
             addMapper((FieldMapper<S, T>) columnDefinition.getCustomFieldMapper());
         } else {
-            PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
+            PropertyMapping<T, ?, K> propertyMapping = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
             if (propertyMapping != null) {
-                FieldMapperColumnDefinition<K> effectiveColumnDefinition = propertyMapping.getColumnDefinition();
+                ColumnDefinition<K, ?> effectiveColumnDefinition = propertyMapping.getColumnDefinition();
                 if (effectiveColumnDefinition.isKey() && effectiveColumnDefinition.keyAppliesTo().test(propertyMapping.getPropertyMeta())) {
                     mappingContextFactoryBuilder.addKey(key);
                 }
@@ -442,7 +443,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             GetterFactory<? super S, K> getterFactory = fieldMapperAsGetterFactory();
             BiInstantiator<S, MappingContext<? super S>, T> instantiator =
                     mapperBiInstantiatorFactory.
-                            <S, T, K, FieldMapperColumnDefinition<K>>
+                            <S, T, K>
                                     getBiInstantiator(mapperSource.source(), target, propertyMappingsBuilder, injections, getterFactory, reflectionService.builderIgnoresNullValues());
             return new InstantiatorAndFieldMappers(constructorInjections, instantiator);
 		} catch(Exception e) {
@@ -461,10 +462,10 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     private List<InjectionParam> constructorInjections() {
 		
 		final List<InjectionParam> injectionParams = new ArrayList<InjectionParam>();
-		propertyMappingsBuilder.forEachConstructorProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K>>>() {
+		propertyMappingsBuilder.forEachConstructorProperties(new ForEachCallBack<PropertyMapping<T,?,K>>() {
             @SuppressWarnings("unchecked")
 			@Override
-			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping) {
+			public void handle(PropertyMapping<T, ?, K> propertyMapping) {
                 if (!isTargetForMapperFieldMapper(propertyMapping)) {
                     PropertyMeta<T, ?> pm = propertyMapping.getPropertyMeta();
                     ConstructorPropertyMeta<T, ?> cProp = (ConstructorPropertyMeta<T, ?>) pm;
@@ -484,7 +485,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         return injectionParams;
 	}
 
-    private <P> SourceMapper<S, P> getterPropertyMapper(PropertyMeta<T, P> owner, PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping) {
+    private <P> SourceMapper<S, P> getterPropertyMapper(PropertyMeta<T, P> owner, PropertyMapping<T, ?, K> propertyMapping) {
         PropertyMeta<T, ?> pm = propertyMapping.getPropertyMeta();
         final Getter<? super S, P> getter =
                 (Getter<? super S, P>) fieldMapperFactory.getGetterFromSource(propertyMapping.getColumnKey(), pm.getPropertyType(), propertyMapping.getColumnDefinition(), pm.getPropertyClassMetaSupplier());
@@ -492,17 +493,17 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         return new GetterMapper<S, P>(getter);
     }
 
-    private MappingContextFactoryBuilder getMapperContextFactoryBuilder(PropertyMeta<?, ?> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties) {
+    private MappingContextFactoryBuilder getMapperContextFactoryBuilder(PropertyMeta<?, ?> owner, List<PropertyMapping<T, ?, K>> properties) {
         final List<K> subKeys = getSubKeys(properties);
         return mappingContextFactoryBuilder.newBuilder(subKeys, owner);
     }
 
     @SuppressWarnings("unchecked")
-    private <P> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, PropertyMeta<T, ?> meta, SourceMapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+    private <P> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K>> properties, PropertyMeta<T, ?> meta, SourceMapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
         return newMapperFieldMapper(properties, (Setter<T, P>) meta.getSetter(), mapper, mappingContextFactoryBuilder);
     }
 
-    private <P> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, Setter<T, P> setter, SourceMapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+    private <P> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K>> properties, Setter<T, P> setter, SourceMapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
         final MapperFieldMapper fieldMapper =
                 new MapperFieldMapper(mapper,
                         (Setter<T, P>)setter,
@@ -519,7 +520,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     // call use towards sub jdbcMapper
     // the keys are initialised
-    private <P> void addMapping(K columnKey, FieldMapperColumnDefinition<K> columnDefinition,  PropertyMeta<T, P> prop) {
+    private <P> void addMapping(K columnKey, ColumnDefinition<K, ?> columnDefinition,  PropertyMeta<T, P> prop) {
 		propertyMappingsBuilder.addProperty(columnKey, columnDefinition, prop);
 	}
 
@@ -538,9 +539,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 	private List<FieldMeta> fields() {
 		final List<FieldMeta> fields = new ArrayList<FieldMeta>();
 
-		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K>>>() {
+		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,K>>() {
 			@Override
-			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> t) {
+			public void handle(PropertyMapping<T, ?, K> t) {
 				if (t == null || isTargetForMapperFieldMapper(t)) return;
 				PropertyMeta<T, ?> meta = t.getPropertyMeta();
 				if (meta == null || (meta instanceof SelfPropertyMeta)) return;
@@ -624,9 +625,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
     
     class PropertyFieldMeta extends FieldMeta {
-        final PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping;
+        final PropertyMapping<T, ?, K> propertyMapping;
 
-        PropertyFieldMeta(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping) {
+        PropertyFieldMeta(PropertyMapping<T, ?, K> propertyMapping) {
             this.propertyMapping = propertyMapping;
         }
         
@@ -659,11 +660,11 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     class SubPropertyFieldMeta extends FieldMeta {
         final SourceMapper<S, ?> mapper;
-        final List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> propertyMappings;
+        final List<PropertyMapping<T, ?, K>> propertyMappings;
         final PropertyMeta<T, ?> owner;
         final MappingContextFactoryBuilder<S, K> currentBuilder;
 
-        SubPropertyFieldMeta(SourceMapper<S, ?> mapper, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> propertyMappings, PropertyMeta<T, ?> owner, MappingContextFactoryBuilder<S, K> currentBuilder) {
+        SubPropertyFieldMeta(SourceMapper<S, ?> mapper, List<PropertyMapping<T, ?, K>> propertyMappings, PropertyMeta<T, ?> owner, MappingContextFactoryBuilder<S, K> currentBuilder) {
             this.mapper = mapper;
             this.propertyMappings = propertyMappings;
             this.owner = owner;
@@ -727,11 +728,11 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
         final List<PropertyPerOwner> subPropertiesList = new ArrayList<PropertyPerOwner>();
 
-        propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K>>>() {
+        propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,K>>() {
 
             @SuppressWarnings("unchecked")
             @Override
-            public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> t) {
+            public void handle(PropertyMapping<T, ?, K> t) {
                 if (t == null) return;
                 PropertyMeta<T, ?> meta = t.getPropertyMeta();
                 if (meta == null) return;
@@ -739,11 +740,11 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                     addSubProperty(t, meta, t.getColumnKey());
                 }
             }
-            private <P> void addSubProperty(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm,  PropertyMeta<T,  ?> propertyMeta, K key) {
+            private <P> void addSubProperty(PropertyMapping<T, ?, K> pm,  PropertyMeta<T,  ?> propertyMeta, K key) {
                 PropertyMeta<T, ?> propertyOwner = getOwner(propertyMeta);
-                List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> props = getList(propertyOwner);
+                List<PropertyMapping<T, ?, K>> props = getList(propertyOwner);
                 if (props == null) {
-                    props = new ArrayList<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>();
+                    props = new ArrayList<PropertyMapping<T, ?, K>>();
                     subPropertiesList.add(new PropertyPerOwner(propertyOwner, props));
                 }
                 props.add(pm);
@@ -756,7 +757,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 return propertyMeta;
             }
 
-            private List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> getList(PropertyMeta<?, ?> owner) {
+            private List<PropertyMapping<T, ?, K>> getList(PropertyMeta<?, ?> owner) {
                 for(PropertyPerOwner tuple : subPropertiesList) {
                     if (tuple.owner.equals(owner)) {
                         return tuple.propertyMappings;
@@ -770,14 +771,14 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private <P> SourceMapper<S, P> subPropertyMapper(PropertyMeta<T, P> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+    private <P> SourceMapper<S, P> subPropertyMapper(PropertyMeta<T, P> owner, List<PropertyMapping<T, ?, K>> properties, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
         final ConstantSourceMapperBuilder<S, P, K> builder =
                 newSubBuilder(owner.getPropertyClassMeta(),
                         mappingContextFactoryBuilder,
                         (PropertyFinder<P>) propertyMappingsBuilder.getPropertyFinder().getSubPropertyFinder(owner));
 
 
-        for(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm : properties) {
+        for(PropertyMapping<T, ?, K> pm : properties) {
             final SubPropertyMeta<T, P,  ?> propertyMeta = (SubPropertyMeta<T, P,  ?>) pm.getPropertyMeta();
             final PropertyMeta<P, ?> subProperty = ((SubPropertyMeta<T, P, ?>) propertyMeta).getSubProperty();
             builder.addMapping(pm.getColumnKey(), pm.getColumnDefinition(), subProperty);
@@ -786,9 +787,13 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
 	@SuppressWarnings("unchecked")
-	protected <P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K, FieldMapperColumnDefinition<K>> t) {
-		FieldMapper<S, T> fieldMapper = (FieldMapper<S, T>) t.getColumnDefinition().getCustomFieldMapper();
-
+	protected <P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K> t) {
+        ColumnDefinition<K, ?> columnDefinition = t.getColumnDefinition();
+        FieldMapper<S, T> fieldMapper = null;
+        if (columnDefinition.has(FieldMapperProperty.class)) {
+            fieldMapper = (FieldMapper<S, T>) columnDefinition.lookFor(FieldMapperProperty.class).getFieldMapper();
+        }
+        
 		if (fieldMapper == null) {
 			fieldMapper = fieldMapperFactory.newFieldMapper(t, mappingContextFactoryBuilder, mapperConfig.mapperBuilderErrorHandler());
 		}
@@ -830,11 +835,11 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private List<K> getSubKeys(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties) {
+    private List<K> getSubKeys(List<PropertyMapping<T, ?, K>> properties) {
         List<K> keys = new ArrayList<K>();
 
         // look for keys property of the object
-        for (PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm : properties) {
+        for (PropertyMapping<T, ?, K> pm : properties) {
             
             if (pm.getPropertyMeta().isSubProperty()) {
                 SubPropertyMeta<T, ?, ?> subPropertyMeta = (SubPropertyMeta<T, ?, ?>) pm.getPropertyMeta();
@@ -976,9 +981,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
     
     private class ConstructorParam extends InjectionParam {
-        private final PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping;
+        private final PropertyMapping<T, ?, K> propertyMapping;
         
-        private ConstructorParam(Parameter parameter, ConstructorPropertyMeta<T, ?> propertyMeta, PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping) {
+        private ConstructorParam(Parameter parameter, ConstructorPropertyMeta<T, ?> propertyMeta, PropertyMapping<T, ?, K> propertyMapping) {
             super(parameter, propertyMeta);
             this.propertyMapping = propertyMapping;
         }
@@ -1001,7 +1006,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             Getter<? super S, ?> getter =
                     fieldMapperFactory.getGetterFromSource(propertyMapping.getColumnKey(), propertyMeta.getPropertyType(), propertyMapping.getColumnDefinition(), propertyMeta.getPropertyClassMetaSupplier());
             if (NullGetter.isNull(getter)) {
-                PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping = this.propertyMapping;
+                PropertyMapping<T, ?, K> propertyMapping = this.propertyMapping;
                 mapperConfig.mapperBuilderErrorHandler()
                         .accessorNotFound(getterNotFoundErrorMessage(propertyMapping));
             }
@@ -1078,9 +1083,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     private class SubPropertyParam extends InjectionParam {
-        final List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> propertyMappings;
+        final List<PropertyMapping<T, ?, K>> propertyMappings;
 
-        private SubPropertyParam(Parameter parameter, ConstructorPropertyMeta<T, ?> propertyMeta, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> propertyMappings) {
+        private SubPropertyParam(Parameter parameter, ConstructorPropertyMeta<T, ?> propertyMeta, List<PropertyMapping<T, ?, K>> propertyMappings) {
             super(parameter, propertyMeta);
             this.propertyMappings = propertyMappings;
         }
@@ -1178,9 +1183,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     private class PropertyPerOwner {
         private final PropertyMeta<T, ?> owner;
-        private final List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> propertyMappings;
+        private final List<PropertyMapping<T, ?, K>> propertyMappings;
 
-        private PropertyPerOwner(PropertyMeta<T, ?> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> propertyMappings) {
+        private PropertyPerOwner(PropertyMeta<T, ?> owner, List<PropertyMapping<T, ?, K>> propertyMappings) {
             this.owner = owner;
             this.propertyMappings = propertyMappings;
         }

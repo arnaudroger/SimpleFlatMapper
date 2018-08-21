@@ -30,9 +30,9 @@ import java.util.List;
 public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends FieldKey<K>, B extends AbstractConstantTargetMapperBuilder<S, T, K , B>> {
 
     private final ReflectionService reflectionService;
-    protected final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
+    protected final MapperConfig<K> mapperConfig;
 
-    protected final PropertyMappingsBuilder<T, K,  FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
+    protected final PropertyMappingsBuilder<T, K> propertyMappingsBuilder;
 
     protected final ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory;
     protected final ClassMeta<T> classMeta;
@@ -42,7 +42,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
 
     public AbstractConstantTargetMapperBuilder(
             ClassMeta<T> classMeta,
-            Class<S> sourceClass, MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
+            Class<S> sourceClass, MapperConfig<K> mapperConfig,
             ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory) {
         this.sourceClass = sourceClass;
         this.fieldAppenderFactory = fieldAppenderFactory;
@@ -100,9 +100,9 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
         });
 
         propertyMappingsBuilder.forEachProperties(
-                new ForEachCallBack<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>() {
+                new ForEachCallBack<PropertyMapping<T, ?, K>>() {
                     @Override
-                    public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm) {
+                    public void handle(PropertyMapping<T, ?, K> pm) {
                         preFieldProcess(mappers, pm);
                         FieldMapper<T, S> fieldMapper =
                                 fieldAppenderFactory.newFieldMapper(
@@ -164,10 +164,10 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
     protected void postMapperProcess(List<FieldMapper<T,S>> mappers) {
     }
 
-    protected void postFieldProcess(List<FieldMapper<T,S>> mappers, PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm) {
+    protected void postFieldProcess(List<FieldMapper<T,S>> mappers, PropertyMapping<T, ?, K> pm) {
     }
 
-    protected void preFieldProcess(List<FieldMapper<T,S>> mappers, PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm) {
+    protected void preFieldProcess(List<FieldMapper<T,S>> mappers, PropertyMapping<T, ?, K> pm) {
     }
 
     protected int getStartingIndex() {

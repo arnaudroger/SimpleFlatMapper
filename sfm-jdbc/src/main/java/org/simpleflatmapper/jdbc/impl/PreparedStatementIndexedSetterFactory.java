@@ -67,7 +67,7 @@ import java.util.UUID;
 
 public class PreparedStatementIndexedSetterFactory
         implements
-        IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>
+        IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>>
         {
     public static final PreparedStatementIndexedSetterFactory INSTANCE = new PreparedStatementIndexedSetterFactory();
 
@@ -339,7 +339,7 @@ public class PreparedStatementIndexedSetterFactory
 
 
     @Override
-    public  <T> IndexedSetter<PreparedStatement, T> getIndexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> arg, Object... properties) {
+    public  <T> IndexedSetter<PreparedStatement, T> getIndexedSetter(PropertyMapping<?, ?, JdbcColumnKey> arg, Object... properties) {
         Type propertyType = arg.getPropertyMeta().getPropertyType();
         IndexedSetter<PreparedStatement, T> setter = getIndexedSetter(propertyType, arg);
 
@@ -353,7 +353,7 @@ public class PreparedStatementIndexedSetterFactory
 
 
     @SuppressWarnings("unchecked")
-    private <P, I> IndexedSetter<PreparedStatement, P> getSetterWithConvertion(Class<P> pclazz, Class<I> iclass, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+    private <P, I> IndexedSetter<PreparedStatement, P> getSetterWithConvertion(Class<P> pclazz, Class<I> iclass, PropertyMapping<?, ?, JdbcColumnKey> pm) {
         Converter<? super P, ? extends I> converter = ConverterService.getInstance().findConverter(pclazz, iclass, pm.getColumnDefinition().properties());
 
         if (converter != null) {
@@ -368,7 +368,7 @@ public class PreparedStatementIndexedSetterFactory
     }
 
     @SuppressWarnings("unchecked")
-    protected  <T> IndexedSetter<PreparedStatement, T> getIndexedSetter(Type propertyType, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> arg) {
+    protected  <T> IndexedSetter<PreparedStatement, T> getIndexedSetter(Type propertyType, PropertyMapping<?, ?, JdbcColumnKey> arg) {
         IndexedSetter<PreparedStatement, T> setter = null;
 
         if (TypeHelper.isEnum(propertyType)) {

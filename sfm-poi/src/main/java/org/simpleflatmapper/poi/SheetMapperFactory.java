@@ -14,7 +14,7 @@ import org.simpleflatmapper.csv.CsvColumnKey;
 
 import java.lang.reflect.Type;
 
-public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>, SheetMapperFactory> {
+public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, SheetMapperFactory> {
 
     private GetterFactory<Row, CsvColumnKey> getterFactory = new RowGetterFactory();
 
@@ -67,7 +67,7 @@ public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, Fiel
      * @return a builder on the specified type
      */
     public <T> SheetMapperBuilder<T> newBuilder(Type type) {
-        MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig = mapperConfig();
+        MapperConfig<CsvColumnKey> mapperConfig = mapperConfig();
         ClassMeta<T> classMeta = getClassMeta(type);
         return  new SheetMapperBuilder<T>(classMeta, mapperConfig, getterFactory);
     }
@@ -100,7 +100,7 @@ public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, Fiel
      */
     public <T> SheetMapper<T> newMapper(Type type) {
         ClassMeta<T> classMeta = getClassMeta(type);
-        MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig = mapperConfig();
+        MapperConfig<CsvColumnKey> mapperConfig = mapperConfig();
         return new DynamicSheetMapper<T>(classMeta, mapperConfig, getterFactory);
     }
 }

@@ -38,14 +38,14 @@ public class UDTObjectSettableDataSetter<T> implements Setter<SettableByIndexDat
         }
     }
 
-    public static <T> Setter<SettableByIndexData, T> newInstance(Type target,  UserType tt, int index, MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
+    public static <T> Setter<SettableByIndexData, T> newInstance(Type target,  UserType tt, int index, MapperConfig<DatastaxColumnKey> config,
                                                                                       ReflectionService reflectionService) {
         FieldMapper<T, SettableByIndexData> mapper = newUDTMapper(target, tt, config, reflectionService);
         return new UDTObjectSettableDataSetter<T>(index, tt, mapper);
     }
 
     public static <T> FieldMapper<T, SettableByIndexData> newUDTMapper(Type target, UserType tt,
-                                                                        MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
+                                                                        MapperConfig<DatastaxColumnKey> config,
                                                                         ReflectionService reflectionService) {
         SettableDataMapperBuilder<T> builder = newFieldMapperBuilder(config, reflectionService, target);
         Iterator<UserType.Field> iterator = tt.iterator();
@@ -58,7 +58,7 @@ public class UDTObjectSettableDataSetter<T> implements Setter<SettableByIndexDat
         return builder.mapper();
     }
 
-    public static <T> SettableDataMapperBuilder<T> newFieldMapperBuilder(MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
+    public static <T> SettableDataMapperBuilder<T> newFieldMapperBuilder(MapperConfig<DatastaxColumnKey> config,
                                                                          ReflectionService reflectionService,  Type target) {
         ClassMeta<T> classMeta = reflectionService.getClassMeta(target);
         return new SettableDataMapperBuilder<T>(classMeta, config, ConstantTargetFieldMapperFactoryImpl.newInstance(new SettableDataSetterFactory(config, reflectionService), SettableByIndexData.class));

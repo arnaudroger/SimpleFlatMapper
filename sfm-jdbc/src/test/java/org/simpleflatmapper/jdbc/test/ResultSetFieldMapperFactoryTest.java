@@ -34,13 +34,13 @@ public class ResultSetFieldMapperFactoryTest {
 		PropertyMeta<DbObject, Long> id = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).<Long>findProperty(new DefaultPropertyNameMatcher("id", 0, false, false), new Object[0], (TypeAffinity)null);
 
 		FieldMapperColumnDefinition<JdbcColumnKey> identity = FieldMapperColumnDefinition.identity();
-		PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> propertyMapping = new PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(id, new JdbcColumnKey("id", 1), identity);
+		PropertyMapping<DbObject, Long, JdbcColumnKey> propertyMapping = new PropertyMapping<DbObject, Long, JdbcColumnKey>(id, new JdbcColumnKey("id", 1), identity);
 		FieldMapper<ResultSet, DbObject> fieldMapper = factory.newFieldMapper(
 				propertyMapping, null, RethrowMapperBuilderErrorHandler.INSTANCE);
 		
 		assertTrue(fieldMapper instanceof LongFieldMapper);
 
-		PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> propertyMapping1 = new PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(id, new JdbcColumnKey("id", 0), identity);
+		PropertyMapping<DbObject, Long, JdbcColumnKey> propertyMapping1 = new PropertyMapping<DbObject, Long, JdbcColumnKey>(id, new JdbcColumnKey("id", 0), identity);
 		fieldMapper = factory.newFieldMapper(propertyMapping1, null, RethrowMapperBuilderErrorHandler.INSTANCE);
 		assertTrue(fieldMapper instanceof LongFieldMapper);
 

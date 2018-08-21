@@ -35,10 +35,10 @@ import static org.mockito.Mockito.mock;
 public class ConstantTargetFieldMapperFactoryImplTest {
 
 
-    SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>> setterFactory =
-            new SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>>() {
+    SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey>> setterFactory =
+            new SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey>>() {
                 @Override
-                public <P> Setter<Appendable, P> getSetter(PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>> arg) {
+                public <P> Setter<Appendable, P> getSetter(PropertyMapping<?, ?, SampleFieldKey> arg) {
                     if (TypeHelper.isJavaLang(arg.getPropertyMeta().getPropertyType())) {
                         return new AppendableSetter<P>();
                     }
@@ -76,7 +76,7 @@ public class ConstantTargetFieldMapperFactoryImplTest {
     }
 
     private <T> void testMapping(T object, String property, String expectedValue) throws Exception {
-        PropertyMapping<T, String, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm =
+        PropertyMapping<T, String, SampleFieldKey> pm =
                 ConstantSourceFieldMapperFactoryImplTest.createPropertyMapping((Class<T>) object.getClass(), property);
         FieldMapper<T, Appendable> fieldMapper = factory.newFieldMapper(pm, null, RethrowMapperBuilderErrorHandler.INSTANCE);
 
@@ -93,8 +93,8 @@ public class ConstantTargetFieldMapperFactoryImplTest {
 
         try {
             PropertyMeta<Object, Object> pm = mock(PropertyMeta.class);
-            PropertyMapping<Object, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> propertyMapping =
-                    new PropertyMapping<Object, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(pm, new SampleFieldKey("hh", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+            PropertyMapping<Object, Object, SampleFieldKey> propertyMapping =
+                    new PropertyMapping<Object, Object, SampleFieldKey>(pm, new SampleFieldKey("hh", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
             factory.newFieldMapper(propertyMapping, null, RethrowMapperBuilderErrorHandler.INSTANCE);
             fail();
         } catch (MapperBuildingException e) {
@@ -103,17 +103,17 @@ public class ConstantTargetFieldMapperFactoryImplTest {
 
     @Test
     public void testSetterNotFound() {
-        SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>> setterFactory =
-                new SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>>() {
+        SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey>> setterFactory =
+                new SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey>>() {
                     @Override
-                    public <P> Setter<Appendable, P> getSetter(PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>> arg) {
+                    public <P> Setter<Appendable, P> getSetter(PropertyMapping<?, ?, SampleFieldKey> arg) {
                         return null;
                     }
                 };
 
         ConstantTargetFieldMapperFactory<Appendable, SampleFieldKey> factory = ConstantTargetFieldMapperFactoryImpl.<Appendable, SampleFieldKey>newInstance(setterFactory, Appendable.class);
         try {
-            PropertyMapping<DbObject, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> propertyMapping =
+            PropertyMapping<DbObject, Object, SampleFieldKey> propertyMapping =
                     ConstantSourceFieldMapperFactoryImplTest.createPropertyMapping(DbObject.class, "id");
             assertNotNull(propertyMapping.getPropertyMeta().getGetter());
             factory.newFieldMapper(propertyMapping, null, RethrowMapperBuilderErrorHandler.INSTANCE);

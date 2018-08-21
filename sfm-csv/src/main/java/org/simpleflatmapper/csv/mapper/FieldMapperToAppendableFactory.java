@@ -7,7 +7,6 @@ import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.impl.writer.*;
 
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.SetterFactoryProperty;
 import org.simpleflatmapper.map.property.SetterProperty;
 import org.simpleflatmapper.map.fieldmapper.BooleanFieldMapper;
@@ -64,7 +63,7 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
 
     @Override
     @SuppressWarnings("unchecked")
-    public <S, P> FieldMapper<S, Appendable> newFieldMapper(PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm, MappingContextFactoryBuilder builder, MapperBuilderErrorHandler mappingErrorHandler) {
+    public <S, P> FieldMapper<S, Appendable> newFieldMapper(PropertyMapping<S, P, CsvColumnKey> pm, MappingContextFactoryBuilder builder, MapperBuilderErrorHandler mappingErrorHandler) {
         if (pm == null) throw new NullPointerException("pm is null");
 
         Getter<? super S, ? extends P> getter;
@@ -146,7 +145,7 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
     }
 
     @SuppressWarnings("unchecked")
-    private <S, P> Setter<Appendable, ? super P> getSetter(PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm, CellWriter cellWriter) {
+    private <S, P> Setter<Appendable, ? super P> getSetter(PropertyMapping<S, P, CsvColumnKey> pm, CellWriter cellWriter) {
 
         final SetterProperty setterProperty = pm.getColumnDefinition().lookFor(SetterProperty.class);
 
@@ -164,13 +163,13 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
     }
 
     @SuppressWarnings("unchecked")
-    private <S, P> Setter<Appendable, ? super P> setterFromFactory(PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm) {
+    private <S, P> Setter<Appendable, ? super P> setterFromFactory(PropertyMapping<S, P, CsvColumnKey> pm) {
         Setter<Appendable, ? super P> setter = null;
 
         final SetterFactoryProperty setterFactoryProperty = pm.getColumnDefinition().lookFor(SetterFactoryProperty.class);
         if (setterFactoryProperty != null) {
-            final SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>> setterFactory =
-                    (SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>>) setterFactoryProperty.getSetterFactory();
+            final SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey>> setterFactory =
+                    (SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey>>) setterFactoryProperty.getSetterFactory();
             setter = setterFactory.getSetter(pm);
         }
 

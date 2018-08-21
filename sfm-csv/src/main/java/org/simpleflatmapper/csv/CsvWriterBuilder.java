@@ -25,7 +25,7 @@ public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<App
 
     public CsvWriterBuilder(
             ClassMeta<T> classMeta,
-            MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
+            MapperConfig<CsvColumnKey> mapperConfig,
             ConstantTargetFieldMapperFactory<Appendable, CsvColumnKey> fieldAppenderFactory,
             CellWriter cellWriter) {
         super(classMeta, Appendable.class, mapperConfig, fieldAppenderFactory);
@@ -43,7 +43,7 @@ public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<App
     }
 
     public static <T> CsvWriterBuilder<T> newBuilder(ClassMeta<T> classMeta, CellWriter cellWriter) {
-        MapperConfig<CsvColumnKey,FieldMapperColumnDefinition<CsvColumnKey>> config =
+        MapperConfig<CsvColumnKey> config =
                 MapperConfig.<CsvColumnKey>fieldMapperConfig();
         FieldMapperToAppendableFactory appenderFactory = new FieldMapperToAppendableFactory(cellWriter);
         CsvWriterBuilder<T> builder =
@@ -66,7 +66,7 @@ public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<App
     }
 
     @Override
-    protected void preFieldProcess(List<FieldMapper<T, Appendable>> fieldMappers, PropertyMapping<T, ?, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm) {
+    protected void preFieldProcess(List<FieldMapper<T, Appendable>> fieldMappers, PropertyMapping<T, ?, CsvColumnKey> pm) {
         if (pm.getColumnKey().getIndex() > 0) {
             fieldMappers.add(cellSeparatorAppender);
         }

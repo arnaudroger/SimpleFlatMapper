@@ -136,18 +136,18 @@ public class ConstantSourceFieldMapperFactoryImplTest {
     private <T, P> FieldMapper<Object, T> createFieldMapper(
             Class<T> target, String property, Getter<Object, P> getter) {
 
-        PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm = createPropertyMapping(target, property);
+        PropertyMapping<T, P, SampleFieldKey> pm = createPropertyMapping(target, property);
         when(getterFactory.<P>newGetter(pm.getPropertyMeta().getPropertyType(), pm.getColumnKey(), pm.getColumnDefinition().properties())).thenReturn(getter);
         return constantSourceFieldMapperFactory.newFieldMapper(pm, mappingContextFactoryBuilder, MAPPING_ERROR_HANDLER);
     }
-    public static <T, P> PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> createPropertyMapping(
+    public static <T, P> PropertyMapping<T, P, SampleFieldKey> createPropertyMapping(
             Class<T> target, String property) {
         ClassMeta<T> classMeta = REFLECTION_SERVICE.getClassMeta(target);
 
         PropertyMeta<T, P> propertyMeta = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(property), new Object[0], (TypeAffinity)null);
 
-        PropertyMapping<T, P , SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm =
-                new PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
+        PropertyMapping<T, P , SampleFieldKey> pm =
+                new PropertyMapping<T, P, SampleFieldKey>(
                         propertyMeta,
                         new SampleFieldKey(property, 0),
                         FieldMapperColumnDefinition.<SampleFieldKey>identity());

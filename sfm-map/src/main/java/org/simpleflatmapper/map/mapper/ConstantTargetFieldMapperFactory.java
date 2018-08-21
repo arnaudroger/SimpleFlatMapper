@@ -8,7 +8,7 @@ import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 
 public interface ConstantTargetFieldMapperFactory<T, K extends FieldKey<K>> {
 	<S, P> FieldMapper<S, T> newFieldMapper(
-			PropertyMapping<S, P, K, FieldMapperColumnDefinition<K>> propertyMapping,
+			PropertyMapping<S, P, K> propertyMapping,
 			MappingContextFactoryBuilder contextFactoryBuilder,
 			MapperBuilderErrorHandler mappingErrorHandler);
 }

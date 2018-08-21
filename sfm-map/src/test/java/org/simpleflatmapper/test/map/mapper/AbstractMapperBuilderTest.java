@@ -362,7 +362,7 @@ public class AbstractMapperBuilderTest {
         FieldMapperColumnDefinitionProviderImpl<SampleFieldKey> definitionProvider = new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>();
         definitionProvider.addColumnProperty("type_name", new DefaultValueProperty<DbObject.Type>(DbObject.Type.type4));
 
-        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig =
+        MapperConfig<SampleFieldKey> mapperConfig =
                 MapperConfig.<SampleFieldKey>fieldMapperConfig().columnDefinitions(definitionProvider);
         EnumerableMapper<Object[][], DbObject, ?> mapper =
                 new SampleMapperBuilder<DbObject>(classMeta, mapperConfig)
@@ -421,9 +421,9 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testMandatoryProperty461() {
         ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
-        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = MapperConfig.fieldMapperConfig();
+        MapperConfig<SampleFieldKey> mapperConfig = MapperConfig.fieldMapperConfig();
 
-        mapperConfig = mapperConfig.columnDefinitions(new ColumnDefinitionProvider<FieldMapperColumnDefinition<SampleFieldKey>, SampleFieldKey>() {
+        mapperConfig = mapperConfig.columnDefinitions(new ColumnDefinitionProvider<SampleFieldKey>() {
             @Override
             public FieldMapperColumnDefinition<SampleFieldKey> getColumnDefinition(SampleFieldKey key) {
                 if (key.getName().equals("email")) {
@@ -888,7 +888,7 @@ public class AbstractMapperBuilderTest {
 
     public static class SampleMapperBuilder<T> extends MapperBuilder<Object[], Object[][], T, SampleFieldKey, Exception, SetRowMapper<Object[], Object[][], T, Exception>, SetRowMapper<Object[], Object[][], T, Exception>, SampleMapperBuilder<T>> {
 
-        public SampleMapperBuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig) {
+        public SampleMapperBuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey> mapperConfig) {
             super(KEY_FACTORY, 
                     new DefaultSetRowMapperBuilder<Object[], Object[][], T, SampleFieldKey, Exception>(
                             classMeta,

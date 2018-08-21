@@ -3,6 +3,7 @@ package org.simpleflatmapper.map.fieldmapper;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.impl.JoinUtils;
+import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.property.ConverterProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -87,8 +88,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T, P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K,
-                FieldMapperColumnDefinition<K>> propertyMapping,
+	public <T, P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K> propertyMapping,
 												   MappingContextFactoryBuilder contextFactoryBuilder,
 												   MapperBuilderErrorHandler mappingErrorHandler) {
 
@@ -123,7 +123,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 
 	@Override
-	public <P> Getter<? super S, ? extends P> getGetterFromSource(K columnKey, Type propertyType, FieldMapperColumnDefinition<K> columnDefinition, Supplier<ClassMeta<P>> propertyClassMetaSupplier) {
+	public <P> Getter<? super S, ? extends P> getGetterFromSource(K columnKey, Type propertyType, ColumnDefinition<K, ?> columnDefinition, Supplier<ClassMeta<P>> propertyClassMetaSupplier) {
 		@SuppressWarnings("unchecked")
 		Getter<? super S, ? extends P> getter = (Getter<? super S, ? extends P>) columnDefinition.getCustomGetterFrom(sourceType);
 
@@ -159,7 +159,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		return getter;
 	}
 
-	private <P, J> Getter<? super S, ? extends P> lookForAlternativeGetter(ClassMeta<P> classMeta, K key, FieldMapperColumnDefinition<K> columnDefinition, Collection<Type> types) {
+	private <P, J> Getter<? super S, ? extends P> lookForAlternativeGetter(ClassMeta<P> classMeta, K key, ColumnDefinition<K, ?> columnDefinition, Collection<Type> types) {
 		// look for converter
 		Type propertyType = classMeta.getType();
 		Type sourceType = key.getType(propertyType);
@@ -175,7 +175,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		return lookForInstantiatorGetter(classMeta, key, columnDefinition, types);
 	}
 
-	public <P> Getter<? super S, ? extends P> lookForInstantiatorGetter(ClassMeta<P> classMeta, K key, FieldMapperColumnDefinition<K> columnDefinition, Collection<Type> types) {
+	public <P> Getter<? super S, ? extends P> lookForInstantiatorGetter(ClassMeta<P> classMeta, K key, ColumnDefinition<K, ?> columnDefinition, Collection<Type> types) {
 
 
 		InstantiatorDefinitions.CompatibilityScorer scorer = InstantiatorDefinitions.getCompatibilityScorer(key);
@@ -190,7 +190,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 	private <T, P> Getter<? super S, ? extends P> getGettetInstantiator(
 			ClassMeta<P> classMeta,
-			InstantiatorDefinition id, K key, FieldMapperColumnDefinition<K> columnDefinition,
+			InstantiatorDefinition id, K key, ColumnDefinition<K, ?> columnDefinition,
 			Collection<Type> types) {
 
 		Instantiator<? super T, ? extends P> instantiator =

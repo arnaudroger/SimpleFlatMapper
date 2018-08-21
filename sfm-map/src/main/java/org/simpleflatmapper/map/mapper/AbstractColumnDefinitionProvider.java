@@ -16,23 +16,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinition<K, C>, K extends FieldKey<K>> implements ColumnDefinitionProvider<C, K> {
+public abstract class AbstractColumnDefinitionProvider<K extends FieldKey<K>> implements ColumnDefinitionProvider<K> {
 
-    protected final List<PredicatedColunnPropertyFactory<C, K>> properties;
+    protected final List<PredicatedColunnPropertyFactory<K>> properties;
 
     public AbstractColumnDefinitionProvider() {
-        this(new ArrayList<PredicatedColunnPropertyFactory<C, K>>());
+        this(new ArrayList<PredicatedColunnPropertyFactory<K>>());
     }
-    public AbstractColumnDefinitionProvider(List<PredicatedColunnPropertyFactory<C, K>> properties) {
+    public AbstractColumnDefinitionProvider(List<PredicatedColunnPropertyFactory<K>> properties) {
         this.properties = properties;
     }
 
-    public void addColumnDefinition(Predicate<? super K> predicate, C definition) {
+    public void addColumnDefinition(Predicate<? super K> predicate, ColumnDefinition<K, ?> definition) {
         for(Object prop : definition.properties()) {
             addColumnProperty(predicate, newFactory(prop));
         }
     }
-    public void addColumnDefinition(String name, C definition) {
+    public void addColumnDefinition(String name, ColumnDefinition<K, ?> definition) {
         Predicate<? super K> predicate = newPredicate(name);
         for(Object prop : definition.properties()) {
             addColumnProperty(predicate, newFactory(prop));
@@ -48,7 +48,7 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
     }
 
     public void addColumnProperty(Predicate<? super K> predicate, UnaryFactory<? super K, Object> propertyFactory) {
-        properties.add(new PredicatedColunnPropertyFactory<C, K>(predicate, propertyFactory));
+        properties.add(new PredicatedColunnPropertyFactory<K>(predicate, propertyFactory));
     }
 
 
@@ -74,11 +74,11 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
 
 
     @Override
-    public C getColumnDefinition(K key) {
-        C definition = identity();
+    public ColumnDefinition<K, ?> getColumnDefinition(K key) {
+        ColumnDefinition<K, ?> definition = identity();
 
         for(int i = properties.size() - 1; i >= 0; i--) {
-            PredicatedColunnPropertyFactory<C, K> tuple2 = properties.get(i);
+            PredicatedColunnPropertyFactory<K> tuple2 = properties.get(i);
             if (tuple2.predicate.test(key)) {
                 Object columnProperty = tuple2.columnPropertyFactory.newInstance(key);
                 if (columnProperty != null) {
@@ -90,15 +90,15 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
         return  definition;
     }
 
-    protected abstract C identity();
+    protected abstract ColumnDefinition<K, ?> identity();
 
-    public List<PredicatedColunnPropertyFactory<C, K>> getProperties() {
+    public List<PredicatedColunnPropertyFactory<K>> getProperties() {
         return properties;
     }
 
     @Override
     public <CP, BC extends BiConsumer<Predicate<? super K>, CP>> BC forEach(Class<CP> propertyType, BC consumer) {
-        for (PredicatedColunnPropertyFactory<C, K> tuple2 : properties) {
+        for (PredicatedColunnPropertyFactory<K> tuple2 : properties) {
             final UnaryFactory<? super K, Object> unaryFactory = tuple2.columnPropertyFactory;
             if (unaryFactory instanceof ConstantUnaryFactory) {
                 final Object columnProperty = unaryFactory.newInstance(null);
@@ -110,7 +110,7 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
         return consumer;
     }
 
-    public static class PredicatedColunnPropertyFactory<C extends ColumnDefinition<K, C>, K extends FieldKey<K>> {
+    public static class PredicatedColunnPropertyFactory<K extends FieldKey<K>> {
         private final Predicate<? super K> predicate;
         private final UnaryFactory<? super K, Object> columnPropertyFactory;
 

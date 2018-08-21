@@ -341,7 +341,8 @@ public class CsvMapperBuilderTest {
 	}
 
 	public static void addDbObjectFields(CsvMapperBuilder<?> builder) {
-		builder.addMapping("id")
+		builder
+				.addMapping("id")
 		.addMapping("name")
 		.addMapping("email")
 		.addMapping("creationTime")

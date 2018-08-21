@@ -39,7 +39,7 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
 
 
     public SheetMapperBuilder(ClassMeta<T> classMeta,
-                              MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
+                              MapperConfig<CsvColumnKey> mapperConfig,
                               GetterFactory<Row, CsvColumnKey> getterFactory) {
         super(KEY_FACTORY, 
                 new SetRowMapperBuilderImpl<RowMapper<T> , Row, Sheet, T, CsvColumnKey, RuntimeException>(

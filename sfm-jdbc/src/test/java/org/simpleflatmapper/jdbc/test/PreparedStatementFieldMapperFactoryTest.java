@@ -470,9 +470,9 @@ public class PreparedStatementFieldMapperFactoryTest {
     public void testCustomSetterFactory() throws Exception {
         Object o = new Object();
         newFieldMapperAndMapToPS(new ConstantGetter<Object, Object>(o), Object.class,
-                new SetterFactoryProperty(new SetterFactory<PreparedStatement, PropertyMapping<?, ?, ?, ?>>() {
+                new SetterFactoryProperty(new SetterFactory<PreparedStatement, PropertyMapping<?, ?, ?>>() {
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, ?, ?> arg) {
+                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, ?> arg) {
                         return new Setter<PreparedStatement, P>() {
                             @Override
                             public void set(PreparedStatement target, P value) throws Exception {
@@ -595,18 +595,18 @@ public class PreparedStatementFieldMapperFactoryTest {
         newFieldMapperAndMapToPS(getter, clazz, JdbcColumnKey.UNDEFINED_TYPE, properties);
     }
     protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, int sqlType, Object... properties) throws Exception {
-        PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> propertyMapping = newPropertyMapping(getter, clazz, sqlType, properties);
+        PropertyMapping<T, P, JdbcColumnKey> propertyMapping = newPropertyMapping(getter, clazz, sqlType, properties);
         FieldMapper<T, PreparedStatement> fieldMapper = factory.<T, P>newFieldMapper(propertyMapping, null, RethrowMapperBuilderErrorHandler.INSTANCE);
         fieldMapper.mapTo(null, ps, null);
     }
 
     @SuppressWarnings("unchecked")
-    private <T, P> PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> newPropertyMapping(Getter getter, Class<P> clazz, int sqltype, Object... properties) {
+    private <T, P> PropertyMapping<T, P, JdbcColumnKey> newPropertyMapping(Getter getter, Class<P> clazz, int sqltype, Object... properties) {
         PropertyMeta<T, P> propertyMeta = mock(PropertyMeta.class);
         when(propertyMeta.getGetter()).thenReturn(getter);
         when(propertyMeta.getPropertyType()).thenReturn(clazz);
         return
-                new PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(
+                new PropertyMapping<T, P, JdbcColumnKey>(
                         propertyMeta,
                         new JdbcColumnKey("col", index++, sqltype),
                         FieldMapperColumnDefinition.<JdbcColumnKey>of(properties));

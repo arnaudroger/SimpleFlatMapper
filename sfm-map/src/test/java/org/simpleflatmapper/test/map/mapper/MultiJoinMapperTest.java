@@ -104,7 +104,7 @@ public class MultiJoinMapperTest {
         assertEquals(1, list.size());
     }
 
-    private MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig() {
+    private MapperConfig<SampleFieldKey> mapperConfig() {
         return MapperConfig.fieldMapperConfig();
     }
 

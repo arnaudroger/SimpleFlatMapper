@@ -23,20 +23,20 @@ import java.lang.reflect.Type;
 import java.sql.*;
 
 public class PreparedStatementSetterFactory implements
-        SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> {
+        SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>> {
 
     public static final PreparedStatementSetterFactory INSTANCE = new PreparedStatementSetterFactory(PreparedStatementIndexedSetterFactory.INSTANCE);
 
-    private final IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> preparedStatementIndexedSetterFactory;
+    private final IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>> preparedStatementIndexedSetterFactory;
 
-    private PreparedStatementSetterFactory(IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> preparedStatementIndexedSetterFactory) {
+    private PreparedStatementSetterFactory(IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>> preparedStatementIndexedSetterFactory) {
         this.preparedStatementIndexedSetterFactory = preparedStatementIndexedSetterFactory;
     }
 
 
     @SuppressWarnings("unchecked")
     @Override
-    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey> pm) {
         int columnIndex = pm.getColumnKey().getIndex();
 
         Type type = pm.getPropertyMeta().getPropertyType();

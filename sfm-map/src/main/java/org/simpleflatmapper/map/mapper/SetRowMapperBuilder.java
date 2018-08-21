@@ -19,7 +19,7 @@ public interface SetRowMapperBuilder<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
     void addMapping(K key, FieldMapperColumnDefinition<K> columnDefinition);
 
-    MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig();
+    MapperConfig<K> mapperConfig();
 
     MappingContextFactoryBuilder<? super ROW, K> getMappingContextFactoryBuilder();
 }

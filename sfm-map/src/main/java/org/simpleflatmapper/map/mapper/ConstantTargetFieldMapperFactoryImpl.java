@@ -4,7 +4,6 @@ package org.simpleflatmapper.map.mapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Setter;
@@ -45,10 +44,10 @@ import java.lang.reflect.Type;
 
 public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> implements ConstantTargetFieldMapperFactory<T, K> {
 
-    private final SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory;
+    private final SetterFactory<T, PropertyMapping<?, ?, K>> setterFactory;
     private final Type targetType;
 
-    private ConstantTargetFieldMapperFactoryImpl(SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory, Type targetType) {
+    private ConstantTargetFieldMapperFactoryImpl(SetterFactory<T, PropertyMapping<?, ?, K>> setterFactory, Type targetType) {
         this.setterFactory = setterFactory;
         this.targetType = targetType;
     }
@@ -56,7 +55,7 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
     @SuppressWarnings("unchecked")
     @Override
     public <S, P> FieldMapper<S, T> newFieldMapper(
-            PropertyMapping<S, P, K, FieldMapperColumnDefinition<K>> pm,
+            PropertyMapping<S, P, K> pm,
             MappingContextFactoryBuilder contextFactoryBuilder,
             MapperBuilderErrorHandler mappingErrorHandler) {
 
@@ -116,11 +115,11 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
     }
 
     @SuppressWarnings("unchecked")
-    private <S, P> Setter<T, P> getSetterForTarget(PropertyMapping<S, ?, K, FieldMapperColumnDefinition<K>> pm) {
+    private <S, P> Setter<T, P> getSetterForTarget(PropertyMapping<S, ?, K> pm) {
         Setter<T, P> setter = (Setter<T, P>) pm.getColumnDefinition().getCustomSetterTo(targetType);
 
-        final SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> customSetterFactory =
-                (SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>>) pm.getColumnDefinition().getCustomSetterFactoryTo(targetType);
+        final SetterFactory<T, PropertyMapping<?, ?, K>> customSetterFactory =
+                (SetterFactory<T, PropertyMapping<?, ?, K>>) pm.getColumnDefinition().getCustomSetterFactoryTo(targetType);
 
         if (customSetterFactory != null) {
             setter = customSetterFactory.getSetter(pm);
@@ -152,7 +151,7 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
     }
 
     public static <T, K extends FieldKey<K>> ConstantTargetFieldMapperFactory<T, K> newInstance(
-            SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory, Type targetType) {
+            SetterFactory<T, PropertyMapping<?, ?, K>> setterFactory, Type targetType) {
         return new ConstantTargetFieldMapperFactoryImpl<T, K>(setterFactory, targetType);
     }
 

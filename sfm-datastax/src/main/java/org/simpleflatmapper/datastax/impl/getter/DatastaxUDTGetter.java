@@ -55,7 +55,7 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
     }
 
     public static <P> ConstantSourceMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> newFieldMapperBuilder(DatastaxMapperFactory factory, Type target) {
-        MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config = factory.mapperConfig();
+        MapperConfig<DatastaxColumnKey> config = factory.mapperConfig();
         MapperSourceImpl<GettableByIndexData, DatastaxColumnKey> mapperSource = new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, new RowGetterFactory(factory));
         ClassMeta<P> classMeta = factory.getClassMeta(target);
         return new ConstantSourceMapperBuilder<GettableByIndexData, P, DatastaxColumnKey>(

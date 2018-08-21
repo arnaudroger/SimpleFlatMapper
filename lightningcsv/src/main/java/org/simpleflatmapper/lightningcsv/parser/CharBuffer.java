@@ -6,7 +6,8 @@ public abstract class CharBuffer {
 
 	public char[] buffer;
 	public int bufferSize;
-	public int mark;
+	public int cellStartMark;
+	public int rowStartMark;
 
     public CharBuffer(char[] buffer, final int bufferSize) {
 		this.buffer = buffer;

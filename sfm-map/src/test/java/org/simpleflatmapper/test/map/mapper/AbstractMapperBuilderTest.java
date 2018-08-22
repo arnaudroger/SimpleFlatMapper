@@ -40,6 +40,7 @@ import org.simpleflatmapper.test.beans.ObjectWith1ParamConstruction;
 import org.simpleflatmapper.test.beans.ObjectWith1ParamConstructionWithLoop;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.BiConsumer;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
@@ -927,9 +928,9 @@ public class AbstractMapperBuilderTest {
                             }
                                 
                     ),
-                    new Function<SetRowMapper<Object[], Object[][], T, Exception>, SetRowMapper<Object[], Object[][], T, Exception>>() {
+                    new BiFunction<SetRowMapper<Object[], Object[][], T, Exception>, List<SampleFieldKey>, SetRowMapper<Object[], Object[][], T, Exception>>() {
                         @Override
-                        public SetRowMapper<Object[], Object[][], T, Exception> apply(SetRowMapper<Object[], Object[][], T, Exception> setRowMapper) {
+                        public SetRowMapper<Object[], Object[][], T, Exception> apply(SetRowMapper<Object[], Object[][], T, Exception> setRowMapper, List<SampleFieldKey> keys) {
                             return setRowMapper;
                         }
                     },

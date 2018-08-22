@@ -6,29 +6,36 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public final class CsvRow {
+
+    private final CsvColumnKey[] keys;
+    private final int nbColumns;
     
     private char[] buffer;
     private int bufferLength;
-    private int[] fieldsBoundaries;
-    private int nbColumns;
-
-    public CsvRow() {
-        this(4, 512);
-    }
-    public CsvRow(int numberOfColumns, int initBufferSize) {
-        buffer = new char[initBufferSize];
-        fieldsBoundaries = new int[numberOfColumns * 2];
-    }
     
+    private int[] fieldsBoundaries;
+    private int currentIndex;
+
+    public CsvRow(CsvColumnKey[] keys, int maxIndex) {
+        buffer = new char[512];
+        nbColumns = maxIndex + 1;
+        this.keys = keys;
+        fieldsBoundaries = new int[nbColumns * 2];
+    }
+
+    public CsvColumnKey[] getKeys() {
+        return keys;
+    }
+
     public void reset() {
-        Arrays.fill(fieldsBoundaries, 0, nbColumns * 2, 0);
-        nbColumns = 0;
+        Arrays.fill(fieldsBoundaries,  0);
         bufferLength = 0;
+        currentIndex = 0;
     }
     
     public void addValue(char[] buffer, int offset, int length) {
-        if (nbColumns * 2 >= fieldsBoundaries.length) {
-            fieldsBoundaries = Arrays.copyOf(fieldsBoundaries, fieldsBoundaries.length * 2);
+        if (currentIndex >= nbColumns) {
+            return; // ignore
         }
         
         if (bufferLength + length > buffer.length) {
@@ -37,10 +44,12 @@ public final class CsvRow {
         
         System.arraycopy(buffer, offset, this.buffer, bufferLength, length);
         
-        fieldsBoundaries[nbColumns * 2] = bufferLength;
+        fieldsBoundaries[currentIndex * 2] = bufferLength;
         bufferLength += length;
-        fieldsBoundaries[nbColumns * 2 + 1] = bufferLength;
-        nbColumns ++;
+        fieldsBoundaries[currentIndex * 2 + 1] = bufferLength;
+
+        currentIndex++;
+
     }
     
        
@@ -53,6 +62,7 @@ public final class CsvRow {
     public String getString(int i) {
         int start = fieldsBoundaries[i * 2];
         int end = fieldsBoundaries[i * 2 + 1];
+        if (start == end) return null;
         return String.valueOf(buffer, start, end - start);
     }
     
@@ -88,7 +98,45 @@ public final class CsvRow {
         return Double.parseDouble(getString(i));
     }
     public boolean getBoolean(int i) {
-        return Boolean.parseBoolean(getString(i));
+        int start = fieldsBoundaries[i * 2];
+        int end = fieldsBoundaries[i * 2 + 1];
+
+        return parseBoolean(buffer, start, end - start);
+    }
+
+    public static boolean parseBoolean(char[] chars, int offset, int length) {
+        switch (length) {
+            case 0:
+                return false;
+            case 1:
+                switch (chars[offset]) {
+                    case 0:
+                    case '0':
+                    case 'F':
+                    case 'f':
+                    case 'n':
+                    case 'N':
+                        return false;
+                    default:
+                        return true;
+                }
+            case 2:
+                if ((chars[offset] == 'N' || chars[offset] == 'n')
+                        && (chars[offset + 1] == 'O' || chars[offset + 1] == 'o')) {
+                    return false;
+                }
+            case 5:
+                if (
+                        (chars[offset] == 'F' || chars[offset] == 'f')
+                                && (chars[offset + 1] == 'A' || chars[offset + 1] == 'a')
+                                && (chars[offset + 2] == 'L' || chars[offset + 2] == 'l')
+                                && (chars[offset + 3] == 'S' || chars[offset + 3] == 's')
+                                && (chars[offset + 4] == 'E' || chars[offset + 4] == 'e')
+                ) {
+                    return false;
+                }
+        }
+        return true;
     }
 
 
@@ -143,6 +191,10 @@ public final class CsvRow {
 
     public int getNbColumns() {
         return nbColumns;
+    }
+
+    public boolean hasData() {
+        return bufferLength > 0;
     }
 
     private static class CharSequenceImpl implements CharSequence {

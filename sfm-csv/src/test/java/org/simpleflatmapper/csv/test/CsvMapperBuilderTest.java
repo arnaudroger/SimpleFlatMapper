@@ -40,45 +40,6 @@ public class CsvMapperBuilderTest {
 		csvMapperFactoryLowSharding = CsvMapperFactory.newInstance().failOnAsm(true).maxMethodSize(2);
 	}
 
-
-    @Test
-    public void testStaticMapperDbObjectToStringNoAsm() throws Exception {
-        CsvMapperBuilder<DbObject> builder = csvMapperFactoryNoAsm.newBuilder(DbObject.class);
-        addDbObjectFields(builder);
-
-
-		assertTrue(builder.mapper().toString().startsWith(
-			   "CsvMapperImpl{" +
-					   "targetSettersFactory=TargetSettersFactory{instantiator=EmptyConstructorInstantiator{constructor=public org.simpleflatmapper.test.beans.DbObject()}}, " +
-					   "delayedCellSetters=[], " +
-					   "setters=[LongCellSetter{setter=LongMethodSetter{method=public void org.simpleflatmapper.test.beans.DbObject.setId(long)}, reader=LongCellValueReaderImpl{}}, " +
-					   "CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.simpleflatmapper.test.beans.DbObject.setName(java.lang.String)}}, " +
-					   "CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.simpleflatmapper.test.beans.DbObject.setEmail(java.lang.String)}}, " +
-					   "CellSetterImpl{reader=DateCellValueReader{index=3,"));
-    }
-
-    @Test
-    public void testStaticMapperDbFinalObjectToString() throws Exception {
-        CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.useAsm(false).newBuilder(DbFinalObject.class);
-        addDbObjectFields(builder);
-        assertTrue(builder.mapper().toString().startsWith(
-                "CsvMapperImpl{" +
-                        "targetSettersFactory=TargetSettersFactory{instantiator=InjectConstructorInstantiator{" +
-                            "instantiatorDefinition=InstantiatorDefinition{executable=public org.simpleflatmapper.test.beans.DbFinalObject(long,java.lang.String,java.lang.String,java.util.Date,org.simpleflatmapper.test.beans.DbObject$Type,org.simpleflatmapper.test.beans.DbObject$Type), " +
-                            "parameters=[" +
-                                "Parameter{name='id', type=long, resolvedType=long}, " +
-                                "Parameter{name='name', type=class java.lang.String, resolvedType=class java.lang.String}, " +
-                                "Parameter{name='email', type=class java.lang.String, resolvedType=class java.lang.String}, " +
-                                "Parameter{name='creationTime', type=class java.util.Date, resolvedType=class java.util.Date}, " +
-                                "Parameter{name='typeOrdinal', type=class org.simpleflatmapper.test.beans.DbObject$Type, resolvedType=class org.simpleflatmapper.test.beans.DbObject$Type}, " +
-                                "Parameter{name='typeName', type=class org.simpleflatmapper.test.beans.DbObject$Type, resolvedType=class org.simpleflatmapper.test.beans.DbObject$Type}]}}}, " +
-                        "delayedCellSetters=[" +
-                        "LongDelayedCellSetterFactory{setter=null, reader=LongCellValueReaderImpl{}}, " +
-                        "DelayedCellSetterFactoryImpl{reader=StringCellValueReader{}, setter=null}, " +
-                        "DelayedCellSetterFactoryImpl{reader=StringCellValueReader{}, setter=null}, " +
-                        "DelayedCellSetterFactoryImpl{reader=DateCellValueReader{index=3,"));
-    }
-
     @Test
 	public void testMapDbObject() throws Exception {
 		testMapDbObject(csvMapperFactory.newBuilder(DbObject.class));

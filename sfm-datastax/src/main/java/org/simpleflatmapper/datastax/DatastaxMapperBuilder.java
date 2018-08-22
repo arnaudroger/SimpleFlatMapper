@@ -15,6 +15,7 @@ import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
@@ -22,6 +23,7 @@ import org.simpleflatmapper.util.UnaryFactory;
 
 import java.util.Iterator;
 //IFJAVA8_START
+import java.util.List;
 import java.util.stream.Stream;
 //IFJAVA8_END
 
@@ -54,9 +56,9 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
                         classMeta, parentBuilder, mapperConfig,
                         new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, getterFactory), 
                         KEY_FACTORY, new ResultSetEnumerableFactory()),
-                new Function<SetRowMapper<Row, ResultSet, T, DriverException>, DatastaxMapper<T>>() {
+                new BiFunction<SetRowMapper<Row, ResultSet, T, DriverException>, List<DatastaxColumnKey>, DatastaxMapper<T>>() {
                     @Override
-                    public DatastaxMapper<T> apply(SetRowMapper<Row, ResultSet, T, DriverException> setRowMapper) {
+                    public DatastaxMapper<T> apply(SetRowMapper<Row, ResultSet, T, DriverException> setRowMapper, List<DatastaxColumnKey> keys) {
                         return new DatastaxMapperImpl<T>(setRowMapper);
                     }
                 },

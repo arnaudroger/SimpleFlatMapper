@@ -8,6 +8,8 @@ import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 
+import java.util.List;
+
 public interface SetRowMapperBuilder<M extends SetRowMapper<ROW, SET, T, E>, ROW, SET, T, K extends FieldKey<K>, E extends Exception> {
     M mapper();
 
@@ -17,9 +19,11 @@ public interface SetRowMapperBuilder<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
     void addMapper(FieldMapper<ROW, T> mapper);
 
-    void addMapping(K key, FieldMapperColumnDefinition<K> columnDefinition);
+    void addMapping(K key, ColumnDefinition<K, ?> columnDefinition);
 
     MapperConfig<K> mapperConfig();
 
     MappingContextFactoryBuilder<? super ROW, K> getMappingContextFactoryBuilder();
+
+    List<K> getKeys();
 }

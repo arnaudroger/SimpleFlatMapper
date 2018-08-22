@@ -1,5 +1,6 @@
 package org.simpleflatmapper.csv.impl;
 
+import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.csv.CsvRow;
@@ -19,9 +20,11 @@ import java.util.stream.Stream;
 
 public class CsvMapperImpl<T> implements CsvMapper<T> {
     private final SetRowMapper<CsvRow, CsvRowSet, T, IOException> setRowMapper;
+    private final CsvColumnKey[] keys;
 
-    public CsvMapperImpl(SetRowMapper<CsvRow, CsvRowSet, T, IOException> setRowMapper) {
+    public CsvMapperImpl(SetRowMapper<CsvRow, CsvRowSet, T, IOException> setRowMapper, CsvColumnKey[] keys) {
         this.setRowMapper = setRowMapper;
+        this.keys = keys;
     }
 
     @Override
@@ -121,8 +124,9 @@ public class CsvMapperImpl<T> implements CsvMapper<T> {
         return toCsvRowSet(CsvParser.reader(reader), skip, limit);
     }
 
-    private CsvRowSet toCsvRowSet(CsvReader reader, int skip, int limit) {
-        return new CsvRowSet(reader);
+    private CsvRowSet toCsvRowSet(CsvReader reader, int skip, int limit) throws IOException {
+        reader.skipRows(skip);
+        return new CsvRowSet(reader, limit, keys);
     }
 
 }

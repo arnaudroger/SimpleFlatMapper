@@ -551,7 +551,7 @@ public final class CsvParser {
 					csvDsl,
 					classMeta,
 					mapToClass,
-					newDefaultStaticMapper(mapToClass, classMeta, columnDefinitionProvider),
+					newDefaultStaticMapper(classMeta, columnDefinitionProvider),
 					columnDefinitionProvider);
 		}
 
@@ -574,7 +574,7 @@ public final class CsvParser {
 		}
 
         public MapWithDSL<T> addKeys(String... keys) {
-			CsvColumnDefinitionProviderImpl newProvider = columnDefinitionProvider.copy();
+			CsvColumnDefinitionProviderImpl newProvider = (CsvColumnDefinitionProviderImpl) columnDefinitionProvider.copy();
 
 			for(String key : keys) {
 				newProvider.addColumnProperty(key, KeyProperty.DEFAULT);
@@ -584,13 +584,13 @@ public final class CsvParser {
         }
 
 		private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(String name, ColumnDefinition<CsvColumnKey, ?> columnDefinition) {
-			CsvColumnDefinitionProviderImpl newProvider = columnDefinitionProvider.copy();
+			CsvColumnDefinitionProviderImpl newProvider = (CsvColumnDefinitionProviderImpl) columnDefinitionProvider.copy();
 			newProvider.addColumnDefinition(name, columnDefinition);
 			return newProvider;
 		}
 
         private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(Predicate<? super CsvColumnKey> predicate, ColumnDefinition<CsvColumnKey, ?> columnDefinition) {
-			CsvColumnDefinitionProviderImpl newProvider = columnDefinitionProvider.copy();
+			CsvColumnDefinitionProviderImpl newProvider = (CsvColumnDefinitionProviderImpl) columnDefinitionProvider.copy();
 			newProvider.addColumnDefinition(predicate, columnDefinition);
 			return newProvider;
 		}
@@ -634,7 +634,7 @@ public final class CsvParser {
 		}
 
 		private StaticMapToDSL(org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass, List<Tuple2<String, ColumnDefinition<CsvColumnKey, ?>>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
-			super(dsl, newStaticMapper(mapToClass, classMeta, columns, columnDefinitionProvider));
+			super(dsl, newStaticMapper(classMeta, columns, columnDefinitionProvider));
 			this.classMeta = classMeta;
 			this.mapToClass = mapToClass;
 			this.columns = columns;
@@ -776,13 +776,13 @@ public final class CsvParser {
 		//IFJAVA8_END
 	}
 	
-	private static <T> CsvMapper<T> newDefaultStaticMapper(Type mapToClass, ClassMeta<T> classMeta, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta, columnDefinitionProvider);
+	private static <T> CsvMapper<T> newDefaultStaticMapper(ClassMeta<T> classMeta, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(classMeta, columnDefinitionProvider);
 		//builder.addDefaultHeaders();
 		return builder.mapper();
 	}
-	private static <T> CsvMapper<T> newStaticMapper(Type mapToClass, ClassMeta<T> classMeta, List<Tuple2<String, ColumnDefinition<CsvColumnKey, ?>>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta, columnDefinitionProvider);
+	private static <T> CsvMapper<T> newStaticMapper(ClassMeta<T> classMeta, List<Tuple2<String, ColumnDefinition<CsvColumnKey, ?>>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(classMeta, columnDefinitionProvider);
 		for(Tuple2<String, ColumnDefinition<CsvColumnKey, ?>> col: columns) {
 			builder.addMapping(col.first(), col.second());
 		}

@@ -139,7 +139,7 @@ public abstract class AbstractMapperFactory<
 
 	public final MapperConfig<K> mapperConfig() {
 		return MapperConfig
-				.<K>config(columnDefinitions)
+				.<K>config(enrichColumnDefinitions(columnDefinitions))
 				.mapperBuilderErrorHandler(mapperBuilderErrorHandler)
 				.propertyNameMatcherFactory(propertyNameMatcherFactory)
 				.failOnAsm(failOnAsm)
@@ -148,6 +148,10 @@ public abstract class AbstractMapperFactory<
 				.consumerErrorHandler(consumerErrorHandler)
 				.maxMethodSize(maxMethodSize)
 				.assumeInjectionModifiesValues(assumeInjectionModifiesValues);
+	}
+
+	public AbstractColumnDefinitionProvider<K> enrichColumnDefinitions(AbstractColumnDefinitionProvider<K> columnDefinitions) {
+		return columnDefinitions;
 	}
 
 	/**

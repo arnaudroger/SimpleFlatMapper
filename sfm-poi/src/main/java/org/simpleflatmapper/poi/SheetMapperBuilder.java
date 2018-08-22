@@ -22,9 +22,12 @@ import org.simpleflatmapper.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.poi.impl.CsvColumnKeyRowKeySourceGetter;
 import org.simpleflatmapper.poi.impl.RowGetterFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.UnaryFactory;
+
+import java.util.List;
 
 public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColumnKey, RuntimeException, RowMapper<T>, RowMapper<T>, SheetMapperBuilder<T>> {
 
@@ -55,9 +58,9 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
                             }
                         },
                         new RowMapperFactory<T>()
-                ),  new Function<RowMapper<T>, RowMapper<T>>() {
+                ),  new BiFunction<RowMapper<T>, List<CsvColumnKey>, RowMapper<T>>() {
                     @Override
-                    public RowMapper<T> apply(RowMapper<T> setRowMapper) {
+                    public RowMapper<T> apply(RowMapper<T> setRowMapper, List<CsvColumnKey> keys) {
                         return setRowMapper;
                     }
                 }, 0

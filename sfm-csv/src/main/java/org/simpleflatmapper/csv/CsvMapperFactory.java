@@ -11,13 +11,16 @@ import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.Result;
 import org.simpleflatmapper.map.ResultFieldMapperErrorHandler;
 import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.DynamicSetRowMapper;
 import org.simpleflatmapper.map.mapper.MapperKey;
+import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.ParameterizedTypeImpl;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.util.CheckedConsumer;
+import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
@@ -66,9 +69,9 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 	public static CsvMapperFactory newInstance() {
 		return new CsvMapperFactory();
 	}
-	
 
-	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
+	private String defaultDateFormat = CsvMapperBuilder.DEFAULT_DATE_FORMAT;
+
 
 	private CsvMapperFactory() {
 		super(new CsvColumnDefinitionProviderImpl(), CsvColumnDefinition.identity());
@@ -76,14 +79,19 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 	
 	private CsvMapperFactory(CsvMapperFactory parent)  {
 		super(parent);
-		this.defaultDateFormat = parent.defaultDateFormat;
+	}
+
+	@Override
+	public AbstractColumnDefinitionProvider<CsvColumnKey> enrichColumnDefinitions(AbstractColumnDefinitionProvider<CsvColumnKey> columnDefinitions) {
+		AbstractColumnDefinitionProvider<CsvColumnKey> copy = columnDefinitions.copy();
+		copy.addColumnProperty(ConstantPredicate.truePredicate(), new DefaultDateFormatProperty(defaultDateFormat));
+		return copy;
 	}
 
 	public CsvMapperFactory defaultDateFormat(final String defaultDateFormat) {
 		this.defaultDateFormat = defaultDateFormat;
 		return this;
 	}
-
 
 	public CsvMapperFactory addCustomValueReader(String key, CellValueReader<?> cellValueReader) {
 		return addColumnProperty(key, new CustomReaderProperty(cellValueReader));
@@ -168,13 +176,13 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 	private static class CsvRowSetMapperKeyFactory implements UnaryFactoryWithException<CsvRowSet, MapperKey<CsvColumnKey>, IOException> {
 		@Override
 		public MapperKey<CsvColumnKey> newInstance(CsvRowSet csvRowSet) throws IOException {
-			return null;
+			return new MapperKey<CsvColumnKey>(csvRowSet.getKeys());
 		}
 	}
 	private static class CsvRowMapperKeyFactory implements UnaryFactoryWithException<CsvRow, MapperKey<CsvColumnKey>, IOException> {
 		@Override
 		public MapperKey<CsvColumnKey> newInstance(CsvRow csvRow) throws IOException {
-			return null;
+			return new MapperKey<CsvColumnKey>(csvRow.getKeys());
 		}
 	}
 
@@ -214,57 +222,71 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 
 		@Override
 		public <H extends CheckedConsumer<? super T>> H forEach(Reader reader, H handle) throws IOException, MappingException {
-			return null;
+			forEach(toCsvRowSet(reader, 0, -1), handle);
+			return handle;
 		}
 
 		@Override
 		public <H extends CheckedConsumer<? super T>> H forEach(CsvReader reader, H handle) throws IOException, MappingException {
-			return null;
+			forEach(toCsvRowSet(reader, 0 , -1), handle);
+			return handle;
 		}
 
 		@Override
 		public <H extends CheckedConsumer<? super T>> H forEach(Reader reader, H handle, int skip) throws IOException, MappingException {
-			return null;
+			forEach(toCsvRowSet(reader, skip, -1), handle);
+			return handle;
 		}
 
 		@Override
 		public <H extends CheckedConsumer<? super T>> H forEach(Reader reader, H handle, int skip, int limit) throws IOException, MappingException {
-			return null;
+			forEach(toCsvRowSet(reader, skip, limit), handle);
+			return handle;
 		}
 
 		@Override
 		public <H extends CheckedConsumer<? super T>> H forEach(CsvReader reader, H handle, int limit) throws IOException, MappingException {
-			return null;
+			forEach(toCsvRowSet(reader, 0, limit), handle);
+			return handle;
 		}
 
 		@Override
 		public Iterator<T> iterator(Reader reader) throws IOException {
-			return null;
+			return iterator(toCsvRowSet(reader, 0 , -1));
 		}
 
 		@Override
 		public Iterator<T> iterator(CsvReader reader) throws IOException {
-			return null;
+			return iterator(toCsvRowSet(reader, 0 , -1));
 		}
 
 		@Override
 		public Iterator<T> iterator(Reader reader, int skip) throws IOException {
-			return null;
+			return iterator(toCsvRowSet(reader, skip , -1));
 		}
 
 		@Override
 		public Stream<T> stream(Reader reader) throws IOException {
-			return null;
+			return stream(toCsvRowSet(reader, 0 , -1));
 		}
 
 		@Override
 		public Stream<T> stream(CsvReader reader) throws IOException {
-			return null;
+			return stream(toCsvRowSet(reader, 0 , -1));
 		}
 
 		@Override
 		public Stream<T> stream(Reader reader, int skip) throws IOException {
-			return null;
+			return stream(toCsvRowSet(reader, skip , -1));
+		}
+
+		private CsvRowSet toCsvRowSet(Reader reader, int skip, int limit) throws IOException {
+			return toCsvRowSet(CsvParser.reader(reader), skip, limit);
+		}
+
+		private CsvRowSet toCsvRowSet(CsvReader reader, int skip, int limit) throws IOException {
+			reader.skipRows(skip);
+			return new CsvRowSet(reader, limit);
 		}
 	}
 }

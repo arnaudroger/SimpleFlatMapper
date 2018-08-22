@@ -18,7 +18,8 @@ public class CsvColumnDefinitionProviderImpl extends AbstractColumnDefinitionPro
     }
 
 
-    public CsvColumnDefinitionProviderImpl copy() {
+    @Override
+    public AbstractColumnDefinitionProvider<CsvColumnKey> copy() {
         return new CsvColumnDefinitionProviderImpl(new ArrayList<PredicatedColunnPropertyFactory<CsvColumnKey>>(properties));
     }
 

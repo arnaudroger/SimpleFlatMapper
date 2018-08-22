@@ -5,7 +5,10 @@ import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.Function;
+
+import java.util.List;
 
 /**
  * @param <T> the targeted type of the mapper
@@ -15,13 +18,13 @@ public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Excepti
 
     protected final KeyFactory<K> keyFactory;
     protected final SetRowMapperBuilder<IM, ROW, SET, T, K, E> setRowMapperBuilder;
-    protected final Function<IM, OM> specialisedMapper;
+    protected final BiFunction<IM, List<K>, OM> specialisedMapper;
     private int calculatedIndex;
     
     public MapperBuilder(
             KeyFactory<K> keyFactory, 
             SetRowMapperBuilder<IM, ROW, SET, T, K, E> setRowMapperBuilder, 
-            Function<IM, OM> specialisedMapper, 
+            BiFunction<IM, List<K>, OM> specialisedMapper, 
             int calculatedIndex) {
         this.keyFactory = keyFactory;
         this.setRowMapperBuilder = setRowMapperBuilder;
@@ -33,7 +36,7 @@ public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Excepti
      * @return a new newInstance of the jdbcMapper based on the current state of the builder.
      */
     public final OM mapper() {
-        return specialisedMapper.apply(setRowMapperBuilder.mapper());
+        return specialisedMapper.apply(setRowMapperBuilder.mapper(), setRowMapperBuilder.getKeys());
     }
     
     protected final SourceFieldMapper<ROW, T> sourceFieldMapper() {
@@ -68,7 +71,7 @@ public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Excepti
      * @param columnDefinition the definition
      * @return the current builder
      */
-    public final B addMapping(final String column, final FieldMapperColumnDefinition<K> columnDefinition) {
+    public final B addMapping(final String column, final ColumnDefinition<K, ?> columnDefinition) {
         return addMapping(column, calculatedIndex++, columnDefinition);
     }
 
@@ -102,7 +105,7 @@ public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Excepti
      * @param columnDefinition the property definition
      * @return the current builder
      */
-    public final B addMapping(String column, int index, final FieldMapperColumnDefinition<K> columnDefinition) {
+    public final B addMapping(String column, int index, final ColumnDefinition<K, ?> columnDefinition) {
         return addMapping(key(column, index), columnDefinition);
     }
 
@@ -132,7 +135,7 @@ public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Excepti
 
 
     @SuppressWarnings("unchecked")
-    public final B addMapping(K key, FieldMapperColumnDefinition<K> columnDefinition) {
+    public final B addMapping(K key, ColumnDefinition<K, ?> columnDefinition) {
         setRowMapperBuilder.addMapping(key, columnDefinition);
         return (B) this;
     }
@@ -140,7 +143,7 @@ public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Excepti
     public final B addMapping(K key, Object... properties) {
         if (properties.length == 1) { // catch Object... on column definition
             if (properties[0] instanceof ColumnDefinition) {
-                return  addMapping(key, (FieldMapperColumnDefinition<K>) properties[0]);
+                return  addMapping(key, (ColumnDefinition<K, ?>) properties[0]);
             }
         }
         return addMapping(key, FieldMapperColumnDefinition.<K>of(properties));
@@ -149,7 +152,4 @@ public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Excepti
     private K key(String column, int index) {
         return keyFactory.newKey(column, index);
     }
-    
-    
-
 }

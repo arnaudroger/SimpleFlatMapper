@@ -16,6 +16,7 @@ import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.TypeReference;
@@ -31,6 +32,7 @@ import java.sql.SQLException;
 import java.util.Iterator;
 
 //IFJAVA8_START
+import java.util.List;
 import java.util.stream.Stream;
 //IFJAVA8_END
 /**
@@ -100,9 +102,9 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
                         classMeta, parentBuilder, mapperConfig, 
                         FIELD_MAPPER_SOURCE.getterFactory(getterFactory), KEY_FACTORY, new ResultSetEnumerableFactory()
                 ),
-                new Function<SetRowMapper<ResultSet, ResultSet, T, SQLException>, JdbcMapper<T>>() {
+                new BiFunction<SetRowMapper<ResultSet, ResultSet, T, SQLException>, List<JdbcColumnKey>, JdbcMapper<T>>() {
                     @Override
-                    public JdbcMapper<T> apply(SetRowMapper<ResultSet, ResultSet, T, SQLException> setRowMapper) {
+                    public JdbcMapper<T> apply(SetRowMapper<ResultSet, ResultSet, T, SQLException> setRowMapper, List<JdbcColumnKey> keys) {
                         return new JdbcMapperImpl<T>(setRowMapper, parentBuilder.newFactory());
                     }
                 },1 );

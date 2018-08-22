@@ -14,6 +14,8 @@ import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.UnaryFactory;
 
+import java.util.List;
+
 /**
  * @param <T> the targeted type of the mapper
  */
@@ -108,7 +110,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
 
     @Override
-    public final void addMapping(K key, FieldMapperColumnDefinition<K> columnDefinition) {
+    public final void addMapping(K key, ColumnDefinition<K, ?> columnDefinition) {
         constantSourceMapperBuilder.addMapping(key, columnDefinition);
     }
 
@@ -121,6 +123,11 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
     @Override
     public MappingContextFactoryBuilder<? super ROW, K> getMappingContextFactoryBuilder() {
         return mappingContextFactoryBuilder;
+    }
+
+    @Override
+    public List<K> getKeys() {
+        return constantSourceMapperBuilder.propertyMappingsBuilder.getKeys();
     }
 
     public interface SetRowMapperFactory<M extends SetRowMapper<ROW, SET, T, E>, ROW, SET, T, E extends Exception> {

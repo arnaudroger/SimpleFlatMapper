@@ -45,77 +45,101 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		constantConverter(consumer, CharSequence.class, UUID.class,       new CharSequenceUUIDConverter());
 		constantConverter(consumer, CharSequence.class, Boolean.class,    new CharSequenceBooleanConverter());
 		
-		factoryConverter(consumer, new AbstractConverterFactory<CharSequence, Date>(CharSequence.class, Date.class) {
-			@Override
-			public Converter<? super CharSequence, ? extends Date> newConverter(ConvertingTypes targetedTypes, Object... params) {
-				String format = getFormat(params);
-				if (format != null) {
-					return new CharSequenceToDateConverter(format);
-				} else return null;
-			}
+		factoryConverter(consumer, new DateConverterFactory());
 
-			private String getFormat(Object[] params) {
-				String defaultValue = null;
-				if (params != null) {
-					for(Object o : params) {
-						if (o instanceof DefaultDateFormatSupplier) {
-							defaultValue = ((DefaultDateFormatSupplier) o).get();
-						} else if (o instanceof DateFormatSupplier) {
-							return ((DateFormatSupplier) o).get();
-						}
-					}
-					
-				}
-				return defaultValue;
-			}
-		});
+		factoryConverter (consumer, new EnumConverterFactory());
 
-		factoryConverter (consumer, new AbstractConverterFactory<CharSequence, Enum>(CharSequence.class, Enum.class) {
-			@SuppressWarnings("unchecked")
-			public Converter<? super CharSequence, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
-				return new CharSequenceToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
-			}
+		factoryConverter (consumer, new NumberEnumConverterFactory());
 
-			@Override
-			public ConvertingScore score(ConvertingTypes targetedTypes) {
-				if (TypeHelper.isAssignable(Enum.class, targetedTypes.getTo())) {
-					return new ConvertingScore(ConvertingTypes.getSourceScore(convertingTypes.getFrom(), targetedTypes.getFrom()), ConvertingScore.MAX_SCORE);
-				}
-				return ConvertingScore.NO_MATCH;
-			}
-		});
-
-		factoryConverter (consumer, new AbstractConverterFactory<Number, Enum>(Number.class, Enum.class) {
-			@SuppressWarnings("unchecked")
-			public Converter<? super Number, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
-				return new NumberToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
-			}
-
-			@Override
-			public ConvertingScore score(ConvertingTypes targetedTypes) {
-				if (TypeHelper.isAssignable(Enum.class, targetedTypes.getTo())) {
-					return new ConvertingScore(ConvertingTypes.getSourceScore(convertingTypes.getFrom(), targetedTypes.getFrom()), ConvertingScore.MAX_SCORE);
-				}
-				return ConvertingScore.NO_MATCH;
-			}
-		});
-
-		factoryConverter (consumer, new AbstractConverterFactory<Object, Enum>(Object.class, Enum.class) {
-			@SuppressWarnings("unchecked")
-			public Converter<? super Object, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
-				return new ObjectToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
-			}
-
-			@Override
-			public ConvertingScore score(ConvertingTypes targetedTypes) {
-				if (TypeHelper.isAssignable(Enum.class, targetedTypes.getTo())) {
-					return new ConvertingScore(ConvertingTypes.getSourceScore(convertingTypes.getFrom(), targetedTypes.getFrom()), ConvertingScore.MAX_SCORE);
-				}
-				return ConvertingScore.NO_MATCH;
-			}
-		});
+		factoryConverter (consumer, new ObjectEnumConverterFactory());
 
 		constantConverter(consumer, Object.class, String.class, ToStringConverter.INSTANCE);
 		constantConverter(consumer, Object.class, URL.class, new ToStringToURLConverter());
+	}
+
+	private static class DateConverterFactory extends AbstractConverterFactory<CharSequence, Date> {
+		public DateConverterFactory() {
+			super(CharSequence.class, Date.class);
+		}
+
+		@Override
+		public Converter<? super CharSequence, ? extends Date> newConverter(ConvertingTypes targetedTypes, Object... params) {
+			String format = getFormat(params);
+			if (format != null) {
+				return new CharSequenceToDateConverter(format);
+			} else return null;
+		}
+
+		private String getFormat(Object[] params) {
+			String defaultValue = null;
+			if (params != null) {
+				for(Object o : params) {
+					if (o instanceof DefaultDateFormatSupplier) {
+						defaultValue = ((DefaultDateFormatSupplier) o).get();
+					} else if (o instanceof DateFormatSupplier) {
+						return ((DateFormatSupplier) o).get();
+					}
+				}
+				
+			}
+			return defaultValue;
+		}
+	}
+
+	private static class EnumConverterFactory extends AbstractConverterFactory<CharSequence, Enum> {
+		public EnumConverterFactory() {
+			super(CharSequence.class, Enum.class);
+		}
+
+		@SuppressWarnings("unchecked")
+		public Converter<? super CharSequence, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
+			return new CharSequenceToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
+		}
+
+		@Override
+		public ConvertingScore score(ConvertingTypes targetedTypes) {
+			if (TypeHelper.isAssignable(Enum.class, targetedTypes.getTo())) {
+				return new ConvertingScore(ConvertingTypes.getSourceScore(convertingTypes.getFrom(), targetedTypes.getFrom()), ConvertingScore.MAX_SCORE);
+			}
+			return ConvertingScore.NO_MATCH;
+		}
+	}
+
+	private static class NumberEnumConverterFactory extends AbstractConverterFactory<Number, Enum> {
+		public NumberEnumConverterFactory() {
+			super(Number.class, Enum.class);
+		}
+
+		@SuppressWarnings("unchecked")
+		public Converter<? super Number, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
+			return new NumberToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
+		}
+
+		@Override
+		public ConvertingScore score(ConvertingTypes targetedTypes) {
+			if (TypeHelper.isAssignable(Enum.class, targetedTypes.getTo())) {
+				return new ConvertingScore(ConvertingTypes.getSourceScore(convertingTypes.getFrom(), targetedTypes.getFrom()), ConvertingScore.MAX_SCORE);
+			}
+			return ConvertingScore.NO_MATCH;
+		}
+	}
+
+	private static class ObjectEnumConverterFactory extends AbstractConverterFactory<Object, Enum> {
+		public ObjectEnumConverterFactory() {
+			super(Object.class, Enum.class);
+		}
+
+		@SuppressWarnings("unchecked")
+		public Converter<? super Object, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
+			return new ObjectToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
+		}
+
+		@Override
+		public ConvertingScore score(ConvertingTypes targetedTypes) {
+			if (TypeHelper.isAssignable(Enum.class, targetedTypes.getTo())) {
+				return new ConvertingScore(ConvertingTypes.getSourceScore(convertingTypes.getFrom(), targetedTypes.getFrom()), ConvertingScore.MAX_SCORE);
+			}
+			return ConvertingScore.NO_MATCH;
+		}
 	}
 }

@@ -112,12 +112,13 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
     @SuppressWarnings("unchecked")
-    public final ConstantSourceMapperBuilder<S, T, K> addMapping(K key, final FieldMapperColumnDefinition<K> columnDefinition) {
-        final FieldMapperColumnDefinition<K> composedDefinition = columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
+    public final ConstantSourceMapperBuilder<S, T, K> addMapping(K key, final ColumnDefinition<K, ?> columnDefinition) {
+        final ColumnDefinition<K, ?> composedDefinition = columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
         final K mappedColumnKey = composedDefinition.rename(key);
 
-        if (columnDefinition.getCustomFieldMapper() != null) {
-            addMapper((FieldMapper<S, T>) columnDefinition.getCustomFieldMapper());
+        FieldMapperProperty prop = columnDefinition.lookFor(FieldMapperProperty.class);
+        if (prop != null) {
+            addMapper((FieldMapper<S, T>) prop.getFieldMapper());
         } else {
             PropertyMapping<T, ?, K> propertyMapping = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
             if (propertyMapping != null) {

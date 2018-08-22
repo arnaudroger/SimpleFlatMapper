@@ -90,6 +90,8 @@ public abstract class AbstractColumnDefinitionProvider<K extends FieldKey<K>> im
         return  definition;
     }
 
+    public abstract AbstractColumnDefinitionProvider<K> copy();
+
     protected abstract ColumnDefinition<K, ?> identity();
 
     public List<PredicatedColunnPropertyFactory<K>> getProperties() {

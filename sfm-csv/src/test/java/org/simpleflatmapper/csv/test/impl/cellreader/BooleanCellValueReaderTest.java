@@ -1,6 +1,7 @@
 package org.simpleflatmapper.csv.test.impl.cellreader;
 
 import org.junit.Test;
+import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.CsvRow;
 
 import java.io.UnsupportedEncodingException;
@@ -9,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 
 public class BooleanCellValueReaderTest {
 
-	CsvRow reader = new CsvRow(1, 2);
+	CsvRow reader = new CsvRow(new CsvColumnKey[1], 1);
 	@Test
 	public void testRead() throws UnsupportedEncodingException {
 		testReadBoolean(null, "");
@@ -29,7 +30,7 @@ public class BooleanCellValueReaderTest {
 		final char[] chars = ("_" + str+ "_").toCharArray();
 		reader.reset();
 		reader.addValue(chars, 1, chars.length - 2);
-		assertEquals(expected, reader.getBoolean(0));
+		assertEquals(expected, reader.getBoxedBoolean(0));
 	}
 
 

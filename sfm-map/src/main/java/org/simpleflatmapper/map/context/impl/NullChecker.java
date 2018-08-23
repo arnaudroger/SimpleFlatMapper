@@ -9,9 +9,9 @@ import java.util.List;
 public class NullChecker<S, K> implements Predicate<S> {
 
     private final List<K> keys;
-    private final KeySourceGetter<K, S> keySourceGetter;
+    private final KeySourceGetter<K, ? super S> keySourceGetter;
 
-    public NullChecker(List<K> keys, KeySourceGetter<K, S> keySourceGetter) {
+    public NullChecker(List<K> keys, KeySourceGetter<K, ? super S> keySourceGetter) {
         this.keys = keys;
         this.keySourceGetter = keySourceGetter;
     }

@@ -24,16 +24,16 @@ public class MappingContextFactoryBuilder<S, K> {
     private final int currentIndex;
     private final MappingContextFactoryBuilder<S, K> parent;
     private final List<K> keys;
-    private final KeySourceGetter<K, S> keySourceGetter;
+    private final KeySourceGetter<K, ? super S> keySourceGetter;
     private final List<MappingContextFactoryBuilder<S, K>> children = new ArrayList<MappingContextFactoryBuilder<S, K>>();
     private final List<Supplier<?>> suppliers = new ArrayList<Supplier<?>>();
     private final PropertyMeta<?, ?> owner;
 
-    public MappingContextFactoryBuilder(KeySourceGetter<K, S> keySourceGetter) {
+    public MappingContextFactoryBuilder(KeySourceGetter<K, ? super S> keySourceGetter) {
         this(new Counter(), new ArrayList<K>(), keySourceGetter, null, null);
     }
 
-    protected MappingContextFactoryBuilder(Counter counter, List<K> keys, KeySourceGetter<K, S> keySourceGetter, MappingContextFactoryBuilder<S, K> parent, PropertyMeta<?, ?> owner) {
+    protected MappingContextFactoryBuilder(Counter counter, List<K> keys, KeySourceGetter<K, ? super S> keySourceGetter, MappingContextFactoryBuilder<S, K> parent, PropertyMeta<?, ?> owner) {
         this.counter = counter;
         this.currentIndex = counter.value;
         this.keys = keys;

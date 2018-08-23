@@ -2,6 +2,7 @@ package org.simpleflatmapper.datastax;
 
 import com.datastax.driver.core.*;
 import com.datastax.driver.core.exceptions.DriverException;
+import org.simpleflatmapper.datastax.impl.DatastaxKeySourceGetter;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
@@ -57,7 +58,7 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
                 new DefaultSetRowMapperBuilder<Row, ResultSet, T, DatastaxColumnKey, DriverException>(
                         classMeta, parentBuilder, mapperConfig,
                         new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, getterFactory), 
-                        KEY_FACTORY, new ResultSetEnumerableFactory()),
+                        KEY_FACTORY, new ResultSetEnumerableFactory(), DatastaxKeySourceGetter.INSTANCE),
                 new BiFunction<SetRowMapper<Row, ResultSet, T, DriverException>, List<DatastaxColumnKey>, DatastaxMapper<T>>() {
                     @Override
                     public DatastaxMapper<T> apply(SetRowMapper<Row, ResultSet, T, DriverException> setRowMapper, List<DatastaxColumnKey> keys) {

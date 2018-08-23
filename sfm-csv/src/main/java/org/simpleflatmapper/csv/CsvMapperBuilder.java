@@ -18,7 +18,6 @@ import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.csv.impl.*;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Consumer;
@@ -88,8 +87,8 @@ public class CsvMapperBuilder<T> extends MapperBuilder<CsvRow, CsvRowSet, T, Csv
 		super(KEY_FACTORY,
 				new DefaultSetRowMapperBuilder<CsvRow, CsvRowSet, T, CsvColumnKey, IOException>(
 						classMeta, parentBuilder, mapperConfig,
-						FIELD_MAPPER_SOURCE.getterFactory(getterFactory), KEY_FACTORY, new CsvRowEnumerableFactory()
-				),
+						FIELD_MAPPER_SOURCE.getterFactory(getterFactory), KEY_FACTORY, new CsvRowEnumerableFactory(),
+						CsvRowKeySourceGetter.INSTANCE),
 				new BiFunction<SetRowMapper<CsvRow, CsvRowSet, T, IOException>, List<CsvColumnKey>, CsvMapper<T>>() {
 					@Override
 					public CsvMapper<T> apply(SetRowMapper<CsvRow, CsvRowSet, T, IOException> setRowMapper, List<CsvColumnKey> keys) {

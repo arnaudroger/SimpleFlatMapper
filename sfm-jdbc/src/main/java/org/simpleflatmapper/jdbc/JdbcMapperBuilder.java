@@ -1,5 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
+import org.simpleflatmapper.jdbc.impl.JdbcKeySourceGetter;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
@@ -100,8 +101,8 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
         super(KEY_FACTORY, 
                 new DefaultSetRowMapperBuilder<ResultSet, ResultSet, T, JdbcColumnKey, SQLException>(
                         classMeta, parentBuilder, mapperConfig, 
-                        FIELD_MAPPER_SOURCE.getterFactory(getterFactory), KEY_FACTORY, new ResultSetEnumerableFactory()
-                ),
+                        FIELD_MAPPER_SOURCE.getterFactory(getterFactory), KEY_FACTORY, new ResultSetEnumerableFactory(),
+                        JdbcKeySourceGetter.INSTANCE),
                 new BiFunction<SetRowMapper<ResultSet, ResultSet, T, SQLException>, List<JdbcColumnKey>, JdbcMapper<T>>() {
                     @Override
                     public JdbcMapper<T> apply(SetRowMapper<ResultSet, ResultSet, T, SQLException> setRowMapper, List<JdbcColumnKey> keys) {

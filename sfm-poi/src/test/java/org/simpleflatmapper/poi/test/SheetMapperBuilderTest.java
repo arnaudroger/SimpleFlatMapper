@@ -24,7 +24,7 @@ public class SheetMapperBuilderTest {
     Sheet sheet;
     Row row;
     Date now = new Date();
-    CsvColumnKeyRowKeySourceGetter keySourceGetter = new CsvColumnKeyRowKeySourceGetter();
+    CsvColumnKeyRowKeySourceGetter keySourceGetter = CsvColumnKeyRowKeySourceGetter.INSTANCE;
 
     @Before
     public void setUp(){

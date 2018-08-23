@@ -3,7 +3,6 @@ package org.simpleflatmapper.poi;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
@@ -50,7 +49,7 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
         super(KEY_FACTORY, 
                 new SetRowMapperBuilderImpl<RowMapper<T> , Row, Sheet, T, CsvColumnKey, RuntimeException>(
                         classMeta,
-                        new MappingContextFactoryBuilder<Row, CsvColumnKey>(new CsvColumnKeyRowKeySourceGetter()),
+                        new MappingContextFactoryBuilder<Row, CsvColumnKey>(CsvColumnKeyRowKeySourceGetter.INSTANCE),
                         mapperConfig,
                         FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
                         KEY_FACTORY,
@@ -60,8 +59,8 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
                                 throw new UnsupportedOperationException();
                             }
                         },
-                        new RowMapperFactory<T>()
-                ),  new BiFunction<RowMapper<T>, List<CsvColumnKey>, RowMapper<T>>() {
+                        new RowMapperFactory<T>(),
+                        CsvColumnKeyRowKeySourceGetter.INSTANCE),  new BiFunction<RowMapper<T>, List<CsvColumnKey>, RowMapper<T>>() {
                     @Override
                     public RowMapper<T> apply(RowMapper<T> setRowMapper, List<CsvColumnKey> keys) {
                         return setRowMapper;

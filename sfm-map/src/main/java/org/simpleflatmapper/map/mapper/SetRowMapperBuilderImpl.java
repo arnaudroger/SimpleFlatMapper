@@ -6,14 +6,20 @@ import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactory;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.property.IgnoreRowIfNullProperty;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.Enumerable;
+import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Function;
+import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.PredicatedEnumerable;
 import org.simpleflatmapper.util.UnaryFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +33,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
     protected final MappingContextFactoryBuilder<? super ROW, K> mappingContextFactoryBuilder;
     private final UnaryFactory<SET, Enumerable<ROW>> enumerableFactory;
     private final SetRowMapperFactory<M, ROW, SET, T, E> setRowMapperFactory;
+    private final KeySourceGetter<K, ? super ROW> keySourceGetter;
 
     /**
      * @param classMeta                  the meta for the target class.
@@ -35,6 +42,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
      * @param mapperSource               the Mapper source.
      * @param keyFactory
      * @param enumerableFactory
+     * @param keySourceGetter
      */
     public SetRowMapperBuilderImpl(
             final ClassMeta<T> classMeta,
@@ -42,10 +50,12 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
             MapperConfig<K> mapperConfig,
             MapperSource<? super ROW, K> mapperSource,
             KeyFactory<K> keyFactory,
-            UnaryFactory<SET, Enumerable<ROW>> enumerableFactory, 
-            SetRowMapperFactory<M, ROW, SET, T, E> setRowMapperFactory) {
+            UnaryFactory<SET, Enumerable<ROW>> enumerableFactory,
+            SetRowMapperFactory<M, ROW, SET, T, E> setRowMapperFactory, 
+            KeySourceGetter<K, ? super ROW> keySourceGetter) {
         this.setRowMapperFactory = setRowMapperFactory;
         this.enumerableFactory = enumerableFactory;
+        this.keySourceGetter = keySourceGetter;
         this.constantSourceMapperBuilder =
                 new ConstantSourceMapperBuilder<ROW, T, K>(
                         mapperSource,
@@ -69,9 +79,9 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
             M m;
 
             if (constantSourceMapperBuilder.isRootAggregate()) {
-                m = (M) setRowMapperFactory.newTransformer(setRowMapperFactory.newJoinMapper(transformSourceFieldMapper.delegate, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory), transformSourceFieldMapper.transform);
+                m = (M) setRowMapperFactory.newTransformer(setRowMapperFactory.newJoinMapper(transformSourceFieldMapper.delegate, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory()), transformSourceFieldMapper.transform);
             } else {
-                m = (M) setRowMapperFactory.newTransformer(setRowMapperFactory.newStaticMapper(transformSourceFieldMapper.delegate, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory), transformSourceFieldMapper.transform);
+                m = (M) setRowMapperFactory.newTransformer(setRowMapperFactory.newStaticMapper(transformSourceFieldMapper.delegate, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory()), transformSourceFieldMapper.transform);
             }
 
             return m;
@@ -81,9 +91,9 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
             M m;
 
             if (constantSourceMapperBuilder.isRootAggregate()) {
-                m = setRowMapperFactory.newJoinMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory);
+                m = setRowMapperFactory.newJoinMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory());
             } else {
-                m = setRowMapperFactory.newStaticMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory);
+                m = setRowMapperFactory.newStaticMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory());
             }
 
             return m;
@@ -91,7 +101,51 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
         
         
     }
-    
+
+    private UnaryFactory<SET, Enumerable<ROW>> enumerableFactory() {
+        Predicate<ROW> filter = getRowPredicate();
+        if (filter != null) {
+            return new UnaryFactory<SET, Enumerable<ROW>>() {
+                @Override
+                public Enumerable<ROW> newInstance(SET set) {
+                    return new PredicatedEnumerable<ROW>(enumerableFactory.newInstance(set), filter);
+                }
+            };
+        }
+        return enumerableFactory;
+    }
+
+    private Predicate<ROW> getRowPredicate() {
+        List<K> mandatoryKeys = constantSourceMapperBuilder.propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K>>() {
+            List<K> mandatoryKeys = new ArrayList<>();
+
+            @Override
+            public void handle(PropertyMapping<T, ?, K> tkPropertyMapping) {
+                if (tkPropertyMapping.getColumnDefinition().has(IgnoreRowIfNullProperty.class)) {
+                    mandatoryKeys.add(tkPropertyMapping.getColumnKey());
+                }
+            }
+        }).mandatoryKeys;
+        
+        if (mandatoryKeys.isEmpty()) {
+            return null;
+        } else {
+            return new Predicate<ROW>() {
+                @Override
+                public boolean test(ROW row) {
+                    for(K k : mandatoryKeys) {
+                        try {
+                            if (keySourceGetter.getValue(k, row) == null) return false;
+                        } catch (Exception e) {
+                            ErrorHelper.rethrow(e);
+                        }
+                    }
+                    return true;
+                }
+            };
+        }
+    }
+
     @Override
     public final SourceFieldMapper<ROW, T> sourceFieldMapper() {
         return constantSourceMapperBuilder.mapper();

@@ -6,6 +6,12 @@ import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 
 public class CsvColumnKeyRowKeySourceGetter implements KeySourceGetter<CsvColumnKey, Row> {
+    
+    public static final CsvColumnKeyRowKeySourceGetter INSTANCE = new CsvColumnKeyRowKeySourceGetter();
+    
+    private CsvColumnKeyRowKeySourceGetter() {
+    }
+    
     @Override
     public Object getValue(CsvColumnKey key, Row source) {
         final Cell cell = source.getCell(key.getIndex());

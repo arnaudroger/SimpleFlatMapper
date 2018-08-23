@@ -19,16 +19,19 @@ public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Excepti
     protected final KeyFactory<K> keyFactory;
     protected final SetRowMapperBuilder<IM, ROW, SET, T, K, E> setRowMapperBuilder;
     protected final BiFunction<IM, List<K>, OM> specialisedMapper;
+    protected final Function<Object[], ColumnDefinition<K, ?>> columnDefinitionFactory;
+    
     private int calculatedIndex;
     
     public MapperBuilder(
-            KeyFactory<K> keyFactory, 
-            SetRowMapperBuilder<IM, ROW, SET, T, K, E> setRowMapperBuilder, 
-            BiFunction<IM, List<K>, OM> specialisedMapper, 
-            int calculatedIndex) {
+            KeyFactory<K> keyFactory,
+            SetRowMapperBuilder<IM, ROW, SET, T, K, E> setRowMapperBuilder,
+            BiFunction<IM, List<K>, OM> specialisedMapper,
+            Function<Object[], ColumnDefinition<K, ?>> columnDefinitionFactory, int calculatedIndex) {
         this.keyFactory = keyFactory;
         this.setRowMapperBuilder = setRowMapperBuilder;
         this.specialisedMapper = specialisedMapper;
+        this.columnDefinitionFactory = columnDefinitionFactory;
         this.calculatedIndex = calculatedIndex;
     }
 
@@ -146,7 +149,7 @@ public class MapperBuilder<ROW, SET, T, K extends FieldKey<K>, E extends Excepti
                 return  addMapping(key, (ColumnDefinition<K, ?>) properties[0]);
             }
         }
-        return addMapping(key, FieldMapperColumnDefinition.<K>of(properties));
+        return addMapping(key, columnDefinitionFactory.apply(properties));
     }
 
     private K key(String column, int index) {

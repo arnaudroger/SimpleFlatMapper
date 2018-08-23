@@ -52,6 +52,13 @@ public final class CsvRow {
 
     }
     
+    public <T> T read(CellValueReader<T> cellValueReader, int i) {
+        int start = fieldsBoundaries[i * 2];
+        int end = fieldsBoundaries[i * 2 + 1];
+
+        return cellValueReader.read(buffer, start, end, null);
+    } 
+    
        
     public CharSequence getCharSequence(int i) {
         int start = fieldsBoundaries[i * 2];
@@ -80,24 +87,31 @@ public final class CsvRow {
         return Byte.parseByte(getString(i));
     }
     public char getChar(int i) {
+        if (isEmpty(i)) return 0;
         return (char) Integer.parseInt(getString(i));
     }
     public short getShort(int i) {
+        if (isEmpty(i)) return 0;
         return Short.parseShort(getString(i));
     }
     public int getInt(int i) {
+        if (isEmpty(i)) return 0;
         return Integer.parseInt(getString(i));
     }
     public long getLong(int i) {
+        if (isEmpty(i)) return 0;
         return Long.parseLong(getString(i));
     }
     public float getFloat(int i) {
+        if (isEmpty(i)) return 0;
         return Float.parseFloat(getString(i));
     }
     public double getDouble(int i) {
+        if (isEmpty(i)) return 0;
         return Double.parseDouble(getString(i));
     }
     public boolean getBoolean(int i) {
+        if (isEmpty(i)) return false;
         int start = fieldsBoundaries[i * 2];
         int end = fieldsBoundaries[i * 2 + 1];
 
@@ -194,7 +208,7 @@ public final class CsvRow {
     }
 
     public boolean hasData() {
-        return bufferLength > 0;
+        return currentIndex > 0;
     }
 
     private static class CharSequenceImpl implements CharSequence {

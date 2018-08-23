@@ -13,14 +13,15 @@ import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.csv.impl.*;
+import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ConstantPredicate;
-import org.simpleflatmapper.util.Function;
+import org.simpleflatmapper.util.Consumer;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -40,6 +41,15 @@ public class CsvMapperBuilder<T> extends MapperBuilder<CsvRow, CsvRowSet, T, Csv
 		}
 	};
 	public static final CsvColumnKey[] EMPTY_KEYS = new CsvColumnKey[0];
+	
+	private static ColumnDefinitionProvider<CsvColumnKey> addDefaultDateFormat(AbstractColumnDefinitionProvider<CsvColumnKey> columnDefinitionProvider, String defaultDateFormat) {
+		columnDefinitionProvider.addColumnProperty(ConstantPredicate.truePredicate(), new DefaultDateFormatProperty(defaultDateFormat));
+		return columnDefinitionProvider;
+	}
+
+
+	private final GetterFactory<CsvRow, CsvColumnKey> getterFactory;
+	private final ClassMeta<T> classMeta;
 
 	public CsvMapperBuilder(final Type target) {
 		this(target, ReflectionService.newInstance());
@@ -61,11 +71,6 @@ public class CsvMapperBuilder<T> extends MapperBuilder<CsvRow, CsvRowSet, T, Csv
 				CsvRowGetterFactory.INSTANCE,
 				new CsvMappingContextFactoryBuilder()
 				);
-	}
-
-	private static ColumnDefinitionProvider<CsvColumnKey> addDefaultDateFormat(AbstractColumnDefinitionProvider<CsvColumnKey> columnDefinitionProvider, String defaultDateFormat) {
-		columnDefinitionProvider.addColumnProperty(ConstantPredicate.truePredicate(), new DefaultDateFormatProperty(defaultDateFormat));
-		return columnDefinitionProvider;
 	}
 
 	/**
@@ -90,9 +95,30 @@ public class CsvMapperBuilder<T> extends MapperBuilder<CsvRow, CsvRowSet, T, Csv
 					public CsvMapper<T> apply(SetRowMapper<CsvRow, CsvRowSet, T, IOException> setRowMapper, List<CsvColumnKey> keys) {
 						return new CsvMapperImpl<T>(setRowMapper, keys.toArray(EMPTY_KEYS));
 					}
-				},0 );
+				}, CsvColumnDefinition.COLUMN_DEFINITION_FACTORY, 0 );
+		this.classMeta = classMeta;
+		this.getterFactory = getterFactory;
 	}
-	
 
+	public void addDefaultHeaders() {
+		addDefaultHeaders(classMeta, "");
+	}
 
+	private <P> void addDefaultHeaders(final ClassMeta<P> classMeta, final String prefix) {
+		classMeta.forEachProperties(new Consumer<PropertyMeta<P,?>>() {
+
+			@Override
+			public void accept(PropertyMeta<P, ?> propertyMeta) {
+
+				String currentName = prefix +  propertyMeta.getPath();
+
+				if (propertyMeta.isSubProperty()) {
+					addDefaultHeaders(propertyMeta.getPropertyClassMeta(), currentName + "_");
+				} else {
+					addMapping(currentName);
+				}
+
+			}
+		});
+	}
 }

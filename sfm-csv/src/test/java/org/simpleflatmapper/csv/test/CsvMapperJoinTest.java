@@ -119,7 +119,9 @@ public class CsvMapperJoinTest {
                 geStaticCsvMapper(getCsvShardingMapperFactory(), ProfessorC.class);
 
         final List<ProfessorC> professors =
-                mapper.forEach(new StringReader(DATA), new ListCollector<ProfessorC>()).getList();
+                mapper
+                        .forEach(new StringReader(DATA), new ListCollector<ProfessorC>())
+                        .getList();
 
         JoinTest.validateProfessors(professors);
     }

@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -92,8 +93,8 @@ public class CsvMapperDateFormatTest {
 		assertNull(list.get(0).date2);
 		assertNull(list.get(0).date3);
 
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date3", 0)), any(), isNull(), any(Exception.class));
 		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 1)), any(), isNull(), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date3", 0)), any(),same(list.get(0)), any(Exception.class));
 		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 2)), any(), same(list.get(0)), any(Exception.class));
 	}
 
@@ -112,8 +113,8 @@ public class CsvMapperDateFormatTest {
 		assertNull(list.get(0).date2);
 		assertNull(list.get(0).date3);
 
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date3", 0)), any(), isNull(), any(Exception.class));
 		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 1)), any(), isNull(), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date3", 0)), any(), same(list.get(0)), any(Exception.class));
 		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 2)), any(),same(list.get(0)), any(Exception.class));
 	}
 
@@ -139,6 +140,7 @@ public class CsvMapperDateFormatTest {
 		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollector<ObjectWithDate>()).getList();
 		assertEquals(3, list.size());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		sdf.setTimeZone(TimeZone.getDefault());
 		assertEquals(sdf.parse("20160618"), list.get(0).date1);
 		assertEquals(sdf.parse("20160619"), list.get(1).date1);
 		assertEquals(sdf.parse("20160620"), list.get(2).date1);

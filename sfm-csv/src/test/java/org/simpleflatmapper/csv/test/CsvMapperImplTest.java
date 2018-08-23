@@ -71,12 +71,16 @@ public class CsvMapperImplTest {
             System.out.println(e.toString());
         }
 
-		Integer next = CsvMapperFactory.newInstance().fieldMapperErrorHandler(new FieldMapperErrorHandler<CsvColumnKey>() {
+		CsvMapper<Integer> csvMapper = CsvMapperFactory.newInstance().fieldMapperErrorHandler(new FieldMapperErrorHandler<CsvColumnKey>() {
 			@Override
 			public void errorMappingField(CsvColumnKey key, Object source, Object target, Exception error) throws MappingException {
 				System.out.println(error.toString());
 			}
-		}).newMapper(Integer.class).iterator(new StringReader("val\nnnnn")).next();
+		}).newMapper(Integer.class);
+		Integer next = 
+				csvMapper
+						.iterator(new StringReader("val\nnnnn"))
+						.next();
 
 		System.out.println("next = " + next);
 

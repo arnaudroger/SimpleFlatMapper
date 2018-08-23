@@ -144,7 +144,7 @@ public class ConstantSourceMapperBuilderTest {
         MyObjectWithInner o = mapper.map(null);
 
         System.out.println("mapper = " + mapper);
-        assertNull(o.prop);
+        assertNull(o.prop.date);
 
     }
 

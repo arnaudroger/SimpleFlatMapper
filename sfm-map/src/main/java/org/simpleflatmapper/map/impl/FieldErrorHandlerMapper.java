@@ -1,8 +1,10 @@
 package org.simpleflatmapper.map.impl;
 
+import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.fieldmapper.IntFieldMapper;
 
 
 public final class FieldErrorHandlerMapper<S, T, K> implements FieldMapper<S, T> {
@@ -31,5 +33,11 @@ public final class FieldErrorHandlerMapper<S, T, K> implements FieldMapper<S, T>
     @Override
     public String toString() {
         return "FieldErrorHandlerMapper{delegate=" + delegate + '}';
+	}
+	
+	
+	public  static <S, T, K extends FieldKey<K>> FieldMapper<S, T> of(K key, FieldMapper<S, T> delegate,
+															   FieldMapperErrorHandler<? super K> errorHandler) {
+		return new FieldErrorHandlerMapper<S, T, K>(key, delegate, errorHandler);
 	}
 }

@@ -15,7 +15,7 @@ public class CsvMappingContextFactoryBuilder extends MappingContextFactoryBuilde
     private static class CsvRowKeySourceGetter implements KeySourceGetter<CsvColumnKey, CsvRow> {
         @Override
         public Object getValue(CsvColumnKey key, CsvRow source) {
-            return source.getCharSequence(key.getIndex());
+            return source.getString(key.getIndex());
         }
     }
 }

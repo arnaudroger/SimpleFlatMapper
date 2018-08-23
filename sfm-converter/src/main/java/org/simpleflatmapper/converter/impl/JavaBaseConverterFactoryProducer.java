@@ -10,6 +10,7 @@ import org.simpleflatmapper.converter.ConvertingTypes;
 
 import org.simpleflatmapper.converter.ToStringConverter;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.date.DateFormatSupplier;
 import org.simpleflatmapper.util.date.DefaultDateFormatSupplier;
@@ -17,7 +18,10 @@ import org.simpleflatmapper.util.date.DefaultDateFormatSupplier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
 public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryProducer {
@@ -64,25 +68,52 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 
 		@Override
 		public Converter<? super CharSequence, ? extends Date> newConverter(ConvertingTypes targetedTypes, Object... params) {
-			String format = getFormat(params);
-			if (format != null) {
-				return new CharSequenceToDateConverter(format);
-			} else return null;
+			List<String> formats = getFormat(params);
+			TimeZone timeZone = getTimeZone(params);
+			if (formats.isEmpty()) {
+				return null;
+			} else if (formats.size() == 1) {
+				return new CharSequenceToDateConverter(formats.get(0), timeZone);
+			} else {
+				return new MultiFormatCharSequenceToDateConverter(formats, timeZone);
+			}
 		}
 
-		private String getFormat(Object[] params) {
+		private TimeZone getTimeZone(Object[] params) {
+			TimeZone defaultValue = TimeZone.getDefault();
+			if (params != null) {
+				for(Object o : params) {
+					if (o instanceof Supplier) {
+						Supplier s = (Supplier) o;
+						Object o1 = s.get();
+						if (o1 instanceof TimeZone) {
+							return (TimeZone) o1;
+						}
+					}
+				}
+
+			}
+			return defaultValue;
+		}
+
+		private List<String> getFormat(Object[] params) {
+			
 			String defaultValue = null;
+			List<String> formats = new ArrayList<String>();
 			if (params != null) {
 				for(Object o : params) {
 					if (o instanceof DefaultDateFormatSupplier) {
 						defaultValue = ((DefaultDateFormatSupplier) o).get();
 					} else if (o instanceof DateFormatSupplier) {
-						return ((DateFormatSupplier) o).get();
+						formats.add(((DateFormatSupplier) o).get());
 					}
 				}
 				
 			}
-			return defaultValue;
+			if (formats.isEmpty() && defaultValue != null) {
+				formats.add(defaultValue);
+			}
+			return formats;
 		}
 	}
 

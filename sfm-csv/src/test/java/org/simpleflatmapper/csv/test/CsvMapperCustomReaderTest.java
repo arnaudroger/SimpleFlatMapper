@@ -59,7 +59,9 @@ public class CsvMapperCustomReaderTest {
 
 
         try {
-            csvMapperFactory.newBuilder(DbObject.class).addMapping("id");
+            csvMapperFactory
+                    .newBuilder(DbObject.class)
+                    .addMapping("id");
             fail("Expect exception due to incompatible custom reader");
         } catch(Exception e) {
         }

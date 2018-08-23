@@ -934,7 +934,7 @@ public class AbstractMapperBuilderTest {
                             return setRowMapper;
                         }
                     },
-                            0);
+                    FieldMapperColumnDefinition.factory(), 0);
         }
         public SampleMapperBuilder(ClassMeta<T> classMeta) {
             this(classMeta, MapperConfig.<SampleFieldKey>fieldMapperConfig());

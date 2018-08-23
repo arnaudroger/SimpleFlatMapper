@@ -5,12 +5,13 @@ import com.datastax.driver.core.exceptions.DriverException;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.DefaultSetRowMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.impl.ResultSetEnumerable;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
@@ -39,6 +40,7 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
             return new DatastaxColumnKey(name, i);
         }
     };
+    public static final Function<Object[], ColumnDefinition<DatastaxColumnKey, ?>> COLUMN_DEFINITION_FACTORY = FieldMapperColumnDefinition.factory();
 
     /**
      * @param classMeta                  the meta for the target class.
@@ -62,7 +64,7 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
                         return new DatastaxMapperImpl<T>(setRowMapper);
                     }
                 },
-                0);
+                COLUMN_DEFINITION_FACTORY, 0);
     }
 
 

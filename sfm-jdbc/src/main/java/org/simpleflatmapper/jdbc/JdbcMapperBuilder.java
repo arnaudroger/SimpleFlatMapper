@@ -1,14 +1,13 @@
 package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.Result;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.DefaultSetRowMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
-import org.simpleflatmapper.map.mapper.SetRowMapperBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
@@ -48,7 +47,8 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
             return new JdbcColumnKey(name, i);
         }
     };
-    
+    public static final Function<Object[], ColumnDefinition<JdbcColumnKey, ?>> COLUMN_DEFINITION_FACTORY = FieldMapperColumnDefinition.factory();
+
     private final MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> mappingContextFactoryBuilder;
 
 
@@ -107,7 +107,9 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
                     public JdbcMapper<T> apply(SetRowMapper<ResultSet, ResultSet, T, SQLException> setRowMapper, List<JdbcColumnKey> keys) {
                         return new JdbcMapperImpl<T>(setRowMapper, parentBuilder.newFactory());
                     }
-                },1 );
+                }, 
+                COLUMN_DEFINITION_FACTORY,
+                1 );
         this.mappingContextFactoryBuilder = parentBuilder;   
     }
 

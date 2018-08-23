@@ -3,19 +3,21 @@ package org.simpleflatmapper.poi;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
+import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
 import org.simpleflatmapper.map.mapper.SetRowMapperBuilderImpl;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.poi.impl.JoinSheetMapper;
 import org.simpleflatmapper.poi.impl.StaticSheetMapper;
 import org.simpleflatmapper.poi.impl.TransformRowMapper;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
@@ -39,6 +41,7 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
             return new CsvColumnKey(name, i);
         }
     };
+    public static final Function<Object[], ColumnDefinition<CsvColumnKey, ?>> COLUMN_DEFINITION_FACTORY = FieldMapperColumnDefinition.factory();
 
 
     public SheetMapperBuilder(ClassMeta<T> classMeta,
@@ -63,7 +66,7 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
                     public RowMapper<T> apply(RowMapper<T> setRowMapper, List<CsvColumnKey> keys) {
                         return setRowMapper;
                     }
-                }, 0
+                }, COLUMN_DEFINITION_FACTORY, 0
                 
         );
     }

@@ -22,23 +22,22 @@ public class CsvMapperCustomReaderFactoryTest {
 
     @Test
     public void testCustomReaderFactory() throws IOException {
-        fail();
-//        CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().failOnAsm(true).cellValueReaderFactory(new CellValueReaderFactory() {
-//            @Override
-//            public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder builder) {
-//                return new CellValueReader<P>() {
-//                    @SuppressWarnings("unchecked")
-//                    @Override
-//                    public P read(char[] chars, int offset, int length, ParsingContext parsingContext) {
-//                        return (P) "Hello!";
-//                    }
-//                };
-//            }
-//        }).newBuilder(DbObject.class).addMapping("name").mapper();
-//
-//        DbObject bop = mapper.iterator(new StringReader("bop")).next();
-//
-//        assertEquals("Hello!", bop.getName());
+        CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().failOnAsm(true).cellValueReaderFactory(new CellValueReaderFactory() {
+            @Override
+            public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder builder) {
+                return new CellValueReader<P>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public P read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+                        return (P) "Hello!";
+                    }
+                };
+            }
+        }).newBuilder(DbObject.class).addMapping("name").mapper();
+
+        DbObject bop = mapper.iterator(new StringReader("bop")).next();
+
+        assertEquals("Hello!", bop.getName());
 
 
     }

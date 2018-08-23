@@ -3,6 +3,7 @@ package org.simpleflatmapper.csv;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.mapper.CsvMappingContextFactoryBuilder;
 import org.simpleflatmapper.csv.mapper.CsvRowGetterFactory;
+import org.simpleflatmapper.csv.property.CustomReaderFactoryProperty;
 import org.simpleflatmapper.csv.property.CustomReaderProperty;
 import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.lightningcsv.StringReader;
@@ -15,8 +16,8 @@ import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.DynamicSetRowMapper;
 import org.simpleflatmapper.map.mapper.MapperKey;
+import org.simpleflatmapper.map.mapper.TransformSetRowMapper;
 import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.ParameterizedTypeImpl;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.util.CheckedConsumer;
@@ -69,9 +70,14 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 	public static CsvMapperFactory newInstance() {
 		return new CsvMapperFactory();
 	}
-
+	public static CsvMapperFactory newInstance(AbstractColumnDefinitionProvider<CsvColumnKey> columnDefinitionProvider) {
+		return new CsvMapperFactory(columnDefinitionProvider);
+	}
 	private String defaultDateFormat = CsvMapperBuilder.DEFAULT_DATE_FORMAT;
 
+	private CsvMapperFactory(AbstractColumnDefinitionProvider<CsvColumnKey> columnDefinitionProvider) {
+		super(columnDefinitionProvider, CsvColumnDefinition.identity());
+	}
 
 	private CsvMapperFactory() {
 		super(new CsvColumnDefinitionProviderImpl(), CsvColumnDefinition.identity());
@@ -122,9 +128,7 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 	}
 
 	public <T> CsvMapper<T> newMapper(final ClassMeta<T> classMeta) throws MapperBuildingException {
-		return new DynamicCsvSetRowMapper<T>(
-				new SetRowMapperFactory<T>(classMeta),  new CsvRowMapperKeyFactory(),  new CsvRowSetMapperKeyFactory()
-					);
+		return new DynamicCsvSetRowMapper<T>(new SetRowMapperFactory<T>(this, classMeta),  new CsvRowMapperKeyFactory(),  new CsvRowSetMapperKeyFactory());
 	}
 
 	public <T> CsvMapper<Result<T,CsvColumnKey>> newErrorCollectingMapper(final Class<T> target) throws MapperBuildingException {
@@ -136,15 +140,30 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 	}
 
 	public <T> CsvMapper<Result<T,CsvColumnKey>> newErrorCollectingMapper(final Type target) throws MapperBuildingException {
-		CsvMapper<Result.ResultBuilder<T, CsvColumnKey>> csvMapper = 
-				new CsvMapperFactory(this)
-						.fieldMapperErrorHandler(new ResultFieldMapperErrorHandler<CsvColumnKey>())
-				.newMapper(new ParameterizedTypeImpl(Result.ResultBuilder.class, target, CsvColumnKey.class))
-				;
-		Function<Result.ResultBuilder<T, CsvColumnKey>, Result<T, CsvColumnKey>> resultBuilderResultFunction = Result.buildingFunction();
-		//return new TransformCsvMapper<Result.ResultBuilder<T, CsvColumnKey>, Result<T, CsvColumnKey>>(csvMapper, resultBuilderResultFunction);
-		return null;
+		final ClassMeta<Result.ResultBuilder<T, CsvColumnKey>> classMeta = getClassMeta(new ParameterizedTypeImpl(Result.ResultBuilder.class, target, CsvColumnKey.class));
+
+		CsvMapperFactory csvMapperFactory = new CsvMapperFactory(this)
+				.fieldMapperErrorHandler(new ResultFieldMapperErrorHandler<CsvColumnKey>());
+
+		final SetRowMapperFactory<Result.ResultBuilder<T, CsvColumnKey>> setRowMapperFactory = new SetRowMapperFactory<Result.ResultBuilder<T, CsvColumnKey>>(csvMapperFactory, classMeta);
 		
+		return new DynamicCsvSetRowMapper<Result<T,CsvColumnKey>>(
+				new UnaryFactory<MapperKey<CsvColumnKey>, SetRowMapper<CsvRow, CsvRowSet, Result<T, CsvColumnKey>, IOException>>() {
+					@Override
+					public SetRowMapper<CsvRow, CsvRowSet, Result<T, CsvColumnKey>, IOException> newInstance(MapperKey<CsvColumnKey> csvColumnKeyMapperKey) {
+						SetRowMapper<CsvRow, CsvRowSet, Result.ResultBuilder<T, CsvColumnKey>, IOException> rowMapper = setRowMapperFactory.newInstance(csvColumnKeyMapperKey);
+						
+						return new TransformSetRowMapper<CsvRow, CsvRowSet, Result.ResultBuilder<T, CsvColumnKey>, Result<T, CsvColumnKey>, IOException>(
+								rowMapper,
+								new Function<Result.ResultBuilder<T, CsvColumnKey>, Result<T, CsvColumnKey>>() {
+									@Override
+									public Result<T, CsvColumnKey> apply(Result.ResultBuilder<T, CsvColumnKey> tCsvColumnKeyResultBuilder) {
+										return tCsvColumnKeyResultBuilder.build();
+									}
+								}
+						);
+					}
+				}, new CsvRowMapperKeyFactory(), new CsvRowSetMapperKeyFactory());
 	}
 
 	/**
@@ -173,6 +192,10 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 		return builder;
 	}
 
+	public CsvMapperFactory cellValueReaderFactory(CellValueReaderFactory cellValueReaderFactory) {
+		return addColumnProperty(ConstantPredicate.truePredicate(), new CustomReaderFactoryProperty(cellValueReaderFactory));
+	}
+
 	private static class CsvRowSetMapperKeyFactory implements UnaryFactoryWithException<CsvRowSet, MapperKey<CsvColumnKey>, IOException> {
 		@Override
 		public MapperKey<CsvColumnKey> newInstance(CsvRowSet csvRowSet) throws IOException {
@@ -186,16 +209,18 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 		}
 	}
 
-	private class SetRowMapperFactory<T> implements UnaryFactory<MapperKey<CsvColumnKey>, SetRowMapper<CsvRow, CsvRowSet, T,IOException>> {
+	private static class SetRowMapperFactory<T> implements UnaryFactory<MapperKey<CsvColumnKey>, SetRowMapper<CsvRow, CsvRowSet, T,IOException>> {
+		private final CsvMapperFactory csvMapperFactory;
 		private final ClassMeta<T> classMeta;
 
-		public SetRowMapperFactory(ClassMeta<T> classMeta) {
+		public SetRowMapperFactory(CsvMapperFactory csvMapperFactory, ClassMeta<T> classMeta) {
+			this.csvMapperFactory = csvMapperFactory;
 			this.classMeta = classMeta;
 		}
 
 		@Override
 		public SetRowMapper<CsvRow, CsvRowSet,T,IOException> newInstance(MapperKey<CsvColumnKey> mapperKey) {
-			final CsvMapperBuilder<T> builder = newBuilder(classMeta);
+			final CsvMapperBuilder<T> builder = csvMapperFactory.newBuilder(classMeta);
 			for(CsvColumnKey key : mapperKey.getColumns()) {
 				builder.addMapping(key);
 			}

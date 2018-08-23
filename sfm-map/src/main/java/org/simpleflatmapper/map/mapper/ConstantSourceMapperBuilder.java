@@ -2,11 +2,13 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
 import org.simpleflatmapper.map.fieldmapper.MapperFieldMapper;
+import org.simpleflatmapper.map.impl.FieldErrorHandlerGetter;
 import org.simpleflatmapper.map.impl.GenericBuilder;
 import org.simpleflatmapper.map.impl.GetterMapper;
 import org.simpleflatmapper.map.impl.JoinUtils;
@@ -61,6 +63,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import static org.simpleflatmapper.map.impl.FieldErrorHandlerGetter.of;
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 import static org.simpleflatmapper.util.ErrorDoc.CSFM_GETTER_NOT_FOUND;
 
@@ -453,7 +456,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
     private GetterFactory<? super S, K> fieldMapperAsGetterFactory() {
-        return new FieldMapperFactoryGetterFactoryAdapter();
+        return new FieldMapperFactoryGetterFactoryAdapter(mapperConfig.fieldMapperErrorHandler());
     }
 
     @SuppressWarnings("unchecked")
@@ -802,11 +805,18 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         return wrapFieldMapperWithErrorHandler(t.getColumnKey(), fieldMapper);
 	}
 
-    private <P> FieldMapper<S, T> wrapFieldMapperWithErrorHandler(final K columnKey, final FieldMapper<S, T> fieldMapper) {
+    private <T> FieldMapper<S, T> wrapFieldMapperWithErrorHandler(final K columnKey, final FieldMapper<S, T> fieldMapper) {
         if (fieldMapper != null && mapperConfig.hasFieldMapperErrorHandler()) {
-            return new FieldErrorHandlerMapper<S, T, K>(columnKey, fieldMapper, mapperConfig.fieldMapperErrorHandler());
+            return FieldErrorHandlerMapper.<S, T, K>of(columnKey, fieldMapper, mapperConfig.fieldMapperErrorHandler());
         }
         return fieldMapper;
+    }
+
+    private <T> Getter<S, T> wrapGetterWithErrorHandler(final K columnKey, final Getter<S, T> getter) {
+        if (getter != null && mapperConfig.hasFieldMapperErrorHandler()) {
+            return FieldErrorHandlerGetter.<S, T, K>of(columnKey, getter, mapperConfig.fieldMapperErrorHandler());
+        }
+        return getter;
     }
 
     public void addMapper(FieldMapper<S, T> mapper) {
@@ -975,7 +985,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 SubPropertyMeta sb = (SubPropertyMeta) propertyMeta;
                 return needTransformer(sb.getOwnerProperty()) || needTransformer(sb.getSubProperty());
             } else {
-                return propertyMeta.getPropertyClassMeta().needTransformer();
+                return !propertyMeta.isSelf() && propertyMeta.getPropertyClassMeta().needTransformer();
             }
         }
 
@@ -990,7 +1000,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         }
         
         public GetterAndFieldMapper getterAndfieldMapper() {
-            Getter<? super S, ?> getter = getGetter();
+            Getter<? super S, ?> getter = wrapGetterWithErrorHandler(propertyMapping.getColumnKey(), (Getter)getGetter());
             BiFunctionGetter<S, MappingContext<? super S>, Object> biFunctionGetter = new BiFunctionGetter<S, MappingContext<? super S>, Object>(getter);
 
             FieldMapper<S, T> fieldMapper;
@@ -1193,11 +1203,22 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     private class FieldMapperFactoryGetterFactoryAdapter implements GetterFactory<S, K> {
+        private final FieldMapperErrorHandler<? super K> fieldMapperErrorHandler;
+
+        public FieldMapperFactoryGetterFactoryAdapter(FieldMapperErrorHandler<? super K> fieldMapperErrorHandler) {
+            this.fieldMapperErrorHandler = fieldMapperErrorHandler;
+        }
+
         @SuppressWarnings("unchecked")
         @Override
         public <P> Getter<S, P> newGetter(Type target, K key, Object... properties) {
             FieldMapperColumnDefinition<K> columnDefinition = FieldMapperColumnDefinition.<K>identity().add(properties);
-            return (Getter<S, P>) fieldMapperFactory.getGetterFromSource(key, target , columnDefinition, new ClassMetaSupplier<P>(target));
+            Getter<? super S, ? extends P> getterFromSource = fieldMapperFactory.getGetterFromSource(key, target, columnDefinition, new ClassMetaSupplier<P>(target));
+            
+            if (fieldMapperErrorHandler != null) {
+                return FieldErrorHandlerGetter.<S, P, K>of(key, getterFromSource, fieldMapperErrorHandler);
+            }
+            return (Getter<S, P>) getterFromSource;
         }
     }
     private class ClassMetaSupplier<P> implements Supplier<ClassMeta<P>> {

@@ -1,14 +1,16 @@
 package org.simpleflatmapper.map.fieldmapper;
 
+import org.simpleflatmapper.GetterWithDefaultValue;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.property.ConverterProperty;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
+import org.simpleflatmapper.map.property.DefaultValueProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
@@ -24,7 +26,6 @@ import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
-import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -156,6 +157,18 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 			getter = lookForAlternativeGetter(propertyClassMetaSupplier.get(), columnKey, columnDefinition, new HashSet<Type>());
 		}
 
+		DefaultValueProperty defaultValueProperty = columnDefinition.lookFor(DefaultValueProperty.class);
+		if (defaultValueProperty != null) {
+			Object value = defaultValueProperty.getValue();
+			if (value != null) {
+				if (TypeHelper.isAssignable(propertyType, value.getClass())) {
+					getter = new GetterWithDefaultValue<S, P>(getter, (P) value);
+				} else {
+					throw new IllegalArgumentException("Incompatible default value " + value + " type " + value.getClass() + " with property " + columnKey + " of type " + propertyType);
+				}
+			}
+		}
+
 		return getter;
 	}
 
@@ -183,12 +196,12 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
                 scorer);
 
 		if (id != null) {
-            return getGettetInstantiator(classMeta, id, key, columnDefinition, types);
+            return getGetterInstantiator(classMeta, id, key, columnDefinition, types);
         }
 		return null;
 	}
 
-	private <T, P> Getter<? super S, ? extends P> getGettetInstantiator(
+	private <T, P> Getter<? super S, ? extends P> getGetterInstantiator(
 			ClassMeta<P> classMeta,
 			InstantiatorDefinition id, K key, ColumnDefinition<K, ?> columnDefinition,
 			Collection<Type> types) {

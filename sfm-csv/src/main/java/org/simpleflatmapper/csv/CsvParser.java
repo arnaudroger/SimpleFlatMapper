@@ -14,6 +14,7 @@ import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.tuple.Tuple3;
 import org.simpleflatmapper.tuple.Tuple4;
@@ -22,6 +23,7 @@ import org.simpleflatmapper.tuple.Tuple6;
 import org.simpleflatmapper.tuple.Tuple7;
 import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.CloseableIterator;
@@ -520,7 +522,7 @@ public final class CsvParser {
 			this(dsl, ReflectionService.newInstance().<T>getClassMeta(mapToClass), mapToClass, new CsvColumnDefinitionProviderImpl());
 		}
 		private MapToDSL(org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
-			super(dsl, null); //new DynamicCsvMapper<T>(mapToClass, classMeta, columnDefinitionProvider)); // TODO
+			super(dsl, CsvMapperFactory.newInstance(columnDefinitionProvider).newMapper(classMeta));
 			this.mapToClass = mapToClass;
 			this.classMeta = classMeta;
 			this.columnDefinitionProvider = columnDefinitionProvider;
@@ -666,6 +668,7 @@ public final class CsvParser {
 		private final CsvMapper<T> mapper;
 
 		public MapWithDSL(org.simpleflatmapper.lightningcsv.CsvParser.AbstractDSL dsl, CsvMapper<T> mapper) {
+			if (mapper == null) throw new NullPointerException();
 			this.dsl = dsl;
 			this.mapper = mapper;
 		}
@@ -778,9 +781,15 @@ public final class CsvParser {
 	
 	private static <T> CsvMapper<T> newDefaultStaticMapper(ClassMeta<T> classMeta, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(classMeta, columnDefinitionProvider);
-		//builder.addDefaultHeaders();
+
+		builder.addDefaultHeaders();
 		return builder.mapper();
 	}
+
+	private static <T> void addDefaultHeaders(final CsvMapperBuilder<T> builder, final ClassMeta<T> classMeta, final String prefix) {
+		
+	}
+
 	private static <T> CsvMapper<T> newStaticMapper(ClassMeta<T> classMeta, List<Tuple2<String, ColumnDefinition<CsvColumnKey, ?>>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(classMeta, columnDefinitionProvider);
 		for(Tuple2<String, ColumnDefinition<CsvColumnKey, ?>> col: columns) {

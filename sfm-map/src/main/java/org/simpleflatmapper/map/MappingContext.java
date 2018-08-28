@@ -1,8 +1,9 @@
 package org.simpleflatmapper.map;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 
-public class MappingContext<S> {
+public class MappingContext<S> implements Context {
 
     public static final MappingContext EMPTY_CONTEXT = new MappingContext();
 

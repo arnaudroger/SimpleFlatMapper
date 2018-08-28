@@ -1,5 +1,6 @@
 package org.simpleflatmapper.datastax.impl;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.converter.Converter;
 
@@ -12,7 +13,7 @@ public class ConverterMapper<I, O> implements Converter<I, O> {
     }
 
     @Override
-    public O convert(I in) throws Exception {
+    public O convert(I in, Context context) throws Exception {
         return mapper.map(in);
     }
 }

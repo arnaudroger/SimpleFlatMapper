@@ -1,10 +1,9 @@
 package org.simpleflatmapper.converter.impl.time;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
-import java.time.Instant;
 import java.time.Year;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class CharSequenceToYearConverter implements Converter<CharSequence, Year> {
@@ -16,7 +15,7 @@ public class CharSequenceToYearConverter implements Converter<CharSequence, Year
     }
 
     @Override
-    public Year convert(CharSequence in) throws Exception {
+    public Year convert(CharSequence in, Context context) throws Exception {
         if (in == null || in.length() == 0) return null;
         return Year.parse(in, dateTimeFormatter);
     }

@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jdbc.test;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
@@ -62,7 +63,7 @@ public class JdbcMapperEnumTest {
         builder.addMapping("val",1, Types.VARCHAR, new Object[] {
                 ConverterProperty.of(new Converter<String, DbObject.Type>() {
             @Override
-            public DbObject.Type convert(String s) throws Exception {
+            public DbObject.Type convert(String s, Context context) throws Exception {
                 return DbObject.Type.shortForm(s);
             }
         })});

@@ -23,7 +23,7 @@ public class ConvertingAppender<S, P> implements FieldMapper<S, Appendable> {
     public void mapTo(S source, Appendable target, MappingContext<? super S> context) throws Exception {
         P o = getter.get(source);
         if (o != null) {
-            cellWriter.writeValue(converter.convert(o), target);
+            cellWriter.writeValue(converter.convert(o, null), target);
         }
     }
 }

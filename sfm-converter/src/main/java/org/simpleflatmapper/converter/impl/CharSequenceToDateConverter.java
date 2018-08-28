@@ -1,5 +1,6 @@
 package org.simpleflatmapper.converter.impl;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.text.SimpleDateFormat;
@@ -17,7 +18,7 @@ public class CharSequenceToDateConverter implements Converter<CharSequence, Date
     }
 
     @Override
-    public Date convert(CharSequence in) throws Exception {
+    public Date convert(CharSequence in, Context context) throws Exception {
         if (in == null || in.length() == 0) return null;
         return ((SimpleDateFormat)format.clone()).parse(in.toString());
     }

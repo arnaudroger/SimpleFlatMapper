@@ -165,7 +165,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
 
             K key;
             try {
-                key = keyConverter.convert(keyStringValue);
+                key = keyConverter.convert(keyStringValue, null);
             } catch (Exception e) {
                 // invalid key..
                 return null;

@@ -1,5 +1,6 @@
 package org.simpleflatmapper.jdbc.converter.time;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.sql.Time;
@@ -14,7 +15,7 @@ public class TimeToOffsetTimeConverter implements Converter<Time, OffsetTime> {
     }
 
     @Override
-    public OffsetTime convert(Time in) throws Exception {
+    public OffsetTime convert(Time in, Context context) throws Exception {
         if (in == null) return null;
         return in.toLocalTime().atOffset(offset);
     }

@@ -29,7 +29,7 @@ public class DatastaxMapWithConverterGetter<K, V, KO, VO> implements Getter<Gett
 
         Map<KO, VO> outMap = new HashMap<KO, VO>();
         for(Map.Entry<K,V> e : map.entrySet()) {
-            outMap.put(keyConverter.convert(e.getKey()), valueConverter.convert(e.getValue()));
+            outMap.put(keyConverter.convert(e.getKey(), null), valueConverter.convert(e.getValue(), null));
         }
         return outMap;
     }

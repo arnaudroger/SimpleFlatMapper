@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.ByteSetter;
 
 public final class ByteFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final ByteGetter<? super S> getter;
+	private final ByteFieldMapperGetter<? super S> getter;
 	private final ByteSetter<? super T> setter;
 	
- 	public ByteFieldMapper(final ByteGetter<? super S> getter, final ByteSetter<? super T> setter) {
+ 	public ByteFieldMapper(final ByteFieldMapperGetter<? super S> getter, final ByteSetter<? super T> setter) {
 		this.getter = getter;
 		this.setter = setter;
 	}
@@ -18,7 +18,7 @@ public final class ByteFieldMapper<S, T> implements FieldMapper<S, T> {
 
 	@Override
 	public void mapTo(final S source, final T target, MappingContext<? super S> mappingContext) throws Exception {
-        setter.setByte(target, getter.getByte(source));
+        setter.setByte(target, getter.getByte(source, mappingContext));
 	}
 
     @Override

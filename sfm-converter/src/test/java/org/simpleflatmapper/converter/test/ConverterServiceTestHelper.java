@@ -18,7 +18,7 @@ public class ConverterServiceTestHelper {
     public static <I, O> void testConverter(I i, O o, Class<I> classi, Class<O> classo, Object... params) throws Exception {
         final Converter<? super I, ? extends O> converter = ConverterService.getInstance().findConverter(classi, classo, params);
         assertNotNull("Converter not null", converter);
-        assertEquals(o, converter.convert(i));
+        assertEquals(o, converter.convert(i, null));
         assertNotNull(converter.toString());
     }
 

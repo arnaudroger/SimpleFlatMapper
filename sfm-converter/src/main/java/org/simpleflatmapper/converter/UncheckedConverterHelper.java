@@ -18,9 +18,9 @@ public final class UncheckedConverterHelper {
         }
 
         @Override
-        public O convert(I in) {
+        public O convert(I in, Context context) {
             try {
-                return converter.convert(in);
+                return converter.convert(in, context);
             } catch (Exception e) {
                 return ErrorHelper.rethrow(e);
             }

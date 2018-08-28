@@ -6,6 +6,7 @@ import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
 import org.simpleflatmapper.util.Enumerable;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.UnaryFactory;
 
@@ -14,12 +15,12 @@ import java.util.List;
 public class DiscriminatorMapper<ROW, ROWS, T, EX extends Exception> extends AbstractEnumerableDelegateMapper<ROW, ROWS, T, EX> {
 
     private final List<PredicatedMapper<ROW, ROWS, T, EX>> mappers;
-    private final UncheckedConverter<ROW, String> errorConverter;
+    private final Function<ROW, String> errorConverter;
     private final UnaryFactory<ROWS, Enumerable<ROW>> rowEnumerableFactory;
 
     public DiscriminatorMapper(List<PredicatedMapper<ROW, ROWS, T, EX>> mappers,
                                UnaryFactory<ROWS, Enumerable<ROW>> rowEnumerableFactory,
-                               UncheckedConverter<ROW, String> errorConverter,
+                               Function<ROW, String> errorConverter,
                                ConsumerErrorHandler consumerErrorHandler) {
         super(consumerErrorHandler);
         this.mappers = mappers;
@@ -35,7 +36,7 @@ public class DiscriminatorMapper<ROW, ROWS, T, EX extends Exception> extends Abs
                 return tm.getMapper();
             }
         }
-        throw new MappingException("No mapper found for " + errorConverter.convert(row));
+        throw new MappingException("No mapper found for " + errorConverter.apply(row));
     }
 
 

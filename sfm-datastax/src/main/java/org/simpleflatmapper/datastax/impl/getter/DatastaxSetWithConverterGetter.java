@@ -27,7 +27,7 @@ public class DatastaxSetWithConverterGetter<I, T> implements Getter<GettableByIn
 
         Set<T> convertedSet = new HashSet<T>();
         for(I i : set) {
-            convertedSet.add(converter.convert(i));
+            convertedSet.add(converter.convert(i, null));
         }
         return convertedSet;
     }

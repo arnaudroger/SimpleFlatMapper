@@ -1,10 +1,9 @@
 package org.simpleflatmapper.converter.impl.time;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
-import java.time.Instant;
 import java.time.OffsetTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class CharSequenceToOffsetTimeConverter implements Converter<CharSequence, OffsetTime> {
@@ -16,7 +15,7 @@ public class CharSequenceToOffsetTimeConverter implements Converter<CharSequence
     }
 
     @Override
-    public OffsetTime convert(CharSequence in) throws Exception {
+    public OffsetTime convert(CharSequence in, Context context) throws Exception {
         if (in == null || in.length() == 0) return null;
         return OffsetTime.parse(in, dateTimeFormatter);
     }

@@ -2,6 +2,7 @@ package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.UncheckedConverter;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
@@ -15,6 +16,7 @@ import org.simpleflatmapper.test.beans.StudentGS;
 import org.simpleflatmapper.util.ArrayEnumerable;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.UnaryFactory;
@@ -125,9 +127,9 @@ public class DiscriminatorMapperTest {
                             public Enumerable<Object[]> newInstance(Object[][] objects) {
                                 return new ArrayEnumerable<Object[]>(objects);
                             }
-                        }, new UncheckedConverter<Object[], String>() {
+                        }, new Function<Object[], String>() {
                     @Override
-                    public String convert(Object[] in) {
+                    public String apply(Object[] in) {
                         return Arrays.toString(in);
                     }
                 }, RethrowConsumerErrorHandler.INSTANCE);

@@ -16,12 +16,12 @@ public class TimeToOffsetTimeConverterTest {
     @Test
     public void testConvertTime() throws Exception {
         Time time = new Time(System.currentTimeMillis());
-        OffsetTime offsetTime = converter.convert(time);
+        OffsetTime offsetTime = converter.convert(time, null);
         assertEquals(time.toLocalTime().atOffset(offset), offsetTime);
     }
 
     @Test
     public void testConvertNull() throws Exception {
-        assertNull(converter.convert(null));
+        assertNull(converter.convert(null, null));
     }
 }

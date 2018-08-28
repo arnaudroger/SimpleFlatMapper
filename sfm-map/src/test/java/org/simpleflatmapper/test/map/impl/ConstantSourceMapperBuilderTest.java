@@ -5,6 +5,8 @@ import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterFactory;
+import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterFactoryAdapter;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
@@ -69,8 +71,8 @@ public class ConstantSourceMapperBuilderTest {
         }
 
         @Override
-        public GetterFactory<Object, SampleFieldKey> getterFactory() {
-            return getterFactory;
+        public FieldMapperGetterFactory<Object, SampleFieldKey> getterFactory() {
+            return new FieldMapperGetterFactoryAdapter<>(getterFactory);
         }
     };
     @Test

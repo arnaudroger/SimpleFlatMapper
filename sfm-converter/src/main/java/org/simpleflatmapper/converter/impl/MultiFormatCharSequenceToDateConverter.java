@@ -1,5 +1,6 @@
 package org.simpleflatmapper.converter.impl;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.text.ParseException;
@@ -23,7 +24,7 @@ public class MultiFormatCharSequenceToDateConverter implements Converter<CharSeq
     }
 
     @Override
-    public Date convert(CharSequence in) throws Exception {
+    public Date convert(CharSequence in, Context context) throws Exception {
         if (in == null || in.length() == 0) return null;
         
         for(int i = 0; i < formats.length; i++) {

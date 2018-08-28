@@ -2,9 +2,8 @@ package org.simpleflatmapper.converter.joda.impl;
 
 import org.joda.time.ReadablePartial;
 import org.joda.time.format.DateTimeFormatter;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
-
-import java.io.IOException;
 
 
 public class JodaReadablePartialToStringConverter implements Converter<ReadablePartial, String> {
@@ -16,7 +15,7 @@ public class JodaReadablePartialToStringConverter implements Converter<ReadableP
     }
 
     @Override
-    public String convert(ReadablePartial in) throws Exception {
+    public String convert(ReadablePartial in, Context context) throws Exception {
         return dateTimeFormatter.print(in);
     }
 }

@@ -1,7 +1,7 @@
 package org.simpleflatmapper.converter.impl;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.util.EnumHelper;
 
 public class ObjectToEnumConverter<E extends Enum<E>> implements Converter<Object, E> {
     private final Class<E> enumClass;
@@ -14,10 +14,10 @@ public class ObjectToEnumConverter<E extends Enum<E>> implements Converter<Objec
     }
 
     @Override
-    public E convert(Object in) throws Exception {
+    public E convert(Object in, Context context) throws Exception {
         if (in == null) return null;
         if (in instanceof Number) {
-            return numberToEnumConverter.convert((Number) in);
+            return numberToEnumConverter.convert((Number) in, context);
         } else {
             return Enum.valueOf(enumClass, String.valueOf(in));
         }

@@ -10,6 +10,7 @@ import org.joda.time.ReadablePartial;
 import org.joda.time.format.DateTimeFormatter;
 import org.simpleflatmapper.converter.AbstractConverterFactory;
 import org.simpleflatmapper.converter.AbstractConverterFactoryProducer;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
 import org.simpleflatmapper.converter.ConvertingTypes;
@@ -134,7 +135,7 @@ public class JodaTimeConverterFactoryProducer extends AbstractConverterFactoryPr
         //IFJAVA8_END
         constantConverter(consumer, LocalTime.class, Long.class, new Converter<LocalTime, Long>() {
             @Override
-            public Long convert(LocalTime in) throws Exception {
+            public Long convert(LocalTime in, Context context) throws Exception {
                 if (in == null) return null;
                 return TimeUnit.MILLISECONDS.toNanos(in.getMillisOfDay());
             }

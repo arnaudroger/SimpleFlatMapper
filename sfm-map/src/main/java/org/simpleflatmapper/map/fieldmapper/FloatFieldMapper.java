@@ -7,17 +7,17 @@ import org.simpleflatmapper.reflect.primitive.FloatSetter;
 
 public final class FloatFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final FloatGetter<? super S> getter;
+	private final FloatFieldMapperGetter<? super S> getter;
 	private final FloatSetter<? super T> setter;
 	
- 	public FloatFieldMapper(final FloatGetter<? super S> getter, final FloatSetter<? super T> setter) {
+ 	public FloatFieldMapper(final FloatFieldMapperGetter<? super S> getter, final FloatSetter<? super T> setter) {
 		this.getter = getter;
 		this.setter = setter;
 	}
 
 	@Override
 	public void mapTo(final S source, final T target, final MappingContext<? super S> context) throws Exception {
-        setter.setFloat(target, getter.getFloat(source));
+        setter.setFloat(target, getter.getFloat(source, context));
 	}
 
     @Override

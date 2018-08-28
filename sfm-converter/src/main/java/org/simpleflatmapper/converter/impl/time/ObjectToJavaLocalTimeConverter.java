@@ -1,6 +1,7 @@
 package org.simpleflatmapper.converter.impl.time;
 
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.time.Instant;
@@ -18,7 +19,7 @@ public class ObjectToJavaLocalTimeConverter implements Converter<Object, LocalTi
     }
 
     @Override
-    public LocalTime convert(Object o) throws Exception {
+    public LocalTime convert(Object o, Context context) throws Exception {
         if (o == null) {
             return null;
         }

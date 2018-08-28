@@ -5,6 +5,7 @@ import com.mysema.query.types.Expression;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSource;
@@ -18,7 +19,7 @@ import java.lang.reflect.Type;
 
 public final class QueryDslMapperBuilder<T> {
 	public static final MapperSource<Tuple, TupleElementKey> FIELD_MAPPER_SOURCE =
-			new MapperSourceImpl<Tuple, TupleElementKey>(Tuple.class, new TupleGetterFactory());
+			new MapperSourceImpl<Tuple, TupleElementKey>(Tuple.class, new FieldMapperGetterFactoryAdapter<Tuple, TupleElementKey>(new TupleGetterFactory()));
 	private static final KeyFactory<TupleElementKey> KEY_FACTORY = new KeyFactory<TupleElementKey>() {
 		@Override
 		public TupleElementKey newKey(String name, int i) {

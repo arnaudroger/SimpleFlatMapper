@@ -5,6 +5,7 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.fieldmapper.*;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
@@ -59,11 +60,11 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
             MappingContextFactoryBuilder contextFactoryBuilder,
             MapperBuilderErrorHandler mappingErrorHandler) {
 
-        Getter<? super S, ? extends P> getter =
-                (Getter<? super S, ? extends P>) pm.getColumnDefinition().getCustomGetterFrom(pm.getPropertyMeta().getOwnerType());
+        FieldMapperGetter<? super S, ? extends P> getter =
+                FieldMapperGetterAdapter.of((Getter<? super S, ? extends P>) pm.getColumnDefinition().getCustomGetterFrom(pm.getPropertyMeta().getOwnerType()));
 
         if (getter == null) {
-            getter = pm.getPropertyMeta().getGetter();
+            getter = FieldMapperGetterAdapter.of(pm.getPropertyMeta().getGetter());
         }
 
         if (getter == null) {
@@ -90,24 +91,24 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
     }
 
     @SuppressWarnings("unchecked")
-    private <S, P> FieldMapper<S, T> buildFieldMapper(Getter<? super S, ? extends P> getter, Setter<? super T, ? super P> setter, Type propertyType) {
+    private <S, P> FieldMapper<S, T> buildFieldMapper(FieldMapperGetter<? super S, ? extends P> getter, Setter<? super T, ? super P> setter, Type propertyType) {
         if (TypeHelper.isPrimitive(propertyType)) {
-            if (getter instanceof BooleanGetter && setter instanceof BooleanSetter) {
-                return new BooleanFieldMapper<S, T>((BooleanGetter<S>)getter, (BooleanSetter<T>) setter);
-            } else if (getter instanceof ByteGetter && setter instanceof ByteSetter) {
-                return new ByteFieldMapper<S, T>((ByteGetter<S>)getter, (ByteSetter<T>) setter);
-            } else if (getter instanceof CharacterGetter && setter instanceof CharacterSetter) {
-                return new CharacterFieldMapper<S, T>((CharacterGetter<S>)getter, (CharacterSetter<T>) setter);
-            } else if (getter instanceof ShortGetter && setter instanceof ShortSetter) {
-                return new ShortFieldMapper<S, T>((ShortGetter<S>)getter, (ShortSetter<T>) setter);
-            } else if (getter instanceof IntGetter && setter instanceof IntSetter) {
-                return new IntFieldMapper<S, T>((IntGetter<S>)getter, (IntSetter<T>) setter);
-            } else if (getter instanceof LongGetter && setter instanceof LongSetter) {
-                return new LongFieldMapper<S, T>((LongGetter<S>)getter, (LongSetter<T>) setter);
-            } else if (getter instanceof FloatGetter && setter instanceof FloatSetter) {
-                return new FloatFieldMapper<S, T>((FloatGetter<S>)getter, (FloatSetter<T>) setter);
-            } else if (getter instanceof DoubleGetter && setter instanceof DoubleSetter) {
-                return new DoubleFieldMapper<S, T>((DoubleGetter<S>)getter, (DoubleSetter<T>) setter);
+            if (getter instanceof BooleanFieldMapperGetter && setter instanceof BooleanSetter) {
+                return new BooleanFieldMapper<S, T>((BooleanFieldMapperGetter<S>)getter, (BooleanSetter<T>) setter);
+            } else if (getter instanceof ByteFieldMapperGetter && setter instanceof ByteSetter) {
+                return new ByteFieldMapper<S, T>((ByteFieldMapperGetter<S>)getter, (ByteSetter<T>) setter);
+            } else if (getter instanceof CharacterFieldMapperGetter && setter instanceof CharacterSetter) {
+                return new CharacterFieldMapper<S, T>((CharacterFieldMapperGetter<S>)getter, (CharacterSetter<T>) setter);
+            } else if (getter instanceof ShortFieldMapperGetter && setter instanceof ShortSetter) {
+                return new ShortFieldMapper<S, T>((ShortFieldMapperGetter<S>)getter, (ShortSetter<T>) setter);
+            } else if (getter instanceof IntFieldMapperGetter && setter instanceof IntSetter) {
+                return new IntFieldMapper<S, T>((IntFieldMapperGetter<S>)getter, (IntSetter<T>) setter);
+            } else if (getter instanceof LongFieldMapperGetter && setter instanceof LongSetter) {
+                return new LongFieldMapper<S, T>((LongFieldMapperGetter<S>)getter, (LongSetter<T>) setter);
+            } else if (getter instanceof FloatFieldMapperGetter && setter instanceof FloatSetter) {
+                return new FloatFieldMapper<S, T>((FloatFieldMapperGetter<S>)getter, (FloatSetter<T>) setter);
+            } else if (getter instanceof DoubleFieldMapperGetter && setter instanceof DoubleSetter) {
+                return new DoubleFieldMapper<S, T>((DoubleFieldMapperGetter<S>)getter, (DoubleSetter<T>) setter);
             }
         }
 

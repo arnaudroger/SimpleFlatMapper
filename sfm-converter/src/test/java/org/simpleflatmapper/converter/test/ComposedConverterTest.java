@@ -22,7 +22,7 @@ public class ComposedConverterTest {
             public String toString() {
                 return "1234";
             }
-        }).intValue());
+        }, null).intValue());
 
     }
 }

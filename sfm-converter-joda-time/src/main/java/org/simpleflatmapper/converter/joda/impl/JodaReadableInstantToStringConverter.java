@@ -2,6 +2,7 @@ package org.simpleflatmapper.converter.joda.impl;
 
 import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormatter;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 
@@ -14,7 +15,7 @@ public class JodaReadableInstantToStringConverter implements Converter<ReadableI
     }
 
     @Override
-    public String convert(ReadableInstant in) throws Exception {
+    public String convert(ReadableInstant in, Context context) throws Exception {
         return dateTimeFormatter.print(in);
     }
 }

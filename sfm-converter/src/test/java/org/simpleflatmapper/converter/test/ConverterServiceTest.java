@@ -102,7 +102,7 @@ public class ConverterServiceTest {
         testConverter("http://url.net", new URL("http://url.net"));
 
         try {
-            ConverterService.getInstance().findConverter(String.class, URL.class).convert("blop");
+            ConverterService.getInstance().findConverter(String.class, URL.class).convert("blop", null);
             fail();
         } catch(ConversionException e) {
             // expected

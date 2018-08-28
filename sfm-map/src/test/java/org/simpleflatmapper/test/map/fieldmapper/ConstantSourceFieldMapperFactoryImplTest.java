@@ -51,7 +51,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
     @Before
     public void setUp() {
         getterFactory = mock(GetterFactory.class);
-        constantSourceFieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey>(getterFactory, ConverterService.getInstance(), Object.class);
+        constantSourceFieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey>(new FieldMapperGetterFactoryAdapter<Object, SampleFieldKey>(getterFactory), ConverterService.getInstance(), Object.class);
         keySourceGetter = mock(KeySourceGetter.class);
         mappingContextFactoryBuilder = null;
     }

@@ -2,24 +2,25 @@ package org.simpleflatmapper.map.impl;
 
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.primitive.BooleanGetter;
-import org.simpleflatmapper.reflect.primitive.ByteGetter;
-import org.simpleflatmapper.reflect.primitive.CharacterGetter;
-import org.simpleflatmapper.reflect.primitive.DoubleGetter;
-import org.simpleflatmapper.reflect.primitive.FloatGetter;
-import org.simpleflatmapper.reflect.primitive.IntGetter;
-import org.simpleflatmapper.reflect.primitive.LongGetter;
-import org.simpleflatmapper.reflect.primitive.ShortGetter;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.fieldmapper.BooleanFieldMapperGetter;
+import org.simpleflatmapper.map.fieldmapper.ByteFieldMapperGetter;
+import org.simpleflatmapper.map.fieldmapper.CharacterFieldMapperGetter;
+import org.simpleflatmapper.map.fieldmapper.DoubleFieldMapperGetter;
+import org.simpleflatmapper.map.fieldmapper.FieldMapperGetter;
+import org.simpleflatmapper.map.fieldmapper.FloatFieldMapperGetter;
+import org.simpleflatmapper.map.fieldmapper.IntFieldMapperGetter;
+import org.simpleflatmapper.map.fieldmapper.LongFieldMapperGetter;
+import org.simpleflatmapper.map.fieldmapper.ShortFieldMapperGetter;
 
 
-public class FieldErrorHandlerGetter<S, T, K> implements Getter<S, T> {
+public class FieldErrorHandlerGetter<S, T, K> implements FieldMapperGetter<S, T> {
 
-	public final Getter<? super S, ? extends T> delegate;
+	public final FieldMapperGetter<? super S, ? extends T> delegate;
 	public final FieldMapperErrorHandler<? super K> errorHandler;
 	public final K key;
 	
-	public FieldErrorHandlerGetter(K key, Getter<? super S, ? extends T> delegate,
+	public FieldErrorHandlerGetter(K key, FieldMapperGetter<? super S, ? extends T> delegate,
                                    FieldMapperErrorHandler<? super K> errorHandler) {
 		super();
 		this.key = key;
@@ -28,9 +29,9 @@ public class FieldErrorHandlerGetter<S, T, K> implements Getter<S, T> {
 	}
 
 	@Override
-	public T get(S source)  {
+	public T get(S source, MappingContext<?> context)  {
 		try {
-			return delegate.get(source);
+			return delegate.get(source, context);
 		} catch(Exception e) {
 			errorHandler.errorMappingField(key, source, null, e);
 			return null;
@@ -43,31 +44,31 @@ public class FieldErrorHandlerGetter<S, T, K> implements Getter<S, T> {
 	}
 
 
-	public  static <S, T, K extends FieldKey<K>> Getter<S, T> of(K key, Getter<? super S, ? extends T> delegate,
+	public  static <S, T, K extends FieldKey<K>> FieldMapperGetter<S, T> of(K key, FieldMapperGetter<? super S, ? extends T> delegate,
 																	  FieldMapperErrorHandler<? super K> errorHandler) {
 
-		if (delegate instanceof BooleanGetter) {
+		if (delegate instanceof BooleanFieldMapperGetter) {
 			return new BooleanFieldErrorHandlerGetter<S, T, K>(key, delegate, errorHandler);
 		}
-		if (delegate instanceof ByteGetter) {
+		if (delegate instanceof ByteFieldMapperGetter) {
 			return new ByteFieldErrorHandlerGetter<S, T, K>(key, delegate, errorHandler);
 		}
-		if (delegate instanceof CharacterGetter) {
+		if (delegate instanceof CharacterFieldMapperGetter) {
 			return new CharFieldErrorHandlerGetter<S, T, K>(key, delegate, errorHandler);
 		}
-		if (delegate instanceof ShortGetter) {
+		if (delegate instanceof ShortFieldMapperGetter) {
 			return new ShortFieldErrorHandlerGetter<S, T, K>(key, delegate, errorHandler);
 		}
-		if (delegate instanceof IntGetter) {
+		if (delegate instanceof IntFieldMapperGetter) {
 			return new IntFieldErrorHandlerGetter<S, T, K>(key, delegate, errorHandler);
 		}
-		if (delegate instanceof LongGetter) {
+		if (delegate instanceof LongFieldMapperGetter) {
 			return new LongFieldErrorHandlerGetter<S, T, K>(key, delegate, errorHandler);
 		}
-		if (delegate instanceof FloatGetter) {
+		if (delegate instanceof FloatFieldMapperGetter) {
 			return new FloatFieldErrorHandlerGetter<S, T, K>(key, delegate, errorHandler);
 		}
-		if (delegate instanceof DoubleGetter) {
+		if (delegate instanceof DoubleFieldMapperGetter) {
 			return new DoubleFieldErrorHandlerGetter<S, T, K>(key, delegate, errorHandler);
 		}
 		
@@ -76,19 +77,19 @@ public class FieldErrorHandlerGetter<S, T, K> implements Getter<S, T> {
 	}
 
 
-	private static class BooleanFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements BooleanGetter<T> {
+	private static class BooleanFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements BooleanFieldMapperGetter<T> {
 
-		private BooleanGetter<T> pGetter;
+		private BooleanFieldMapperGetter<T> pGetter;
 
-		public BooleanFieldErrorHandlerGetter(K key, Getter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
+		public BooleanFieldErrorHandlerGetter(K key, FieldMapperGetter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
 			super(key, delegate, errorHandler);
-			this.pGetter = (BooleanGetter<T>) delegate;
+			this.pGetter = (BooleanFieldMapperGetter<T>) delegate;
 		}
 
 		@Override
-		public boolean getBoolean(T source) throws Exception {
+		public boolean getBoolean(T source, MappingContext<?> mappingContext) throws Exception {
 			try {
-				return pGetter.getBoolean(source);
+				return pGetter.getBoolean(source, mappingContext);
 			} catch(Exception e) {
 				errorHandler.errorMappingField(key, source, null, e);
 				return false;
@@ -96,19 +97,19 @@ public class FieldErrorHandlerGetter<S, T, K> implements Getter<S, T> {
 		}
 	}
 	
-	private static class ByteFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements ByteGetter<T> {
+	private static class ByteFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements ByteFieldMapperGetter<T> {
 
-		private ByteGetter<T> pGetter;
+		private ByteFieldMapperGetter<T> pGetter;
 		
-		public ByteFieldErrorHandlerGetter(K key, Getter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
+		public ByteFieldErrorHandlerGetter(K key, FieldMapperGetter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
 			super(key, delegate, errorHandler);
-			this.pGetter = (ByteGetter<T>) delegate;
+			this.pGetter = (ByteFieldMapperGetter<T>) delegate;
 		}
 
 		@Override
-		public byte getByte(T source) throws Exception {
+		public byte getByte(T source, MappingContext<?> mappingContext) throws Exception {
 			try {
-				return pGetter.getByte(source);
+				return pGetter.getByte(source, mappingContext);
 			} catch(Exception e) {
 				errorHandler.errorMappingField(key, source, null, e);
 				return 0;
@@ -116,19 +117,19 @@ public class FieldErrorHandlerGetter<S, T, K> implements Getter<S, T> {
 		}
 	}
 
-	private static class CharFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements CharacterGetter<T> {
+	private static class CharFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements CharacterFieldMapperGetter<T> {
 
-		private CharacterGetter<T> pGetter;
+		private CharacterFieldMapperGetter<T> pGetter;
 
-		public CharFieldErrorHandlerGetter(K key, Getter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
+		public CharFieldErrorHandlerGetter(K key, FieldMapperGetter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
 			super(key, delegate, errorHandler);
-			this.pGetter = (CharacterGetter<T>) delegate;
+			this.pGetter = (CharacterFieldMapperGetter<T>) delegate;
 		}
 
 		@Override
-		public char getCharacter(T source) throws Exception {
+		public char getCharacter(T source, MappingContext<?> mappingContext) throws Exception {
 			try {
-				return pGetter.getCharacter(source);
+				return pGetter.getCharacter(source, mappingContext);
 			} catch(Exception e) {
 				errorHandler.errorMappingField(key, source, null, e);
 				return 0;
@@ -136,19 +137,19 @@ public class FieldErrorHandlerGetter<S, T, K> implements Getter<S, T> {
 		}
 	}
 
-	private static class ShortFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements ShortGetter<T> {
+	private static class ShortFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements ShortFieldMapperGetter<T> {
 
-		private ShortGetter<T> pGetter;
+		private ShortFieldMapperGetter<T> pGetter;
 
-		public ShortFieldErrorHandlerGetter(K key, Getter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
+		public ShortFieldErrorHandlerGetter(K key, FieldMapperGetter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
 			super(key, delegate, errorHandler);
-			this.pGetter = (ShortGetter<T>) delegate;
+			this.pGetter = (ShortFieldMapperGetter<T>) delegate;
 		}
 
 		@Override
-		public short getShort(T source) throws Exception {
+		public short getShort(T source, MappingContext<?> mappingContext) throws Exception {
 			try {
-				return pGetter.getShort(source);
+				return pGetter.getShort(source, mappingContext);
 			} catch(Exception e) {
 				errorHandler.errorMappingField(key, source, null, e);
 				return 0;
@@ -156,19 +157,19 @@ public class FieldErrorHandlerGetter<S, T, K> implements Getter<S, T> {
 		}
 	}
 
-	private static class IntFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements IntGetter<T> {
+	private static class IntFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements IntFieldMapperGetter<T> {
 
-		private IntGetter<T> pGetter;
+		private IntFieldMapperGetter<T> pGetter;
 
-		public IntFieldErrorHandlerGetter(K key, Getter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
+		public IntFieldErrorHandlerGetter(K key, FieldMapperGetter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
 			super(key, delegate, errorHandler);
-			this.pGetter = (IntGetter<T>) delegate;
+			this.pGetter = (IntFieldMapperGetter<T>) delegate;
 		}
 
 		@Override
-		public int getInt(T source) throws Exception {
+		public int getInt(T source, MappingContext<?> mappingContext) throws Exception {
 			try {
-				return pGetter.getInt(source);
+				return pGetter.getInt(source, mappingContext);
 			} catch(Exception e) {
 				errorHandler.errorMappingField(key, source, null, e);
 				return 0;
@@ -176,19 +177,19 @@ public class FieldErrorHandlerGetter<S, T, K> implements Getter<S, T> {
 		}
 	}
 
-	private static class LongFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements LongGetter<T> {
+	private static class LongFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements LongFieldMapperGetter<T> {
 
-		private LongGetter<T> pGetter;
+		private LongFieldMapperGetter<T> pGetter;
 
-		public LongFieldErrorHandlerGetter(K key, Getter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
+		public LongFieldErrorHandlerGetter(K key, FieldMapperGetter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
 			super(key, delegate, errorHandler);
-			this.pGetter = (LongGetter<T>) delegate;
+			this.pGetter = (LongFieldMapperGetter<T>) delegate;
 		}
 
 		@Override
-		public long getLong(T source) throws Exception {
+		public long getLong(T source, MappingContext<?> mappingContext) throws Exception {
 			try {
-				return pGetter.getLong(source);
+				return pGetter.getLong(source, mappingContext);
 			} catch(Exception e) {
 				errorHandler.errorMappingField(key, source, null, e);
 				return 0;
@@ -196,19 +197,19 @@ public class FieldErrorHandlerGetter<S, T, K> implements Getter<S, T> {
 		}
 	}
 
-	private static class FloatFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements FloatGetter<T> {
+	private static class FloatFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements FloatFieldMapperGetter<T> {
 
-		private FloatGetter<T> pGetter;
+		private FloatFieldMapperGetter<T> pGetter;
 
-		public FloatFieldErrorHandlerGetter(K key, Getter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
+		public FloatFieldErrorHandlerGetter(K key, FieldMapperGetter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
 			super(key, delegate, errorHandler);
-			this.pGetter = (FloatGetter<T>) delegate;
+			this.pGetter = (FloatFieldMapperGetter<T>) delegate;
 		}
 
 		@Override
-		public float getFloat(T source) throws Exception {
+		public float getFloat(T source, MappingContext<?> mappingContext) throws Exception {
 			try {
-				return pGetter.getFloat(source);
+				return pGetter.getFloat(source, mappingContext);
 			} catch(Exception e) {
 				errorHandler.errorMappingField(key, source, null, e);
 				return 0;
@@ -216,19 +217,19 @@ public class FieldErrorHandlerGetter<S, T, K> implements Getter<S, T> {
 		}
 	}
 
-	private static class DoubleFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements DoubleGetter<T> {
+	private static class DoubleFieldErrorHandlerGetter<S, T, K> extends FieldErrorHandlerGetter<S, T, K> implements DoubleFieldMapperGetter<T> {
 
-		private DoubleGetter<T> pGetter;
+		private DoubleFieldMapperGetter<T> pGetter;
 
-		public DoubleFieldErrorHandlerGetter(K key, Getter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
+		public DoubleFieldErrorHandlerGetter(K key, FieldMapperGetter<? super S, ? extends T> delegate, FieldMapperErrorHandler<? super K> errorHandler) {
 			super(key, delegate, errorHandler);
-			this.pGetter = (DoubleGetter<T>) delegate;
+			this.pGetter = (DoubleFieldMapperGetter<T>) delegate;
 		}
 
 		@Override
-		public double getDouble(T source) throws Exception {
+		public double getDouble(T source, MappingContext<?> mappingContext) throws Exception {
 			try {
-				return pGetter.getDouble(source);
+				return pGetter.getDouble(source, mappingContext);
 			} catch(Exception e) {
 				errorHandler.errorMappingField(key, source, null, e);
 				return 0;

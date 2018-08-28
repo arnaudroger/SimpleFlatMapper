@@ -23,7 +23,7 @@ public class SetWithConverterSettableDataSetter<I, O> implements Setter<Settable
         } else {
             Set<O> list = new HashSet<O>(value.size());
             for(I i : value) {
-                list.add(converter.convert(i));
+                list.add(converter.convert(i, null));
             }
             target.setSet(index, list);
         }

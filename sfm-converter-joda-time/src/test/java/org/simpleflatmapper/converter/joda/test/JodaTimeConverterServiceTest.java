@@ -76,11 +76,11 @@ public class JodaTimeConverterServiceTest {
     public void testToStringConverter() throws Exception {
         Converter<? super LocalDate, ? extends String> converterLocalDate = ConverterService.getInstance().findConverter(LocalDate.class, String.class, DateTimeFormat.fullDate());
         LocalDate localDate = LocalDate.now();
-        assertEquals(DateTimeFormat.fullDate().print(localDate), converterLocalDate.convert(localDate));
+        assertEquals(DateTimeFormat.fullDate().print(localDate), converterLocalDate.convert(localDate, null));
 
         Converter<? super DateTime, ? extends String> converterDateTime = ConverterService.getInstance().findConverter(DateTime.class, String.class, DateTimeFormat.fullDateTime());
         DateTime dateTime = DateTime.now();
-        assertEquals(DateTimeFormat.fullDateTime().print(dateTime), converterDateTime.convert(dateTime));
+        assertEquals(DateTimeFormat.fullDateTime().print(dateTime), converterDateTime.convert(dateTime, null));
 
     }
 
@@ -89,11 +89,11 @@ public class JodaTimeConverterServiceTest {
         Converter<? super LocalDate, ? extends String> converterLocalDate =
                 ConverterService.getInstance().findConverter(LocalDate.class, String.class);
         LocalDate localDate = LocalDate.now();
-        assertEquals(localDate.toString(), converterLocalDate.convert(localDate));
+        assertEquals(localDate.toString(), converterLocalDate.convert(localDate, null));
 
         Converter<? super DateTime, ? extends String> converterDateTime = ConverterService.getInstance().findConverter(DateTime.class, String.class);
         DateTime dateTime = DateTime.now();
-        assertEquals(dateTime.toString(), converterDateTime.convert(dateTime));
+        assertEquals(dateTime.toString(), converterDateTime.convert(dateTime, null));
 
     }
 
@@ -111,18 +111,18 @@ public class JodaTimeConverterServiceTest {
     public void testConvertFromCharSequence(ReadableInstant date, DateTimeFormatter dateTimeFormatter) throws Exception {
         Converter<? super CharSequence, ? extends ReadableInstant> converter =
                 ConverterService.getInstance().<CharSequence, ReadableInstant>findConverter(CharSequence.class, date.getClass(), dateTimeFormatter);
-        assertEquals(date, converter.convert(dateTimeFormatter.print(date)));
+        assertEquals(date, converter.convert(dateTimeFormatter.print(date), null));
 
-        assertNull(converter.convert(""));
-        assertNull(converter.convert(null));
+        assertNull(converter.convert("", null));
+        assertNull(converter.convert(null, null));
 
         DateTimeFormatter failing = DateTimeFormat.forPattern("yyyy////dd");
         Converter<? super CharSequence, ? extends ReadableInstant> multiConverter =
                 ConverterService.getInstance().<CharSequence, ReadableInstant>findConverter(CharSequence.class, date.getClass(), failing, dateTimeFormatter);
-        assertEquals(date, multiConverter.convert(dateTimeFormatter.print(date)));
+        assertEquals(date, multiConverter.convert(dateTimeFormatter.print(date), null));
 
         try {
-            multiConverter.convert("a");
+            multiConverter.convert("a", null);
             fail();
         } catch (IllegalArgumentException e) {
 
@@ -132,18 +132,18 @@ public class JodaTimeConverterServiceTest {
     public void testConvertFromCharSequence(ReadablePartial date, DateTimeFormatter dateTimeFormatter) throws Exception {
         Converter<? super CharSequence, ? extends ReadablePartial> converter =
                 ConverterService.getInstance().<CharSequence, ReadablePartial>findConverter(CharSequence.class, date.getClass(), dateTimeFormatter);
-        assertEquals(date, converter.convert(dateTimeFormatter.print(date)));
+        assertEquals(date, converter.convert(dateTimeFormatter.print(date), null));
 
-        assertNull(converter.convert(""));
-        assertNull(converter.convert(null));
+        assertNull(converter.convert("", null));
+        assertNull(converter.convert(null, null));
 
         DateTimeFormatter failing = DateTimeFormat.forPattern("yyyy////dd");
         Converter<? super CharSequence, ? extends ReadablePartial> multiConverter =
                 ConverterService.getInstance().<CharSequence, ReadablePartial>findConverter(CharSequence.class, date.getClass(), failing, dateTimeFormatter);
-        assertEquals(date, multiConverter.convert(dateTimeFormatter.print(date)));
+        assertEquals(date, multiConverter.convert(dateTimeFormatter.print(date), null));
 
         try {
-            multiConverter.convert("a");
+            multiConverter.convert("a", null);
             fail();
         } catch (IllegalArgumentException e) {
 

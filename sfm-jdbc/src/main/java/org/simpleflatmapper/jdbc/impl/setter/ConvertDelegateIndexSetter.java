@@ -20,7 +20,7 @@ public class ConvertDelegateIndexSetter<I, O> implements PreparedStatementIndexS
     @Override
     public void set(PreparedStatement target, I value, int columnIndex) throws SQLException {
         try {
-            setter.set(target, converter.convert(value), columnIndex);
+            setter.set(target, converter.convert(value, null), columnIndex);
         } catch (Exception e) {
             ErrorHelper.rethrow(e);
         }

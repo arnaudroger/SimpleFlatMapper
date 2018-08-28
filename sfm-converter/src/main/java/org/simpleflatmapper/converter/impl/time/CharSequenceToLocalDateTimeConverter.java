@@ -1,10 +1,9 @@
 package org.simpleflatmapper.converter.impl.time;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class CharSequenceToLocalDateTimeConverter implements Converter<CharSequence, LocalDateTime> {
@@ -16,7 +15,7 @@ public class CharSequenceToLocalDateTimeConverter implements Converter<CharSeque
     }
 
     @Override
-    public LocalDateTime convert(CharSequence in) throws Exception {
+    public LocalDateTime convert(CharSequence in, Context context) throws Exception {
         if (in == null || in.length() == 0) return null;
         return LocalDateTime.parse(in, dateTimeFormatter);
     }

@@ -12,12 +12,12 @@ public class DateToLocalDateConverterTest {
     DateToLocalDateConverter converter = new DateToLocalDateConverter();
     @Test
     public void testNull() throws Exception {
-        assertNull(converter.convert(null));
+        assertNull(converter.convert(null, null));
     }
 
     @Test
     public void testDate() throws Exception {
         Date date = new Date(System.currentTimeMillis());
-        assertEquals(date.toLocalDate(), converter.convert(date));
+        assertEquals(date.toLocalDate(), converter.convert(date, null ));
     }
 }

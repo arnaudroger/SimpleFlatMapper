@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jdbc;
 
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.UncheckedConverter;
 import org.simpleflatmapper.converter.UncheckedConverterHelper;
@@ -11,6 +12,7 @@ import org.simpleflatmapper.map.mapper.DiscriminatorMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.UnaryFactory;
@@ -104,13 +106,16 @@ public class DiscriminatorJdbcBuilder<T> {
                         return new ResultSetEnumerable(resultSet);
                     }
                 },
-                UncheckedConverterHelper.<ResultSet, String>toUnchecked(
-                        new Converter<ResultSet, String>() {
-                            @Override
-                            public String convert(ResultSet in) throws SQLException {
-                                return column + ":" + in.getObject(column);
-                            }
-                        }),
+                new Function<ResultSet, String>() {
+                    @Override
+                    public String apply(ResultSet in) {
+                        try {
+                            return column + ":" + in.getObject(column);
+                        } catch (SQLException e) {
+                            return ErrorHelper.rethrow(e);
+                        }
+                    }
+                },
                 jdbcMapperFactory.consumerErrorHandler());
         return discriminatorMapper;
     }
@@ -121,7 +126,7 @@ public class DiscriminatorJdbcBuilder<T> {
 
         public DiscriminatorJdbcMapper(List<PredicatedMapper<ResultSet, ResultSet, T, SQLException>> predicatedMappers,
                                        UnaryFactory<ResultSet, Enumerable<ResultSet>> rowEnumerableFactory,
-                                       UncheckedConverter<ResultSet, String> errorConverter,
+                                       Function<ResultSet, String> errorConverter,
                                        ConsumerErrorHandler consumerErrorHandler) {
             super(predicatedMappers, rowEnumerableFactory, errorConverter, consumerErrorHandler);
         }

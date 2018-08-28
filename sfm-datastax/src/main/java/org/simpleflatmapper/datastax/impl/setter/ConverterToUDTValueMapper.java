@@ -2,8 +2,8 @@ package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.converter.Converter;
 
 public class ConverterToUDTValueMapper<I> implements Converter<I, UDTValue> {
@@ -17,7 +17,7 @@ public class ConverterToUDTValueMapper<I> implements Converter<I, UDTValue> {
     }
 
     @Override
-    public UDTValue convert(I in) throws Exception {
+    public UDTValue convert(I in, Context context) throws Exception {
         if (in == null) return null;
         UDTValue udtValue = userType.newValue();
         mapper.mapTo(in, udtValue, null);

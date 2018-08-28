@@ -9,15 +9,16 @@ import org.simpleflatmapper.jdbc.named.NamedParameter;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.PropertyWithGetter;
+import org.simpleflatmapper.map.fieldmapper.FieldMapperGetter;
+import org.simpleflatmapper.map.mapper.FieldMapperGetterAdapter;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
-import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
-import org.simpleflatmapper.reflect.getter.GetterWithConverter;
+import org.simpleflatmapper.map.impl.FieldMapperGetterWithConverter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
@@ -92,7 +93,7 @@ public final class SqlParameterSourceBuilder<T> {
                     public void handle(PropertyMapping<T, ?, JdbcColumnKey> pm) {
                         int parameterType =
                                 getParameterType(pm);
-                        Getter<? super T, ?> getter = pm.getPropertyMeta().getGetter();
+                        FieldMapperGetter<? super T, ?> getter = FieldMapperGetterAdapter.of(pm.getPropertyMeta().getGetter());
                         
                         
                         // need conversion ?
@@ -102,7 +103,7 @@ public final class SqlParameterSourceBuilder<T> {
                             Converter<? super Object, ?> converter = ConverterService.getInstance().findConverter(propertyType, sqlType);
                             
                             if (converter != null) {
-                                getter = new GetterWithConverter(converter, getter);
+                                getter = new FieldMapperGetterWithConverter(converter, getter);
                             }
                         }
                         

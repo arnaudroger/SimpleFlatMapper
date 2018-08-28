@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jdbc.converter;
 
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.reflect.Getter;
 
@@ -20,8 +21,8 @@ public class SqlArrayToJavaArrayConverter<T> implements Converter<Array, T[]> {
     }
 
     @Override
-    public T[] convert(Array in) throws Exception {
-        List<T> list = sqlArrayToListConverter.convert(in);
+    public T[] convert(Array in, Context context) throws Exception {
+        List<T> list = sqlArrayToListConverter.convert(in, context);
         return list != null ? list.toArray(emptyArray) : null;
     }
 }

@@ -1,5 +1,6 @@
 package org.simpleflatmapper.converter.impl.time;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.time.LocalTime;
@@ -14,7 +15,7 @@ public class DateToJavaLocalTimeConverter implements Converter<Date, LocalTime> 
     }
 
     @Override
-    public LocalTime convert(Date in) throws Exception {
+    public LocalTime convert(Date in, Context context) throws Exception {
         if (in == null) return null;
         return in.toInstant().atZone(dateTimeZone).toLocalTime();
     }

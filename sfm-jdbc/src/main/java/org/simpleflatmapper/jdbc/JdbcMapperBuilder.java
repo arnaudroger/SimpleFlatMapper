@@ -6,6 +6,7 @@ import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.DefaultSetRowMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
@@ -41,7 +42,7 @@ import java.util.stream.Stream;
 public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultSet, T, JdbcColumnKey, SQLException, SetRowMapper<ResultSet, ResultSet, T, SQLException>, JdbcMapper<T>, JdbcMapperBuilder<T>> {
 
     private static final MapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
-            new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class,  ResultSetGetterFactory.INSTANCE);
+            new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class,  new FieldMapperGetterFactoryAdapter<ResultSet, JdbcColumnKey>(ResultSetGetterFactory.INSTANCE));
     private static final KeyFactory<JdbcColumnKey> KEY_FACTORY = new KeyFactory<JdbcColumnKey>() {
         @Override
         public JdbcColumnKey newKey(String name, int i) {

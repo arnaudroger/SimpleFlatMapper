@@ -1,18 +1,19 @@
 package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.converter.UncheckedConverter;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.Predicate;
+
 
 public class DiscriminatorEnumerable<S, T> implements Enumerable<T> {
 
     private final PredicatedMapperWithContext<S, T>[] discriminatorMappers;
     private final Enumerable<S> sourceEnumerable;
-    private final UncheckedConverter<? super S, ? extends CharSequence> errorMessageGenerator;
+    private final Function<? super S, ? extends CharSequence> errorMessageGenerator;
 
     private T currentValue;
     private T nextValue;
@@ -23,7 +24,7 @@ public class DiscriminatorEnumerable<S, T> implements Enumerable<T> {
     public DiscriminatorEnumerable(
             PredicatedMapperWithContext<S, T>[] discriminatorMappers,
             Enumerable<S> sourceEnumerable,
-            UncheckedConverter<? super S, ? extends CharSequence> errorMessageGenerator) {
+            Function<? super S, ? extends CharSequence> errorMessageGenerator) {
         this.discriminatorMappers = discriminatorMappers;
         this.sourceEnumerable = sourceEnumerable;
         this.errorMessageGenerator = errorMessageGenerator;
@@ -78,7 +79,7 @@ public class DiscriminatorEnumerable<S, T> implements Enumerable<T> {
     }
 
     private void mapperNotFound() {
-        CharSequence errorMessage = errorMessageGenerator.convert(sourceEnumerable.currentValue());
+        CharSequence errorMessage = errorMessageGenerator.apply(sourceEnumerable.currentValue());
         throw new MappingException("No mapper found for " + errorMessage);
     }
 

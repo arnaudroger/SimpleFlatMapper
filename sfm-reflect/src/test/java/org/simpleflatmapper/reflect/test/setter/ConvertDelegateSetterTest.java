@@ -1,6 +1,7 @@
 package org.simpleflatmapper.reflect.test.setter;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.setter.ConvertDelegateSetter;
 import org.simpleflatmapper.test.beans.DbObject;
@@ -26,7 +27,7 @@ public class ConvertDelegateSetterTest {
                         },
                         new Converter<UUID, String>() {
                             @Override
-                            public String convert(UUID in) throws Exception {
+                            public String convert(UUID in, Context context) throws Exception {
                                 return in.toString();
                             }
                         }

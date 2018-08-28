@@ -1,5 +1,6 @@
 package org.simpleflatmapper.converter.impl.time;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.time.Month;
@@ -16,7 +17,7 @@ public class JavaYearTojuDateConverter implements Converter<Year, Date> {
     }
 
     @Override
-    public Date convert(Year in) throws Exception {
+    public Date convert(Year in, Context context) throws Exception {
         if (in == null) return null;
         return Date.from(in.atMonthDay(MonthDay.of(Month.JANUARY, 1)).atStartOfDay(zoneId).toInstant());
     }

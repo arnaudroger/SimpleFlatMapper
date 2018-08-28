@@ -2,6 +2,7 @@ package org.simpleflatmapper.converter.test;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.UncheckedConverterHelper;
 
@@ -17,7 +18,7 @@ public class UncheckedConverterHelperTest {
 
         Converter<Object, Object> converter = new Converter<Object, Object>() {
             @Override
-            public Object convert(Object in) throws IOException {
+            public Object convert(Object in, Context context) throws IOException {
                 throw new IOException("What!");
             }
         };
@@ -38,15 +39,15 @@ public class UncheckedConverterHelperTest {
 
         Converter<Object, Object> converter = new Converter<Object, Object>() {
             @Override
-            public Object convert(Object in) throws IOException {
+            public Object convert(Object in, Context context) throws IOException {
                 return "Ok!";
             }
         };
 
-        Assert.assertEquals("Ok!", UncheckedConverterHelper.toUnchecked(converter).convert(null));
+        Assert.assertEquals("Ok!", UncheckedConverterHelper.toUnchecked(converter).convert(null,  null));
     }
 
     private void convertUncheck(Converter<Object, Object> converter) {
-        UncheckedConverterHelper.toUnchecked(converter).convert(null);
+        UncheckedConverterHelper.toUnchecked(converter).convert(null, null);
     }
 }

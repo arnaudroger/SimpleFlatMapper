@@ -1,8 +1,8 @@
 package org.simpleflatmapper.jdbc.spring;
 
-import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetter;
-import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.converter.ContextFactory;
+import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.util.ErrorHelper;
 
 public final class PlaceHolderValueGetter<T> {
@@ -10,14 +10,16 @@ public final class PlaceHolderValueGetter<T> {
     private final String column;
     private final int sqlType;
     private final String typeName;
-    private final FieldMapperGetter<T, ?> getter;
+    private final ContextualGetter<T, ?> getter;
+    private final ContextFactory contextFactory;
 
 
-    public PlaceHolderValueGetter(String column, int sqlType, String typeName, FieldMapperGetter<T, ?> getter) {
+    public PlaceHolderValueGetter(String column, int sqlType, String typeName, ContextualGetter<T, ?> getter, ContextFactory contextFactory) {
         this.column = column;
         this.sqlType = sqlType;
         this.typeName = typeName;
         this.getter = getter;
+        this.contextFactory = contextFactory;
     }
 
 
@@ -25,9 +27,10 @@ public final class PlaceHolderValueGetter<T> {
         return this.column.equals(column);
     }
 
-    public Object getValue(T instance, MappingContext<?> mappingContext) {
+    public Object getValue(T instance) {
         try {
-            return getter.get(instance, mappingContext);
+            Context context = contextFactory.newContext();
+            return getter.get(instance, context);
         } catch (Exception e) {
             return ErrorHelper.rethrow(e);
         }

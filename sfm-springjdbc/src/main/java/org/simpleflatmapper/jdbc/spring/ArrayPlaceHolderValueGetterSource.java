@@ -1,5 +1,7 @@
 package org.simpleflatmapper.jdbc.spring;
 
+import org.simpleflatmapper.converter.ContextFactory;
+
 import java.util.Arrays;
 
 public final class ArrayPlaceHolderValueGetterSource<T> implements PlaceHolderValueGetterSource<T> {

@@ -1,15 +1,16 @@
 package org.simpleflatmapper.map.impl;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetter;
+import org.simpleflatmapper.map.getter.ContextualGetter;
 
-public class FieldMapperGetterWithConverter<T, I, P> implements FieldMapperGetter<T, P> {
+public class FieldMapperGetterWithConverter<T, I, P> implements ContextualGetter<T, P> {
 
     private final Converter<? super I, ? extends P> converter;
-    private final FieldMapperGetter<? super T, ? extends I> getter;
+    private final ContextualGetter<? super T, ? extends I> getter;
 
-    public FieldMapperGetterWithConverter(Converter<? super I, ? extends P > converter, FieldMapperGetter<? super T, ? extends I> getter) {
+    public FieldMapperGetterWithConverter(Converter<? super I, ? extends P > converter, ContextualGetter<? super T, ? extends I> getter) {
         if (converter == null) throw new NullPointerException("converter");
         if (getter == null) throw new NullPointerException("getter");
         this.converter = converter;
@@ -17,7 +18,7 @@ public class FieldMapperGetterWithConverter<T, I, P> implements FieldMapperGette
     }
 
     @Override
-    public P get(T target, MappingContext<?> context) throws Exception {
+    public P get(T target, Context context) throws Exception {
         I in = getter.get(target, context);
         return converter.convert(in, context);
     }

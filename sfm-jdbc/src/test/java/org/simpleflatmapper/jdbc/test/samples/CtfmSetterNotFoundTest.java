@@ -1,11 +1,11 @@
 package org.simpleflatmapper.jdbc.test.samples;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.property.IndexedSetterProperty;
 import org.simpleflatmapper.map.MapperBuildingException;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.jdbc.property.IndexedSetterFactoryProperty;
 import org.simpleflatmapper.map.property.SetterFactoryProperty;
 import org.simpleflatmapper.map.property.SetterProperty;

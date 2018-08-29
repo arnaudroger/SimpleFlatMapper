@@ -20,7 +20,7 @@ public final class SqlParameterSourceImpl<T> implements SqlParameterSource {
     public Object getValue(String column) throws IllegalArgumentException {
         PlaceHolderValueGetter<T> parameter = parameters.getPlaceHolderValueGetter(column);
         if (parameter != null) {
-            return parameter.getValue(instance, null);
+            return parameter.getValue(instance );
         } else {
             throw new IllegalArgumentException("No value for property " + column);
         }

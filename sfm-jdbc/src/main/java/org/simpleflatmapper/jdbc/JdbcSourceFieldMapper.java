@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-
 public interface JdbcSourceFieldMapper<T> extends SourceFieldMapper<ResultSet, T>, MappingContextFactoryFromRows<ResultSet, ResultSet, SQLException> {
 
 

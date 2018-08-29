@@ -1,5 +1,6 @@
 package org.simpleflatmapper.jdbc.impl;
 
+import org.simpleflatmapper.converter.ContextFactory;
 import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 
 public final class MysqlBatchInsertQueryExecutor<T> extends AbstractBatchInsertQueryExecutor<T> {
@@ -10,8 +11,9 @@ public final class MysqlBatchInsertQueryExecutor<T> extends AbstractBatchInsertQ
             String[] insertColumnExpressions,
             String[] updateColumns,
             String[] generatedKeys,
-            MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
-        super(meta, insertColumns, insertColumnExpressions, updateColumns, generatedKeys, multiIndexFieldMappers);
+            MultiIndexFieldMapper<T>[] multiIndexFieldMappers,
+            ContextFactory contextFactory) {
+        super(meta, insertColumns, insertColumnExpressions, updateColumns, generatedKeys, multiIndexFieldMappers, contextFactory);
     }
 
     protected void appendInsertInto(StringBuilder sb) {

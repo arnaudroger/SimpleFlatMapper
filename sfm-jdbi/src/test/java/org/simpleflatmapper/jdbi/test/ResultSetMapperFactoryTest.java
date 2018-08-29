@@ -40,11 +40,11 @@ public class ResultSetMapperFactoryTest {
     @Test
     public void testMapToDbObjectStatic() throws Exception {
         DBI dbi = new DBI(DbHelper.getHsqlDataSource());
-        dbi.registerMapper(new SfmResultSetMapperFactory(new UnaryFactory<Class<?>, SourceMapper< ResultSet, ?>>() {
+        UnaryFactory<Class<?>, SourceMapper<ResultSet, ?>> unaryFactory = new UnaryFactory<Class<?>, SourceMapper<ResultSet, ?>>() {
 
             @Override
-            public SourceFieldMapper<ResultSet, ?> newInstance(Class<?> aClass) {
-                return new SourceFieldMapper<ResultSet, DbObject>() {
+            public ContextualSourceFieldMapper<ResultSet, ?> newInstance(Class<?> aClass) {
+                return new ContextualSourceFieldMapper<ResultSet, DbObject>() {
                     @Override
                     public DbObject map(ResultSet source) throws MappingException {
                         return map(source, null);
@@ -75,7 +75,8 @@ public class ResultSetMapperFactoryTest {
                     }
                 };
             }
-        } ));
+        };
+        dbi.registerMapper(new SfmResultSetMapperFactory(unaryFactory));
         Handle handle = dbi.open();
         try {
             DbObject dbObject = handle.createQuery(DbHelper.TEST_DB_OBJECT_QUERY).mapTo(DbObject.class).first();

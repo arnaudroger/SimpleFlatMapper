@@ -3,6 +3,7 @@ package org.simpleflatmapper.converter.impl;
 
 import org.simpleflatmapper.converter.AbstractConverterFactory;
 import org.simpleflatmapper.converter.AbstractConverterFactoryProducer;
+import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
 import org.simpleflatmapper.converter.ConvertingScore;
@@ -18,6 +19,7 @@ import org.simpleflatmapper.util.date.DefaultDateFormatSupplier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,15 +69,41 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		}
 
 		@Override
-		public Converter<? super CharSequence, ? extends Date> newConverter(ConvertingTypes targetedTypes, Object... params) {
+		public Converter<? super CharSequence, ? extends Date> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
 			List<String> formats = getFormat(params);
 			TimeZone timeZone = getTimeZone(params);
 			if (formats.isEmpty()) {
 				return null;
 			} else if (formats.size() == 1) {
-				return new CharSequenceToDateConverter(formats.get(0), timeZone);
+				final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(formats.get(0));
+				simpleDateFormat.setTimeZone(timeZone);
+				int contextIndex = contextFactoryBuilder.addSupplier(new Supplier<SimpleDateFormat>() {
+					@Override
+					public SimpleDateFormat get() {
+						return (SimpleDateFormat) simpleDateFormat.clone();
+					}
+				});
+				return new CharSequenceToDateConverter(contextIndex);
 			} else {
-				return new MultiFormatCharSequenceToDateConverter(formats, timeZone);
+				final SimpleDateFormat[] simpleDateFormats = new SimpleDateFormat[formats.size()];
+				for(int i = 0; i < simpleDateFormats.length; i++) {
+					final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(formats.get(simpleDateFormats.length - i - 1));
+					simpleDateFormat.setTimeZone(timeZone);
+					simpleDateFormats[i] = simpleDateFormat;
+				}
+				
+				int contextIndex = contextFactoryBuilder.addSupplier(new Supplier<SimpleDateFormat[]>() {
+					@Override
+					public SimpleDateFormat[] get() {
+						SimpleDateFormat[] simpleDateFormatsCopy = new SimpleDateFormat[simpleDateFormats.length];
+						for(int i = 0; i < simpleDateFormats.length; i++) {
+							simpleDateFormatsCopy[i] = (SimpleDateFormat) simpleDateFormats[i].clone();
+						}
+						return simpleDateFormatsCopy;
+					}
+				});
+				
+				return new MultiFormatCharSequenceToDateConverter(contextIndex);
 			}
 		}
 
@@ -123,7 +151,7 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		}
 
 		@SuppressWarnings("unchecked")
-		public Converter<? super CharSequence, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
+		public Converter<? super CharSequence, ? extends Enum> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
 			return new CharSequenceToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
 		}
 
@@ -142,7 +170,7 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		}
 
 		@SuppressWarnings("unchecked")
-		public Converter<? super Number, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
+		public Converter<? super Number, ? extends Enum> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
 			return new NumberToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
 		}
 
@@ -161,7 +189,7 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		}
 
 		@SuppressWarnings("unchecked")
-		public Converter<? super Object, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
+		public Converter<? super Object, ? extends Enum> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
 			return new ObjectToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
 		}
 

@@ -5,6 +5,7 @@ import org.simpleflatmapper.converter.ComposedConverter;
 import org.simpleflatmapper.converter.ConversionException;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
 import org.simpleflatmapper.converter.ToStringConverter;
 import org.simpleflatmapper.converter.impl.CharSequenceIntegerConverter;
 import org.simpleflatmapper.util.date.DateFormatSupplier;
@@ -102,7 +103,7 @@ public class ConverterServiceTest {
         testConverter("http://url.net", new URL("http://url.net"));
 
         try {
-            ConverterService.getInstance().findConverter(String.class, URL.class).convert("blop", null);
+            ConverterService.getInstance().findConverter(String.class, URL.class, EmptyContextFactoryBuilder.INSTANCE).convert("blop", null);
             fail();
         } catch(ConversionException e) {
             // expected
@@ -139,14 +140,14 @@ public class ConverterServiceTest {
 
     @Test
     public void testNoConverter()  {
-        assertNull(ConverterService.getInstance().findConverter(Reader.class, System.class));
+        assertNull(ConverterService.getInstance().findConverter(Reader.class, System.class, EmptyContextFactoryBuilder.INSTANCE));
     }
     
     @Test
     public void testListToNumberSOE() {
         ConverterService converterService = ConverterService.getInstance();
         Converter<? super List, ? extends Integer> converter = 
-                converterService.findConverter(List.class, Integer.class);
+                converterService.findConverter(List.class, Integer.class, EmptyContextFactoryBuilder.INSTANCE);
         
         assertTrue(converter instanceof ComposedConverter);
         ComposedConverter composedConverter = (ComposedConverter) converter;

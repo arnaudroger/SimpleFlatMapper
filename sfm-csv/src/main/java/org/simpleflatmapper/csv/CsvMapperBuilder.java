@@ -6,7 +6,7 @@ import org.simpleflatmapper.csv.mapper.CsvRowGetterFactory;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterFactoryAdapter;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.DefaultSetRowMapperBuilder;
@@ -33,7 +33,7 @@ public class CsvMapperBuilder<T> extends MapperBuilder<CsvRow, CsvRowSet, T, Csv
 	public static String DEFAULT_DATE_FORMAT =  "yyyy-MM-dd HH:mm:ss";
 
 	private static final MapperSourceImpl<CsvRow, CsvColumnKey> FIELD_MAPPER_SOURCE =
-			new MapperSourceImpl<CsvRow, CsvColumnKey>(CsvRow.class,  new FieldMapperGetterFactoryAdapter<CsvRow, CsvColumnKey>(CsvRowGetterFactory.INSTANCE));
+			new MapperSourceImpl<CsvRow, CsvColumnKey>(CsvRow.class,  new ContextualGetterFactoryAdapter<CsvRow, CsvColumnKey>(CsvRowGetterFactory.INSTANCE));
 	private static final KeyFactory<CsvColumnKey> KEY_FACTORY = new KeyFactory<CsvColumnKey>() {
 		@Override
 		public CsvColumnKey newKey(String name, int i) {

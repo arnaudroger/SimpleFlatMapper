@@ -1,5 +1,6 @@
 package org.simpleflatmapper.jdbc.impl;
 
+import org.simpleflatmapper.converter.ContextFactory;
 import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 
 public final class PostgresqlBatchInsertQueryExecutor<T> extends AbstractBatchInsertQueryExecutor<T> {
@@ -13,8 +14,8 @@ public final class PostgresqlBatchInsertQueryExecutor<T> extends AbstractBatchIn
             String[] updateColumns,
             String[] generatedKeys,
             String[] keys,
-            MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
-        super(meta, insertColumns, insertColumnExpressions, updateColumns, generatedKeys, multiIndexFieldMappers);
+            MultiIndexFieldMapper<T>[] multiIndexFieldMappers, ContextFactory contextFactory) {
+        super(meta, insertColumns, insertColumnExpressions, updateColumns, generatedKeys, multiIndexFieldMappers, contextFactory);
         this.keys = keys;
     }
 

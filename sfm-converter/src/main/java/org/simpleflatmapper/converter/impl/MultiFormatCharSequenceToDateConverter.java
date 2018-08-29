@@ -12,24 +12,20 @@ import java.util.TimeZone;
 
 public class MultiFormatCharSequenceToDateConverter implements Converter<CharSequence, Date> {
 
-    private final SimpleDateFormat[] formats;
-
-    public MultiFormatCharSequenceToDateConverter(List<String> formats, TimeZone timeZone) {
-        this.formats = new SimpleDateFormat[formats.size()];
-        for(int i = 0; i < formats.size(); i++) {
-            SimpleDateFormat f = new SimpleDateFormat(formats.get(formats.size() - i - 1));
-            f.setTimeZone(timeZone);
-            this.formats[i] = f;
-        }
+    private final int contextIndex;
+    
+    public MultiFormatCharSequenceToDateConverter(int contextIndex) {
+        this.contextIndex = contextIndex;
     }
 
     @Override
     public Date convert(CharSequence in, Context context) throws Exception {
         if (in == null || in.length() == 0) return null;
         
+        SimpleDateFormat[] formats = context.context(contextIndex);
         for(int i = 0; i < formats.length; i++) {
             try {
-                return ((SimpleDateFormat)formats[i].clone()).parse(in.toString());
+                return formats[i].parse(in.toString());
             } catch (ParseException e) {
                 // ignore
             }

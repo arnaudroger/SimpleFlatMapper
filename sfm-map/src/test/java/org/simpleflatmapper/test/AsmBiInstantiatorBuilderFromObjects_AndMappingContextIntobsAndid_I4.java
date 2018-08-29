@@ -3,7 +3,7 @@ package org.simpleflatmapper.test;
 import java.util.Map;
 import java.util.Set;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterBiFunction;
+import org.simpleflatmapper.map.getter.ContextualGetterBiFunction;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
@@ -16,12 +16,12 @@ import org.simpleflatmapper.util.BiFunction;
 public final class AsmBiInstantiatorBuilderFromObjects_AndMappingContextIntobsAndid_I4 implements BiInstantiator<Object[], MappingContext, A> {
     final Instantiator<Void, Builder> builderInstantiator;
     final Getter factory_id;
-    final FieldMapperGetterBiFunction factory_bs;
+    final ContextualGetterBiFunction factory_bs;
 
     public AsmBiInstantiatorBuilderFromObjects_AndMappingContextIntobsAndid_I4(Map<java.lang.String, BiFunction<Object[], MappingContext, ?>> var1, Instantiator<Void, Builder> var2) {
         this.builderInstantiator = var2;
         this.factory_id = (Getter)((BiFunctionGetter)var1.get("id")).getGetter();
-        this.factory_bs = (FieldMapperGetterBiFunction)var1.get("bs");
+        this.factory_bs = (ContextualGetterBiFunction)var1.get("bs");
     }
 
     public A newInstance(Object[] var1, MappingContext var2) throws Exception {

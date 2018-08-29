@@ -1,5 +1,7 @@
 package org.simpleflatmapper.jdbc.impl;
 
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.converter.ContextFactory;
 import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 import org.simpleflatmapper.jdbc.QueryBinder;
 import org.simpleflatmapper.jdbc.QueryPreparer;
@@ -18,16 +20,18 @@ public class MultiIndexQueryPreparer<T> implements QueryPreparer<T> {
     private final NamedSqlQuery query;
     private final MultiIndexFieldMapper<T>[] multiIndexFieldMappers;
     private final String[] generatedKeys;
+    private final ContextFactory contextFactory;
 
-    public MultiIndexQueryPreparer(NamedSqlQuery query, MultiIndexFieldMapper<T>[] multiIndexFieldMappers, String[] generatedKeys) {
+    public MultiIndexQueryPreparer(NamedSqlQuery query, MultiIndexFieldMapper<T>[] multiIndexFieldMappers, String[] generatedKeys, ContextFactory contextFactory) {
         this.query = query;
         this.multiIndexFieldMappers = multiIndexFieldMappers;
         this.generatedKeys = generatedKeys;
+        this.contextFactory = contextFactory;
     }
 
     @Override
     public QueryBinder<T> prepare(Connection connection) throws SQLException {
-        return new MultiIndexQueryBinder(connection);
+        return new MultiIndexQueryBinder(connection, contextFactory);
     }
 
     @Override
@@ -54,19 +58,22 @@ public class MultiIndexQueryPreparer<T> implements QueryPreparer<T> {
 
     public class MultiIndexQueryBinder implements QueryBinder<T> {
         private final Connection connection;
+        private final ContextFactory contextFactory;
 
 
-        protected MultiIndexQueryBinder(Connection connection) {
+        protected MultiIndexQueryBinder(Connection connection, ContextFactory contextFactory) {
             this.connection = connection;
+            this.contextFactory = contextFactory;
         }
 
         @Override
         public PreparedStatement bind(T value) throws SQLException {
             PreparedStatement ps = createPreparedStatement(value);
+            Context context = contextFactory.newContext();
             try {
                 int columnIndex = 0;
                 for (int i = 0; i < multiIndexFieldMappers.length; i++) {
-                    columnIndex += multiIndexFieldMappers[i].map(ps, value, columnIndex);
+                    columnIndex += multiIndexFieldMappers[i].map(ps, value, columnIndex, context);
                 }
                 return ps;
             } catch (Exception e) {

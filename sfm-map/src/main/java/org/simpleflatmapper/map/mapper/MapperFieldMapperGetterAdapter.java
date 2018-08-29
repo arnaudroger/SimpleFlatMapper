@@ -1,13 +1,14 @@
 package org.simpleflatmapper.map.mapper;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetter;
+import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.util.Predicate;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
-public final class MapperFieldMapperGetterAdapter<S, P> implements FieldMapperGetter<S, P> {
+public final class MapperFieldMapperGetterAdapter<S, P> implements ContextualGetter<S, P> {
 
 	public final SourceMapper<S, P> mapper;
     public final Predicate<S> nullChecker;
@@ -27,13 +28,14 @@ public final class MapperFieldMapperGetterAdapter<S, P> implements FieldMapperGe
     }
 
     @Override
-    public P get(S s, MappingContext<?> context) {
+    public P get(S s, Context context) {
         if (nullChecker.test(s)){
             return null;
         }
-        P value = mapper.map(s, (MappingContext<? super S>) context);
-        if (context != null) {
-            context.setCurrentValue(valueIndex, value);
+        MappingContext<? super S> mappingContext = (MappingContext<? super S>) context;
+        P value = mapper.map(s, mappingContext);
+        if (mappingContext != null) {
+            mappingContext.setCurrentValue(valueIndex, value);
         }
         return value;
     }

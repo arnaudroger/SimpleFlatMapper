@@ -10,16 +10,15 @@ import java.util.TimeZone;
 
 public class CharSequenceToDateConverter implements Converter<CharSequence, Date> {
 
-    private final SimpleDateFormat format;
+    private final int contextIndex;
 
-    public CharSequenceToDateConverter(String format, TimeZone timeZone) {
-        this.format = new SimpleDateFormat(format);
-        this.format.setTimeZone(timeZone);
+    public CharSequenceToDateConverter(int contextIndex) {
+        this.contextIndex = contextIndex;
     }
 
     @Override
     public Date convert(CharSequence in, Context context) throws Exception {
         if (in == null || in.length() == 0) return null;
-        return ((SimpleDateFormat)format.clone()).parse(in.toString());
+        return ((SimpleDateFormat)context.context(contextIndex)).parse(in.toString());
     }
 }

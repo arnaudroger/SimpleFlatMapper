@@ -1,5 +1,6 @@
 package org.simpleflatmapper.jdbc.impl.setter;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.ErrorHelper;
 
@@ -16,9 +17,9 @@ public class PreparedStatementIndexSetterOnGetter<I, P> implements PreparedState
     }
 
     @Override
-    public void set(PreparedStatement ps, P value, int columnIndex) throws SQLException {
+    public void set(PreparedStatement ps, P value, int columnIndex, Context context) throws SQLException {
         try {
-            setter.set(ps, getter.get(value), columnIndex);
+            setter.set(ps, getter.get(value), columnIndex, context);
         } catch (Exception e) {
             ErrorHelper.rethrow(e);
         }

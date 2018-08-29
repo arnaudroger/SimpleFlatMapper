@@ -1,9 +1,8 @@
 package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.converter.UncheckedConverter;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
-import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
@@ -29,7 +28,7 @@ public class DiscriminatorMapper<ROW, ROWS, T, EX extends Exception> extends Abs
     }
 
     @Override
-    protected SourceFieldMapper<ROW, T> getMapper(final ROW row) throws MappingException {
+    protected ContextualSourceFieldMapper<ROW, T> getMapper(final ROW row) throws MappingException {
 
         for (PredicatedMapper<ROW, ROWS, T, EX> tm : mappers) {
             if (tm.getPredicate().test(row)) {
@@ -65,11 +64,11 @@ public class DiscriminatorMapper<ROW, ROWS, T, EX extends Exception> extends Abs
     public static class PredicatedMapper<ROW, ROWS, T, EX extends Throwable> {
 
         private final Predicate<ROW> predicate;
-        private final SourceFieldMapper<ROW, T> mapper;
+        private final ContextualSourceFieldMapper<ROW, T> mapper;
         private final MappingContextFactoryFromRows<ROW, ROWS, EX> mappingContextFactory;
 
         public PredicatedMapper(Predicate<ROW> predicate,
-                                SourceFieldMapper<ROW, T> mapper,
+                                ContextualSourceFieldMapper<ROW, T> mapper,
                                 MappingContextFactoryFromRows<ROW, ROWS, EX> mappingContextFactory) {
             this.predicate = predicate;
             this.mapper = mapper;
@@ -80,7 +79,7 @@ public class DiscriminatorMapper<ROW, ROWS, T, EX extends Exception> extends Abs
             return predicate;
         }
 
-        public SourceFieldMapper<ROW, T> getMapper() {
+        public ContextualSourceFieldMapper<ROW, T> getMapper() {
             return mapper;
         }
 

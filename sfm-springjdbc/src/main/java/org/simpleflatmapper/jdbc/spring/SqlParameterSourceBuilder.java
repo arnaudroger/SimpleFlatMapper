@@ -2,6 +2,7 @@ package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.SqlTypeColumnProperty;
 import org.simpleflatmapper.jdbc.JdbcTypeHelper;
@@ -9,8 +10,8 @@ import org.simpleflatmapper.jdbc.named.NamedParameter;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.PropertyWithGetter;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetter;
-import org.simpleflatmapper.map.mapper.FieldMapperGetterAdapter;
+import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
@@ -93,14 +94,15 @@ public final class SqlParameterSourceBuilder<T> {
                     public void handle(PropertyMapping<T, ?, JdbcColumnKey> pm) {
                         int parameterType =
                                 getParameterType(pm);
-                        FieldMapperGetter<? super T, ?> getter = FieldMapperGetterAdapter.of(pm.getPropertyMeta().getGetter());
-                        
-                        
+                        ContextualGetter<? super T, ?> getter = ContextualGetterAdapter.of(pm.getPropertyMeta().getGetter());
+
+
                         // need conversion ?
+                        final DefaultContextFactoryBuilder contextFactoryBuilder = new DefaultContextFactoryBuilder();
                         Type propertyType = pm.getPropertyMeta().getPropertyType();
                         Class<?> sqlType = JdbcTypeHelper.toJavaType(parameterType, propertyType);
                         if (!TypeHelper.isAssignable(sqlType, propertyType)) {
-                            Converter<? super Object, ?> converter = ConverterService.getInstance().findConverter(propertyType, sqlType);
+                            Converter<? super Object, ?> converter = ConverterService.getInstance().findConverter(propertyType, sqlType, contextFactoryBuilder);
                             
                             if (converter != null) {
                                 getter = new FieldMapperGetterWithConverter(converter, getter);
@@ -110,7 +112,7 @@ public final class SqlParameterSourceBuilder<T> {
                         PlaceHolderValueGetter parameter =
                                 new PlaceHolderValueGetter(pm.getColumnKey().getOrginalName(),
                                         parameterType,
-                                        null, getter);
+                                        null, getter, contextFactoryBuilder.build());
                         parameters[i] = parameter;
                         i++;
                     }

@@ -7,7 +7,10 @@ import org.simpleflatmapper.converter.UncheckedConverter;
 import org.simpleflatmapper.converter.UncheckedConverterHelper;
 import org.simpleflatmapper.jdbc.impl.ResultSetEnumerable;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
 import org.simpleflatmapper.map.mapper.DiscriminatorMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.util.Enumerable;
@@ -93,8 +96,9 @@ public class DiscriminatorJdbcBuilder<T> {
 
         for(DiscriminatorJdbcSubBuilder subBuilder : builders) {
             JdbcSourceFieldMapper<T> mapper = subBuilder.createMapper();
+            
             Predicate<ResultSet> predicate = new ResultSetDiscriminatorPredicate(column, subBuilder.predicate);
-            mappers.add(new DiscriminatorMapper.PredicatedMapper<ResultSet, ResultSet, T, SQLException>(predicate, mapper, mapper));
+            mappers.add(new DiscriminatorMapper.PredicatedMapper<ResultSet, ResultSet, T, SQLException>(predicate, (ContextualSourceFieldMapper<ResultSet, T>) mapper, (MappingContextFactoryFromRows<ResultSet, ResultSet, SQLException>) mapper));
         }
 
 

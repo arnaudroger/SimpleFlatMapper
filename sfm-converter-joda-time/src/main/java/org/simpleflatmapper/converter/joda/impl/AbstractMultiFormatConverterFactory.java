@@ -3,6 +3,7 @@ package org.simpleflatmapper.converter.joda.impl;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.simpleflatmapper.converter.AbstractConverterFactory;
+import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConvertingTypes;
 
@@ -14,7 +15,7 @@ public abstract class AbstractMultiFormatConverterFactory<I, O> extends Abstract
 
     @SuppressWarnings("unchecked")
     @Override
-    public Converter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, Object... params) {
+    public Converter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
 
         DateTimeFormatter[] dateTimeFormatters = JodaTimeHelper.getDateTimeFormatters(params);
 

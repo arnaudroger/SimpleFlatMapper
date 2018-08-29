@@ -199,7 +199,7 @@ public class JdbcMapperFactoryTest {
 		
 		List<DbObject> list = mapper.forEach(new MockDbObjectResultSet(1), new ListCollector<DbObject>()).getList();
 		assertNotNull(list.get(0));
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new JdbcColumnKey("id", 1)), any(), same(list.get(0)), same(exception));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new JdbcColumnKey("id", 1)), any(), same(list.get(0)), same(exception), any());
 	}
 	
 	
@@ -220,7 +220,7 @@ public class JdbcMapperFactoryTest {
 		
 		List<DbObject> list = mapper.forEach(rs, new ListCollector<DbObject>()).getList();
 		assertNotNull(list.get(0));
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new JdbcColumnKey("id", 1)), any(), same(list.get(0)), same(exception));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new JdbcColumnKey("id", 1)), any(), same(list.get(0)), same(exception), any());
 
 	}
 

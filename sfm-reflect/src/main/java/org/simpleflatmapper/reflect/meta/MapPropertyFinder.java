@@ -1,5 +1,6 @@
 package org.simpleflatmapper.reflect.meta;
 
+import org.simpleflatmapper.converter.ContextFactory;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.reflect.property.MapTypeProperty;
@@ -20,6 +21,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     private final ClassMeta<V> valueMetaData;
     private final ClassMeta<T> mapMeta;
     private final Converter<? super CharSequence, ? extends K> keyConverter;
+    private final ContextFactory keyContextFactory;
     private final Map<PropertyNameMatcher, PropertyFinder<V>> finders = new HashMap<PropertyNameMatcher, PropertyFinder<V>>();
     private final Map<PropertyMeta<?, ?>, PropertyFinder<?>> findersByKey = new HashMap<PropertyMeta<?, ?>, PropertyFinder<?>>();
     private final Map<String, MapElementPropertyMeta<?, K, V>> keys = new HashMap<String, MapElementPropertyMeta<?, K, V>>();
@@ -29,13 +31,14 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
 
     private int keyValueMode = NONE;
 
-    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
+    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter, ContextFactory keyContextFactory, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
         super(propertyFilter, selfScoreFullName);
         this.mapMeta = mapMeta;
         this.valueMetaData = valueMetaData;
         this.keyConverter = keyConverter;
         this.keyValueType = getKeyValueType(mapMeta);
         this.keyValueClassMeta = mapMeta.getReflectionService().getClassMeta(keyValueType);
+        this.keyContextFactory = keyContextFactory;
         this.keyValuePropertyFinder = keyValueClassMeta.newPropertyFinder(propertyFilter);
         this.elementPropertyMeta = 
             new MapKeyValueElementPropertyMeta<T, K, V>(mapMeta.getType(), valueMetaData.getReflectionService(), keyValueType);
@@ -165,7 +168,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
 
             K key;
             try {
-                key = keyConverter.convert(keyStringValue, null);
+                key = keyConverter.convert(keyStringValue, keyContextFactory.newContext());
             } catch (Exception e) {
                 // invalid key..
                 return null;

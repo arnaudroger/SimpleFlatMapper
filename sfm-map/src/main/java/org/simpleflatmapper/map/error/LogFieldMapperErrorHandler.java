@@ -1,6 +1,8 @@
 package org.simpleflatmapper.map.error;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 
 import java.util.logging.Level;
@@ -10,7 +12,7 @@ public final class LogFieldMapperErrorHandler<K> implements FieldMapperErrorHand
 	private final Logger logger = Logger.getLogger(getClass().getName());
 	@Override
 	public void errorMappingField(final K key, final Object source, final Object target,
-			final Exception error) throws MappingException {
+								  final Exception error, final Context mappingContext) throws MappingException {
 		logger.log(Level.WARNING, "Error getting value from " + source, error);
 	}
 }

@@ -88,7 +88,7 @@ public class JdbcMapperPrimitiveTest {
 		when(rs.getFloat(7)).thenReturn(3.14f);
 		when(rs.getDouble(8)).thenReturn(3.14159);
 		
-		T object = mapper.map(rs);
+		T object = mapper.map(rs, null);
 		
 		assertEquals(true,  object.ispBoolean());
 		assertEquals((byte)0xa3, object.getpByte());
@@ -114,7 +114,7 @@ public class JdbcMapperPrimitiveTest {
 		when(rs.getFloat(7)).thenReturn(0f);
 		when(rs.getDouble(8)).thenReturn(0d);
 		
-		DbBoxedPrimitiveObject object = mapper.map(rs);
+		DbBoxedPrimitiveObject object = mapper.map(rs, null);
 		
 		assertNull(object.getoBoolean());
 		assertNull(object.getoByte());

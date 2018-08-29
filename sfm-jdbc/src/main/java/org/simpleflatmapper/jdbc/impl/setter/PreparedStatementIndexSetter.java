@@ -1,11 +1,12 @@
 package org.simpleflatmapper.jdbc.impl.setter;
 
-import org.simpleflatmapper.reflect.IndexedSetter;
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.map.setter.ContextualIndexedSetter;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public interface PreparedStatementIndexSetter<T> extends IndexedSetter<PreparedStatement, T> {
+public interface PreparedStatementIndexSetter<T> extends ContextualIndexedSetter<PreparedStatement, T> {
 
     /**
      *
@@ -14,5 +15,6 @@ public interface PreparedStatementIndexSetter<T> extends IndexedSetter<PreparedS
      * @param columnIndex the index to start binding at
      * @throws SQLException if an error occurs
      */
-    void set(PreparedStatement ps, T value, int columnIndex) throws SQLException;
+    @Override
+    void set(PreparedStatement ps, T value, int columnIndex, Context context) throws SQLException;
 }

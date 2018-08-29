@@ -2,7 +2,6 @@ package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 import java.util.concurrent.atomic.AtomicReference;

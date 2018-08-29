@@ -26,7 +26,7 @@ public final class FieldErrorHandlerMapper<S, T, K> implements FieldMapper<S, T>
 		try {
 			delegate.mapTo(source, target, mappingContext);
 		} catch(Exception e) {
-			errorHandler.errorMappingField(key, source, target, e);
+			errorHandler.errorMappingField(key, source, target, e, mappingContext);
 		}
 	}
 

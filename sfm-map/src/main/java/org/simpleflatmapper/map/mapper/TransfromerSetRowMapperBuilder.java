@@ -1,5 +1,6 @@
 package org.simpleflatmapper.map.mapper;
 
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
@@ -29,10 +30,9 @@ public class TransfromerSetRowMapperBuilder<MO extends SetRowMapper<ROW, SET, O,
     }
 
     @Override
-    public final SourceFieldMapper<ROW, O> sourceFieldMapper() {
+    public ContextualSourceFieldMapper<ROW, O> sourceFieldMapper() {
         throw new UnsupportedOperationException();
     }
-
     @Override
     public final boolean isRootAggregate() {
         return delegate.isRootAggregate();

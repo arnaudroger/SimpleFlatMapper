@@ -29,6 +29,13 @@ import java.util.List;
 
 public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends FieldKey<K>, B extends AbstractConstantTargetMapperBuilder<S, T, K , B>> {
 
+    private static KeySourceGetter KEY_SOURCE_GETTER = new KeySourceGetter() {
+        @Override
+        public Object getValue(Object key, Object source) throws Exception {
+            throw new UnsupportedOperationException();
+        }
+    };
+    
     private final ReflectionService reflectionService;
     protected final MapperConfig<K> mapperConfig;
 
@@ -87,17 +94,12 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
     }
 
     @SuppressWarnings("unchecked")
-    public ContextualFieldMapper<T, S> mapper() {
+    public AbstractMapper<T, S> mapper() {
 
         final List<FieldMapper<T, S>> mappers = new ArrayList<FieldMapper<T, S>>();
 
 
-        final MappingContextFactoryBuilder mappingContextFactoryBuilder = new MappingContextFactoryBuilder(new KeySourceGetter<K, T>() {
-            @Override
-            public Object getValue(K key, T source) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-        });
+        final MappingContextFactoryBuilder<T, K> mappingContextFactoryBuilder = new MappingContextFactoryBuilder<T, K>(keySourceGetter());
 
         propertyMappingsBuilder.forEachProperties(
                 new ForEachCallBack<PropertyMapping<T, ?, K>>() {
@@ -158,7 +160,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
         
 
         return
-            new ContextualFieldMapper<T, S>(mapper, mappingContextFactoryBuilder.newFactory());
+            mapper;
     }
 
     protected void postMapperProcess(List<FieldMapper<T,S>> mappers) {
@@ -181,5 +183,10 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
     private FieldKey<?>[] getKeys() {
         return propertyMappingsBuilder.getKeys().toArray(new FieldKey[0]);
     }
+
+    protected KeySourceGetter<K, ? super T> keySourceGetter() {
+        return KEY_SOURCE_GETTER;
+    }
+
 
 }

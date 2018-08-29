@@ -1,7 +1,9 @@
 package org.simpleflatmapper.jdbc.impl;
 
+import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.Crud;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
+import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 import org.simpleflatmapper.jdbc.PreparedStatementMapperBuilder;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
@@ -50,13 +52,16 @@ public class MysqlCrudFactory {
             }
         }
 
+        DefaultContextFactoryBuilder builder = new DefaultContextFactoryBuilder();
+        MultiIndexFieldMapper<T>[] multiIndexFieldMappers = statementMapperBuilder.buildIndexFieldMappers(builder);
         MysqlBatchInsertQueryExecutor<T> queryExecutor = new MysqlBatchInsertQueryExecutor<T>(
                 crudMeta,
                 insertColumns.toArray(new String[0]),
                 insertColumnExpressions.toArray(new String[0]),
                 onDuplicateKeyUpdate ? updateColumns.toArray(new String[0]) : null,
                 generatedKeys.toArray(new String[0]),
-                statementMapperBuilder.buildIndexFieldMappers());
+                multiIndexFieldMappers, 
+                builder.build());
 
         return
                 new SizeAdjusterBatchQueryExecutor<T>(queryExecutor);

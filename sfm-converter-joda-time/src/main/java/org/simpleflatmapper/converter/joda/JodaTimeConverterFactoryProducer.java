@@ -11,6 +11,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.simpleflatmapper.converter.AbstractConverterFactory;
 import org.simpleflatmapper.converter.AbstractConverterFactoryProducer;
 import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
 import org.simpleflatmapper.converter.ConvertingTypes;
@@ -46,7 +47,7 @@ public class JodaTimeConverterFactoryProducer extends AbstractConverterFactoryPr
         // Date to joda time
         factoryConverter(consumer, new AbstractConverterFactory<Date, DateTime>(Date.class, DateTime.class) {
             @Override
-            public Converter<Date, DateTime> newConverter(ConvertingTypes targetedTypes, Object... params) {
+            public Converter<Date, DateTime> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
                 return new DateToJodaDateTimeConverter(JodaTimeHelper.getDateTimeZoneOrDefault(params));
             }
         });
@@ -61,13 +62,13 @@ public class JodaTimeConverterFactoryProducer extends AbstractConverterFactoryPr
         constantConverter(consumer, LocalDate.class, Date.class, new JodaLocalDateTojuDateConverter());
         factoryConverter(consumer, new AbstractConverterFactory<LocalDateTime, Date>(LocalDateTime.class, Date.class) {
             @Override
-            public Converter<LocalDateTime, Date> newConverter(ConvertingTypes targetedTypes, Object... params) {
+            public Converter<LocalDateTime, Date> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
                 return new JodaLocalDateTimeTojuDateConverter(JodaTimeHelper.getDateTimeZoneOrDefault(params));
             }
         });
         factoryConverter(consumer, new AbstractConverterFactory<LocalTime, Date>(LocalTime.class, Date.class) {
             @Override
-            public Converter<LocalTime, Date> newConverter(ConvertingTypes targetedTypes, Object... params) {
+            public Converter<LocalTime, Date> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
                 return new JodaLocalTimeTojuDateConverter(JodaTimeHelper.getDateTimeZoneOrDefault(params));
             }
         });
@@ -107,7 +108,7 @@ public class JodaTimeConverterFactoryProducer extends AbstractConverterFactoryPr
 
         factoryConverter(consumer, new AbstractConverterFactory<ReadableInstant, String>(ReadableInstant.class, String.class) {
             @Override
-            public Converter<? super ReadableInstant, String> newConverter(ConvertingTypes targetedTypes, Object... params) {
+            public Converter<? super ReadableInstant, String> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
                 DateTimeFormatter dateTimeFormatter  = JodaTimeHelper.getDateTimeFormatter(params);
                 if (dateTimeFormatter != null) {
                     return new JodaReadableInstantToStringConverter(dateTimeFormatter);
@@ -118,7 +119,7 @@ public class JodaTimeConverterFactoryProducer extends AbstractConverterFactoryPr
         });
         factoryConverter(consumer, new AbstractConverterFactory<ReadablePartial, String>(ReadablePartial.class, String.class) {
             @Override
-            public Converter<? super ReadablePartial, String> newConverter(ConvertingTypes targetedTypes, Object... params) {
+            public Converter<? super ReadablePartial, String> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
                 DateTimeFormatter dateTimeFormatter  = JodaTimeHelper.getDateTimeFormatter(params);
                 if (dateTimeFormatter != null) {
                     return new JodaReadablePartialToStringConverter(dateTimeFormatter);

@@ -1,7 +1,10 @@
 package org.simpleflatmapper.jdbc;
 
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SourceFieldMapper;
+import org.simpleflatmapper.map.mapper.ContextualSourceMapperImpl;
 import org.simpleflatmapper.map.mapper.DynamicSourceFieldMapper;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.jdbc.impl.JdbcColumnKeyMapperKeyComparator;
@@ -256,7 +259,7 @@ public final class JdbcMapperFactory
 			implements JdbcSourceFieldMapper<T> {
 
 		public DynamicJdbSourceFieldMapper(
-				UnaryFactory<MapperKey<JdbcColumnKey>, SourceFieldMapper<ResultSet, T>> mapperFactory,
+				UnaryFactory<MapperKey<JdbcColumnKey>, ContextualSourceFieldMapper<ResultSet, T>> mapperFactory,
 				UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> mapperKeyFromRow) {
 			super(mapperFactory, mapperKeyFromRow, JdbcColumnKeyMapperKeyComparator.INSTANCE);
 		}
@@ -342,7 +345,7 @@ public final class JdbcMapperFactory
         }
 	}
 
-	private class SourceFieldMapperFactory<T> implements UnaryFactory<MapperKey<JdbcColumnKey>, SourceFieldMapper<ResultSet, T>> {
+	private class SourceFieldMapperFactory<T> implements UnaryFactory<MapperKey<JdbcColumnKey>, ContextualSourceFieldMapper<ResultSet, T>> {
 		private final ClassMeta<T> classMeta;
 
 		public SourceFieldMapperFactory(ClassMeta<T> classMeta) {
@@ -350,13 +353,13 @@ public final class JdbcMapperFactory
 		}
 
 		@Override
-		public SourceFieldMapper<ResultSet, T> newInstance(MapperKey<JdbcColumnKey> jdbcColumnKeyMapperKey) {
+		public ContextualSourceFieldMapper<ResultSet, T> newInstance(MapperKey<JdbcColumnKey> jdbcColumnKeyMapperKey) {
 			final JdbcMapperBuilder<T> builder = newBuilder(classMeta);
 
 			for(JdbcColumnKey key : jdbcColumnKeyMapperKey.getColumns()) {
 				builder.addMapping(key);
 			}
-			return builder.newSourceFieldMapper();
+			return new ContextualSourceMapperImpl<ResultSet, T>( null, builder.newSourceFieldMapper()) ;
 		}
 	}
 }

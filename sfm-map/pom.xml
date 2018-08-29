@@ -96,7 +96,9 @@
                             org.simpleflatmapper.map.context,
                             org.simpleflatmapper.map.error,
                             org.simpleflatmapper.map.fieldmapper,
-                            org.simpleflatmapper.map.mapper
+                            org.simpleflatmapper.map.mapper,
+                            org.simpleflatmapper.map.setter,
+                            org.simpleflatmapper.map.getter
                         </Export-Package>
 						<Import-Package>
 							org.simpleflatmapper.ow2asm.*,

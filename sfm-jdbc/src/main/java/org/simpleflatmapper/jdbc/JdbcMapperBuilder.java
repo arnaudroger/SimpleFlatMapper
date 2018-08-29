@@ -6,12 +6,12 @@ import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterFactoryAdapter;
+import org.simpleflatmapper.map.context.MappingContextFactory;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.DefaultSetRowMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
@@ -42,7 +42,7 @@ import java.util.stream.Stream;
 public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultSet, T, JdbcColumnKey, SQLException, SetRowMapper<ResultSet, ResultSet, T, SQLException>, JdbcMapper<T>, JdbcMapperBuilder<T>> {
 
     private static final MapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
-            new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class,  new FieldMapperGetterFactoryAdapter<ResultSet, JdbcColumnKey>(ResultSetGetterFactory.INSTANCE));
+            new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class,  new ContextualGetterFactoryAdapter<ResultSet, JdbcColumnKey>(ResultSetGetterFactory.INSTANCE));
     private static final KeyFactory<JdbcColumnKey> KEY_FACTORY = new KeyFactory<JdbcColumnKey>() {
         @Override
         public JdbcColumnKey newKey(String name, int i) {
@@ -107,7 +107,7 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
                 new BiFunction<SetRowMapper<ResultSet, ResultSet, T, SQLException>, List<JdbcColumnKey>, JdbcMapper<T>>() {
                     @Override
                     public JdbcMapper<T> apply(SetRowMapper<ResultSet, ResultSet, T, SQLException> setRowMapper, List<JdbcColumnKey> keys) {
-                        return new JdbcMapperImpl<T>(setRowMapper, parentBuilder.newFactory());
+                        return new JdbcMapperImpl<T>(setRowMapper, parentBuilder.build());
                     }
                 }, 
                 COLUMN_DEFINITION_FACTORY,
@@ -172,7 +172,7 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
 
 
     public JdbcSourceFieldMapper<T> newSourceFieldMapper() {
-        return new JdbcSourceFieldMapperImpl<T>(super.sourceFieldMapper(), mappingContextFactoryBuilder.newFactory());
+        return new JdbcSourceFieldMapperImpl<T>(super.sourceFieldMapper(), mappingContextFactoryBuilder.build());
     }
     
     private static class JdbcSourceFieldMapperImpl<T> implements JdbcSourceFieldMapper<T> {
@@ -187,11 +187,6 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
         @Override
         public void mapTo(ResultSet source, T target, MappingContext<? super ResultSet> context) throws Exception {
             sourceFieldMapper.mapTo(source, target, context);
-        }
-
-        @Override
-        public T map(ResultSet source) throws MappingException {
-            return sourceFieldMapper.map(source);
         }
 
         @Override

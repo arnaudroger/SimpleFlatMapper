@@ -2,10 +2,30 @@ package org.simpleflatmapper.map.fieldmapper;
 
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.map.getter.BooleanContextualGetter;
+import org.simpleflatmapper.map.getter.BoxedBooleanContextualGetter;
+import org.simpleflatmapper.map.getter.BoxedByteContextualGetter;
+import org.simpleflatmapper.map.getter.BoxedCharacterContextualGetter;
+import org.simpleflatmapper.map.getter.BoxedDoubleContextualGetter;
+import org.simpleflatmapper.map.getter.BoxedFloatContextualGetter;
+import org.simpleflatmapper.map.getter.BoxedIntContextualGetter;
+import org.simpleflatmapper.map.getter.BoxedLongContextualGetter;
+import org.simpleflatmapper.map.getter.BoxedShortContextualGetter;
+import org.simpleflatmapper.map.getter.ByteContextualGetter;
+import org.simpleflatmapper.map.getter.CharacterContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.DoubleContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
+import org.simpleflatmapper.map.getter.ContextualGetterWithDefaultValue;
+import org.simpleflatmapper.map.getter.FloatContextualGetter;
+import org.simpleflatmapper.map.getter.InstantiatorContextualGetter;
+import org.simpleflatmapper.map.getter.IntContextualGetter;
+import org.simpleflatmapper.map.getter.LongContextualGetter;
+import org.simpleflatmapper.map.getter.ShortContextualGetter;
 import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
-import org.simpleflatmapper.map.mapper.FieldMapperGetterAdapter;
+import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.property.ConverterProperty;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
@@ -32,12 +52,12 @@ import java.util.HashSet;
 
 public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>> implements ConstantSourceFieldMapperFactory<S,K> {
 
-	private final FieldMapperGetterFactory<? super S, K> getterFactory;
+	private final ContextualGetterFactory<? super S, K> getterFactory;
 	private final ConverterService converterService;
 	private final Type sourceType;
 
 
-	public ConstantSourceFieldMapperFactoryImpl(FieldMapperGetterFactory<? super S, K> getterFactory, ConverterService converterService, Type sourceType) {
+	public ConstantSourceFieldMapperFactoryImpl(ContextualGetterFactory<? super S, K> getterFactory, ConverterService converterService, Type sourceType) {
 		this.getterFactory = getterFactory;
 		this.converterService = converterService;
 		this.sourceType = sourceType;
@@ -45,38 +65,38 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 
 	@SuppressWarnings("unchecked")
-	private <T, P> FieldMapper<S, T> primitiveIndexedFieldMapper(final Class<P> type, final Setter<? super T, ? super P> setter, final FieldMapperGetter<? super S, ? extends P> getter) {
+	private <T, P> FieldMapper<S, T> primitiveIndexedFieldMapper(final Class<P> type, final Setter<? super T, ? super P> setter, final ContextualGetter<? super S, ? extends P> getter) {
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<S, T>(
-					toBooleanGetter((FieldMapperGetter<S, ? extends Boolean>) getter),
+					toBooleanGetter((ContextualGetter<S, ? extends Boolean>) getter),
 					ObjectSetterFactory.<T>toBooleanSetter((Setter<T, ? super Boolean>) setter));
 		} else if (type.equals(Integer.TYPE)) {
 			return new IntFieldMapper<S, T>(
-					toIntGetter((FieldMapperGetter<S, ? extends Integer>) getter),
+					toIntGetter((ContextualGetter<S, ? extends Integer>) getter),
 					ObjectSetterFactory.<T>toIntSetter((Setter<T, ? super Integer>) setter));
 		} else if (type.equals(Long.TYPE)) {
 			return new LongFieldMapper<S, T>(
-					toLongGetter((FieldMapperGetter<S, ? extends Long>) getter),
+					toLongGetter((ContextualGetter<S, ? extends Long>) getter),
 					ObjectSetterFactory.<T>toLongSetter((Setter<T, ? super Long>) setter));
 		} else if (type.equals(Float.TYPE)) {
 			return new FloatFieldMapper<S, T>(
-					toFloatGetter((FieldMapperGetter<S, ? extends Float>) getter),
+					toFloatGetter((ContextualGetter<S, ? extends Float>) getter),
 					ObjectSetterFactory.<T>toFloatSetter((Setter<T, ? super Float>) setter));
 		} else if (type.equals(Double.TYPE)) {
 			return new DoubleFieldMapper<S, T>(
-					toDoubleGetter((FieldMapperGetter<S, ? extends Double>) getter),
+					toDoubleGetter((ContextualGetter<S, ? extends Double>) getter),
 					ObjectSetterFactory.<T>toDoubleSetter((Setter<T, ? super Double>) setter));
 		} else if (type.equals(Byte.TYPE)) {
 			return new ByteFieldMapper<S, T>(
-					toByteGetter((FieldMapperGetter<S, ? extends Byte>) getter),
+					toByteGetter((ContextualGetter<S, ? extends Byte>) getter),
 					ObjectSetterFactory.<T>toByteSetter((Setter<T, ? super Byte>) setter));
 		} else if (type.equals(Character.TYPE)) {
 			return new CharacterFieldMapper<S, T>(
-					toCharGetter((FieldMapperGetter<S, ? extends Character>) getter),
+					toCharGetter((ContextualGetter<S, ? extends Character>) getter),
 					ObjectSetterFactory.<T>toCharacterSetter((Setter<T, ? super Character>) setter));
 		} else if (type.equals(Short.TYPE)) {
 			return new ShortFieldMapper<S, T>(
-					toShortGetter((FieldMapperGetter<S, ? extends Short>) getter),
+					toShortGetter((ContextualGetter<S, ? extends Short>) getter),
 					ObjectSetterFactory.<T>toShortSetter((Setter<T, ? super Short>) setter));
 		} else {
 			throw new UnsupportedOperationException("Type " + type
@@ -86,74 +106,74 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 
 	@SuppressWarnings("unchecked")
-	public static <T> BooleanFieldMapperGetter<T> toBooleanGetter(final FieldMapperGetter<T, ? extends Boolean> getter) {
-		if (getter instanceof BooleanFieldMapperGetter) {
-			return (BooleanFieldMapperGetter<T>) getter;
+	public static <T> BooleanContextualGetter<T> toBooleanGetter(final ContextualGetter<T, ? extends Boolean> getter) {
+		if (getter instanceof BooleanContextualGetter) {
+			return (BooleanContextualGetter<T>) getter;
 		} else {
-			return new BoxedBooleanFieldMapperGetter<T>(getter);
+			return new BoxedBooleanContextualGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> IntFieldMapperGetter<T> toIntGetter(FieldMapperGetter<T, ? extends Integer> getter) {
-		if (getter instanceof IntFieldMapperGetter) {
-			return (IntFieldMapperGetter<T>) getter;
+	public static <T> IntContextualGetter<T> toIntGetter(ContextualGetter<T, ? extends Integer> getter) {
+		if (getter instanceof IntContextualGetter) {
+			return (IntContextualGetter<T>) getter;
 		} else {
-			return new BoxedIntFieldMapperGetter<T>(getter);
+			return new BoxedIntContextualGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> LongFieldMapperGetter<T> toLongGetter(FieldMapperGetter<T, ? extends Long> getter) {
-		if (getter instanceof LongFieldMapperGetter) {
-			return (LongFieldMapperGetter<T>) getter;
+	public static <T> LongContextualGetter<T> toLongGetter(ContextualGetter<T, ? extends Long> getter) {
+		if (getter instanceof LongContextualGetter) {
+			return (LongContextualGetter<T>) getter;
 		} else {
-			return new BoxedLongFieldMapperGetter<T>(getter);
+			return new BoxedLongContextualGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> FloatFieldMapperGetter<T> toFloatGetter(FieldMapperGetter<T, ? extends Float> getter) {
-		if (getter instanceof FloatFieldMapperGetter) {
-			return (FloatFieldMapperGetter<T>) getter;
+	public static <T> FloatContextualGetter<T> toFloatGetter(ContextualGetter<T, ? extends Float> getter) {
+		if (getter instanceof FloatContextualGetter) {
+			return (FloatContextualGetter<T>) getter;
 		} else {
-			return new BoxedFloatFieldMapperGetter<T>(getter);
+			return new BoxedFloatContextualGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> DoubleFieldMapperGetter<T> toDoubleGetter(FieldMapperGetter<T, ? extends Double> getter) {
-		if (getter instanceof DoubleFieldMapperGetter) {
-			return (DoubleFieldMapperGetter<T>) getter;
+	public static <T> DoubleContextualGetter<T> toDoubleGetter(ContextualGetter<T, ? extends Double> getter) {
+		if (getter instanceof DoubleContextualGetter) {
+			return (DoubleContextualGetter<T>) getter;
 		} else {
-			return new BoxedDoubleFieldMapperGetter<T>(getter);
+			return new BoxedDoubleContextualGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> ByteFieldMapperGetter<T> toByteGetter(FieldMapperGetter<T, ? extends Byte> getter) {
-		if (getter instanceof ByteFieldMapperGetter) {
-			return (ByteFieldMapperGetter<T>) getter;
+	public static <T> ByteContextualGetter<T> toByteGetter(ContextualGetter<T, ? extends Byte> getter) {
+		if (getter instanceof ByteContextualGetter) {
+			return (ByteContextualGetter<T>) getter;
 		} else {
-			return new BoxedByteFieldMapperGetter<T>(getter);
+			return new BoxedByteContextualGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> ShortFieldMapperGetter<T> toShortGetter(FieldMapperGetter<T, ? extends Short> getter) {
-		if (getter instanceof ShortFieldMapperGetter) {
-			return (ShortFieldMapperGetter<T>) getter;
+	public static <T> ShortContextualGetter<T> toShortGetter(ContextualGetter<T, ? extends Short> getter) {
+		if (getter instanceof ShortContextualGetter) {
+			return (ShortContextualGetter<T>) getter;
 		} else {
-			return new BoxedShortFieldMapperGetter<T>(getter);
+			return new BoxedShortContextualGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> CharacterFieldMapperGetter<T> toCharGetter(FieldMapperGetter<T, ? extends Character> getter) {
-		if (getter instanceof CharacterFieldMapperGetter) {
-			return (CharacterFieldMapperGetter<T>) getter;
+	public static <T> CharacterContextualGetter<T> toCharGetter(ContextualGetter<T, ? extends Character> getter) {
+		if (getter instanceof CharacterContextualGetter) {
+			return (CharacterContextualGetter<T>) getter;
 		} else {
-			return new BoxedCharacterFieldMapperGetter<T>(getter);
+			return new BoxedCharacterContextualGetter<T>(getter);
 		}
 	}
 	
@@ -171,7 +191,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		final K key = propertyMapping.getColumnKey();
 		final Class<P> type = TypeHelper.toClass(propertyType);
 
-		FieldMapperGetter<? super S, ? extends P> getter = getGetterFromSource(key,
+		ContextualGetter<? super S, ? extends P> getter = getGetterFromSource(key,
 				propertyMapping.getPropertyMeta().getPropertyType(),
 				propertyMapping.getColumnDefinition(), 
 				propertyMeta.getPropertyClassMetaSupplier(), contextFactoryBuilder);
@@ -195,14 +215,14 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 	}
 
 	@Override
-	public <P> FieldMapperGetter<? super S, ? extends P> getGetterFromSource(K columnKey, Type propertyType, ColumnDefinition<K, ?> columnDefinition, Supplier<ClassMeta<P>> propertyClassMetaSupplier, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder) {
+	public <P> ContextualGetter<? super S, ? extends P> getGetterFromSource(K columnKey, Type propertyType, ColumnDefinition<K, ?> columnDefinition, Supplier<ClassMeta<P>> propertyClassMetaSupplier, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder) {
 		@SuppressWarnings("unchecked")
-		FieldMapperGetter<? super S, ? extends P> getter = FieldMapperGetterAdapter.of((Getter<? super S, ? extends P>) columnDefinition.getCustomGetterFrom(sourceType));
+		ContextualGetter<? super S, ? extends P> getter = ContextualGetterAdapter.of((Getter<? super S, ? extends P>) columnDefinition.getCustomGetterFrom(sourceType));
 
 		if (getter == null) {
             GetterFactory<? super S, K> customGetterFactory = (GetterFactory<? super S, K>) columnDefinition.getCustomGetterFactoryFrom(sourceType);
 			if (customGetterFactory != null) {
-				getter = FieldMapperGetterAdapter.of(customGetterFactory.newGetter(propertyType, columnKey, columnDefinition.properties()));
+				getter = ContextualGetterAdapter.of(customGetterFactory.newGetter(propertyType, columnKey, columnDefinition.properties()));
 			}
         }
 
@@ -233,7 +253,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 			Object value = defaultValueProperty.getValue();
 			if (value != null) {
 				if (TypeHelper.isAssignable(propertyType, value.getClass())) {
-					getter = new FieldMapperGetterWithDefaultValue<S, P>(getter, (P) value);
+					getter = new ContextualGetterWithDefaultValue<S, P>(getter, (P) value);
 				} else {
 					throw new IllegalArgumentException("Incompatible default value " + value + " type " + value.getClass() + " with property " + columnKey + " of type " + propertyType);
 				}
@@ -243,15 +263,15 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		return getter;
 	}
 
-	private <P, J> FieldMapperGetter<? super S, ? extends P> lookForAlternativeGetter(ClassMeta<P> classMeta, K key, ColumnDefinition<K, ?> columnDefinition, Collection<Type> types, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder) {
+	private <P, J> ContextualGetter<? super S, ? extends P> lookForAlternativeGetter(ClassMeta<P> classMeta, K key, ColumnDefinition<K, ?> columnDefinition, Collection<Type> types, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder) {
 		// look for converter
 		Type propertyType = classMeta.getType();
 		Type sourceType = key.getType(propertyType);
 		Object[] properties = columnDefinition.properties();
-		Converter<? super J, ? extends P> converter = converterService.findConverter(sourceType, propertyType, properties);
+		Converter<? super J, ? extends P> converter = converterService.findConverter(sourceType, propertyType, mappingContextFactoryBuilder, properties);
 
 		if (converter != null) {
-			FieldMapperGetter<? super S, ? extends J> getter = getterFactory.newGetter(sourceType, key, mappingContextFactoryBuilder, properties);
+			ContextualGetter<? super S, ? extends J> getter = getterFactory.newGetter(sourceType, key, mappingContextFactoryBuilder, properties);
 
 			return new FieldMapperGetterWithConverter<S, J, P>(converter, getter);
 		}
@@ -259,7 +279,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		return lookForInstantiatorGetter(classMeta, key, columnDefinition, types, mappingContextFactoryBuilder);
 	}
 
-	public <P> FieldMapperGetter<? super S, ? extends P> lookForInstantiatorGetter(ClassMeta<P> classMeta, K key, ColumnDefinition<K, ?> columnDefinition, Collection<Type> types, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder) {
+	public <P> ContextualGetter<? super S, ? extends P> lookForInstantiatorGetter(ClassMeta<P> classMeta, K key, ColumnDefinition<K, ?> columnDefinition, Collection<Type> types, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder) {
 
 
 		InstantiatorDefinitions.CompatibilityScorer scorer = InstantiatorDefinitions.getCompatibilityScorer(key);
@@ -272,7 +292,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		return null;
 	}
 
-	private <T, P> FieldMapperGetter<? super S, ? extends P> getGetterInstantiator(
+	private <T, P> ContextualGetter<? super S, ? extends P> getGetterInstantiator(
 			ClassMeta<P> classMeta,
 			InstantiatorDefinition id, K key, ColumnDefinition<K, ?> columnDefinition,
 			Collection<Type> types,
@@ -283,7 +303,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 		final Type paramType = id.getParameters()[0].getGenericType();
 
-		FieldMapperGetter<? super S, ? extends T> subGetter = getterFactory.newGetter(paramType, key, mappingContextFactoryBuilder, columnDefinition );
+		ContextualGetter<? super S, ? extends T> subGetter = getterFactory.newGetter(paramType, key, mappingContextFactoryBuilder, columnDefinition );
 
 		if (subGetter == null) {
 			if (types.contains(paramType)) {
@@ -293,10 +313,10 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 			types.add(paramType);
 			// converter?
 			Type sourceType = key.getType(paramType);
-			Converter converter = converterService.findConverter(sourceType, paramType, columnDefinition.properties());
+			Converter converter = converterService.findConverter(sourceType, paramType, mappingContextFactoryBuilder, columnDefinition.properties());
 			
 			if (converter != null) {
-				FieldMapperGetter sourceTypeGetter = getterFactory.newGetter(sourceType, key, mappingContextFactoryBuilder, columnDefinition);
+				ContextualGetter sourceTypeGetter = getterFactory.newGetter(sourceType, key, mappingContextFactoryBuilder, columnDefinition);
 				subGetter = new FieldMapperGetterWithConverter(converter, sourceTypeGetter);
 			} else {
 				subGetter = lookForInstantiatorGetter(classMeta.getReflectionService().<T>getClassMeta(paramType), key, columnDefinition, types, mappingContextFactoryBuilder);
@@ -304,7 +324,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		}
 
 		if (subGetter != null) {
-			return new InstantiatorFieldMapperGetter<T, S, P>(instantiator, subGetter);
+			return new InstantiatorContextualGetter<T, S, P>(instantiator, subGetter);
 		} else return null;
 	}
 

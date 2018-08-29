@@ -1,11 +1,11 @@
 package org.simpleflatmapper.map.context;
 
 
+import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.context.impl.KeyDefinitionBuilder;
 import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
-import org.simpleflatmapper.reflect.meta.MapElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.MapKeyValueElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContextFactory;
@@ -18,7 +18,7 @@ import org.simpleflatmapper.util.Supplier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MappingContextFactoryBuilder<S, K> {
+public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder {
 
     private final Counter counter;
     private final int currentIndex;
@@ -50,14 +50,15 @@ public class MappingContextFactoryBuilder<S, K> {
         }
     }
 
-    public void addSupplier(int index, Supplier<?> supplier) {
-        while(suppliers.size() <= index) {
-            suppliers.add(null);
+    @Override
+    public int addSupplier(Supplier<?> supplier) {
+        if (parent == null) {
+            int index = suppliers.size();
+            suppliers.add(index, supplier);
+            return index;
+        } else {
+            return parent.addSupplier(supplier);
         }
-        if (suppliers.get(index) != null) {
-            throw new IllegalStateException("Conflicting suppliers");
-        }
-        suppliers.set(index, supplier);
     }
 
     public Predicate<S> nullChecker() {
@@ -71,7 +72,8 @@ public class MappingContextFactoryBuilder<S, K> {
     }
 
     @SuppressWarnings("unchecked")
-    public MappingContextFactory<S> newFactory() {
+    @Override
+    public MappingContextFactory<S> build() {
         if (parent != null)  {
             throw new IllegalStateException();
         }
@@ -82,8 +84,6 @@ public class MappingContextFactoryBuilder<S, K> {
         ArrayList<MappingContextFactoryBuilder<S, K>> builders = new ArrayList<MappingContextFactoryBuilder<S, K>>();
         addAllBuilders(builders);
         
-        copySuppliers(builders);
-
         if (suppliers.isEmpty()) {
             context = MappingContext.EMPTY_FACTORY;
         } else {
@@ -108,17 +108,7 @@ public class MappingContextFactoryBuilder<S, K> {
         return context;
     }
 
-    private void copySuppliers(ArrayList<MappingContextFactoryBuilder<S, K>> builders) {
-        for (int i = 1; i < builders.size(); i++) {
-            MappingContextFactoryBuilder<S, K> builder = builders.get(i);
-            for(int j = 0; j < builder.suppliers.size(); j++) {
-                Supplier<?> supplier = builder.suppliers.get(j);
-                if (supplier != null) {
-                    addSupplier(j, supplier);
-                }
-            }
-        }
-    }
+
 
     private KeyDefinitionBuilder<S, K> populateKey(KeyDefinitionBuilder<S, K>[] keyDefinitions, ArrayList<MappingContextFactoryBuilder<S, K>> builders, MappingContextFactoryBuilder<S, K> builder) {
 

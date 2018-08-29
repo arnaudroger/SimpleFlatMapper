@@ -1,5 +1,6 @@
 package org.simpleflatmapper.map.mapper;
 
+import org.simpleflatmapper.map.ContextualSourceMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
@@ -12,11 +13,11 @@ import org.simpleflatmapper.util.UnaryFactory;
 
 public class StaticSetRowMapper<ROW, SET, T, E extends Exception> extends AbstractEnumerableMapper<SET, T, E> implements SetRowMapper<ROW, SET, T, E> {
 
-	private final SourceMapper<ROW, T> mapper;
+	private final ContextualSourceMapper<ROW, T> mapper;
 	private final MappingContextFactory<? super ROW> mappingContextFactory;
 	private final UnaryFactory<SET, Enumerable<ROW>> enumerableFactory;
 
-	public StaticSetRowMapper(final SourceMapper<ROW, T> mapper,
+	public StaticSetRowMapper(final ContextualSourceMapper<ROW, T> mapper,
 							  final ConsumerErrorHandler errorHandler,
 							  final MappingContextFactory<? super ROW> mappingContextFactory,
 							  UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
@@ -27,8 +28,8 @@ public class StaticSetRowMapper<ROW, SET, T, E extends Exception> extends Abstra
 	}
 
 	@Override
-	public final T map(ROW rs) throws MappingException {
-		return mapper.map(rs);
+	public T map(ROW source) throws MappingException {
+		return mapper.map(source);
 	}
 
 	@Override

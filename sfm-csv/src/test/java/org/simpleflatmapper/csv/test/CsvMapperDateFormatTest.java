@@ -93,9 +93,9 @@ public class CsvMapperDateFormatTest {
 		assertNull(list.get(0).date2);
 		assertNull(list.get(0).date3);
 
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 1)), any(), isNull(), any(Exception.class));
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date3", 0)), any(),same(list.get(0)), any(Exception.class));
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 2)), any(), same(list.get(0)), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 1)), any(), isNull(), any(Exception.class), any());
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date3", 0)), any(),same(list.get(0)), any(Exception.class), any());
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 2)), any(), same(list.get(0)), any(Exception.class), any());
 	}
 
 	@Test
@@ -113,9 +113,9 @@ public class CsvMapperDateFormatTest {
 		assertNull(list.get(0).date2);
 		assertNull(list.get(0).date3);
 
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 1)), any(), isNull(), any(Exception.class));
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date3", 0)), any(), same(list.get(0)), any(Exception.class));
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 2)), any(),same(list.get(0)), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 1)), any(), isNull(), any(Exception.class), any());
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date3", 0)), any(), same(list.get(0)), any(Exception.class), any());
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 2)), any(),same(list.get(0)), any(Exception.class), any());
 	}
 
 

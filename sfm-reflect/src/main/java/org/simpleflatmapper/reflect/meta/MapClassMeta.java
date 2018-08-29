@@ -1,6 +1,9 @@
 package org.simpleflatmapper.reflect.meta;
 
+import org.simpleflatmapper.converter.ContextFactory;
+import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -20,6 +23,7 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	private final ReflectionService reflectionService;
 	private final Converter<? super CharSequence, ? extends K> keyConverter;
+	private final ContextFactory keyContextFactory;
 	private final ClassMeta<V> valueClassMeta;
 	private final Type type;
 
@@ -27,7 +31,11 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	public MapClassMeta(Type type, Type keyType, Type valueType, ReflectionService reflectionService) {
 		this.type = type;
-		this.keyConverter = ConverterService.getInstance().findConverter(CharSequence.class, keyType);
+
+		DefaultContextFactoryBuilder contextFactoryBuilder = new DefaultContextFactoryBuilder();
+		
+		this.keyConverter = ConverterService.getInstance().findConverter(CharSequence.class, keyType, contextFactoryBuilder);
+		this.keyContextFactory = contextFactoryBuilder.build();
 		this.reflectionService = reflectionService;
 		this.valueClassMeta = reflectionService.getClassMeta(valueType);
 		this.constructor = getConstructor(type);
@@ -66,7 +74,7 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	@Override
 	public PropertyFinder<M> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
-		return new MapPropertyFinder<M, K, V>(this, valueClassMeta, keyConverter, propertyFilter, reflectionService.selfScoreFullName());
+		return new                                 MapPropertyFinder<M, K, V>(this, valueClassMeta, keyConverter, keyContextFactory, propertyFilter, reflectionService.selfScoreFullName());
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterFactoryAdapter;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
 import org.simpleflatmapper.map.mapper.SetRowMapperBuilderImpl;
@@ -34,7 +34,7 @@ import java.util.List;
 public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColumnKey, RuntimeException, RowMapper<T>, RowMapper<T>, SheetMapperBuilder<T>> {
 
     public static final MapperSourceImpl<Row, CsvColumnKey> FIELD_MAPPER_SOURCE =
-            new MapperSourceImpl<Row, CsvColumnKey>(Row.class, new FieldMapperGetterFactoryAdapter<Row, CsvColumnKey>(new RowGetterFactory()));
+            new MapperSourceImpl<Row, CsvColumnKey>(Row.class, new ContextualGetterFactoryAdapter<Row, CsvColumnKey>(new RowGetterFactory()));
     private static final KeyFactory<CsvColumnKey> KEY_FACTORY = new KeyFactory<CsvColumnKey>() {
         @Override
         public CsvColumnKey newKey(String name, int i) {

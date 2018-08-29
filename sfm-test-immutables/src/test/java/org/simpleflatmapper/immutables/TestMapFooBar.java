@@ -1,6 +1,7 @@
 package org.simpleflatmapper.immutables;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.PreparedStatementMapperBuilder;
@@ -17,7 +18,7 @@ public class TestMapFooBar {
         assertNotNull(builder.addKey("foo").addKey("bar").addKey("crux").mapper());
 
         final PreparedStatementMapperBuilder<FoobarValue> buildFrom = JdbcMapperFactory.newInstance().buildFrom(FoobarValue.class);
-        assertNotNull(buildFrom.addColumn("foo").addColumn("bar").addColumn("crux").buildIndexFieldMappers());
+        assertNotNull(buildFrom.addColumn("foo").addColumn("bar").addColumn("crux").buildIndexFieldMappers(EmptyContextFactoryBuilder.INSTANCE));
     }
 
 

@@ -7,16 +7,15 @@ import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.impl.writer.*;
 
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
-import org.simpleflatmapper.map.fieldmapper.BooleanFieldMapperGetter;
-import org.simpleflatmapper.map.fieldmapper.ByteFieldMapperGetter;
-import org.simpleflatmapper.map.fieldmapper.CharacterFieldMapperGetter;
-import org.simpleflatmapper.map.fieldmapper.DoubleFieldMapperGetter;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetter;
-import org.simpleflatmapper.map.fieldmapper.FloatFieldMapperGetter;
-import org.simpleflatmapper.map.fieldmapper.IntFieldMapperGetter;
-import org.simpleflatmapper.map.fieldmapper.LongFieldMapperGetter;
-import org.simpleflatmapper.map.fieldmapper.ShortFieldMapperGetter;
-import org.simpleflatmapper.map.mapper.FieldMapperGetterAdapter;
+import org.simpleflatmapper.map.getter.BooleanContextualGetter;
+import org.simpleflatmapper.map.getter.ByteContextualGetter;
+import org.simpleflatmapper.map.getter.CharacterContextualGetter;
+import org.simpleflatmapper.map.getter.DoubleContextualGetter;
+import org.simpleflatmapper.map.getter.FloatContextualGetter;
+import org.simpleflatmapper.map.getter.IntContextualGetter;
+import org.simpleflatmapper.map.getter.LongContextualGetter;
+import org.simpleflatmapper.map.getter.ShortContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.property.SetterFactoryProperty;
 import org.simpleflatmapper.map.property.SetterProperty;
 import org.simpleflatmapper.map.fieldmapper.BooleanFieldMapper;
@@ -90,21 +89,21 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
         Type type = pm.getPropertyMeta().getPropertyType();
         if (TypeHelper.isPrimitive(type) && !columnDefinition.has(FormatProperty.class)) {
             if (getter instanceof BooleanGetter) {
-                return new BooleanFieldMapper<S, Appendable>((BooleanFieldMapperGetter) FieldMapperGetterAdapter.of(getter), new BooleanAppendableSetter(cellWriter));
+                return new BooleanFieldMapper<S, Appendable>((BooleanContextualGetter) ContextualGetterAdapter.of(getter), new BooleanAppendableSetter(cellWriter));
             } else if (getter instanceof ByteGetter) {
-                return new ByteFieldMapper<S, Appendable>((ByteFieldMapperGetter) FieldMapperGetterAdapter.of(getter), new ByteAppendableSetter(cellWriter));
+                return new ByteFieldMapper<S, Appendable>((ByteContextualGetter) ContextualGetterAdapter.of(getter), new ByteAppendableSetter(cellWriter));
             } else if (getter instanceof CharacterGetter) {
-                return new CharacterFieldMapper<S, Appendable>((CharacterFieldMapperGetter) FieldMapperGetterAdapter.of(getter), new CharacterAppendableSetter(cellWriter));
+                return new CharacterFieldMapper<S, Appendable>((CharacterContextualGetter) ContextualGetterAdapter.of(getter), new CharacterAppendableSetter(cellWriter));
             } else if (getter instanceof ShortGetter) {
-                return new ShortFieldMapper<S, Appendable>((ShortFieldMapperGetter) FieldMapperGetterAdapter.of(getter), new ShortAppendableSetter(cellWriter));
+                return new ShortFieldMapper<S, Appendable>((ShortContextualGetter) ContextualGetterAdapter.of(getter), new ShortAppendableSetter(cellWriter));
             } else if (getter instanceof IntGetter) {
-                return new IntFieldMapper<S, Appendable>((IntFieldMapperGetter) FieldMapperGetterAdapter.of(getter), new IntegerAppendableSetter(cellWriter));
+                return new IntFieldMapper<S, Appendable>((IntContextualGetter) ContextualGetterAdapter.of(getter), new IntegerAppendableSetter(cellWriter));
             } else if (getter instanceof LongGetter) {
-                return new LongFieldMapper<S, Appendable>((LongFieldMapperGetter) FieldMapperGetterAdapter.of(getter), new LongAppendableSetter(cellWriter));
+                return new LongFieldMapper<S, Appendable>((LongContextualGetter) ContextualGetterAdapter.of(getter), new LongAppendableSetter(cellWriter));
             } else if (getter instanceof FloatGetter) {
-                return new FloatFieldMapper<S, Appendable>((FloatFieldMapperGetter) FieldMapperGetterAdapter.of(getter), new FloatAppendableSetter(cellWriter));
+                return new FloatFieldMapper<S, Appendable>((FloatContextualGetter) ContextualGetterAdapter.of(getter), new FloatAppendableSetter(cellWriter));
             } else if (getter instanceof DoubleGetter) {
-                return new DoubleFieldMapper<S, Appendable>((DoubleFieldMapperGetter) FieldMapperGetterAdapter.of(getter), new DoubleAppendableSetter(cellWriter));
+                return new DoubleFieldMapper<S, Appendable>((DoubleContextualGetter) ContextualGetterAdapter.of(getter), new DoubleAppendableSetter(cellWriter));
             }
         }
 
@@ -130,8 +129,8 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
 
         if (format != null) {
             final Format f = format;
-            builder.addSupplier(pm.getColumnKey().getIndex(), new CloneFormatSupplier(f));
-            return new FormatingAppender<S>(getter, new MappingContextFormatGetter<S>(pm.getColumnKey().getIndex()), cellWriter);
+            int  i = builder.addSupplier(new CloneFormatSupplier(f));
+            return new FormatingAppender<S>(getter, new MappingContextFormatGetter<S>(i), cellWriter);
         }
 
 
@@ -144,6 +143,7 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
                     converterService.findConverter(
                             pm.getPropertyMeta().getPropertyType(),
                             CharSequence.class,
+                            builder,
                             columnDefinition != null ? columnDefinition.properties() : new Object[0]);
 
             if (converter != null) {
@@ -151,7 +151,7 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
             }
         }
 
-        return new FieldMapperImpl<S, Appendable, P>(FieldMapperGetterAdapter.of(getter), setter);
+        return new FieldMapperImpl<S, Appendable, P>(ContextualGetterAdapter.of(getter), setter);
     }
 
     @SuppressWarnings("unchecked")

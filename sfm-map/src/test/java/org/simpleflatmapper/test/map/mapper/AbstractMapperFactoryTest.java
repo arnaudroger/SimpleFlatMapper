@@ -2,11 +2,13 @@ package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
@@ -78,7 +80,7 @@ public class AbstractMapperFactoryTest {
 
         FieldMapperErrorHandler<SampleFieldKey> fieldMapperErrorHandler = new FieldMapperErrorHandler<SampleFieldKey>() {
             @Override
-            public void errorMappingField(SampleFieldKey key, Object source, Object target, Exception error) throws MappingException {
+            public void errorMappingField(SampleFieldKey key, Object source, Object target, Exception error, Context mappingContext) throws MappingException {
             }
         };
         MapperBuilderErrorHandler mapperBuilderErrorHandler = new MapperBuilderErrorHandler() {

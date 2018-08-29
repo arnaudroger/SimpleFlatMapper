@@ -1,6 +1,7 @@
 package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.SetRowMapper;
@@ -72,16 +73,16 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
      */
     @Override
     public final M mapper() {
-        SourceFieldMapper<ROW, T> mapper = sourceFieldMapper();
+        ContextualSourceFieldMapper<ROW, T> mapper = sourceFieldMapper();
 
-        if (mapper instanceof TransformSourceFieldMapper) {
-            TransformSourceFieldMapper transformSourceFieldMapper = (TransformSourceFieldMapper) mapper;
+        if (mapper instanceof TransformContextualSourceFieldMapper) {
+            TransformContextualSourceFieldMapper transformSourceFieldMapper = (TransformContextualSourceFieldMapper) mapper;
             M m;
 
             if (constantSourceMapperBuilder.isRootAggregate()) {
-                m = (M) setRowMapperFactory.newTransformer(setRowMapperFactory.newJoinMapper(transformSourceFieldMapper.delegate, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory()), transformSourceFieldMapper.transform);
+                m = (M) setRowMapperFactory.newTransformer(setRowMapperFactory.newJoinMapper(transformSourceFieldMapper.delegate, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.build(), enumerableFactory()), transformSourceFieldMapper.transform);
             } else {
-                m = (M) setRowMapperFactory.newTransformer(setRowMapperFactory.newStaticMapper(transformSourceFieldMapper.delegate, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory()), transformSourceFieldMapper.transform);
+                m = (M) setRowMapperFactory.newTransformer(setRowMapperFactory.newStaticMapper(transformSourceFieldMapper.delegate, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.build(), enumerableFactory()), transformSourceFieldMapper.transform);
             }
 
             return m;
@@ -91,9 +92,9 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
             M m;
 
             if (constantSourceMapperBuilder.isRootAggregate()) {
-                m = setRowMapperFactory.newJoinMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory());
+                m = setRowMapperFactory.newJoinMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.build(), enumerableFactory());
             } else {
-                m = setRowMapperFactory.newStaticMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory(), enumerableFactory());
+                m = setRowMapperFactory.newStaticMapper(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.build(), enumerableFactory());
             }
 
             return m;
@@ -147,7 +148,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
     }
 
     @Override
-    public final SourceFieldMapper<ROW, T> sourceFieldMapper() {
+    public final ContextualSourceFieldMapper<ROW, T> sourceFieldMapper() {
         return constantSourceMapperBuilder.mapper();
     }
     
@@ -186,9 +187,9 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
     public interface SetRowMapperFactory<M extends SetRowMapper<ROW, SET, T, E>, ROW, SET, T, E extends Exception> {
 
-        M newJoinMapper(SourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory);
+        M newJoinMapper(ContextualSourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory);
 
-        M newStaticMapper(SourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory);
+        M newStaticMapper(ContextualSourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory);
 
         <I> M newTransformer(SetRowMapper<ROW, SET, I, E> setRowMapper, Function<I, T> transform);
     }

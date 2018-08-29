@@ -118,14 +118,14 @@ public class FieldMapperToAppendableFactoryJavaTimeTest {
         FieldMapper<JavaTimeObject, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldMapper(
                 newPropertyMapping("localDateTime", javaTimeObjectClassMeta, FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("dd/MM/yyyy")))),
                 builder, null);
-        testFieldMapper("03/12/2011", fieldMapper, javaTimeObject, builder.newFactory());
+        testFieldMapper("03/12/2011", fieldMapper, javaTimeObject, builder.build());
 
     }
 
     public void testFieldMapperForClassAndProp(String expected, String propName, ClassMeta<JavaTimeObject> classMeta) throws Exception {
         MappingContextFactoryBuilder<JavaTimeObject, CsvColumnKey> builder = getMappingContextBuilder();
         FieldMapper<JavaTimeObject, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping(propName, classMeta), builder, null);
-        testFieldMapper(expected, fieldMapper, javaTimeObject, builder.newFactory());
+        testFieldMapper(expected, fieldMapper, javaTimeObject, builder.build());
     }
 
     private <T> void testFieldMapper(String expected, FieldMapper<T, Appendable> fieldMapper, T source, MappingContextFactory<T> dbObjectMappingContextFactory) throws Exception {

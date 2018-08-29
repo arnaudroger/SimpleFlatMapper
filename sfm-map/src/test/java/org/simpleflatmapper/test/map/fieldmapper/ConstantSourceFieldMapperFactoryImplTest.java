@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.fieldmapper.*;
@@ -29,7 +30,6 @@ import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.util.ConstantPredicate;
-import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Method;
 
@@ -51,7 +51,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
     @Before
     public void setUp() {
         getterFactory = mock(GetterFactory.class);
-        constantSourceFieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey>(new FieldMapperGetterFactoryAdapter<Object, SampleFieldKey>(getterFactory), ConverterService.getInstance(), Object.class);
+        constantSourceFieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey>(new ContextualGetterFactoryAdapter<Object, SampleFieldKey>(getterFactory), ConverterService.getInstance(), Object.class);
         keySourceGetter = mock(KeySourceGetter.class);
         mappingContextFactoryBuilder = null;
     }

@@ -12,7 +12,7 @@ import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterFactoryAdapter;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.property.MandatoryProperty;
 import org.simpleflatmapper.reflect.ModifyInjectedParams;
 import org.simpleflatmapper.reflect.TypeAffinity;
@@ -903,7 +903,7 @@ public class AbstractMapperBuilderTest {
                             classMeta,
                             new MappingContextFactoryBuilder<Object[], SampleFieldKey>(KEY_SOURCE_GETTER), 
                             mapperConfig,
-                            new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, new FieldMapperGetterFactoryAdapter<Object[], SampleFieldKey>(GETTER_FACTORY)),
+                            new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, new ContextualGetterFactoryAdapter<Object[], SampleFieldKey>(GETTER_FACTORY)),
                             KEY_FACTORY,
                             new UnaryFactory<Object[][], Enumerable<Object[]>>() {
                                 @Override

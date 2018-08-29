@@ -31,7 +31,8 @@ import java.util.stream.Stream;
  * @param <T> the type that the jdbcMapper is mapping to
  * @see JdbcMapperFactory
  */
-public interface JdbcMapper<T> extends SetRowMapper<ResultSet, ResultSet, T, SQLException>, MappingContextFactoryFromRows<ResultSet, ResultSet, SQLException> {
+public interface JdbcMapper<T> extends SetRowMapper<ResultSet, ResultSet, T, SQLException>, MappingContextFactoryFromRows<ResultSet, ResultSet, SQLException> 
+		{
 
 	/**
 	 * map the current row of the ResultSet to a new newInstance of T.

@@ -1,16 +1,18 @@
 package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetter;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterFactory;
+import org.simpleflatmapper.map.context.MappingContextFactory;
+import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.fieldmapper.MapperFieldMapper;
-import org.simpleflatmapper.map.fieldmapper.NullFieldMapperGetter;
+import org.simpleflatmapper.map.getter.NullContextualGetter;
 import org.simpleflatmapper.map.impl.FieldErrorHandlerGetter;
 import org.simpleflatmapper.map.impl.GenericBuilder;
 import org.simpleflatmapper.map.impl.GetterMapper;
@@ -26,16 +28,13 @@ import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactoryImpl
 import org.simpleflatmapper.map.property.MandatoryProperty;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
-import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
-import org.simpleflatmapper.reflect.getter.BiFunctionGetter;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
-import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.BuilderBiInstantiator;
 import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
@@ -136,7 +135,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    public SourceFieldMapper<S, T> mapper() {
+    public ContextualSourceFieldMapper<S, T> mapper() {
         // look for property with a default value property but no definition.
         mapperConfig
                 .columnDefinitions()
@@ -206,7 +205,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private SourceFieldMapper<S, T> buildMapperWithTransformer(List<InjectionParam> injections) {
+    private ContextualSourceFieldMapper<S, T> buildMapperWithTransformer(List<InjectionParam> injections) {
         boolean forceGenericBuilder = needGenericBuilder(injections);
 
         BuilderInstantiatorDefinition mutableBuilder = getMutableBuilder();
@@ -250,7 +249,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         return null;
     }
 
-    private SourceFieldMapper<S, T> buildWithGenericBuilder(List<InjectionParam> params) {
+    private ContextualSourceFieldMapper<S, T> buildWithGenericBuilder(List<InjectionParam> params) {
 
 
         List<FieldMeta> fields = fields();
@@ -258,12 +257,12 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         final Class<?> targetClass = GenericBuilder.class;
 
         int nbParams = params.size();
-        final FieldMapperGetter[] biFunctions = new FieldMapperGetter[nbParams];
+        final ContextualGetter[] biFunctions = new ContextualGetter[nbParams];
         final Parameter[] indexMapping = new Parameter[nbParams];
         final Function[] transformers = new Function[nbParams];
 
 
-        Map<Parameter, FieldMapperGetter<? super S,  ?>> parameterGetterMap = new HashMap<Parameter, FieldMapperGetter<? super S, ?>>();
+        Map<Parameter, ContextualGetter<? super S,  ?>> parameterGetterMap = new HashMap<Parameter, ContextualGetter<? super S, ?>>();
         List<FieldMapper<S, T>> constructorFieldMapperGeneric = new ArrayList<FieldMapper<S, T>>();
         List<FieldMapper<S, T>> constructFieldMapperTarget = new ArrayList<FieldMapper<S, T>>();
         List<FieldMapper<S, T>> targetFieldMappers = new ArrayList<FieldMapper<S, T>>();
@@ -285,7 +284,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 constructFieldMapperTarget.add(getterAndFieldMapper.fieldMapperAfterConstruct);
             }
             
-            FieldMapperGetter<? super S, ?> biFunction = getterAndFieldMapper.getter;
+            ContextualGetter<? super S, ?> biFunction = getterAndFieldMapper.getter;
             
             biFunctions[i] = biFunction;
             indexMapping[i] = p.parameter;
@@ -316,9 +315,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                         constructorInjections,
                         genericBuilderInstantiator);
 
-        SourceFieldMapper<S, GenericBuilder<T>> delegate = buildMapper(fieldMapperGeneric.toArray(EMPTY_FIELD_MAPPERS), newConstantSourceMapperBuilder, targetClass);
+        ContextualSourceFieldMapper<S, GenericBuilder<T>> delegate = buildMapper(fieldMapperGeneric.toArray(EMPTY_FIELD_MAPPERS), newConstantSourceMapperBuilder, targetClass);
 
-        return new TransformSourceFieldMapper<S, GenericBuilder<T>, T>(delegate, merge(constructFieldMapperTarget.toArray(EMPTY_FIELD_MAPPERS), targetFieldMappers.toArray(EMPTY_FIELD_MAPPERS)), transformFunction);
+        return new TransformContextualSourceFieldMapper<S, GenericBuilder<T>, T>(delegate, merge(constructFieldMapperTarget.toArray(EMPTY_FIELD_MAPPERS), targetFieldMappers.toArray(EMPTY_FIELD_MAPPERS)), transformFunction);
 
     }
     private FieldMapper<S, T>[] merge(FieldMapper<S, T>[] fieldMappers, FieldMapper<S, T>[] fields) {
@@ -353,7 +352,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private SourceFieldMapper<S, T> builderWithTransformer(final List<InjectionParam> params, final BuilderInstantiatorDefinition builder) {
+    private ContextualSourceFieldMapper<S, T> builderWithTransformer(final List<InjectionParam> params, final BuilderInstantiatorDefinition builder) {
         final FieldMapper[] fields = targetFieldMappers();
         final Method buildMethod = builder.getBuildMethod();
         final Class<?> targetClass = buildMethod.getDeclaringClass();
@@ -371,11 +370,11 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 return builderBiInstantiator.newInitialisedBuilderInstace(o, o2);
             }
         });
-        SourceFieldMapper delegate = buildMapper(fields, newConstantSourceMapperBuilder, targetClass);
-        return new TransformSourceFieldMapper<S, Object, T>(delegate, fields, f);
+        ContextualSourceFieldMapper delegate = buildMapper(fields, newConstantSourceMapperBuilder, targetClass);
+        return new TransformContextualSourceFieldMapper<S, Object, T>(delegate, fields, f);
     }
 
-    private <T> SourceFieldMapper<S, T> buildMapper(FieldMapper<S, T>[] fields, InstantiatorAndFieldMappers<T> constructorFieldMappersAndInstantiator, Class<T> target) {
+    private <T> ContextualSourceFieldMapper<S, T> buildMapper(FieldMapper<S, T>[] fields, InstantiatorAndFieldMappers<T> constructorFieldMappersAndInstantiator, Class<T> target) {
         SourceFieldMapper<S, T> mapper;
 
         if (isEligibleForAsmMapper()) {
@@ -397,8 +396,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                                         constructorFieldMappersAndInstantiator.constructorInjections.fieldMappers,
                                         constructorFieldMappersAndInstantiator.instantiator,
                                         mapperSource.source(),
-                                        target
-                                );
+                                        target);
             } catch (Throwable e) {
                 if (mapperConfig.failOnAsm()) {
                     return ErrorHelper.rethrow(e);
@@ -409,7 +407,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         } else {
             mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.constructorInjections.fieldMappers, constructorFieldMappersAndInstantiator.instantiator);
         }
-        return mapper;
+        return new ContextualSourceMapperImpl<S, T>(mappingContextFactoryBuilder.build(), mapper);
     }
 
     public boolean isRootAggregate() {
@@ -423,7 +421,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     private <T> ConstructorInjections<T> toConstructorInjections(List<InjectionParam> params) throws MapperBuildingException {
 
-        Map<Parameter, FieldMapperGetter<? super S ,  ?>> injections = new HashMap<Parameter, FieldMapperGetter<? super S, ?>>();
+        Map<Parameter, ContextualGetter<? super S ,  ?>> injections = new HashMap<Parameter, ContextualGetter<? super S, ?>>();
         List<FieldMapper<S, T>> fieldMappers = new ArrayList<FieldMapper<S, T>>();
 
         for(int i = 0; i < params.size(); i++) {
@@ -443,9 +441,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
  
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 		try {
-            Map<Parameter, FieldMapperGetter<? super S , ?>> injections = constructorInjections.parameterGetterMap;
+            Map<Parameter, ContextualGetter<? super S , ?>> injections = constructorInjections.parameterGetterMap;
             MapperBiInstantiatorFactory mapperBiInstantiatorFactory = new MapperBiInstantiatorFactory(instantiatorFactory);
-            FieldMapperGetterFactory<? super S, K> getterFactory = fieldMapperAsGetterFactory();
+            ContextualGetterFactory<? super S, K> getterFactory = fieldMapperAsGetterFactory();
             BiInstantiator<S, MappingContext<?>, T> instantiator =
                     mapperBiInstantiatorFactory.
                             <S, T, K>
@@ -456,7 +454,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 		}
 	}
 
-    private FieldMapperGetterFactory<? super S, K> fieldMapperAsGetterFactory() {
+    private ContextualGetterFactory<? super S, K> fieldMapperAsGetterFactory() {
         return new FieldMapperFactoryGetterFactoryAdapter(mapperConfig.fieldMapperErrorHandler());
     }
 
@@ -492,8 +490,8 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     private <P> SourceMapper<S, P> getterPropertyMapper(PropertyMeta<T, P> owner, PropertyMapping<T, ?, K> propertyMapping) {
         PropertyMeta<T, ?> pm = propertyMapping.getPropertyMeta();
-        final Getter<? super S, P> getter =
-                (Getter<? super S, P>) fieldMapperFactory.getGetterFromSource(propertyMapping.getColumnKey(), pm.getPropertyType(), propertyMapping.getColumnDefinition(), pm.getPropertyClassMetaSupplier(), mappingContextFactoryBuilder);
+        final ContextualGetter<? super S, P> getter =
+                (ContextualGetter<? super S, P>) fieldMapperFactory.getGetterFromSource(propertyMapping.getColumnKey(), pm.getPropertyType(), propertyMapping.getColumnDefinition(), pm.getPropertyClassMetaSupplier(), mappingContextFactoryBuilder);
 
         return new GetterMapper<S, P>(getter);
     }
@@ -519,7 +517,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private <P> FieldMapperGetter<S,  P> newMapperGetterAdapter(SourceMapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> builder) {
+    private <P> ContextualGetter<S,  P> newMapperGetterAdapter(SourceMapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> builder) {
         return new MapperFieldMapperGetterAdapter<S, P>((SourceMapper<S, P>)mapper, builder.nullChecker(), builder.currentIndex());
     }
 
@@ -577,6 +575,10 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
 		return fields;
 	}
+
+    public MappingContextFactory<? super S> contextFactory() {
+        return mappingContextFactoryBuilder.build();
+    }
 
     private static class MethodFunction implements Function {
         private final Method buildMethod;
@@ -644,7 +646,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         public FieldGenericBuilderInfo fieldGenericBuilderInfo(final int index) {
 
             final Setter setter = propertyMapping.getPropertyMeta().getSetter();
-            final FieldMapperGetter<? super S, ?> getter = fieldMapperFactory.getGetterFromSource(
+            final ContextualGetter<? super S, ?> getter = fieldMapperFactory.getGetterFromSource(
                     propertyMapping.getColumnKey(),
                     propertyMapping.getPropertyMeta().getPropertyType(),
                     propertyMapping.getColumnDefinition(),
@@ -813,7 +815,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         return fieldMapper;
     }
 
-    private <T> FieldMapperGetter<S, T> wrapGetterWithErrorHandler(final K columnKey, final FieldMapperGetter<S, T> getter) {
+    private <T> ContextualGetter<S, T> wrapGetterWithErrorHandler(final K columnKey, final ContextualGetter<S, T> getter) {
         if (getter != null && mapperConfig.hasFieldMapperErrorHandler()) {
             return FieldErrorHandlerGetter.<S, T, K>of(columnKey, getter, mapperConfig.fieldMapperErrorHandler());
         }
@@ -898,11 +900,11 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     private static class GenericBuildBiInstantiator implements BiInstantiator {
-        private final FieldMapperGetter[] biFunctions;
+        private final ContextualGetter[] biFunctions;
         private final BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder;
         private final int nbFields;
 
-        public GenericBuildBiInstantiator(FieldMapperGetter[] biFunctions, BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder, int nbFields) {
+        public GenericBuildBiInstantiator(ContextualGetter[] biFunctions, BiInstantiator<Object[], Object, Object> targetInstantiatorFromGenericBuilder, int nbFields) {
             this.biFunctions = biFunctions;
             this.targetInstantiatorFromGenericBuilder = targetInstantiatorFromGenericBuilder;
             this.nbFields = nbFields;
@@ -957,10 +959,10 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         }
     }
     private class ConstructorInjections<T> {
-        private final Map<Parameter, FieldMapperGetter<? super S, ?>> parameterGetterMap;
+        private final Map<Parameter, ContextualGetter<? super S, ?>> parameterGetterMap;
         private final FieldMapper<S, T>[] fieldMappers;
 
-        private ConstructorInjections(Map<Parameter, FieldMapperGetter<? super S, ?>> parameterGetterMap, FieldMapper<S, T>[] fieldMappers) {
+        private ConstructorInjections(Map<Parameter, ContextualGetter<? super S, ?>> parameterGetterMap, FieldMapper<S, T>[] fieldMappers) {
             this.parameterGetterMap = parameterGetterMap;
             this.fieldMappers = fieldMappers;
         }
@@ -1001,7 +1003,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         }
         
         public GetterAndFieldMapper getterAndfieldMapper() {
-            FieldMapperGetter<? super S, ?> getter = wrapGetterWithErrorHandler(propertyMapping.getColumnKey(), (FieldMapperGetter)getGetter());
+            ContextualGetter<? super S, ?> getter = wrapGetterWithErrorHandler(propertyMapping.getColumnKey(), (ContextualGetter)getGetter());
             FieldMapper<S, T> fieldMapper;
             if (NullSetter.isNull(propertyMeta.getSetter())) {
                 fieldMapper = null;
@@ -1009,13 +1011,13 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 fieldMapper = wrapFieldMapperWithErrorHandler(propertyMapping.getColumnKey(), fieldMapperFactory.newFieldMapper(propertyMapping, mappingContextFactoryBuilder, mapperConfig.mapperBuilderErrorHandler()));
             }
 
-            return new GetterAndFieldMapper((FieldMapperGetter<S, Object>) getter, fieldMapper);
+            return new GetterAndFieldMapper((ContextualGetter<S, Object>) getter, fieldMapper);
         }
 
-        private FieldMapperGetter<? super S, ?> getGetter() {
-            FieldMapperGetter<? super S, ?> getter =
+        private ContextualGetter<? super S, ?> getGetter() {
+            ContextualGetter<? super S, ?> getter =
                     fieldMapperFactory.getGetterFromSource(propertyMapping.getColumnKey(), propertyMeta.getPropertyType(), propertyMapping.getColumnDefinition(), propertyMeta.getPropertyClassMetaSupplier(), mappingContextFactoryBuilder);
-            if (NullFieldMapperGetter.isNull(getter)) {
+            if (NullContextualGetter.isNull(getter)) {
                 PropertyMapping<T, ?, K> propertyMapping = this.propertyMapping;
                 mapperConfig.mapperBuilderErrorHandler()
                         .accessorNotFound(getterNotFoundErrorMessage(propertyMapping));
@@ -1025,7 +1027,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
         @Override
         GenericBuilderGetterAndFieldMapper getterAndfieldMapperGenericBuilder(final int index) {
-            final FieldMapperGetter<? super S, ?> getter = getGetter();
+            final ContextualGetter<? super S, ?> getter = getGetter();
 
             FieldMapper<S, T> fieldMapper;
             FieldMapper<S, T> fieldMapperAfterConstruct;
@@ -1037,7 +1039,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 fieldMapperAfterConstruct = wrapFieldMapperWithErrorHandler(propertyMapping.getColumnKey(), fieldMapperFactory.newFieldMapper(propertyMapping, mappingContextFactoryBuilder, mapperConfig.mapperBuilderErrorHandler()));
             }
 
-            return new GenericBuilderGetterAndFieldMapper((FieldMapperGetter<S, Object>) getter, fieldMapper, null, fieldMapperAfterConstruct);
+            return new GenericBuilderGetterAndFieldMapper((ContextualGetter<S, Object>) getter, fieldMapper, null, fieldMapperAfterConstruct);
 
         }
 
@@ -1049,9 +1051,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
         private class GenericBuilderFieldMapper<S, T> implements FieldMapper<S, T> {
             private final int index;
-            private final FieldMapperGetter<? super S, ?> getter;
+            private final ContextualGetter<? super S, ?> getter;
 
-            public GenericBuilderFieldMapper(int index, FieldMapperGetter<? super S, ?> getter) {
+            public GenericBuilderFieldMapper(int index, ContextualGetter<? super S, ?> getter) {
                 this.index = index;
                 this.getter = getter;
             }
@@ -1104,7 +1106,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(propertyMeta, propertyMappings);
 
             final SourceMapper<S, ?> mapper = getsSourceMapper(currentBuilder);
-            FieldMapperGetter<S, ?> biFunction = newMapperGetterAdapter(mapper, currentBuilder);
+            ContextualGetter<S, ?> biFunction = newMapperGetterAdapter(mapper, currentBuilder);
             FieldMapper<S, T> fieldMapper = newMapperFieldMapper(propertyMappings, propertyMeta, mapper, currentBuilder);
             return new GetterAndFieldMapper(biFunction, fieldMapper);
         }
@@ -1116,12 +1118,12 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             SourceMapper<S, ?> mapper = getsSourceMapper(currentBuilder);
             Function<?, T> transform = null;
 
-            if (mapper instanceof TransformSourceFieldMapper) {
-                transform = ((TransformSourceFieldMapper) mapper).transform;
-                mapper = ((TransformSourceFieldMapper) mapper).delegate;
+            if (mapper instanceof TransformContextualSourceFieldMapper) {
+                transform = ((TransformContextualSourceFieldMapper) mapper).transform;
+                mapper = ((TransformContextualSourceFieldMapper) mapper).delegate;
             }
             
-            FieldMapperGetter<S, Object> biFunction = newMapperGetterAdapter(mapper, currentBuilder);
+            ContextualGetter<S, Object> biFunction = newMapperGetterAdapter(mapper, currentBuilder);
             
             
             FieldMapper<S, T> fieldMapper = newMapperFieldMapper(propertyMappings, new GenericBuilderSetter(i), mapper , currentBuilder);
@@ -1167,22 +1169,22 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
     
     private class GetterAndFieldMapper {
-        final FieldMapperGetter<S, ?> getter;
+        final ContextualGetter<S, ?> getter;
         final FieldMapper<S, T> fieldMapper;
 
-        private GetterAndFieldMapper(FieldMapperGetter<S, ?> getter, FieldMapper<S, T> fieldMapper) {
+        private GetterAndFieldMapper(ContextualGetter<S, ?> getter, FieldMapper<S, T> fieldMapper) {
             this.getter = getter;
             this.fieldMapper = fieldMapper;
         }
     }
 
     private class GenericBuilderGetterAndFieldMapper {
-        final FieldMapperGetter<S, Object> getter;
+        final ContextualGetter<S, Object> getter;
         final FieldMapper<S, T> fieldMapper;
         final Function<?, T> transform;
         final FieldMapper<S, T> fieldMapperAfterConstruct;
 
-        private GenericBuilderGetterAndFieldMapper(FieldMapperGetter<S, Object> getter, FieldMapper<S, T> fieldMapper, Function<?, T> transform, FieldMapper<S, T> fieldMapperAfterConstruct) {
+        private GenericBuilderGetterAndFieldMapper(ContextualGetter<S, Object> getter, FieldMapper<S, T> fieldMapper, Function<?, T> transform, FieldMapper<S, T> fieldMapperAfterConstruct) {
             this.getter = getter;
             this.fieldMapper = fieldMapper;
             this.transform = transform;
@@ -1200,7 +1202,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         }
     }
 
-    private class FieldMapperFactoryGetterFactoryAdapter implements FieldMapperGetterFactory<S, K> {
+    private class FieldMapperFactoryGetterFactoryAdapter implements ContextualGetterFactory<S, K> {
         private final FieldMapperErrorHandler<? super K> fieldMapperErrorHandler;
 
         public FieldMapperFactoryGetterFactoryAdapter(FieldMapperErrorHandler<? super K> fieldMapperErrorHandler) {
@@ -1209,14 +1211,14 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
         @SuppressWarnings("unchecked")
         @Override
-        public <P> FieldMapperGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder,  Object... properties) {
+        public <P> ContextualGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
             FieldMapperColumnDefinition<K> columnDefinition = FieldMapperColumnDefinition.<K>identity().add(properties);
-            FieldMapperGetter<? super S, ? extends P> getterFromSource = fieldMapperFactory.getGetterFromSource(key, target, columnDefinition, new ClassMetaSupplier<P>(target), mappingContextFactoryBuilder);
+            ContextualGetter<? super S, ? extends P> getterFromSource = fieldMapperFactory.getGetterFromSource(key, target, columnDefinition, new ClassMetaSupplier<P>(target), mappingContextFactoryBuilder);
             
             if (fieldMapperErrorHandler != null) {
                 return FieldErrorHandlerGetter.<S, P, K>of(key, getterFromSource, fieldMapperErrorHandler);
             }
-            return (FieldMapperGetter<S, P>) getterFromSource;
+            return (ContextualGetter<S, P>) getterFromSource;
         }
     }
     private class ClassMetaSupplier<P> implements Supplier<ClassMeta<P>> {

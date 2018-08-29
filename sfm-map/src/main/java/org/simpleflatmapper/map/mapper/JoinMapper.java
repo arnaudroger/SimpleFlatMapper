@@ -1,6 +1,8 @@
 package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
+import org.simpleflatmapper.map.ContextualSourceMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
@@ -9,11 +11,11 @@ import org.simpleflatmapper.util.UnaryFactory;
 
 public class JoinMapper<ROW, ROWS, T, EX extends Exception> extends AbstractEnumerableDelegateMapper<ROW, ROWS, T, EX> {
 
-    private final SourceFieldMapper<ROW, T> mapper;
+    private final ContextualSourceFieldMapper<ROW, T> mapper;
     private final MappingContextFactory<? super ROW> mappingContextFactory;
     private final UnaryFactory<ROWS, Enumerable<ROW>> factory;
 
-    public JoinMapper(SourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<ROWS, Enumerable<ROW>> factory) {
+    public JoinMapper(ContextualSourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<ROWS, Enumerable<ROW>> factory) {
         super(errorHandler);
         this.mapper = mapper;
         this.mappingContextFactory = mappingContextFactory;
@@ -22,7 +24,7 @@ public class JoinMapper<ROW, ROWS, T, EX extends Exception> extends AbstractEnum
 
 
     @Override
-    protected final SourceMapper<ROW, T> getMapper(ROW source) {
+    protected final ContextualSourceMapper<ROW, T> getMapper(ROW source) {
         return mapper;
     }
 

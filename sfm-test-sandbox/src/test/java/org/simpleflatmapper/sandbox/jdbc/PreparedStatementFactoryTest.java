@@ -1,6 +1,7 @@
 package org.simpleflatmapper.sandbox.jdbc;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,6 @@ public class PreparedStatementFactoryTest {
     }
     @Test
     public void testCanGetJavaTimeGetterWithoutJodaTimeInClassPath() {
-        assertNotNull(JdbcMapperFactory.newInstance().buildFrom(MyObject.class).addColumn("dateTime").buildIndexFieldMappers());
+        assertNotNull(JdbcMapperFactory.newInstance().buildFrom(MyObject.class).addColumn("dateTime").buildIndexFieldMappers(new DefaultContextFactoryBuilder()));
     }
 }

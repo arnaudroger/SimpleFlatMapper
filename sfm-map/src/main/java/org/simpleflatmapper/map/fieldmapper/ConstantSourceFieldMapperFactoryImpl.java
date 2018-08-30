@@ -48,6 +48,7 @@ import org.simpleflatmapper.util.TypeHelper;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>> implements ConstantSourceFieldMapperFactory<S,K> {
 
@@ -282,8 +283,8 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 
 		InstantiatorDefinitions.CompatibilityScorer scorer = InstantiatorDefinitions.getCompatibilityScorer(key);
-		InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
-                scorer);
+		List<InstantiatorDefinition> instantiatorDefinitions = classMeta.getInstantiatorDefinitions();
+		InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(instantiatorDefinitions, scorer);
 
 		if (id != null) {
             return getGetterInstantiator(classMeta, id, key, columnDefinition, types, mappingContextFactoryBuilder);

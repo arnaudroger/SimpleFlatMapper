@@ -34,7 +34,7 @@ public class MapperBiInstantiatorFactory {
     }
 
     @SuppressWarnings("unchecked")
-    public <S, T, K extends FieldKey<K>> BiInstantiator<S, MappingContext<?>, T> getBiInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K> propertyMappingsBuilder, Map<Parameter, ContextualGetter<? super S, ?>> constructorParameterGetterMap, final ContextualGetterFactory<? super S, K> getterFactory, boolean useAsmIfEnabled, boolean builderIgnoresNullValues, MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder) throws NoSuchMethodException {
+    public <S, T, K extends FieldKey<K>> BiInstantiator<S, MappingContext<?>, T> getBiInstantiator(final Type source, final Type target, final PropertyMappingsBuilder<T, K> propertyMappingsBuilder, final Map<Parameter, ContextualGetter<? super S, ?>> constructorParameterGetterMap, final ContextualGetterFactory<? super S, K> getterFactory, final boolean useAsmIfEnabled, final boolean builderIgnoresNullValues, final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder) throws NoSuchMethodException {
 
         if (propertyMappingsBuilder.isSelfProperty()) {
             ContextualGetter getter = propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K>>() {

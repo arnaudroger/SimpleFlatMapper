@@ -90,7 +90,7 @@ public class CsvMapperImplTest {
 	
 	@Test
 	public void test517() throws IOException {
-		if (true)return;
+		if (true) return;
 		CsvMapper<Result<T517, CsvColumnKey>> mapper = 
 				CsvMapperFactory.newInstance().useAsm(false)
 					.newErrorCollectingMapper(T517.class);

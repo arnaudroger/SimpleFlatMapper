@@ -2,6 +2,8 @@ package org.simpleflatmapper.jdbi.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.jdbi.SfmResultSetMapperFactory;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
+import org.simpleflatmapper.map.ContextualSourceMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
@@ -40,7 +42,7 @@ public class ResultSetMapperFactoryTest {
     @Test
     public void testMapToDbObjectStatic() throws Exception {
         DBI dbi = new DBI(DbHelper.getHsqlDataSource());
-        UnaryFactory<Class<?>, SourceMapper<ResultSet, ?>> unaryFactory = new UnaryFactory<Class<?>, SourceMapper<ResultSet, ?>>() {
+        UnaryFactory<Class<?>, ContextualSourceMapper<ResultSet, ?>> unaryFactory = new UnaryFactory<Class<?>, ContextualSourceMapper<ResultSet, ?>>() {
 
             @Override
             public ContextualSourceFieldMapper<ResultSet, ?> newInstance(Class<?> aClass) {

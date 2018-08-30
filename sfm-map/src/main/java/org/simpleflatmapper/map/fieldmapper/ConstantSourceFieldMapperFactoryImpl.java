@@ -33,7 +33,6 @@ import org.simpleflatmapper.map.property.DefaultValueProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.map.impl.FieldMapperGetterWithConverter;
 import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
 import org.simpleflatmapper.reflect.ObjectSetterFactory;
 import org.simpleflatmapper.reflect.Setter;
@@ -222,7 +221,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		if (getter == null) {
             GetterFactory<? super S, K> customGetterFactory = (GetterFactory<? super S, K>) columnDefinition.getCustomGetterFactoryFrom(sourceType);
 			if (customGetterFactory != null) {
-				getter = ContextualGetterAdapter.of(customGetterFactory.newGetter(propertyType, columnKey, columnDefinition.properties()));
+				getter = (ContextualGetter<? super S, ? extends P>) ContextualGetterAdapter.<S, P>of(customGetterFactory.<P>newGetter(propertyType, columnKey, columnDefinition.properties()));
 			}
         }
 

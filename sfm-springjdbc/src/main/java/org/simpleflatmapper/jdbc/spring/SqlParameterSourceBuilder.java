@@ -19,7 +19,7 @@ import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
-import org.simpleflatmapper.map.impl.FieldMapperGetterWithConverter;
+import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterWithConverter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;

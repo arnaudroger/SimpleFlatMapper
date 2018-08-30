@@ -3,14 +3,11 @@ package org.simpleflatmapper.csv.test;
 import org.junit.Test;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.CsvWriterBuilder;
-import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.mapper.ContextualFieldMapper;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
+import org.simpleflatmapper.map.mapper.ContextualSourceFieldMapperImpl;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.property.DateFormatProperty;
 import org.simpleflatmapper.map.property.EnumOrdinalFormatProperty;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.MapperConfig;
 
 import static org.junit.Assert.*;
@@ -23,7 +20,7 @@ public class CsvWriterBuilderTest {
                 MapperConfig.<CsvColumnKey>fieldMapperConfig();
         CsvWriterBuilder<DbObject> builder = CsvWriterBuilder.newBuilder(DbObject.class);
 
-        ContextualFieldMapper<DbObject, Appendable> mapper =
+        ContextualSourceFieldMapperImpl<DbObject, Appendable> mapper =
                 builder.addColumn("id")
                         .addColumn("name")
                         .addColumn("email")

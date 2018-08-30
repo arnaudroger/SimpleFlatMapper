@@ -20,7 +20,7 @@ public class IndexedSetterProperty extends SetterFactoryProperty {
             @SuppressWarnings("unchecked")
             @Override
             public <PP> Setter<PreparedStatement, PP> getSetter(Object arg) {
-                int index = ((PropertyMapping)arg).getColumnKey().getIndex();
+                final int index = ((PropertyMapping)arg).getColumnKey().getIndex();
                 return new Setter<PreparedStatement, PP>() {
                     @Override
                     public void set(PreparedStatement target, PP value) throws Exception {

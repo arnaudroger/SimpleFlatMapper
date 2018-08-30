@@ -26,7 +26,7 @@ public final class ContextualGetterAdapter<S, P> implements ContextualGetter<S, 
     }
 
 
-    public static <P, S> ContextualGetter<S, P> of(Getter<? super S, ? extends P> getter) {
+    public static <S, P> ContextualGetter<S, P> of(Getter<? super S, ? extends P> getter) {
         if (getter == null) return null;
 
         if (getter instanceof BooleanGetter) {
@@ -218,7 +218,7 @@ public final class ContextualGetterAdapter<S, P> implements ContextualGetter<S, 
 
 
     public static <S> BooleanContextualGetter<? super S> of(final BooleanGetter<? super S> getter) {
-        return new BooleanContextualGetterAdapter<>(getter);
+        return new BooleanContextualGetterAdapter<S>(getter);
     }
     
     private static class BooleanContextualGetterAdapter<S> implements BooleanContextualGetter<S> {
@@ -234,7 +234,7 @@ public final class ContextualGetterAdapter<S, P> implements ContextualGetter<S, 
         }
     }
     public static <S> ByteContextualGetter<? super S> of(final ByteGetter<? super S> getter) {
-        return new ByteContextualGetterAdapter<>(getter);
+        return new ByteContextualGetterAdapter<S>(getter);
     }
 
     private static class ByteContextualGetterAdapter<S> implements ByteContextualGetter<S> {
@@ -250,7 +250,7 @@ public final class ContextualGetterAdapter<S, P> implements ContextualGetter<S, 
         }
     }
     public static <S> CharacterContextualGetter<? super S> of(final CharacterGetter<? super S> getter) {
-        return new CharacterContextualGetterAdapter<>(getter);
+        return new CharacterContextualGetterAdapter<S>(getter);
     }
 
     private static class CharacterContextualGetterAdapter<S> implements CharacterContextualGetter<S> {
@@ -266,7 +266,7 @@ public final class ContextualGetterAdapter<S, P> implements ContextualGetter<S, 
         }
     }
     public static <S> ShortContextualGetter<? super S> of(final ShortGetter<? super S> getter) {
-        return new ShortContextualGetterAdapter<>(getter);
+        return new ShortContextualGetterAdapter<S>(getter);
     }
 
     private static class ShortContextualGetterAdapter<S> implements ShortContextualGetter<S> {
@@ -282,7 +282,7 @@ public final class ContextualGetterAdapter<S, P> implements ContextualGetter<S, 
         }
     }
     public static <S> IntContextualGetter<? super S> of(final IntGetter<? super S> getter) {
-        return new IntContextualGetterAdapter<>(getter);
+        return new IntContextualGetterAdapter<S>(getter);
     }
 
     private static class IntContextualGetterAdapter<S> implements IntContextualGetter<S> {
@@ -298,7 +298,7 @@ public final class ContextualGetterAdapter<S, P> implements ContextualGetter<S, 
         }
     }
     public static <S> LongContextualGetter<? super S> of(final LongGetter<? super S> getter) {
-        return new LongContextualGetterAdapter<>(getter);
+        return new LongContextualGetterAdapter<S>(getter);
     }
 
     private static class LongContextualGetterAdapter<S> implements LongContextualGetter<S> {
@@ -314,7 +314,7 @@ public final class ContextualGetterAdapter<S, P> implements ContextualGetter<S, 
         }
     }
     public static <S> FloatContextualGetter<? super S> of(final FloatGetter<? super S> getter) {
-        return new FloatContextualGetterAdapter<>(getter);
+        return new FloatContextualGetterAdapter<S>(getter);
     }
 
     private static class FloatContextualGetterAdapter<S> implements FloatContextualGetter<S> {
@@ -330,7 +330,7 @@ public final class ContextualGetterAdapter<S, P> implements ContextualGetter<S, 
         }
     }
     public static <S> DoubleContextualGetter<? super S> of(final DoubleGetter<? super S> getter) {
-        return new DoubleContextualGetterAdapter<>(getter);
+        return new DoubleContextualGetterAdapter<S>(getter);
     }
 
     private static class DoubleContextualGetterAdapter<S> implements DoubleContextualGetter<S> {

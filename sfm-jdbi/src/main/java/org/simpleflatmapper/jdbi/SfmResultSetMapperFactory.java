@@ -3,20 +3,23 @@ package org.simpleflatmapper.jdbi;
 import org.simpleflatmapper.jdbc.DynamicJdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
+import org.simpleflatmapper.map.ContextualSourceMapper;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.util.BiPredicate;
 import org.simpleflatmapper.util.UnaryFactory;
 import org.skife.jdbi.v2.ResultSetMapperFactory;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import java.sql.ResultSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class SfmResultSetMapperFactory implements ResultSetMapperFactory {
 
-    private static final UnaryFactory<Class<?>, JdbcMapper<?>> DEFAULT_FACTORY = new UnaryFactory<Class<?>, JdbcMapper<?>>() {
+    private static final UnaryFactory<Class<?>, ContextualSourceMapper<ResultSet, ?>> DEFAULT_FACTORY = new UnaryFactory<Class<?>, ContextualSourceMapper<ResultSet, ?>>() {
         @Override
-        public JdbcMapper<?> newInstance(Class<?> aClass) {
+        public ContextualSourceMapper<ResultSet, ?> newInstance(Class<?> aClass) {
             return JdbcMapperFactory.newInstance().newMapper(aClass);
         }
     };
@@ -27,7 +30,7 @@ public class SfmResultSetMapperFactory implements ResultSetMapperFactory {
         }
     };
 
-    private final UnaryFactory<Class<?>, JdbcMapper<?>> mapperFactory;
+    private final UnaryFactory<Class<?>, ContextualSourceMapper<ResultSet, ?>> mapperFactory;
     private final ConcurrentMap<Class<?>, ResultSetMapper<?>> cache = new ConcurrentHashMap<Class<?>, ResultSetMapper<?>>();
     private final BiPredicate<Class<?>, StatementContext> acceptsPredicate;
 
@@ -35,11 +38,11 @@ public class SfmResultSetMapperFactory implements ResultSetMapperFactory {
         this(DEFAULT_FACTORY);
     }
 
-    public SfmResultSetMapperFactory(UnaryFactory<Class<?>, JdbcMapper<?>> mapperFactory) {
+    public SfmResultSetMapperFactory(UnaryFactory<Class<?>, ContextualSourceMapper<ResultSet, ?>> mapperFactory) {
         this(DEFAULT_ACCEPT_PREDICATE, mapperFactory);
     }
 
-    public SfmResultSetMapperFactory(BiPredicate<Class<?>, StatementContext> acceptsPredicate, UnaryFactory<Class<?>, JdbcMapper<?>> mapperFactory) {
+    public SfmResultSetMapperFactory(BiPredicate<Class<?>, StatementContext> acceptsPredicate, UnaryFactory<Class<?>, ContextualSourceMapper<ResultSet, ?>> mapperFactory) {
         this.mapperFactory = mapperFactory;
         this.acceptsPredicate = acceptsPredicate;
     }
@@ -55,7 +58,7 @@ public class SfmResultSetMapperFactory implements ResultSetMapperFactory {
         ResultSetMapper mapper = cache.get(aClass);
 
         if (mapper == null) {
-            JdbcMapper<?> resultSetMapper = mapperFactory.newInstance(aClass);
+            ContextualSourceMapper<ResultSet, ?> resultSetMapper = mapperFactory.newInstance(aClass);
             mapper = toResultSetMapper(resultSetMapper);
             ResultSetMapper<?> cachedMapper = cache.putIfAbsent(aClass, mapper);
             if (cachedMapper != null) {
@@ -66,7 +69,7 @@ public class SfmResultSetMapperFactory implements ResultSetMapperFactory {
         return mapper;
     }
 
-    private <T> ResultSetMapper<T> toResultSetMapper(JdbcMapper<T> resultSetMapper) {
+    private <T> ResultSetMapper<T> toResultSetMapper(ContextualSourceMapper<ResultSet, T> resultSetMapper) {
         ResultSetMapper mapper;
         if (resultSetMapper instanceof DynamicJdbcMapper) {
             mapper = new DynamicSfmResultSetMapper<T>((DynamicJdbcMapper<T>) resultSetMapper);

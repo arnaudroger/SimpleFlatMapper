@@ -1,18 +1,18 @@
 package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.util.Function;
 
-public class TransformContextualSourceFieldMapper<S, I, O> implements ContextualSourceFieldMapper<S, O> {
+public class TransformSourceFieldMapper<S, I, O> implements SourceFieldMapper<S, O> {
     
-    public final ContextualSourceFieldMapper<S, I> delegate;
+    public final SourceFieldMapper<S, I> delegate;
     public final FieldMapper<S, O>[] mappers;
     public final Function<I, O> transform;
 
-    public TransformContextualSourceFieldMapper(ContextualSourceFieldMapper<S, I> delegate, FieldMapper<S, O>[] mappers, Function<I, O> transform) {
+    public TransformSourceFieldMapper(SourceFieldMapper<S, I> delegate, FieldMapper<S, O>[] mappers, Function<I, O> transform) {
         this.delegate = delegate;
         this.mappers = mappers;
         this.transform = transform;
@@ -23,11 +23,6 @@ public class TransformContextualSourceFieldMapper<S, I, O> implements Contextual
         for(FieldMapper<S, O> mapper : mappers) {
             mapper.mapTo(source, target, context);
         }
-    }
-
-    @Override
-    public O map(S source) throws MappingException {
-        return transform.apply(delegate.map(source));
     }
 
     @Override

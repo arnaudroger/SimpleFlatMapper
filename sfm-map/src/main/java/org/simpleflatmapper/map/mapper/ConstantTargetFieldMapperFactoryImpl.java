@@ -101,7 +101,7 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
                 (SetterFactory<T, PropertyMapping<?, ?, K>>) pm.getColumnDefinition().getCustomSetterFactoryTo(targetType);
 
         if (customSetterFactory != null) {
-            setter = ContextualSetterAdapter.of(customSetterFactory.getSetter(pm));
+            setter = ContextualSetterAdapter.<T, P>of(customSetterFactory.<P>getSetter(pm));
         }
 
         if (setter == null){

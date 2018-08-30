@@ -7,10 +7,11 @@ import org.simpleflatmapper.converter.ToStringConverter;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
 import org.simpleflatmapper.lightningcsv.CellWriter;
 import org.simpleflatmapper.lightningcsv.CsvCellWriter;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.PropertyWithGetter;
-import org.simpleflatmapper.map.mapper.ContextualFieldMapper;
+import org.simpleflatmapper.map.mapper.ContextualSourceFieldMapperImpl;
 import org.simpleflatmapper.map.property.FormatProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.MapperConfig;
@@ -65,9 +66,9 @@ public class CsvWriter<T>  {
 
     private final FieldMapper<T, Appendable> mapper;
     private final Appendable appendable;
-    private final MappingContext<T> mappingContext;
+    private final MappingContext<? super T> mappingContext;
 
-    private CsvWriter(FieldMapper<T, Appendable> mapper, Appendable appendable, MappingContext<T> mappingContext) {
+    private CsvWriter(FieldMapper<T, Appendable> mapper, Appendable appendable, MappingContext<? super T> mappingContext) {
         this.mapper = mapper;
         this.appendable = appendable;
         this.mappingContext = mappingContext;
@@ -129,7 +130,7 @@ public class CsvWriter<T>  {
             for(String header : headers) {
                 builder.addColumn(header);
             }
-            ContextualFieldMapper<T, Appendable> mapper = builder.mapper();
+            ContextualSourceFieldMapperImpl<T, Appendable> mapper = builder.mapper();
 
             return new DefaultCsvWriterDSL<T>(
                     CsvWriter.<T>toColumnDefinitions(headers),
@@ -231,7 +232,7 @@ public class CsvWriter<T>  {
     public static class CsvWriterDSL<T> {
 
         protected final Column[] columns;
-        protected final ContextualFieldMapper<T, Appendable> mapper;
+        protected final ContextualSourceFieldMapperImpl<T, Appendable> mapper;
         protected final CellWriter cellWriter;
         protected final ClassMeta<T> classMeta;
         protected final MapperConfig<CsvColumnKey> mapperConfig;
@@ -240,7 +241,7 @@ public class CsvWriter<T>  {
         private CsvWriterDSL(
                 Column[] columns,
                 CellWriter cellWriter,
-                ContextualFieldMapper<T, Appendable> mapper,
+                ContextualSourceFieldMapperImpl<T, Appendable> mapper,
                 ClassMeta<T> classMeta,
                 MapperConfig<CsvColumnKey> mapperConfig,
                 boolean skipHeaders) {
@@ -404,7 +405,7 @@ public class CsvWriter<T>  {
                 builder.addColumn(col.name(), col.definition());
             }
 
-            ContextualFieldMapper<T, Appendable> mapper = builder.mapper();
+            ContextualSourceFieldMapperImpl<T, Appendable> mapper = builder.mapper();
 
             return new CsvWriterDSL<T>(columns, cellWriter, mapper,  classMeta, mapperConfig, skipHeaders);
         }
@@ -422,13 +423,13 @@ public class CsvWriter<T>  {
                 builder.addColumn(col.name(), col.definition());
             }
 
-            ContextualFieldMapper<T, Appendable> mapper = builder.mapper();
+            ContextualSourceFieldMapperImpl<T, Appendable> mapper = builder.mapper();
 
             return newCsvWriterDSL(columns, cellWriter, mapper, classMeta, mapperConfig, skipHeaders);
         }
 
         protected CsvWriterDSL<T> newCsvWriterDSL(Column[] columns,
-                                                CellWriter cellWriter, ContextualFieldMapper<T, Appendable> mapper, ClassMeta<T> classMeta,
+                                                CellWriter cellWriter, ContextualSourceFieldMapperImpl<T, Appendable> mapper, ClassMeta<T> classMeta,
                                                 MapperConfig<CsvColumnKey> mapperConfig,
                                                 boolean skipHeaders) {
             return new CsvWriterDSL<T>(columns, cellWriter, mapper, classMeta, mapperConfig, skipHeaders);
@@ -452,7 +453,7 @@ public class CsvWriter<T>  {
         @Override
         protected NoColumnCsvWriterDSL<T> newCsvWriterDSL(Column[] columns,
                                                   CellWriter cellWriter,
-                                                  ContextualFieldMapper<T, Appendable> mapper, ClassMeta<T> classMeta,
+                                                  ContextualSourceFieldMapperImpl<T, Appendable> mapper, ClassMeta<T> classMeta,
                                                   MapperConfig<CsvColumnKey> mapperConfig,
                                                   boolean skipHeaders) {
             return new NoColumnCsvWriterDSL<T>(cellWriter, classMeta, mapperConfig, skipHeaders);
@@ -464,7 +465,7 @@ public class CsvWriter<T>  {
         private DefaultCsvWriterDSL(
                 Column[] columns,
                 CellWriter cellWriter,
-                ContextualFieldMapper<T, Appendable> mapper,
+                ContextualSourceFieldMapperImpl<T, Appendable> mapper,
                 ClassMeta<T> classMeta,
                 MapperConfig<CsvColumnKey> mapperConfig, boolean skipHeaders) {
             super(columns, cellWriter, mapper, classMeta, mapperConfig, skipHeaders);
@@ -500,7 +501,7 @@ public class CsvWriter<T>  {
         @Override
         protected CsvWriterDSL<T> newCsvWriterDSL(Column[] columns,
                                                   CellWriter cellWriter,
-                                                  ContextualFieldMapper<T, Appendable> mapper, ClassMeta<T> classMeta,
+                                                  ContextualSourceFieldMapperImpl<T, Appendable> mapper, ClassMeta<T> classMeta,
                                                   MapperConfig<CsvColumnKey> mapperConfig,
                                                   boolean skipHeaders) {
             return new DefaultCsvWriterDSL<T>(columns, cellWriter, mapper, classMeta, mapperConfig, skipHeaders);

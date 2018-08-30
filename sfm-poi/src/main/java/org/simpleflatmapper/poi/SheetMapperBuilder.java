@@ -4,6 +4,7 @@ package org.simpleflatmapper.poi;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
@@ -73,12 +74,12 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
 
     private static class RowMapperFactory<T> implements SetRowMapperBuilderImpl.SetRowMapperFactory<RowMapper<T>, Row, Sheet, T, RuntimeException> {
         @Override
-        public RowMapper<T> newJoinMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory, UnaryFactory<Sheet, Enumerable<Row>> enumerableFactory) {
+        public RowMapper<T> newJoinMapper(ContextualSourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory, UnaryFactory<Sheet, Enumerable<Row>> enumerableFactory) {
             return new JoinSheetMapper<T>(mapper, consumerErrorHandler, mappingContextFactory);
         }
 
         @Override
-        public RowMapper<T> newStaticMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory, UnaryFactory<Sheet, Enumerable<Row>> enumerableFactory) {
+        public RowMapper<T> newStaticMapper(ContextualSourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory, UnaryFactory<Sheet, Enumerable<Row>> enumerableFactory) {
             return new StaticSheetMapper<T>(mapper, consumerErrorHandler, mappingContextFactory);
         }
 

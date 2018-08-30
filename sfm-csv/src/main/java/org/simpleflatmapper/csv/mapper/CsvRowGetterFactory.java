@@ -28,7 +28,7 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
     
     public static final CsvRowGetterFactory INSTANCE = new CsvRowGetterFactory();
 
-    private Map<Class<?>, GetterFactory<CsvRow, CsvColumnKey>> getterFactory = new HashMap<>();
+    private Map<Class<?>, GetterFactory<CsvRow, CsvColumnKey>> getterFactory = new HashMap<Class<?>, GetterFactory<CsvRow, CsvColumnKey>>();
     
     {
         // primitives

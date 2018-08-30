@@ -32,7 +32,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Iterator;
+
+//IFJAVA8_START
 import java.util.stream.Stream;
+//IFJAVA8_END
 
 /**
  * CsvMapperFactory is not Thread-Safe but the mappers are.
@@ -289,7 +292,8 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 		public Iterator<T> iterator(Reader reader, int skip) throws IOException {
 			return iterator(toCsvRowSet(reader, skip , -1));
 		}
-
+		
+		//IFJAVA8_START
 		@Override
 		public Stream<T> stream(Reader reader) throws IOException {
 			return stream(toCsvRowSet(reader, 0 , -1));
@@ -304,6 +308,7 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 		public Stream<T> stream(Reader reader, int skip) throws IOException {
 			return stream(toCsvRowSet(reader, skip , -1));
 		}
+		//IFJAVA8_END
 
 		private CsvRowSet toCsvRowSet(Reader reader, int skip, int limit) throws IOException {
 			return toCsvRowSet(CsvParser.reader(reader), skip, limit);

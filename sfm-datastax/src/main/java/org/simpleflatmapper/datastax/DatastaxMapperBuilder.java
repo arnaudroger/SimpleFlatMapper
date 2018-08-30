@@ -25,8 +25,9 @@ import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.util.Iterator;
-//IFJAVA8_START
 import java.util.List;
+
+//IFJAVA8_START
 import java.util.stream.Stream;
 //IFJAVA8_END
 
@@ -58,7 +59,7 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
         super(KEY_FACTORY, 
                 new DefaultSetRowMapperBuilder<Row, ResultSet, T, DatastaxColumnKey, DriverException>(
                         classMeta, parentBuilder, mapperConfig,
-                        new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, new ContextualGetterFactoryAdapter<>(getterFactory)), 
+                        new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, new ContextualGetterFactoryAdapter<GettableByIndexData, DatastaxColumnKey>(getterFactory)), 
                         KEY_FACTORY, new ResultSetEnumerableFactory(), DatastaxKeySourceGetter.INSTANCE),
                 new BiFunction<SetRowMapper<Row, ResultSet, T, DriverException>, List<DatastaxColumnKey>, DatastaxMapper<T>>() {
                     @Override

@@ -3,6 +3,7 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
@@ -22,13 +23,13 @@ import java.util.stream.StreamSupport;
 
 public class StaticSheetMapper<T> implements RowMapper<T>, SourceFieldMapper<Row, T> {
 
-    private final SourceFieldMapper<Row, T> mapper;
+    private final ContextualSourceFieldMapper<Row, T> mapper;
     private final int startRow = 0;
 
     private final ConsumerErrorHandler consumerErrorHandler;
     private final MappingContextFactory<? super Row> mappingContextFactory;
 
-    public StaticSheetMapper(SourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
+    public StaticSheetMapper(ContextualSourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
         this.mapper = mapper;
         this.consumerErrorHandler = consumerErrorHandler;
         this.mappingContextFactory = mappingContextFactory;

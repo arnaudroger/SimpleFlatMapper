@@ -6,14 +6,20 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.MappingException;
 
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
-public class ContextualSourceMapperImpl<S, T> implements ContextualSourceFieldMapper<S, T> {
+
+public class ContextualSourceFieldMapperImpl<S, T> implements ContextualSourceFieldMapper<S, T> {
     private final MappingContextFactory<? super S> mappingContextFactory;
     private final SourceFieldMapper<S, T> delegate;
 
-    public ContextualSourceMapperImpl(MappingContextFactory<? super S> mappingContextFactory, SourceFieldMapper<S, T> delegate) {
-        this.mappingContextFactory = mappingContextFactory;
-        this.delegate = delegate;
+    public ContextualSourceFieldMapperImpl(MappingContextFactory<? super S> mappingContextFactory, SourceFieldMapper<S, T> delegate) {
+        this.mappingContextFactory = requireNonNull("mappingContextFactory", mappingContextFactory);
+        this.delegate = requireNonNull("delegate", delegate);
+    }
+
+    public SourceFieldMapper<S, T> getDelegate() {
+        return delegate;
     }
 
     public MappingContext<? super S> newMappingContext() {
@@ -43,4 +49,7 @@ public class ContextualSourceMapperImpl<S, T> implements ContextualSourceFieldMa
                 '}';
     }
 
+    public MappingContextFactory<? super S> getMappingContextFactory() {
+        return mappingContextFactory;
+    }
 }

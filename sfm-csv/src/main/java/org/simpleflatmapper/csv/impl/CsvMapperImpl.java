@@ -9,14 +9,16 @@ import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
-import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Enumerable;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
+
+//IFJAVA8_START
 import java.util.stream.Stream;
+//IFJAVA8_END
 
 public class CsvMapperImpl<T> implements CsvMapper<T> {
     private final SetRowMapper<CsvRow, CsvRowSet, T, IOException> setRowMapper;
@@ -72,6 +74,7 @@ public class CsvMapperImpl<T> implements CsvMapper<T> {
         return iterator(toCsvRowSet(reader, skip , -1));
     }
 
+    //IFJAVA8_START
     @Override
     public Stream<T> stream(Reader reader) throws IOException {
         return stream(toCsvRowSet(reader, 0 , -1));
@@ -86,8 +89,9 @@ public class CsvMapperImpl<T> implements CsvMapper<T> {
     public Stream<T> stream(Reader reader, int skip) throws IOException {
         return stream(toCsvRowSet(reader, skip , -1));
     }
-    
-    
+    //IFJAVA8_END
+
+
 
     @Override
     public <H extends CheckedConsumer<? super T>> H forEach(CsvRowSet source, H handler) throws IOException, MappingException {
@@ -100,10 +104,12 @@ public class CsvMapperImpl<T> implements CsvMapper<T> {
         return setRowMapper.iterator(source);
     }
 
+    //IFJAVA8_START
     @Override
     public Stream<T> stream(CsvRowSet source) throws IOException, MappingException {
         return setRowMapper.stream(source);
     }
+    //IFJAVA8_END
 
     @Override
     public Enumerable<T> enumerate(CsvRowSet source) throws IOException, MappingException {

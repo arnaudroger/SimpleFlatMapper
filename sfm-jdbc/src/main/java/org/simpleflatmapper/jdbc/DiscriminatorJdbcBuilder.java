@@ -98,7 +98,7 @@ public class DiscriminatorJdbcBuilder<T> {
             JdbcSourceFieldMapper<T> mapper = subBuilder.createMapper();
             
             Predicate<ResultSet> predicate = new ResultSetDiscriminatorPredicate(column, subBuilder.predicate);
-            mappers.add(new DiscriminatorMapper.PredicatedMapper<ResultSet, ResultSet, T, SQLException>(predicate, (ContextualSourceFieldMapper<ResultSet, T>) mapper, (MappingContextFactoryFromRows<ResultSet, ResultSet, SQLException>) mapper));
+            mappers.add(new DiscriminatorMapper.PredicatedMapper<ResultSet, ResultSet, T, SQLException>(predicate, mapper, mapper));
         }
 
 

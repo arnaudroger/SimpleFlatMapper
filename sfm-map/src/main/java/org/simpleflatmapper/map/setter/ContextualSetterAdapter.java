@@ -216,7 +216,7 @@ public class ContextualSetterAdapter<T, P> implements ContextualSetter<T, P> {
     
 
     public static <T> BooleanContextualSetter<? super T> of(final BooleanSetter<? super T> setter) {
-        return new PrimitiveBooleanContextualSetterAdapter<>(setter);
+        return new PrimitiveBooleanContextualSetterAdapter<T>(setter);
     }
 
     private static class PrimitiveBooleanContextualSetterAdapter<T> implements BooleanContextualSetter<T> {
@@ -233,7 +233,7 @@ public class ContextualSetterAdapter<T, P> implements ContextualSetter<T, P> {
     }
 
     public static <T> ByteContextualSetter<? super T> of(final ByteSetter<? super T> setter) {
-        return new PrimitiveByteContextualSetterAdapter<>(setter);
+        return new PrimitiveByteContextualSetterAdapter<T>(setter);
     }
 
     private static class PrimitiveByteContextualSetterAdapter<T> implements ByteContextualSetter<T> {
@@ -250,7 +250,7 @@ public class ContextualSetterAdapter<T, P> implements ContextualSetter<T, P> {
     }
 
     public static <T> ShortContextualSetter<? super T> of(final ShortSetter<? super T> setter) {
-        return new PrimitiveShortContextualSetterAdapter<>(setter);
+        return new PrimitiveShortContextualSetterAdapter<T>(setter);
     }
 
     private static class PrimitiveShortContextualSetterAdapter<T> implements ShortContextualSetter<T> {
@@ -267,7 +267,7 @@ public class ContextualSetterAdapter<T, P> implements ContextualSetter<T, P> {
     }
 
     public static <T> IntContextualSetter<? super T> of(final IntSetter<? super T> setter) {
-        return new PrimitiveIntContextualSetterAdapter<>(setter);
+        return new PrimitiveIntContextualSetterAdapter<T>(setter);
     }
 
     private static class PrimitiveIntContextualSetterAdapter<T> implements IntContextualSetter<T> {
@@ -285,7 +285,7 @@ public class ContextualSetterAdapter<T, P> implements ContextualSetter<T, P> {
 
 
     public static <T> LongContextualSetter<? super T> of(final LongSetter<? super T> setter) {
-        return new PrimitiveLongContextualSetterAdapter<>(setter);
+        return new PrimitiveLongContextualSetterAdapter<T>(setter);
     }
 
     private static class PrimitiveLongContextualSetterAdapter<T> implements LongContextualSetter<T> {
@@ -303,7 +303,7 @@ public class ContextualSetterAdapter<T, P> implements ContextualSetter<T, P> {
 
 
     public static <T> FloatContextualSetter<? super T> of(final FloatSetter<? super T> setter) {
-        return new PrimitiveFloatContextualSetterAdapter<>(setter);
+        return new PrimitiveFloatContextualSetterAdapter<T>(setter);
     }
 
     private static class PrimitiveFloatContextualSetterAdapter<T> implements FloatContextualSetter<T> {
@@ -321,7 +321,7 @@ public class ContextualSetterAdapter<T, P> implements ContextualSetter<T, P> {
 
 
     public static <T> DoubleContextualSetter<? super T> of(final DoubleSetter<? super T> setter) {
-        return new PrimitiveDoubleContextualSetterAdapter<>(setter);
+        return new PrimitiveDoubleContextualSetterAdapter<T>(setter);
     }
 
     private static class PrimitiveDoubleContextualSetterAdapter<T> implements DoubleContextualSetter<T> {
@@ -339,7 +339,7 @@ public class ContextualSetterAdapter<T, P> implements ContextualSetter<T, P> {
 
 
     public static <T> CharacterContextualSetter<? super T> of(final CharacterSetter<? super T> setter) {
-        return new PrimitiveCharacterContextualSetterAdapter<>(setter);
+        return new PrimitiveCharacterContextualSetterAdapter<T>(setter);
     }
 
     private static class PrimitiveCharacterContextualSetterAdapter<T> implements CharacterContextualSetter<T> {

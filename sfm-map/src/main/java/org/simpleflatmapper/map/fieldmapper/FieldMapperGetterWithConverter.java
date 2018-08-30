@@ -1,4 +1,4 @@
-package org.simpleflatmapper.map.impl;
+package org.simpleflatmapper.map.fieldmapper;
 
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;

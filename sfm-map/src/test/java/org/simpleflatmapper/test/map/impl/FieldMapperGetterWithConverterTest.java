@@ -1,10 +1,10 @@
-package org.simpleflatmapper.map.impl;
+package org.simpleflatmapper.test.map.impl;
 
 import org.junit.Test;
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterWithConverter;
 
 import static org.junit.Assert.assertEquals;
 

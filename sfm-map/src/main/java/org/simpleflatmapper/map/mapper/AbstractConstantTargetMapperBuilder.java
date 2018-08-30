@@ -94,7 +94,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
     }
 
     @SuppressWarnings("unchecked")
-    public AbstractMapper<T, S> mapper() {
+    public ContextualSourceFieldMapperImpl<T, S> mapper() {
 
         final List<FieldMapper<T, S>> mappers = new ArrayList<FieldMapper<T, S>>();
 
@@ -156,11 +156,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
                     instantiator);
         }
 
-        
-        
-
-        return
-            mapper;
+        return new ContextualSourceFieldMapperImpl<T, S>(mappingContextFactoryBuilder.build(), mapper);
     }
 
     protected void postMapperProcess(List<FieldMapper<T,S>> mappers) {

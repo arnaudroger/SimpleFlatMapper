@@ -74,7 +74,7 @@ public class ConstantSourceMapperBuilderTest {
 
         @Override
         public ContextualGetterFactory<Object, SampleFieldKey> getterFactory() {
-            return new ContextualGetterFactoryAdapter<>(getterFactory);
+            return new ContextualGetterFactoryAdapter<Object, SampleFieldKey>(getterFactory);
         }
     };
     @Test

@@ -135,7 +135,13 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    public ContextualSourceFieldMapper<S, T> mapper() {
+    public ContextualSourceFieldMapperImpl<S, T> mapper() {
+        SourceFieldMapper<S, T> mapper = sourceFieldMapper();
+        return new ContextualSourceFieldMapperImpl<S, T>(mappingContextFactoryBuilder.build(), mapper);
+
+    }
+
+    public SourceFieldMapper<S, T> sourceFieldMapper() {
         // look for property with a default value property but no definition.
         mapperConfig
                 .columnDefinitions()
@@ -178,21 +184,23 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                                 }
                             }
                         });
-        
-        
+
+
         if (!missingProperties.isEmpty()) {
             throw new MissingPropertyException(missingProperties);
         }
+        SourceFieldMapper<S, T> mapper;
 
         List<InjectionParam> injectionParams = constructorInjections();
 
         if (isTargetForTransformer(injectionParams)) {
-            return buildMapperWithTransformer(injectionParams);
+            mapper = buildMapperWithTransformer(injectionParams);
         } else {
             ConstructorInjections<T> constructorInjections = toConstructorInjections(injectionParams);
             InstantiatorAndFieldMappers<T> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator(constructorInjections);
-            return buildMapper(targetFieldMappers(), constructorFieldMappersAndInstantiator, getTargetClass());
+            mapper = buildMapper(targetFieldMappers(), constructorFieldMappersAndInstantiator, getTargetClass());
         }
+        return mapper;
     }
 
     private boolean isTargetForTransformer(List<InjectionParam> injectionParams) {
@@ -205,7 +213,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private ContextualSourceFieldMapper<S, T> buildMapperWithTransformer(List<InjectionParam> injections) {
+    private SourceFieldMapper<S, T> buildMapperWithTransformer(List<InjectionParam> injections) {
         boolean forceGenericBuilder = needGenericBuilder(injections);
 
         BuilderInstantiatorDefinition mutableBuilder = getMutableBuilder();
@@ -249,7 +257,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         return null;
     }
 
-    private ContextualSourceFieldMapper<S, T> buildWithGenericBuilder(List<InjectionParam> params) {
+    private SourceFieldMapper<S, T> buildWithGenericBuilder(List<InjectionParam> params) {
 
 
         List<FieldMeta> fields = fields();
@@ -315,9 +323,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                         constructorInjections,
                         genericBuilderInstantiator);
 
-        ContextualSourceFieldMapper<S, GenericBuilder<T>> delegate = buildMapper(fieldMapperGeneric.toArray(EMPTY_FIELD_MAPPERS), newConstantSourceMapperBuilder, targetClass);
+        SourceFieldMapper<S, GenericBuilder<T>> delegate = buildMapper(fieldMapperGeneric.toArray(EMPTY_FIELD_MAPPERS), newConstantSourceMapperBuilder, targetClass);
 
-        return new TransformContextualSourceFieldMapper<S, GenericBuilder<T>, T>(delegate, merge(constructFieldMapperTarget.toArray(EMPTY_FIELD_MAPPERS), targetFieldMappers.toArray(EMPTY_FIELD_MAPPERS)), transformFunction);
+        return new TransformSourceFieldMapper<S, GenericBuilder<T>, T>(delegate, merge(constructFieldMapperTarget.toArray(EMPTY_FIELD_MAPPERS), targetFieldMappers.toArray(EMPTY_FIELD_MAPPERS)), transformFunction);
 
     }
     private FieldMapper<S, T>[] merge(FieldMapper<S, T>[] fieldMappers, FieldMapper<S, T>[] fields) {
@@ -352,7 +360,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private ContextualSourceFieldMapper<S, T> builderWithTransformer(final List<InjectionParam> params, final BuilderInstantiatorDefinition builder) {
+    private SourceFieldMapper<S, T> builderWithTransformer(final List<InjectionParam> params, final BuilderInstantiatorDefinition builder) {
         final FieldMapper[] fields = targetFieldMappers();
         final Method buildMethod = builder.getBuildMethod();
         final Class<?> targetClass = buildMethod.getDeclaringClass();
@@ -370,11 +378,11 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 return builderBiInstantiator.newInitialisedBuilderInstace(o, o2);
             }
         });
-        ContextualSourceFieldMapper delegate = buildMapper(fields, newConstantSourceMapperBuilder, targetClass);
-        return new TransformContextualSourceFieldMapper<S, Object, T>(delegate, fields, f);
+        SourceFieldMapper delegate = buildMapper(fields, newConstantSourceMapperBuilder, targetClass);
+        return new TransformSourceFieldMapper<S, Object, T>(delegate, fields, f);
     }
 
-    private <T> ContextualSourceFieldMapper<S, T> buildMapper(FieldMapper<S, T>[] fields, InstantiatorAndFieldMappers<T> constructorFieldMappersAndInstantiator, Class<T> target) {
+    private <T> SourceFieldMapper<S, T> buildMapper(FieldMapper<S, T>[] fields, InstantiatorAndFieldMappers<T> constructorFieldMappersAndInstantiator, Class<T> target) {
         SourceFieldMapper<S, T> mapper;
 
         if (isEligibleForAsmMapper()) {
@@ -407,7 +415,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         } else {
             mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.constructorInjections.fieldMappers, constructorFieldMappersAndInstantiator.instantiator);
         }
-        return new ContextualSourceMapperImpl<S, T>(mappingContextFactoryBuilder.build(), mapper);
+        return mapper;
     }
 
     public boolean isRootAggregate() {
@@ -790,7 +798,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             final PropertyMeta<P, ?> subProperty = ((SubPropertyMeta<T, P, ?>) propertyMeta).getSubProperty();
             builder.addMapping(pm.getColumnKey(), pm.getColumnDefinition(), subProperty);
         }
-        return builder.mapper();
+        return builder.sourceFieldMapper();
     }
 
 	@SuppressWarnings("unchecked")
@@ -1118,9 +1126,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             SourceMapper<S, ?> mapper = getsSourceMapper(currentBuilder);
             Function<?, T> transform = null;
 
-            if (mapper instanceof TransformContextualSourceFieldMapper) {
-                transform = ((TransformContextualSourceFieldMapper) mapper).transform;
-                mapper = ((TransformContextualSourceFieldMapper) mapper).delegate;
+            if (mapper instanceof TransformSourceFieldMapper) {
+                transform = ((TransformSourceFieldMapper) mapper).transform;
+                mapper = ((TransformSourceFieldMapper) mapper).delegate;
             }
             
             ContextualGetter<S, Object> biFunction = newMapperGetterAdapter(mapper, currentBuilder);

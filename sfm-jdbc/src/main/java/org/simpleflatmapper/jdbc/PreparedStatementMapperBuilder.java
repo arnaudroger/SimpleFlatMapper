@@ -221,7 +221,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
                 final IndexedSetterFactoryProperty indexedSetterPropertyFactory = pm.getColumnDefinition().lookFor(IndexedSetterFactoryProperty.class);
                 if (indexedSetterPropertyFactory != null) {
                     IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>> setterFactory = (IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>>) indexedSetterPropertyFactory.getIndexedSetterFactory();
-                    setter = ContextualIndexedSetterAdapter.of(setterFactory.getIndexedSetter(pm));
+                    setter = ContextualIndexedSetterAdapter.<PreparedStatement, P>of(setterFactory.<P>getIndexedSetter(pm));
                 }
 
                 if (setter == null) {

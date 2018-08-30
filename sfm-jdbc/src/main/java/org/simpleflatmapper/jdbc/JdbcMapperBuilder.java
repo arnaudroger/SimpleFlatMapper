@@ -32,8 +32,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-//IFJAVA8_START
 import java.util.List;
+//IFJAVA8_START
 import java.util.stream.Stream;
 //IFJAVA8_END
 /**
@@ -195,9 +195,15 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
         }
 
         @Override
+        public T map(ResultSet source) throws MappingException {
+            return sourceFieldMapper.map(source, mappingContextFactory.newContext());
+        }
+
+        @Override
         public MappingContext<? super ResultSet> newMappingContext(ResultSet resultSet) throws SQLException {
             return mappingContextFactory.newContext();
         }
+
     }
     
     private static class JdbcMapperImpl<T> implements JdbcMapper<T> {

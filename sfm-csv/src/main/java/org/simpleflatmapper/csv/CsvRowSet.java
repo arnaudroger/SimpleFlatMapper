@@ -15,6 +15,7 @@ public final class CsvRowSet implements Enumerable<CsvRow> {
     private CsvRow currentRow;
     private int limit;
     private CsvColumnKey[] keys;
+    private boolean finished;
     
     CellConsumer cellConsumer = new CellConsumer() {
         @Override
@@ -72,13 +73,18 @@ public final class CsvRowSet implements Enumerable<CsvRow> {
 
     @Override
     public boolean next() {
-        if (limit == 0) return false;
+        if (finished || limit == 0) return false;
         
         currentRow.reset();
         try {
             if (limit != -1) limit--;
-            csvReader.parseRow(cellConsumer);
-            return currentRow.hasData();
+            do {
+                finished = !csvReader.parseRow(cellConsumer);
+                if (currentRow.hasData()) {
+                    return true;
+                }
+                if (finished) return false;
+            } while (true);
         } catch (IOException e) {
             return ErrorHelper.rethrow(e);
         }

@@ -23,6 +23,7 @@ import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Function;
+import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.UnaryFactory;
@@ -31,6 +32,7 @@ import org.simpleflatmapper.util.UnaryFactoryWithException;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 //IFJAVA8_START
@@ -190,8 +192,17 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 	}
 
 	public <T> CsvMapperBuilder<T> newBuilder(final ClassMeta<T> classMeta) {
+		CsvMappingContextFactoryBuilder parentBuilder = new CsvMappingContextFactoryBuilder();
+		if (mapperConfig().fieldMapperErrorHandler() instanceof ResultFieldMapperErrorHandler) {
+			parentBuilder.addSupplier(new Supplier<Object>() {
+				@Override
+				public Object get() {
+					return new ArrayList();
+				}
+			});
+		}
 		CsvMapperBuilder<T> builder =
-				new CsvMapperBuilder<T>(classMeta, mapperConfig(), getterFactory, new CsvMappingContextFactoryBuilder());
+				new CsvMapperBuilder<T>(classMeta, mapperConfig(), getterFactory, parentBuilder);
 		return builder;
 	}
 

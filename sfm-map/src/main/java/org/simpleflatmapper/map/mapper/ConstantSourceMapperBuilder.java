@@ -500,27 +500,14 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         }
 
         ClassMeta<T> classMeta = propertyMappingsBuilder.getClassMeta();
-        Type type = classMeta.getType();
-        
-        if (TypeHelper.areEquals(Result.ResultBuilder.class, type)) {
-            injectionParams.add(new ContextParam(new Parameter(0, "context", Context.class), null));
+        for(InstantiatorDefinition id : classMeta.getInstantiatorDefinitions()) {
+            for(Parameter p : id.getParameters()) {
+                if (p.getType().isAssignableFrom(Context.class) && ! parameters.contains(p)) {
+                    injectionParams.add(new ContextParam(p, null));
+                }
+            }
         }
-//        try {
-//            classMeta.forEachProperties(new Consumer<PropertyMeta<T, ?>>() {
-//                @Override
-//                public void accept(PropertyMeta<T, ?> tPropertyMeta) {
-//                    if (tPropertyMeta.isConstructorProperty() && TypeHelper.isAssignable(tPropertyMeta.getPropertyType(), Context.class)) {
-//                        ConstructorPropertyMeta<T, ?> cProp = (ConstructorPropertyMeta<T, ?>) tPropertyMeta;
-//                        if (!parameters.contains(cProp.getParameter())) {
-//                            injectionParams.add(new ContextParam(cProp.getParameter(), cProp));
-//                        }
-//                    }
-//                }
-//            });
-//        } catch (UnsupportedOperationException e) {
-//            // ignore
-//        }
-//        
+
         return injectionParams;
 	}
 

@@ -502,7 +502,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         ClassMeta<T> classMeta = propertyMappingsBuilder.getClassMeta();
         for(InstantiatorDefinition id : classMeta.getInstantiatorDefinitions()) {
             for(Parameter p : id.getParameters()) {
-                if (p.getType().isAssignableFrom(Context.class) && ! parameters.contains(p)) {
+                if (TypeHelper.areEquals(p.getType(), Context.class) && ! parameters.contains(p)) {
                     injectionParams.add(new ContextParam(p, null));
                 }
             }

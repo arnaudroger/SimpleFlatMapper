@@ -77,7 +77,7 @@ public class Result<T, K> {
         }
         
         public Result<T, K> build() {
-            ArrayList<FieldError<K>> fieldErrors = new ArrayList<>(errors);
+            ArrayList<FieldError<K>> fieldErrors = new ArrayList<FieldError<K>>(errors);
             errors.clear();
             return new Result<T, K>(value, fieldErrors);
         }

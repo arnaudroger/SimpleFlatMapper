@@ -505,13 +505,20 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
     private void addContextParam(List<InjectionParam> injectionParams, Set<Parameter> parameters) {
+        Parameter mappingContext = null;
         for(InstantiatorDefinition id : propertyMappingsBuilder.getPropertyFinder().getEligibleInstantiatorDefinitions()) {
             for(Parameter p : id.getParameters()) {
                 if (TypeHelper.areEquals(p.getType(), Context.class) && ! parameters.contains(p)) {
-                    injectionParams.add(new ContextParam(p, null));
-                    return; // only add one
+                    if (mappingContext != null && ! p.equals(mappingContext)) {
+                        // multiple context ignore to avoid constructor selection issue
+                        return;
+                    }
+                    mappingContext = p;
                 }
             }
+        }
+        if (mappingContext != null) {
+            injectionParams.add(new ContextParam(mappingContext, null));
         }
     }
 

@@ -145,7 +145,7 @@ public class ParamNameDeductor<T> {
     }
 
     private <V> V createValueFromInstantiator(Type type, boolean builderIgnoresNullValues) throws Exception {
-        InstantiatorDefinition instantiatorDefinition = InstantiatorFactory.getSmallerConstructor(ReflectionInstantiatorDefinitionFactory.extractDefinitions(type), Collections.emptySet());
+        InstantiatorDefinition instantiatorDefinition = InstantiatorFactory.getSmallerConstructor(ReflectionInstantiatorDefinitionFactory.extractDefinitions(type), Collections.<Parameter>emptySet());
 
         Instantiator<Object, V> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, true, builderIgnoresNullValues), false, builderIgnoresNullValues);
         try {

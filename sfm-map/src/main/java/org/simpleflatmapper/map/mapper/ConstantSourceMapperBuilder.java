@@ -509,6 +509,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             for(Parameter p : id.getParameters()) {
                 if (TypeHelper.areEquals(p.getType(), Context.class) && ! parameters.contains(p)) {
                     injectionParams.add(new ContextParam(p, null));
+                    return; // only add one
                 }
             }
         }

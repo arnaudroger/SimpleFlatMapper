@@ -67,35 +67,35 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 	@SuppressWarnings("unchecked")
 	private <T, P> FieldMapper<S, T> primitiveIndexedFieldMapper(final Class<P> type, final Setter<? super T, ? super P> setter, final ContextualGetter<? super S, ? extends P> getter) {
 		if (type.equals(Boolean.TYPE)) {
-			return new BooleanFieldMapper<S, T>(
+			return new BooleanConstantSourceFieldMapper<S, T>(
 					toBooleanGetter((ContextualGetter<S, ? extends Boolean>) getter),
 					ObjectSetterFactory.<T>toBooleanSetter((Setter<T, ? super Boolean>) setter));
 		} else if (type.equals(Integer.TYPE)) {
-			return new IntFieldMapper<S, T>(
+			return new IntConstantSourceFieldMapper<S, T>(
 					toIntGetter((ContextualGetter<S, ? extends Integer>) getter),
 					ObjectSetterFactory.<T>toIntSetter((Setter<T, ? super Integer>) setter));
 		} else if (type.equals(Long.TYPE)) {
-			return new LongFieldMapper<S, T>(
+			return new LongConstantSourceFieldMapper<S, T>(
 					toLongGetter((ContextualGetter<S, ? extends Long>) getter),
 					ObjectSetterFactory.<T>toLongSetter((Setter<T, ? super Long>) setter));
 		} else if (type.equals(Float.TYPE)) {
-			return new FloatFieldMapper<S, T>(
+			return new FloatConstantSourceFieldMapper<S, T>(
 					toFloatGetter((ContextualGetter<S, ? extends Float>) getter),
 					ObjectSetterFactory.<T>toFloatSetter((Setter<T, ? super Float>) setter));
 		} else if (type.equals(Double.TYPE)) {
-			return new DoubleFieldMapper<S, T>(
+			return new DoubleConstantSourceFieldMapper<S, T>(
 					toDoubleGetter((ContextualGetter<S, ? extends Double>) getter),
 					ObjectSetterFactory.<T>toDoubleSetter((Setter<T, ? super Double>) setter));
 		} else if (type.equals(Byte.TYPE)) {
-			return new ByteFieldMapper<S, T>(
+			return new ByteConstantSourceFieldMapper<S, T>(
 					toByteGetter((ContextualGetter<S, ? extends Byte>) getter),
 					ObjectSetterFactory.<T>toByteSetter((Setter<T, ? super Byte>) setter));
 		} else if (type.equals(Character.TYPE)) {
-			return new CharacterFieldMapper<S, T>(
+			return new CharacterConstantSourceFieldMapper<S, T>(
 					toCharGetter((ContextualGetter<S, ? extends Character>) getter),
 					ObjectSetterFactory.<T>toCharacterSetter((Setter<T, ? super Character>) setter));
 		} else if (type.equals(Short.TYPE)) {
-			return new ShortFieldMapper<S, T>(
+			return new ShortConstantSourceFieldMapper<S, T>(
 					toShortGetter((ContextualGetter<S, ? extends Short>) getter),
 					ObjectSetterFactory.<T>toShortSetter((Setter<T, ? super Short>) setter));
 		} else {
@@ -207,9 +207,9 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 			
 			if (propertyMapping.getColumnDefinition().isKey() 
 					&& JoinUtils.isArrayElement(propertyMapping.getPropertyMeta())) {
-				return new FieldMapperImpl<S, T, P>(getter, new NullValueFilterSetter(setter));
+				return new ConstantSourceFieldMapper<S, T, P>(getter, new NullValueFilterSetter(setter));
 			} else {
-				return new FieldMapperImpl<S, T, P>(getter, setter);
+				return new ConstantSourceFieldMapper<S, T, P>(getter, setter);
 			}
 		}
 	}

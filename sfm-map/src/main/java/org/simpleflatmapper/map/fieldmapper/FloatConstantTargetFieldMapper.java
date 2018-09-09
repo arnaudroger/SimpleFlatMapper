@@ -9,22 +9,18 @@ import org.simpleflatmapper.map.setter.FloatContextualSetter;
 import org.simpleflatmapper.reflect.primitive.FloatGetter;
 import org.simpleflatmapper.reflect.primitive.FloatSetter;
 
-public final class FloatFieldMapper<S, T> implements FieldMapper<S, T> {
+public final class FloatConstantTargetFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final FloatContextualGetter<? super S> getter;
+	private final FloatGetter<? super S> getter;
 	private final FloatContextualSetter<? super T> setter;
 	
- 	public FloatFieldMapper(final FloatContextualGetter<? super S> getter, final FloatSetter<? super T> setter) {
+	public FloatConstantTargetFieldMapper(final FloatGetter<? super S> getter, final FloatContextualSetter<? super T> setter) {
 		this.getter = getter;
-		this.setter = ContextualSetterAdapter.of(setter);
-	}
-	public FloatFieldMapper(final FloatGetter<? super S> getter, final FloatContextualSetter<? super T> setter) {
-		this.getter = ContextualGetterAdapter.of(getter);
 		this.setter = setter;
 	}
 	@Override
 	public void mapTo(final S source, final T target, final MappingContext<? super S> context) throws Exception {
-        setter.setFloat(target, getter.getFloat(source, context), context);
+        setter.setFloat(target, getter.getFloat(source), context);
 	}
 
     @Override

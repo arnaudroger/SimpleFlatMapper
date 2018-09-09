@@ -72,25 +72,25 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
     private <S, P> FieldMapper<S, T> buildFieldMapper(Getter<? super S, ? extends P> getter, ContextualSetter<? super T, ? super P> setter, Type propertyType) {
         if (TypeHelper.isPrimitive(propertyType)) {
             if (getter instanceof BooleanGetter && setter instanceof BooleanContextualSetter) {
-                return new BooleanFieldMapper<S, T>((BooleanGetter<S>)getter, (BooleanContextualSetter<T>) setter);
+                return new BooleanConstantTargetFieldMapper<S, T>((BooleanGetter<S>)getter, (BooleanContextualSetter<T>) setter);
             } else if (getter instanceof ByteGetter && setter instanceof ByteContextualSetter) {
-                return new ByteFieldMapper<S, T>((ByteGetter<S>)getter, (ByteContextualSetter<T>) setter);
+                return new ByteConstantTargetFieldMapper<S, T>((ByteGetter<S>)getter, (ByteContextualSetter<T>) setter);
             } else if (getter instanceof CharacterGetter && setter instanceof CharacterContextualSetter) {
-                return new CharacterFieldMapper<S, T>((CharacterGetter<S>)getter, (CharacterContextualSetter<T>) setter);
+                return new CharacterConstantTargetFieldMapper<S, T>((CharacterGetter<S>)getter, (CharacterContextualSetter<T>) setter);
             } else if (getter instanceof ShortGetter && setter instanceof ShortContextualSetter) {
-                return new ShortFieldMapper<S, T>((ShortGetter<S>)getter, (ShortContextualSetter<T>) setter);
+                return new ShortConstantTargetFieldMapper<S, T>((ShortGetter<S>)getter, (ShortContextualSetter<T>) setter);
             } else if (getter instanceof IntGetter && setter instanceof IntContextualSetter) {
-                return new IntFieldMapper<S, T>((IntGetter<S>)getter, (IntContextualSetter<T>) setter);
+                return new IntConstantTargetFieldMapper<S, T>((IntGetter<S>)getter, (IntContextualSetter<T>) setter);
             } else if (getter instanceof LongGetter && setter instanceof LongContextualSetter) {
-                return new LongFieldMapper<S, T>((LongGetter<S>)getter, (LongContextualSetter<T>) setter);
+                return new LongConstantTargetFieldMapper<S, T>((LongGetter<S>)getter, (LongContextualSetter<T>) setter);
             } else if (getter instanceof FloatGetter && setter instanceof FloatContextualSetter) {
-                return new FloatFieldMapper<S, T>((FloatGetter<S>)getter, (FloatContextualSetter<T>) setter);
+                return new FloatConstantTargetFieldMapper<S, T>((FloatGetter<S>)getter, (FloatContextualSetter<T>) setter);
             } else if (getter instanceof DoubleGetter && setter instanceof DoubleContextualSetter) {
-                return new DoubleFieldMapper<S, T>((DoubleGetter<S>)getter, (DoubleContextualSetter<T>) setter);
+                return new DoubleConstantTargetFieldMapper<S, T>((DoubleGetter<S>)getter, (DoubleContextualSetter<T>) setter);
             }
         }
 
-        return new FieldMapperImpl<S, T, P>(getter, setter);
+        return new ConstantTargetFieldMapper<S, T, P>(getter, setter);
     }
 
     @SuppressWarnings("unchecked")

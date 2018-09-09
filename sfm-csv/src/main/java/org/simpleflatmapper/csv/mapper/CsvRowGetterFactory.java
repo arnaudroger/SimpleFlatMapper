@@ -1,21 +1,14 @@
 package org.simpleflatmapper.csv.mapper;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.CsvRow;
 import org.simpleflatmapper.csv.property.CustomReaderFactoryProperty;
 import org.simpleflatmapper.csv.property.CustomReaderProperty;
-import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.getter.GetterFactory;
-import org.simpleflatmapper.reflect.primitive.BooleanGetter;
-import org.simpleflatmapper.reflect.primitive.ByteGetter;
-import org.simpleflatmapper.reflect.primitive.CharacterGetter;
-import org.simpleflatmapper.reflect.primitive.DoubleGetter;
-import org.simpleflatmapper.reflect.primitive.FloatGetter;
-import org.simpleflatmapper.reflect.primitive.IntGetter;
-import org.simpleflatmapper.reflect.primitive.LongGetter;
-import org.simpleflatmapper.reflect.primitive.ShortGetter;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.getter.*;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -24,178 +17,178 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> {
+public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvColumnKey> {
     
     public static final CsvRowGetterFactory INSTANCE = new CsvRowGetterFactory();
 
-    private Map<Class<?>, GetterFactory<CsvRow, CsvColumnKey>> getterFactory = new HashMap<Class<?>, GetterFactory<CsvRow, CsvColumnKey>>();
+    private Map<Class<?>, ContextualGetterFactory<CsvRow, CsvColumnKey>> getterFactory = new HashMap<Class<?>, ContextualGetterFactory<CsvRow, CsvColumnKey>>();
     
     {
         // primitives
-        getterFactory.put(boolean.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(boolean.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvBooleanGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvBooleanGetter(index);
             }
         });
 
-        getterFactory.put(byte.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(byte.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvByteGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvByteGetter(index);
             }
         });
 
-        getterFactory.put(char.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(char.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvCharGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvCharGetter(index);
             }
         });
         
-        getterFactory.put(short.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(short.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvShortGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvShortGetter(index);
             }
         });
 
-        getterFactory.put(int.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(int.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvIntegerGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvIntegerGetter(index);
             }
         });
         
-        getterFactory.put(long.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(long.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvLongGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvLongGetter(index);
             }
         });
 
-        getterFactory.put(float.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(float.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvFloatGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvFloatGetter(index);
             }
         });
 
-        getterFactory.put(double.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(double.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvDoubleGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvDoubleGetter(index);
             }
         });
 
         // boxed
-        getterFactory.put(Boolean.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(Boolean.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvBoxedBooleanGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvBoxedBooleanGetter(index);
             }
         });
 
-        getterFactory.put(Byte.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(Byte.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvBoxedByteGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvBoxedByteGetter(index);
             }
         });
 
-        getterFactory.put(Character.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(Character.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvBoxedCharGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvBoxedCharGetter(index);
             }
         });
 
-        getterFactory.put(Short.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(Short.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvBoxedShortGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvBoxedShortGetter(index);
             }
         });
 
-        getterFactory.put(Integer.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(Integer.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvBoxedIntegerGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvBoxedIntegerGetter(index);
             }
         });
 
-        getterFactory.put(Long.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(Long.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvBoxedLongGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvBoxedLongGetter(index);
             }
         });
 
-        getterFactory.put(Float.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(Float.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvBoxedFloatGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvBoxedFloatGetter(index);
             }
         });
 
-        getterFactory.put(Double.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(Double.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvBoxedDoubleGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvBoxedDoubleGetter(index);
             }
         });
         
-        getterFactory.put(String.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(String.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvStringGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvStringGetter(index);
             }
         });
 
-        getterFactory.put(CharSequence.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(CharSequence.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvCharSequenceGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvCharSequenceGetter(index);
             }
         });
 
-        getterFactory.put(BigDecimal.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(BigDecimal.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvBigDecimalGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvBigDecimalGetter(index);
             }
         });
 
-        getterFactory.put(BigInteger.class, new GetterFactory<CsvRow, CsvColumnKey>() {
+        getterFactory.put(BigInteger.class, new ContextualGetterFactory<CsvRow, CsvColumnKey>() {
             @Override
-            public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+            public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 int index = key.getIndex();
-                return (Getter<CsvRow, P>) new CsvBigIntegerGetter(index);
+                return (ContextualGetter<CsvRow, P>) new CsvBigIntegerGetter(index);
             }
         });
     }
     
     @Override
-    public <P> Getter<CsvRow, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
+    public <P> ContextualGetter<CsvRow, P> newGetter(final Type target, CsvColumnKey key, MappingContextFactoryBuilder<?, CsvColumnKey> mappingContextFactoryBuilder, Object... properties) {
 
         Class<?> clazz = TypeHelper.toClass(target);
 
@@ -225,17 +218,17 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
             clazz = String.class;
         }
 
-        GetterFactory<CsvRow, CsvColumnKey> getterFactory = this.getterFactory.get(clazz);
+        ContextualGetterFactory<CsvRow, CsvColumnKey> getterFactory = this.getterFactory.get(clazz);
         
         if (getterFactory != null) {
-            return getterFactory.newGetter(target, key, properties);
+            return getterFactory.newGetter(target, key, mappingContextFactoryBuilder, properties);
         }
         
 
         return null;
     }
 
-    private static class CsvCharSequenceGetter implements Getter<CsvRow, CharSequence> {
+    private static class CsvCharSequenceGetter implements ContextualGetter<CsvRow, CharSequence> {
         private final int index;
 
         public CsvCharSequenceGetter(int index) {
@@ -243,12 +236,12 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public CharSequence get(CsvRow target)  {
+        public CharSequence get(CsvRow target, Context context)  {
             return target.getCharSequence(index);
         }
     }
 
-    private static class CsvBigIntegerGetter implements Getter<CsvRow, BigInteger> {
+    private static class CsvBigIntegerGetter implements ContextualGetter<CsvRow, BigInteger> {
         private final int index;
 
         public CsvBigIntegerGetter(int index) {
@@ -256,12 +249,12 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public BigInteger get(CsvRow target)  {
+        public BigInteger get(CsvRow target, Context context)  {
             return target.getBigInteger(index);
         }
     }
     
-    private static class CsvBigDecimalGetter implements Getter<CsvRow, BigDecimal> {
+    private static class CsvBigDecimalGetter implements ContextualGetter<CsvRow, BigDecimal> {
         private final int index;
 
         public CsvBigDecimalGetter(int index) {
@@ -269,12 +262,12 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public BigDecimal get(CsvRow target)  {
+        public BigDecimal get(CsvRow target, Context context)  {
             return target.getBigDecimal(index);
         }
     }
     
-    private static class CsvStringGetter implements Getter<CsvRow, String> {
+    private static class CsvStringGetter implements ContextualGetter<CsvRow, String> {
         private final int index;
 
         public CsvStringGetter(int index) {
@@ -282,11 +275,11 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public String get(CsvRow target)  {
+        public String get(CsvRow target, Context context)  {
             return target.getString(index);
         }
     }
-    private static class CsvByteGetter implements Getter<CsvRow, Byte>, ByteGetter<CsvRow> {
+    private static class CsvByteGetter implements ContextualGetter<CsvRow, Byte>, ByteContextualGetter<CsvRow> {
         private final int index;
 
         public CsvByteGetter(int index) {
@@ -294,17 +287,17 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Byte get(CsvRow target)  {
+        public Byte get(CsvRow target, Context context)  {
             return target.getByte(index);
         }
 
         @Override
-        public byte getByte(CsvRow target)  {
+        public byte getByte(CsvRow target, Context context)  {
             return target.getByte(index);
         }
     }
 
-    private static class CsvCharGetter implements Getter<CsvRow, Character>, CharacterGetter<CsvRow> {
+    private static class CsvCharGetter implements ContextualGetter<CsvRow, Character>, CharacterContextualGetter<CsvRow> {
         private final int index;
 
         public CsvCharGetter(int index) {
@@ -312,17 +305,17 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Character get(CsvRow target)  {
+        public Character get(CsvRow target, Context context)  {
             return target.getChar(index);
         }
 
         @Override
-        public char getCharacter(CsvRow target)  {
+        public char getCharacter(CsvRow target, Context context)  {
             return target.getChar(index);
         }
     }
 
-    private static class CsvShortGetter implements Getter<CsvRow, Short>, ShortGetter<CsvRow> {
+    private static class CsvShortGetter implements ContextualGetter<CsvRow, Short>, ShortContextualGetter<CsvRow> {
         private final int index;
 
         public CsvShortGetter(int index) {
@@ -330,17 +323,17 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Short get(CsvRow target)  {
+        public Short get(CsvRow target, Context context)  {
             return target.getShort(index);
         }
 
         @Override
-        public short getShort(CsvRow target)  {
+        public short getShort(CsvRow target, Context context)  {
             return target.getShort(index);
         }
     }
 
-    private static class CsvIntegerGetter implements Getter<CsvRow, Integer>, IntGetter<CsvRow> {
+    private static class CsvIntegerGetter implements ContextualGetter<CsvRow, Integer>, IntContextualGetter<CsvRow> {
         private final int index;
 
         public CsvIntegerGetter(int index) {
@@ -348,17 +341,17 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Integer get(CsvRow target)  {
+        public Integer get(CsvRow target, Context context)  {
             return target.getInt(index);
         }
 
         @Override
-        public int getInt(CsvRow target)  {
+        public int getInt(CsvRow target, Context context)  {
             return target.getInt(index);
         }
     }
 
-    private static class CsvLongGetter implements Getter<CsvRow, Long>, LongGetter<CsvRow> {
+    private static class CsvLongGetter implements ContextualGetter<CsvRow, Long>, LongContextualGetter<CsvRow> {
         private final int index;
 
         public CsvLongGetter(int index) {
@@ -366,17 +359,17 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Long get(CsvRow target)  {
+        public Long get(CsvRow target, Context context)  {
             return target.getLong(index);
         }
 
         @Override
-        public long getLong(CsvRow target)  {
+        public long getLong(CsvRow target, Context context)  {
             return target.getLong(index);
         }
     }
 
-    private static class CsvFloatGetter implements Getter<CsvRow, Float>, FloatGetter<CsvRow> {
+    private static class CsvFloatGetter implements ContextualGetter<CsvRow, Float>, FloatContextualGetter<CsvRow> {
         private final int index;
 
         public CsvFloatGetter(int index) {
@@ -384,17 +377,17 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Float get(CsvRow target)  {
+        public Float get(CsvRow target, Context context)  {
             return target.getFloat(index);
         }
 
         @Override
-        public float getFloat(CsvRow target)  {
+        public float getFloat(CsvRow target, Context context)  {
             return target.getFloat(index);
         }
     }
 
-    private static class CsvDoubleGetter implements Getter<CsvRow, Double>, DoubleGetter<CsvRow> {
+    private static class CsvDoubleGetter implements ContextualGetter<CsvRow, Double>, DoubleContextualGetter<CsvRow> {
         private final int index;
 
         public CsvDoubleGetter(int index) {
@@ -402,17 +395,17 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Double get(CsvRow target)  {
+        public Double get(CsvRow target, Context context)  {
             return target.getDouble(index);
         }
 
         @Override
-        public double getDouble(CsvRow target)  {
+        public double getDouble(CsvRow target, Context context)  {
             return target.getDouble(index);
         }
     }
 
-    private static class CsvBooleanGetter implements Getter<CsvRow, Boolean>, BooleanGetter<CsvRow> {
+    private static class CsvBooleanGetter implements ContextualGetter<CsvRow, Boolean>, BooleanContextualGetter<CsvRow> {
         private final int index;
 
         public CsvBooleanGetter(int index) {
@@ -420,17 +413,17 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Boolean get(CsvRow target)  {
+        public Boolean get(CsvRow target, Context context)  {
             return target.getBoolean(index);
         }
 
         @Override
-        public boolean getBoolean(CsvRow target)  {
+        public boolean getBoolean(CsvRow target, Context context)  {
             return target.getBoolean(index);
         }
     }
 
-    private static class CsvBoxedByteGetter implements Getter<CsvRow, Byte> {
+    private static class CsvBoxedByteGetter implements ContextualGetter<CsvRow, Byte> {
         private final int index;
 
         public CsvBoxedByteGetter(int index) {
@@ -438,12 +431,12 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Byte get(CsvRow target)  {
+        public Byte get(CsvRow target, Context context)  {
             return target.getBoxedByte(index);
         }
     }
 
-    private static class CsvBoxedCharGetter implements Getter<CsvRow, Character> {
+    private static class CsvBoxedCharGetter implements ContextualGetter<CsvRow, Character> {
         private final int index;
 
         public CsvBoxedCharGetter(int index) {
@@ -451,13 +444,13 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Character get(CsvRow target)  {
+        public Character get(CsvRow target, Context context)  {
             return target.getBoxedChar(index);
         }
 
     }
 
-    private static class CsvBoxedShortGetter implements Getter<CsvRow, Short> {
+    private static class CsvBoxedShortGetter implements ContextualGetter<CsvRow, Short> {
         private final int index;
 
         public CsvBoxedShortGetter(int index) {
@@ -465,13 +458,13 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Short get(CsvRow target)  {
+        public Short get(CsvRow target, Context context)  {
             return target.getBoxedShort(index);
         }
 
     }
 
-    private static class CsvBoxedIntegerGetter implements Getter<CsvRow, Integer> {
+    private static class CsvBoxedIntegerGetter implements ContextualGetter<CsvRow, Integer> {
         private final int index;
 
         public CsvBoxedIntegerGetter(int index) {
@@ -479,12 +472,12 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Integer get(CsvRow target)  {
+        public Integer get(CsvRow target, Context context)  {
             return target.getBoxedInt(index);
         }
     }
 
-    private static class CsvBoxedLongGetter implements Getter<CsvRow, Long> {
+    private static class CsvBoxedLongGetter implements ContextualGetter<CsvRow, Long> {
         private final int index;
 
         public CsvBoxedLongGetter(int index) {
@@ -492,12 +485,12 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Long get(CsvRow target)  {
+        public Long get(CsvRow target, Context context)  {
             return target.getBoxedLong(index);
         }
     }
 
-    private static class CsvBoxedFloatGetter implements Getter<CsvRow, Float> {
+    private static class CsvBoxedFloatGetter implements ContextualGetter<CsvRow, Float> {
         private final int index;
 
         public CsvBoxedFloatGetter(int index) {
@@ -505,12 +498,12 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Float get(CsvRow target)  {
+        public Float get(CsvRow target, Context context)  {
             return target.getBoxedFloat(index);
         }
     }
     
-    private static class CsvBoxedDoubleGetter implements Getter<CsvRow, Double> {
+    private static class CsvBoxedDoubleGetter implements ContextualGetter<CsvRow, Double> {
         private final int index;
 
         public CsvBoxedDoubleGetter(int index) {
@@ -518,12 +511,12 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Double get(CsvRow target)  {
+        public Double get(CsvRow target, Context context)  {
             return target.getBoxedDouble(index);
         }
     }
 
-    private static class CsvBoxedBooleanGetter implements Getter<CsvRow, Boolean> {
+    private static class CsvBoxedBooleanGetter implements ContextualGetter<CsvRow, Boolean> {
         private final int index;
 
         public CsvBoxedBooleanGetter(int index) {
@@ -531,13 +524,13 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public Boolean get(CsvRow target)  {
+        public Boolean get(CsvRow target, Context context)  {
             return target.getBoxedBoolean(index);
         }
 
     }
 
-    private class CustomReaderGetter<P> implements Getter<CsvRow, P> {
+    private class CustomReaderGetter<P> implements ContextualGetter<CsvRow, P> {
         private final CellValueReader<?> reader;
         private final int index;
 
@@ -547,7 +540,7 @@ public class CsvRowGetterFactory implements GetterFactory<CsvRow, CsvColumnKey> 
         }
 
         @Override
-        public P get(CsvRow target) throws Exception {
+        public P get(CsvRow target, Context context) throws Exception {
             return (P) target.read(reader, index);
         }
     }

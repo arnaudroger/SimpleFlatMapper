@@ -6,7 +6,7 @@ import org.simpleflatmapper.csv.mapper.CsvRowGetterFactory;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.DefaultSetRowMapperBuilder;
@@ -15,7 +15,6 @@ import org.simpleflatmapper.map.mapper.MapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
-import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.csv.impl.*;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
@@ -33,7 +32,7 @@ public class CsvMapperBuilder<T> extends MapperBuilder<CsvRow, CsvRowSet, T, Csv
 	public static String DEFAULT_DATE_FORMAT =  "yyyy-MM-dd HH:mm:ss";
 
 	private static final MapperSourceImpl<CsvRow, CsvColumnKey> FIELD_MAPPER_SOURCE =
-			new MapperSourceImpl<CsvRow, CsvColumnKey>(CsvRow.class,  new ContextualGetterFactoryAdapter<CsvRow, CsvColumnKey>(CsvRowGetterFactory.INSTANCE));
+			new MapperSourceImpl<CsvRow, CsvColumnKey>(CsvRow.class,  CsvRowGetterFactory.INSTANCE);
 	private static final KeyFactory<CsvColumnKey> KEY_FACTORY = new KeyFactory<CsvColumnKey>() {
 		@Override
 		public CsvColumnKey newKey(String name, int i) {
@@ -81,7 +80,7 @@ public class CsvMapperBuilder<T> extends MapperBuilder<CsvRow, CsvRowSet, T, Csv
 	public CsvMapperBuilder(
 			final ClassMeta<T> classMeta,
 			final MapperConfig<CsvColumnKey> mapperConfig,
-			final GetterFactory<CsvRow, CsvColumnKey> getterFactory,
+			final ContextualGetterFactory<CsvRow, CsvColumnKey> getterFactory,
 			final MappingContextFactoryBuilder<CsvRow, CsvColumnKey> parentBuilder) {
 
 		super(KEY_FACTORY,

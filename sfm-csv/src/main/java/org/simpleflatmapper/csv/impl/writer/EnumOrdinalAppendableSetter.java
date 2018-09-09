@@ -1,9 +1,11 @@
 package org.simpleflatmapper.csv.impl.writer;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.lightningcsv.CellWriter;
+import org.simpleflatmapper.map.setter.ContextualSetter;
 import org.simpleflatmapper.reflect.Setter;
 
-public class EnumOrdinalAppendableSetter  implements Setter<Appendable, Enum> {
+public class EnumOrdinalAppendableSetter  implements ContextualSetter<Appendable, Enum> {
     private final CellWriter cellWriter;
 
     public EnumOrdinalAppendableSetter(CellWriter cellWriter) {
@@ -11,7 +13,7 @@ public class EnumOrdinalAppendableSetter  implements Setter<Appendable, Enum> {
     }
 
     @Override
-    public void set(Appendable target, Enum value) throws Exception {
+    public void set(Appendable target, Enum value, Context context) throws Exception {
         cellWriter.writeValue(Integer.toString(value.ordinal()), target);
     }
 }

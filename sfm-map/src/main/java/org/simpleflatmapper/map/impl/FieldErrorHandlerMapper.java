@@ -4,7 +4,6 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.fieldmapper.IntFieldMapper;
 
 
 public final class FieldErrorHandlerMapper<S, T, K> implements FieldMapper<S, T> {

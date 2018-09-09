@@ -1,9 +1,11 @@
 package org.simpleflatmapper.csv.impl.writer;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.lightningcsv.CellWriter;
+import org.simpleflatmapper.map.setter.DoubleContextualSetter;
 import org.simpleflatmapper.reflect.primitive.DoubleSetter;
 
-public class DoubleAppendableSetter implements DoubleSetter<Appendable> {
+public class DoubleAppendableSetter implements DoubleContextualSetter<Appendable> {
 
     private final CellWriter cellWriter;
 
@@ -12,7 +14,7 @@ public class DoubleAppendableSetter implements DoubleSetter<Appendable> {
     }
 
     @Override
-    public void setDouble(Appendable target, double value) throws Exception {
+    public void setDouble(Appendable target, double value, Context context) throws Exception {
         cellWriter.writeValue(Double.toString(value), target);
     }
 }

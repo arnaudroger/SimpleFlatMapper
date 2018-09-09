@@ -12,6 +12,7 @@ import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.Result;
 import org.simpleflatmapper.map.ResultFieldMapperErrorHandler;
 import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.DynamicSetRowMapper;
@@ -66,7 +67,7 @@ import java.util.stream.Stream;
 public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, CsvMapperFactory> {
 
 
-	private GetterFactory<CsvRow, CsvColumnKey> getterFactory = CsvRowGetterFactory.INSTANCE;
+	private ContextualGetterFactory<CsvRow, CsvColumnKey> getterFactory = CsvRowGetterFactory.INSTANCE;
 
 	/**
 	 * instantiate a new JdbcMapperFactory

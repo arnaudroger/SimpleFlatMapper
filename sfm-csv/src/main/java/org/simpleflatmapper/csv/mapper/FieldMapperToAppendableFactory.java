@@ -7,26 +7,9 @@ import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.impl.writer.*;
 
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
-import org.simpleflatmapper.map.getter.BooleanContextualGetter;
-import org.simpleflatmapper.map.getter.ByteContextualGetter;
-import org.simpleflatmapper.map.getter.CharacterContextualGetter;
-import org.simpleflatmapper.map.getter.DoubleContextualGetter;
-import org.simpleflatmapper.map.getter.FloatContextualGetter;
-import org.simpleflatmapper.map.getter.IntContextualGetter;
-import org.simpleflatmapper.map.getter.LongContextualGetter;
-import org.simpleflatmapper.map.getter.ShortContextualGetter;
-import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.property.SetterFactoryProperty;
 import org.simpleflatmapper.map.property.SetterProperty;
-import org.simpleflatmapper.map.fieldmapper.BooleanFieldMapper;
-import org.simpleflatmapper.map.fieldmapper.ByteFieldMapper;
-import org.simpleflatmapper.map.fieldmapper.CharacterFieldMapper;
-import org.simpleflatmapper.map.fieldmapper.DoubleFieldMapper;
-import org.simpleflatmapper.map.fieldmapper.FieldMapperImpl;
-import org.simpleflatmapper.map.fieldmapper.FloatFieldMapper;
-import org.simpleflatmapper.map.fieldmapper.IntFieldMapper;
-import org.simpleflatmapper.map.fieldmapper.LongFieldMapper;
-import org.simpleflatmapper.map.fieldmapper.ShortFieldMapper;
+import org.simpleflatmapper.map.fieldmapper.*;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
@@ -36,10 +19,12 @@ import org.simpleflatmapper.map.property.FormatProperty;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.setter.ContextualSetter;
+import org.simpleflatmapper.map.setter.ContextualSetterAdapter;
+import org.simpleflatmapper.map.setter.ContextualSetterOnGetter;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
-import org.simpleflatmapper.reflect.setter.SetterOnGetter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
@@ -89,28 +74,28 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
         Type type = pm.getPropertyMeta().getPropertyType();
         if (TypeHelper.isPrimitive(type) && !columnDefinition.has(FormatProperty.class)) {
             if (getter instanceof BooleanGetter) {
-                return new BooleanFieldMapper<S, Appendable>((BooleanContextualGetter) ContextualGetterAdapter.of(getter), new BooleanAppendableSetter(cellWriter));
+                return new BooleanConstantTargetFieldMapper<S, Appendable>((BooleanGetter<? super S>) getter, new BooleanAppendableSetter(cellWriter));
             } else if (getter instanceof ByteGetter) {
-                return new ByteFieldMapper<S, Appendable>((ByteContextualGetter) ContextualGetterAdapter.of(getter), new ByteAppendableSetter(cellWriter));
+                return new ByteConstantTargetFieldMapper<S, Appendable>((ByteGetter<? super S>) getter, new ByteAppendableSetter(cellWriter));
             } else if (getter instanceof CharacterGetter) {
-                return new CharacterFieldMapper<S, Appendable>((CharacterContextualGetter) ContextualGetterAdapter.of(getter), new CharacterAppendableSetter(cellWriter));
+                return new CharacterConstantTargetFieldMapper<S, Appendable>((CharacterGetter<? super S>) getter, new CharacterAppendableSetter(cellWriter));
             } else if (getter instanceof ShortGetter) {
-                return new ShortFieldMapper<S, Appendable>((ShortContextualGetter) ContextualGetterAdapter.of(getter), new ShortAppendableSetter(cellWriter));
+                return new ShortConstantTargetFieldMapper<S, Appendable>((ShortGetter<? super S>) getter, new ShortAppendableSetter(cellWriter));
             } else if (getter instanceof IntGetter) {
-                return new IntFieldMapper<S, Appendable>((IntContextualGetter) ContextualGetterAdapter.of(getter), new IntegerAppendableSetter(cellWriter));
+                return new IntConstantTargetFieldMapper<S, Appendable>((IntGetter<? super S>) getter, new IntegerAppendableSetter(cellWriter));
             } else if (getter instanceof LongGetter) {
-                return new LongFieldMapper<S, Appendable>((LongContextualGetter) ContextualGetterAdapter.of(getter), new LongAppendableSetter(cellWriter));
+                return new LongConstantTargetFieldMapper<S, Appendable>((LongGetter<? super S>) getter, new LongAppendableSetter(cellWriter));
             } else if (getter instanceof FloatGetter) {
-                return new FloatFieldMapper<S, Appendable>((FloatContextualGetter) ContextualGetterAdapter.of(getter), new FloatAppendableSetter(cellWriter));
+                return new FloatConstantTargetFieldMapper<S, Appendable>((FloatGetter<? super S>) getter, new FloatAppendableSetter(cellWriter));
             } else if (getter instanceof DoubleGetter) {
-                return new DoubleFieldMapper<S, Appendable>((DoubleContextualGetter) ContextualGetterAdapter.of(getter), new DoubleAppendableSetter(cellWriter));
+                return new DoubleConstantTargetFieldMapper<S, Appendable>((DoubleGetter<? super S>) getter, new DoubleAppendableSetter(cellWriter));
             }
         }
 
-        Setter<Appendable, ? super P> setter = null;
+        ContextualSetter<Appendable, ? super P> setter = null;
 
         if (TypeHelper.isEnum(type) && columnDefinition.has(EnumOrdinalFormatProperty.class)) {
-            setter = (Setter) new EnumOrdinalAppendableSetter(cellWriter);
+            setter = (ContextualSetter<Appendable, ? super P>) new EnumOrdinalAppendableSetter(cellWriter);
         }
 
         Format format = null;
@@ -151,19 +136,19 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
             }
         }
 
-        return new FieldMapperImpl<S, Appendable, P>(ContextualGetterAdapter.of(getter), setter);
+        return new ConstantTargetFieldMapper<S, Appendable, P>(getter, setter);
     }
 
     @SuppressWarnings("unchecked")
-    private <S, P> Setter<Appendable, ? super P> getSetter(PropertyMapping<S, P, CsvColumnKey> pm, CellWriter cellWriter) {
+    private <S, P> ContextualSetter<Appendable, ? super P> getSetter(PropertyMapping<S, P, CsvColumnKey> pm, CellWriter cellWriter) {
 
         final SetterProperty setterProperty = pm.getColumnDefinition().lookFor(SetterProperty.class);
 
         if (setterProperty != null) {
-            return new CellWriterSetterWrapper<P>(cellWriter, (Setter<Appendable, P>) setterProperty.getSetter());
+            return new CellWriterSetterWrapper<P>(cellWriter, ContextualSetterAdapter.of ((Setter<Appendable, P>) setterProperty.getSetter()));
         }
 
-        Setter<Appendable, ? super P> setter = setterFromFactory(pm);
+        ContextualSetter<Appendable, ? super P> setter = setterFromFactory(pm);
 
         if (setter != null) {
             return new CellWriterSetterWrapper<P>(cellWriter, setter);
@@ -173,14 +158,14 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
     }
 
     @SuppressWarnings("unchecked")
-    private <S, P> Setter<Appendable, ? super P> setterFromFactory(PropertyMapping<S, P, CsvColumnKey> pm) {
-        Setter<Appendable, ? super P> setter = null;
+    private <S, P> ContextualSetter<Appendable, ? super P> setterFromFactory(PropertyMapping<S, P, CsvColumnKey> pm) {
+        ContextualSetter<Appendable, ? super P> setter = null;
 
         final SetterFactoryProperty setterFactoryProperty = pm.getColumnDefinition().lookFor(SetterFactoryProperty.class);
         if (setterFactoryProperty != null) {
             final SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey>> setterFactory =
                     (SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey>>) setterFactoryProperty.getSetterFactory();
-            setter = setterFactory.getSetter(pm);
+            setter = ContextualSetterAdapter.of(setterFactory.getSetter(pm));
         }
 
 
@@ -192,10 +177,10 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
                     if (ocm.getNumberOfProperties() == 1) {
                         PropertyMeta<P, ?> subProp = ocm.getFirstProperty();
 
-                        Setter<Appendable, Object> subSetter = (Setter<Appendable, Object>) setterFromFactory(pm.propertyMeta(subProp));
+                        ContextualSetter<Appendable, Object> subSetter = (ContextualSetter<Appendable, Object>) setterFromFactory(pm.propertyMeta(subProp));
 
                         if (subSetter != null) {
-                            setter = new SetterOnGetter<Appendable, Object, P>(subSetter, (Getter<P, Object>) subProp.getGetter());
+                            setter = new ContextualSetterOnGetter<Appendable, Object, P>(subSetter, (Getter<P, Object>) subProp.getGetter());
                         } else {
                             return new ObjectToStringSetter<P>(subProp.getGetter());
                         }

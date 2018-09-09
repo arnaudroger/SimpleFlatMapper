@@ -12,32 +12,26 @@ import org.simpleflatmapper.reflect.Setter;
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 
-public final class FieldMapperImpl<S, T, P> implements FieldMapper<S, T> {
+public final class ConstantSourceFieldMapper<S, T, P> implements FieldMapper<S, T> {
 	
 	private final ContextualGetter<? super S, ? extends P> getter;
-	private final ContextualSetter<? super T, ? super P> setter;
+	private final Setter<? super T, ? super P> setter;
 
 
-	public FieldMapperImpl(final ContextualGetter<? super S, ? extends P> getter, final Setter<? super T, ? super P> setter) {
+	public ConstantSourceFieldMapper(final ContextualGetter<? super S, ? extends P> getter, final Setter<? super T, ? super P> setter) {
 		this.getter = requireNonNull("getter", getter);
-		this.setter = ContextualSetterAdapter.of(requireNonNull("setter", setter));
-	}
-
-
-	public FieldMapperImpl(final Getter<? super S, ? extends P> getter, final ContextualSetter<? super T, ? super P> setter) {
-		this.getter = ContextualGetterAdapter.of(requireNonNull("getter", getter));
 		this.setter = requireNonNull("setter", setter);
 	}
-	
+
 	@Override
 	public void mapTo(final S source, final T target, final MappingContext<? super S> mappingContext) throws Exception {
 		final P value = getter.get(source, mappingContext);
-		setter.set(target, value, mappingContext);
+		setter.set(target, value);
 	}
 
     @Override
     public String toString() {
-        return "FieldMapperImpl{" +
+        return "ConstantSourceFieldMapperImpl{" +
                 "getter=" + getter +
                 ", setter=" + setter +
                 '}';

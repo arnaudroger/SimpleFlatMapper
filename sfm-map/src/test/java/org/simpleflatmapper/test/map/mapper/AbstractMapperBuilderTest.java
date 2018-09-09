@@ -5,6 +5,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Assert;
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.EnumerableMapper;
 import org.simpleflatmapper.map.FieldMapper;
@@ -619,6 +620,43 @@ public class AbstractMapperBuilderTest {
     }
 
     @Test
+    public void testObjectWithMappingContext() throws Exception {
+        SampleMapperBuilder<ObjectContext> builderA = new SampleMapperBuilder<ObjectContext>(ReflectionService.newInstance(true).getClassMeta(ObjectContext.class), MapperConfig.<SampleFieldKey>fieldMapperConfig());
+
+        SetRowMapper<Object[], Object[][], ObjectContext, Exception> mapper = builderA.addKey("foo").mapper();
+        ObjectContext a = mapper.iterator(new Object[][]{{"v1"}}).next();
+
+        assertEquals("v1", a.foo);
+
+        builderA = new SampleMapperBuilder<ObjectContext>(ReflectionService.newInstance(true).getClassMeta(ObjectContext.class), MapperConfig.<SampleFieldKey>fieldMapperConfig());
+
+        mapper = builderA.addKey("bar").mapper();
+        a = mapper.iterator(new Object[][]{{12234l}}).next();
+        assertEquals(12234l, a.bar);
+    }
+    
+    public static class ObjectContext {
+        private final String foo;
+        private final long bar;
+        private final Context context;
+
+        public ObjectContext(long bar) {
+            this.foo = null;
+            this.bar = bar;
+            this.context = null;
+        }
+        public ObjectContext(String foo) {
+            throw new NullPointerException();
+        }
+
+        public ObjectContext(String foo, Context context) {
+            this.foo = foo;
+            this.bar = -1;
+            this.context = context;
+        }
+    }
+
+    @Test
     public void testImmutableListNoBuilderAsm() throws Exception {
 
         SampleMapperBuilder<A3> builderA = new SampleMapperBuilder<A3>(ReflectionService.newInstance(true).getClassMeta(A3.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
@@ -805,6 +843,7 @@ public class AbstractMapperBuilderTest {
             return v != null ? v.hashCode() : 0;
         }
     }
+
 
 
     @Test

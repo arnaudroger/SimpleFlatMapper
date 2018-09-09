@@ -499,17 +499,20 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             }
         }
 
-        ClassMeta<T> classMeta = propertyMappingsBuilder.getClassMeta();
-        for(InstantiatorDefinition id : classMeta.getInstantiatorDefinitions()) {
+        addContextParam(injectionParams, parameters);
+
+        return injectionParams;
+	}
+
+    private void addContextParam(List<InjectionParam> injectionParams, Set<Parameter> parameters) {
+        for(InstantiatorDefinition id : propertyMappingsBuilder.getPropertyFinder().getEligibleInstantiatorDefinitions()) {
             for(Parameter p : id.getParameters()) {
                 if (TypeHelper.areEquals(p.getType(), Context.class) && ! parameters.contains(p)) {
                     injectionParams.add(new ContextParam(p, null));
                 }
             }
         }
-
-        return injectionParams;
-	}
+    }
 
     private <P> SourceMapper<S, P> getterPropertyMapper(PropertyMeta<T, P> owner, PropertyMapping<T, ?, K> propertyMapping) {
         PropertyMeta<T, ?> pm = propertyMapping.getPropertyMeta();

@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-//IFJAVA8_START
 import java.util.Map;
+//IFJAVA8_START
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 //IFJAVA8_END

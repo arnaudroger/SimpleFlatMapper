@@ -4,6 +4,7 @@ import org.simpleflatmapper.lightningcsv.impl.CellConsumerCapture;
 import org.simpleflatmapper.lightningcsv.impl.CellConsumerFixLengthToCheckConsumer;
 import org.simpleflatmapper.lightningcsv.parser.AbstractCharConsumer;
 import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
+import org.simpleflatmapper.lightningcsv.parser.CharBuffer;
 import org.simpleflatmapper.lightningcsv.parser.NullCellConsumer;
 import org.simpleflatmapper.lightningcsv.parser.StringArrayCellConsumer;
 import org.simpleflatmapper.util.CheckedConsumer;
@@ -47,15 +48,15 @@ public final class CsvReader implements Iterable<String[]> {
 	 */
 	public <CC extends CellConsumer> CC parseAll(CC cellConsumer)
 			throws IOException {
-		_parseAll(wrapConsumer(cellConsumer));
+		_parseAll(wrapConsumer(cellConsumer), false);
 
 		return cellConsumer;
 	}
 
-	private <CC extends CellConsumer> void _parseAll(CC cellConsumer) throws IOException {
+	private <CC extends CellConsumer> void _parseAll(CC cellConsumer, boolean keepRow) throws IOException {
 		do {
 			consumer.consumeAllBuffer(cellConsumer);
-		} while(consumer.next());
+		} while(consumer.shiftAndRead(keepRow));
 
 		consumer.finish(cellConsumer);
 	}
@@ -69,15 +70,15 @@ public final class CsvReader implements Iterable<String[]> {
 	 */
 	public boolean parseRow(CellConsumer cellConsumer)
 			throws IOException {
-		return _parseRow(wrapConsumer(cellConsumer));
+		return rawParseRow(wrapConsumer(cellConsumer), false);
 	}
 
-	private boolean _parseRow(CellConsumer cellConsumer) throws IOException {
+	public boolean rawParseRow(CellConsumer cellConsumer, boolean keepRow) throws IOException {
 		do {
 			if (consumer.consumeToNextRow(cellConsumer)) {
 				return true;
 			}
-		} while(consumer.next());
+		} while(consumer.shiftAndRead(keepRow));
 
 		consumer.finish(cellConsumer);
 		return false;
@@ -95,7 +96,7 @@ public final class CsvReader implements Iterable<String[]> {
 
 	private <CC extends CellConsumer> void _parseRows(CC cellConsumer, int limit) throws IOException {
 		for(int i = 0; i < limit; i++) {
-			_parseRow(cellConsumer);
+			rawParseRow(cellConsumer, false);
 		}
 	}
 
@@ -113,11 +114,14 @@ public final class CsvReader implements Iterable<String[]> {
 		return StringArrayCellConsumer.newInstance(consumer);
 	}
 
-	private CellConsumer wrapConsumer(CellConsumer cellConsumer) {
+	public CellConsumer wrapConsumer(CellConsumer cellConsumer) {
 		if (cellConsumerWrapper == null) return cellConsumer;
 		return cellConsumerWrapper.apply(cellConsumer);
 	}
 
+	public CharBuffer charBuffer() {
+		return consumer.charBuffer();
+	}
 
 	@Override
 	public Iterator<String[]> iterator() {
@@ -132,6 +136,7 @@ public final class CsvReader implements Iterable<String[]> {
 	public Stream<String[]> stream() {
 		return StreamSupport.stream(new CsvStringArraySpliterator(this), false);
 	}
+
 
 	private static class CsvStringArraySpliterator implements Spliterator<String[]> {
 		private final CsvReader reader;

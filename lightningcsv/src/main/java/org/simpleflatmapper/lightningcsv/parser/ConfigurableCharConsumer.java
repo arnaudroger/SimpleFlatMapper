@@ -42,6 +42,11 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 	}
 
 	@Override
+	public CharBuffer charBuffer() {
+		return csvBuffer;
+	}
+
+	@Override
 	public final void consumeAllBuffer(final CellConsumer cellConsumer) {
 
 		final boolean notIgnoreLeadingSpace = !ignoreLeadingSpace();
@@ -76,16 +81,14 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 								cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
 								cellConsumer.endOfRow();
 							}
-							csvBuffer.cellStartMark = currentIndex;
-							csvBuffer.rowStartMark = currentIndex;
+							markEndOfRow(currentIndex);
 							currentState = NONE;
 							continue;
 						} else if (character == CR) { // \r
 							cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
-							csvBuffer.cellStartMark = currentIndex;
-							csvBuffer.rowStartMark = currentIndex;
-							currentState = LAST_CHAR_WAS_CR;
 							cellConsumer.endOfRow();
+							markEndOfRow(currentIndex);
+							currentState = LAST_CHAR_WAS_CR;
 							continue;
 						} else if ((currentState & (QUOTED|CELL_DATA)) == (CELL_DATA)) {
 							while(currentIndex < bufferSize) {
@@ -94,14 +97,14 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 								currentIndex++;
 								if (c == separatorChar || c == LF || c == CR) { // separator
 									cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, ce, cellConsumer, currentState);
-									csvBuffer.cellStartMark = currentIndex;
 									if (c == separatorChar) {
 										currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
 									} else {
 										currentState = (c == LF ? NONE : LAST_CHAR_WAS_CR );
-										csvBuffer.rowStartMark = currentIndex;
 										cellConsumer.endOfRow();
+										csvBuffer.rowStartMark = currentIndex;
 									}
+									csvBuffer.cellStartMark = currentIndex;
 									break;
 								}
 							}
@@ -129,8 +132,7 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 						cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, nextEndOfLineChar, cellConsumer, currentState);
 						cellConsumer.endOfRow();
 						currentIndex = nextEndOfLineChar + 1;
-						csvBuffer.cellStartMark = currentIndex;
-						csvBuffer.rowStartMark = currentIndex;
+						markEndOfRow(currentIndex);
 						currentState = chars[nextEndOfLineChar] == CR ? LAST_CHAR_WAS_CR : NONE;
 					} else {
 						currentIndex = bufferSize;
@@ -190,29 +192,28 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 							currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
 							continue;
 						} else if (character == LF) { // \n
-							csvBuffer.rowStartMark = currentIndex;
 							if ((currentState & LAST_CHAR_WAS_CR) == 0) {
 								cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
 								if (cellConsumer.endOfRow()) {
-									csvBuffer.cellStartMark = currentIndex;
+									markEndOfRow(currentIndex);
 									_currentState = NONE;
 									_currentIndex = currentIndex;
 									return true;
 								}
 							}
-							csvBuffer.cellStartMark = currentIndex;
+							markEndOfRow(currentIndex);
 							currentState = NONE;
 							continue;
 						} else if (character == CR) { // \r
 							cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
-							csvBuffer.cellStartMark = currentIndex;
-							csvBuffer.rowStartMark = currentIndex;
 							currentState = LAST_CHAR_WAS_CR;
 							if (cellConsumer.endOfRow()) {
+								markEndOfRow(currentIndex);
 								_currentState = currentState;
 								_currentIndex = currentIndex;
 								return true;
 							}
+							markEndOfRow(currentIndex);
 							continue;
 						} else if ((currentState & (QUOTED|CELL_DATA)) == (CELL_DATA)) {
 							while(currentIndex < bufferSize) {
@@ -221,18 +222,19 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 								currentIndex++;
 								if (c == separatorChar || c == LF || c == CR) { // separator
 									cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, ce, cellConsumer, currentState);
-									csvBuffer.cellStartMark = currentIndex;
 									if (c == separatorChar) {
 										currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
 									} else {
 										currentState = c == LF ? NONE : LAST_CHAR_WAS_CR;
-										csvBuffer.rowStartMark = currentIndex;
 										if (cellConsumer.endOfRow()) {
+											markEndOfRow(currentIndex);
 											_currentState = currentState;
 											_currentIndex = currentIndex;
 											return true;
 										}
+										csvBuffer.rowStartMark = currentIndex;
 									}
+									csvBuffer.cellStartMark = currentIndex;
 									break;
 								}
 							}
@@ -259,14 +261,14 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 					if (nextEndOfLineChar != -1) {
 						currentIndex = nextEndOfLineChar + 1;
 						cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, nextEndOfLineChar, cellConsumer, currentState);
-						csvBuffer.cellStartMark = currentIndex;
-						csvBuffer.rowStartMark = currentIndex;
 						currentState = chars[nextEndOfLineChar] == CR ? LAST_CHAR_WAS_CR : NONE;
 						if (cellConsumer.endOfRow()) {
+							markEndOfRow(currentIndex);
 							_currentState = currentState;
 							_currentIndex = currentIndex;
 							return true;
 						}
+						markEndOfRow(currentIndex);
 					} else {
 						currentIndex = bufferSize;
 					}
@@ -295,6 +297,12 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 		_currentIndex = currentIndex;
 
 		return false;
+	}
+
+	private void markEndOfRow(int currentIndex) {
+		CharBuffer csvBuffer = this.csvBuffer;
+		csvBuffer.cellStartMark = currentIndex;
+		csvBuffer.rowStartMark = currentIndex;
 	}
 
 	private char quoteChar() {
@@ -352,10 +360,13 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 	}
 
 	@Override
-	public boolean next() throws IOException {
-		int mark = csvBuffer.rowStartMark;
-		boolean b = csvBuffer.next();
-		_currentIndex -= mark - csvBuffer.rowStartMark;
+	public boolean shiftAndRead(boolean keepRow) throws IOException {
+		if (csvBuffer.isConstant()) return false;
+		
+		int shiftFrom = keepRow ? csvBuffer.rowStartMark : Math.min(csvBuffer.cellStartMark, csvBuffer.bufferSize);
+		
+		boolean b = csvBuffer.shiftAndRead(shiftFrom);
+		_currentIndex -= shiftFrom;
 		return b;
 	}
 }

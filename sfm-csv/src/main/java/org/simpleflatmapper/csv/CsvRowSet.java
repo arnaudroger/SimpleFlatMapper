@@ -2,6 +2,7 @@ package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
+import org.simpleflatmapper.lightningcsv.parser.CharBuffer;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
 
@@ -12,44 +13,39 @@ import java.util.List;
 public final class CsvRowSet implements Enumerable<CsvRow> {
 
     private final CsvReader csvReader;
+    private final CharBuffer charBuffer;
     private CsvRow currentRow;
     private int limit;
     private CsvColumnKey[] keys;
     private boolean finished;
     
-    CellConsumer cellConsumer = new CellConsumer() {
-        @Override
-        public void newCell(char[] chars, int offset, int length) {
-            currentRow.addValue(chars, offset, length);
-        }
-
-        @Override
-        public boolean endOfRow() {
-            return true;
-        }
-
-        @Override
-        public void end() {
-
-        }
-    };
+    private final CellConsumer cellConsumer;
 
     public CsvRowSet(CsvReader csvReader, int limit) {
         this.csvReader = csvReader;
+        this.charBuffer = csvReader.charBuffer();
         this.limit = limit;
+        this.cellConsumer = cellConsumer(csvReader);
     }
 
     public CsvRowSet(CsvReader csvReader, int limit, CsvColumnKey[] keys) {
         this.csvReader = csvReader;
-        this.currentRow = new CsvRow(keys, maxIndex(keys));
+        this.charBuffer = csvReader.charBuffer();
+        this.currentRow = new CsvRow(keys, maxIndex(keys), charBuffer);
         this.limit = limit;
         this.keys = keys;
+        this.cellConsumer = cellConsumer(csvReader);
     }
-    
+
+    private CellConsumer cellConsumer(CsvReader csvReader) {
+        return csvReader.wrapConsumer(new CsvRowCellConsumer());
+    }
+
+
     public CsvColumnKey[] getKeys() throws IOException {
         if (keys == null) {
             this.keys = fetchKeys();
-            currentRow = new CsvRow(keys, maxIndex(keys));
+            currentRow = new CsvRow(keys, maxIndex(keys), charBuffer);
         }
         return keys;
     }
@@ -79,7 +75,7 @@ public final class CsvRowSet implements Enumerable<CsvRow> {
         try {
             if (limit != -1) limit--;
             do {
-                finished = !csvReader.parseRow(cellConsumer);
+                finished = !csvReader.rawParseRow(cellConsumer, true);
                 if (currentRow.hasData()) {
                     return true;
                 }
@@ -120,6 +116,24 @@ public final class CsvRowSet implements Enumerable<CsvRow> {
 
         public CsvColumnKey[] getKeys() {
             return keyList.toArray(EMPTY_KEYS);
+        }
+    }
+
+    private class CsvRowCellConsumer implements CellConsumer {
+        @Override
+        public void newCell(char[] chars, int offset, int length) {
+            currentRow.addValue(offset - charBuffer.rowStartMark, length);
+        }
+
+        @Override
+        public boolean endOfRow() {
+            currentRow.rowStartMark = charBuffer.rowStartMark;
+            return true;
+        }
+
+        @Override
+        public void end() {
+            currentRow.rowStartMark = charBuffer.rowStartMark;
         }
     }
 }

@@ -14,5 +14,6 @@ public abstract class CharBuffer {
 		this.bufferSize = bufferSize;
 	}
 
-	public abstract boolean next() throws IOException;
+	public abstract boolean isConstant();
+	public abstract boolean shiftAndRead(int shiftFrom) throws IOException;
 }

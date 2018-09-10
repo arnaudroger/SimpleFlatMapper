@@ -1,5 +1,7 @@
 package org.simpleflatmapper.csv;
 
+import org.simpleflatmapper.lightningcsv.parser.CharBuffer;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -10,16 +12,16 @@ public final class CsvRow {
     private final CsvColumnKey[] keys;
     private final int nbColumns;
     
-    private char[] buffer;
-    private int bufferLength;
+    private final CharBuffer charBuffer;
     
     private int[] fieldsBoundaries;
     private int currentIndex;
+    protected int rowStartMark;
 
-    public CsvRow(CsvColumnKey[] keys, int maxIndex) {
-        buffer = new char[512];
+    public CsvRow(CsvColumnKey[] keys, int maxIndex, CharBuffer charBuffer) {
         nbColumns = maxIndex + 1;
         this.keys = keys;
+        this.charBuffer = charBuffer;
         fieldsBoundaries = new int[nbColumns * 2];
     }
 
@@ -29,54 +31,41 @@ public final class CsvRow {
 
     public void reset() {
         Arrays.fill(fieldsBoundaries,  0);
-        bufferLength = 0;
         currentIndex = 0;
     }
     
-    public void addValue(char[] buffer, int offset, int length) {
-        if (currentIndex >= nbColumns) {
-            return; // ignore
+    public void addValue(int offset, int length) {
+        int index = this.currentIndex;
+        if (index < fieldsBoundaries.length) {
+            fieldsBoundaries[index] = offset;
+            fieldsBoundaries[index + 1] = length;
+            currentIndex = index + 2;
         }
-        
-        if (bufferLength + length > buffer.length) {
-            buffer = Arrays.copyOf(buffer, buffer.length * 2);
-        }
-        
-        System.arraycopy(buffer, offset, this.buffer, bufferLength, length);
-        
-        fieldsBoundaries[currentIndex * 2] = bufferLength;
-        bufferLength += length;
-        fieldsBoundaries[currentIndex * 2 + 1] = bufferLength;
-
-        currentIndex++;
-
     }
     
     public <T> T read(CellValueReader<T> cellValueReader, int i) {
-        int start = fieldsBoundaries[i * 2];
-        int end = fieldsBoundaries[i * 2 + 1];
-
-        return cellValueReader.read(buffer, start, end, null);
+        int rowOffset = fieldsBoundaries[i * 2];
+        int length = fieldsBoundaries[i * 2 + 1];
+        return cellValueReader.read(charBuffer.buffer, rowStartMark + rowOffset, length , null);
     } 
     
        
     public CharSequence getCharSequence(int i) {
-        int start = fieldsBoundaries[i * 2];
-        int end = fieldsBoundaries[i * 2 + 1];
-        return new CharSequenceImpl(buffer, start, end);
+        int rowOffset = fieldsBoundaries[i * 2];
+        int length = fieldsBoundaries[i * 2 + 1];
+        return new CharSequenceImpl(charBuffer.buffer, rowStartMark + rowOffset, rowStartMark + rowOffset + length);
     }
 
     public String getString(int i) {
-        int start = fieldsBoundaries[i * 2];
-        int end = fieldsBoundaries[i * 2 + 1];
-        if (start == end) return null;
-        return String.valueOf(buffer, start, end - start);
+        int length = fieldsBoundaries[i * 2 + 1];
+        if (length == 0) return null;
+
+        int rowOffset = fieldsBoundaries[i * 2];
+        return String.valueOf(charBuffer.buffer, rowStartMark + rowOffset, length);
     }
     
     public int length(int i) {
-        int start = fieldsBoundaries[i * 2];
-        int end = fieldsBoundaries[i * 2 + 1];
-        return end - start;        
+        return fieldsBoundaries[i * 2 + 1];
     }
 
     private boolean isEmpty(int i) {
@@ -84,6 +73,7 @@ public final class CsvRow {
     }
 
     public byte getByte(int i) {
+        if (isEmpty(i)) return 0;
         return Byte.parseByte(getString(i));
     }
     public char getChar(int i) {
@@ -112,10 +102,10 @@ public final class CsvRow {
     }
     public boolean getBoolean(int i) {
         if (isEmpty(i)) return false;
-        int start = fieldsBoundaries[i * 2];
-        int end = fieldsBoundaries[i * 2 + 1];
+        int rowOffset = fieldsBoundaries[i * 2];
+        int length = fieldsBoundaries[i * 2 + 1];
 
-        return parseBoolean(buffer, start, end - start);
+        return parseBoolean(charBuffer.buffer,  rowStartMark + rowOffset, length);
     }
 
     public static boolean parseBoolean(char[] chars, int offset, int length) {

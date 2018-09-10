@@ -2,6 +2,7 @@ package org.simpleflatmapper.lightningcsv.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.lightningcsv.CsvParser;
+import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
 import org.simpleflatmapper.util.ListCollector;
 
@@ -14,10 +15,12 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class CsvParserRandomDataTest {
 
 	static class TestData {
+		boolean endWithCarriageReturn;
 		String[][] expectations;
 
 		char quoteChar = '"';
@@ -65,6 +68,7 @@ public class CsvParserRandomDataTest {
 		testDsl(testData, dsl);
 		testDsl(testData, dsl.trimSpaces());
 		testDsl(testData, dsl.parallelReader());
+		testDsl(testData, dsl.disableSpecialisedCharConsumer());
 	}
 
 	private TestData createTestData() {
@@ -81,7 +85,9 @@ public class CsvParserRandomDataTest {
 			expectations[i] = row;
 		}
 
-		return new TestData(expectations);
+		TestData testData = new TestData(expectations);
+		testData.endWithCarriageReturn = (nbRows % 2) == 0;
+		return testData;
 	}
 
 	private String newString() {
@@ -212,6 +218,15 @@ public class CsvParserRandomDataTest {
 		cells =
 				dsl.reader(createReader(chars)).parseAll(new AccumulateCellConsumer()).allValues();
 		assertArrayEquals(testData.expectations, cells);
+
+		CsvReader reader = dsl.reader(createReader(chars));
+		
+		AccumulateCellConsumer acc = new AccumulateCellConsumer();
+		
+		while(reader.rawParseRow(reader.wrapConsumer(acc), true));
+
+		assertArrayEquals(testData.expectations, acc.allValues());
+
 	}
 
 	private Reader createReader(char[] chars) {
@@ -248,7 +263,9 @@ public class CsvParserRandomDataTest {
 					sb.append(cell);
 				}
 			}
-			sb.append(carriageReturn);
+			if (testData.endWithCarriageReturn || rowIndex != cells.length -1) {
+				sb.append(carriageReturn);
+			}
 
 		}
 

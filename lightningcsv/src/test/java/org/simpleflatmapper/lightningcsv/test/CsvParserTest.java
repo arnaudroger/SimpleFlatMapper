@@ -685,12 +685,16 @@ public class CsvParserTest {
 	}
 	@Test
 	public void testYamlCommentParser() throws IOException  {
-		String data = "test,\" \"\"hello\"\" \"\n# this a comment, not data\none more";
-
-
 		CsvParser.DSLYamlComment dsl = CsvParser
 				.dsl()
 				.withYamlComments();
+		testYamlCommentParser(dsl);
+		testYamlCommentParser(dsl.disableSpecialisedCharConsumer());
+	}
+
+	private void testYamlCommentParser(CsvParser.DSLYamlComment dsl) throws IOException {
+
+		String data = "test,\" \"\"hello\"\" \"\n# this a comment, not data\none more";
 
 		List<String[]> rows = new ArrayList<String[]>();
 
@@ -748,7 +752,6 @@ public class CsvParserTest {
 		checkYamlCommentParserRows(dsl.stream(new StringBuilder(data)).collect(Collectors.toList()));
 		//IFJAVA8_END
 		checkYamlCommentParserRows(dsl.forEach(new StringBuilder(data), new ListCollector<String[]>()).getList());
-
 	}
 
 

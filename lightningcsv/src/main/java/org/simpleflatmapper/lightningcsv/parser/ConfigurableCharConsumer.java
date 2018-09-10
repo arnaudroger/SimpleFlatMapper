@@ -325,17 +325,6 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 		return cellPreProcessor.ignoreLeadingSpace();
 	}
 
-	private int _moveToNextSeparator(char[] chars, char separatorChar, int currentIndex, int bufferSize) {
-		while(currentIndex < bufferSize) {
-			final char c = chars[currentIndex];
-			if (c == separatorChar || c == CR || c == LF) {
-				return currentIndex;
-			}
-			currentIndex++;
-		}
-		return currentIndex;
-	}
-
 	private int findNexEndOfLineChar(char[] chars, int start, int end) {
 		for(int i = start; i < end; i++) {
 			char c = chars[i];

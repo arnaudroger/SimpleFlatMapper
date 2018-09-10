@@ -2,8 +2,8 @@ package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.TupleType;
 import com.datastax.driver.core.TupleValue;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.converter.Converter;
 
 public class ConverterToTupleValueMapper<I> implements Converter<I, TupleValue> {
@@ -17,7 +17,7 @@ public class ConverterToTupleValueMapper<I> implements Converter<I, TupleValue> 
     }
 
     @Override
-    public TupleValue convert(I in) throws Exception {
+    public TupleValue convert(I in, Context context) throws Exception {
         if (in == null) return null;
         TupleValue tv = tupleType.newValue();
         mapper.mapTo(in, tv, null);

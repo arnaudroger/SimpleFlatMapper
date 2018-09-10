@@ -1,5 +1,6 @@
 package org.simpleflatmapper.converter.impl.time;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.time.*;
@@ -15,7 +16,7 @@ public class ObjectToJavaOffsetTimeConverter implements Converter<Object, Offset
     }
 
     @Override
-    public OffsetTime convert(Object o) throws Exception {
+    public OffsetTime convert(Object o, Context context) throws Exception {
         if (o == null) {
             return null;
         }

@@ -1,5 +1,6 @@
 package org.simpleflatmapper.converter.impl.time;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.time.format.DateTimeParseException;
@@ -12,11 +13,11 @@ public class MultiDateTimeFormatterConverter<I, O> implements Converter<I, O> {
     }
 
     @Override
-    public O convert(I in) throws Exception {
+    public O convert(I in, Context context) throws Exception {
         for(int i = converters.length - 1; i >= 0; i--) {
             Converter<I, O> converter = converters[i];
             try {
-                return converter.convert(in);
+                return converter.convert(in, context);
             } catch (DateTimeParseException e) {
                 // ignore
             }

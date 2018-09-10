@@ -2,6 +2,7 @@ package org.simpleflatmapper.jdbc.converter;
 
 import org.simpleflatmapper.converter.AbstractConverterFactory;
 import org.simpleflatmapper.converter.AbstractConverterFactoryProducer;
+import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
 
@@ -43,7 +44,7 @@ public class JdbcConverterFactoryProducer extends AbstractConverterFactoryProduc
         constantConverter(consumer, Date.class, LocalDate.class, new DateToLocalDateConverter());
         factoryConverter(consumer, new AbstractConverterFactory<Time, OffsetTime>(Time.class, OffsetTime.class) {
             @Override
-            public Converter<Time, OffsetTime> newConverter(ConvertingTypes targetedTypes, Object... params) {
+            public Converter<Time, OffsetTime> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
                 ZoneOffset zoneOffset = getZoneOffset(params);
                 return new TimeToOffsetTimeConverter(zoneOffset);
             }
@@ -65,7 +66,7 @@ public class JdbcConverterFactoryProducer extends AbstractConverterFactoryProduc
 
         factoryConverter(consumer, new AbstractConverterFactory<Array, Object>(Array.class, java.lang.reflect.Array.class) {
             @Override
-            public Converter<? super Array, ? extends Object> newConverter(ConvertingTypes targetedTypes, Object... params) {
+            public Converter<? super Array, ? extends Object> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder,  Object... params) {
                 Type elementType = TypeHelper.getComponentTypeOfListOrArray(targetedTypes.getTo());
                 Getter<? super ResultSet, ?> getter = ResultSetGetterFactory.INSTANCE.newGetter(elementType, new JdbcColumnKey("elt", 2), params);
                 return new SqlArrayToJavaArrayConverter<Object>(TypeHelper.<Object>toClass(elementType), getter);
@@ -78,7 +79,7 @@ public class JdbcConverterFactoryProducer extends AbstractConverterFactoryProduc
         });
         factoryConverter(consumer, new AbstractConverterFactory<Array, List>(Array.class, List.class) {
             @Override
-            public Converter<? super Array, ? extends List> newConverter(ConvertingTypes targetedTypes, Object... params) {
+            public Converter<? super Array, ? extends List> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
                 Type elementType = TypeHelper.getComponentTypeOfListOrArray(targetedTypes.getTo());
                 Getter<? super ResultSet, ?> getter = ResultSetGetterFactory.INSTANCE.newGetter(elementType, new JdbcColumnKey("elt", 2), params);
                 return new SqlArrayToListConverter<Object>( getter);

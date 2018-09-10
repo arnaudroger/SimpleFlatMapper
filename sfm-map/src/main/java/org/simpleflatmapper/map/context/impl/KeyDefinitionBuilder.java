@@ -7,11 +7,11 @@ import java.lang.reflect.Array;
 import java.util.List;
 
 public class KeyDefinitionBuilder<S, K> {
-    private final KeySourceGetter<K, S> keySourceGetter;
+    private final KeySourceGetter<K, ? super S> keySourceGetter;
     private final List<K> keys;
     private final int index;
 
-    public KeyDefinitionBuilder(List<K> keys, KeySourceGetter<K, S> keySourceGetter, int index) {
+    public KeyDefinitionBuilder(List<K> keys, KeySourceGetter<K, ? super S> keySourceGetter, int index) {
         this.keys = keys;
         this.keySourceGetter = keySourceGetter;
         this.index = index;

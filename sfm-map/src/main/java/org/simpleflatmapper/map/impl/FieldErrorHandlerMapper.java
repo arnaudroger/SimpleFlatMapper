@@ -1,5 +1,6 @@
 package org.simpleflatmapper.map.impl;
 
+import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.MappingContext;
@@ -24,12 +25,18 @@ public final class FieldErrorHandlerMapper<S, T, K> implements FieldMapper<S, T>
 		try {
 			delegate.mapTo(source, target, mappingContext);
 		} catch(Exception e) {
-			errorHandler.errorMappingField(key, source, target, e);
+			errorHandler.errorMappingField(key, source, target, e, mappingContext);
 		}
 	}
 
     @Override
     public String toString() {
         return "FieldErrorHandlerMapper{delegate=" + delegate + '}';
+	}
+	
+	
+	public  static <S, T, K extends FieldKey<K>> FieldMapper<S, T> of(K key, FieldMapper<S, T> delegate,
+															   FieldMapperErrorHandler<? super K> errorHandler) {
+		return new FieldErrorHandlerMapper<S, T, K>(key, delegate, errorHandler);
 	}
 }

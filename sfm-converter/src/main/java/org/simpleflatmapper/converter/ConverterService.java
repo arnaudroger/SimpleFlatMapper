@@ -49,12 +49,12 @@ public class ConverterService {
         this.converters = converters;
     }
 
-    public <F, P> Converter<? super F, ? extends P> findConverter(Class<F> inType, Class<P> outType, Object... params) {
-        return findConverter((Type)inType, (Type)outType, params);
+    public <F, P> Converter<? super F, ? extends P> findConverter(Class<F> inType, Class<P> outType, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+        return findConverter((Type)inType, (Type)outType, contextFactoryBuilder, params);
     }
 
     @SuppressWarnings("unchecked")
-    public <F, P> Converter<? super F, ? extends P> findConverter(Type inType, Type outType, Object... params) {
+    public <F, P> Converter<? super F, ? extends P> findConverter(Type inType, Type outType, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
         if (TypeHelper.isAssignable(outType, inType)) {
             return new IdentityConverter();
         }
@@ -64,7 +64,7 @@ public class ConverterService {
 
         ConvertingTypes targetedTypes = new ConvertingTypes(inType, outType);
         for(ScoredConverterFactory p : potentials) {
-            Converter<F, P> converter = p.converterFactory.newConverter(targetedTypes, params);
+            Converter<F, P> converter = p.converterFactory.newConverter(targetedTypes, contextFactoryBuilder, params);
             if (converter != null) return converter;
         }
         return null;
@@ -114,9 +114,9 @@ public class ConverterService {
                             List<ScoredConverterFactory> tailConverters = findConverterFactories(tailFactoryInType, outType, params);
                             if (!tailConverters.isEmpty()) {
                                 for(ScoredConverterFactory hf : headConverters) {
-                                    if (hf.converterFactory.newConverter(new ConvertingTypes(inType, tailFactoryInType), params) != null) {
+                                    if (hf.converterFactory.newConverter(new ConvertingTypes(inType, tailFactoryInType), new DefaultContextFactoryBuilder(), params) != null) {
                                         for(ScoredConverterFactory tf : tailConverters) {
-                                            if (hf.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, outType), params) != null) {
+                                            if (hf.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, outType), new DefaultContextFactoryBuilder(), params) != null) {
                                                 ComposedConverterFactory composedConverterFactory = new ComposedConverterFactory(hf.converterFactory, tf.converterFactory, tailFactoryInType);
                                                 int score = composedConverterFactory.score(new ConvertingTypes(inType, outType)).getScore();
                                                 potentials.add(new ScoredConverterFactory(score, composedConverterFactory));
@@ -168,10 +168,10 @@ public class ConverterService {
         }
 
         @Override
-        public Converter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, Object... params) {
-            Converter<? super I, ? extends T> head = headConverterFactory.newConverter(new ConvertingTypes(targetedTypes.getFrom(), tType), params);
+        public Converter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+            Converter<? super I, ? extends T> head = headConverterFactory.newConverter(new ConvertingTypes(targetedTypes.getFrom(), tType), contextFactoryBuilder, params);
             if (head == null) return null;
-            Converter<? super T, ? extends O> tail = tailConverterFactory.newConverter(new ConvertingTypes(tType, targetedTypes.getTo()));
+            Converter<? super T, ? extends O> tail = tailConverterFactory.newConverter(new ConvertingTypes(tType, targetedTypes.getTo()), contextFactoryBuilder);
             if (tail == null) return null;
             return new ComposedConverter<I, T, O>(head, tail);
         }

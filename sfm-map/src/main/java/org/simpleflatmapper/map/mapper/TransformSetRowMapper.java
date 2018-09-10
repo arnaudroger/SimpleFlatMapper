@@ -48,6 +48,7 @@ public final class TransformSetRowMapper<ROW, SET, I, O, E extends Exception> im
 	}
 	//IFJAVA8_END
 
+
 	@Override
 	public O map(ROW source) throws MappingException {
 		return transformer.apply(delegate.map(source));

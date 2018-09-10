@@ -1,11 +1,11 @@
 package org.simpleflatmapper.jdbc.test.samples;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.property.IndexedSetterProperty;
 import org.simpleflatmapper.map.MapperBuildingException;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.jdbc.property.IndexedSetterFactoryProperty;
 import org.simpleflatmapper.map.property.SetterFactoryProperty;
 import org.simpleflatmapper.map.property.SetterProperty;
@@ -147,10 +147,10 @@ public class CtfmSetterNotFoundTest {
                 .newInstance()
                 .addColumnProperty("bar",
                         new SetterFactoryProperty(
-                            new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>>() {
+                            new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>>() {
                                 @SuppressWarnings("unchecked")
                                 @Override
-                                public <P> Setter<PreparedStatement, P> getSetter(final PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> arg) {
+                                public <P> Setter<PreparedStatement, P> getSetter(final PropertyMapping<?, ?, JdbcColumnKey> arg) {
                                     return (Setter<PreparedStatement, P>) new Setter<PreparedStatement, Bar2Prop>() {
                                         @Override
                                         public void set(PreparedStatement target, Bar2Prop value) throws Exception {
@@ -188,10 +188,10 @@ public class CtfmSetterNotFoundTest {
                 .newInstance()
                 .addColumnProperty("bar",
                         new IndexedSetterFactoryProperty(
-                                new IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>>() {
+                                new IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>>() {
                                     @SuppressWarnings("unchecked")
                                     @Override
-                                    public <P> IndexedSetter<PreparedStatement, P> getIndexedSetter(final PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> arg, Object... properties) {
+                                    public <P> IndexedSetter<PreparedStatement, P> getIndexedSetter(final PropertyMapping<?, ?, JdbcColumnKey> arg, Object... properties) {
                                         return (IndexedSetter<PreparedStatement, P>) new IndexedSetter<PreparedStatement, Bar2Prop>() {
                                             @Override
                                             public void set(PreparedStatement target, Bar2Prop value, int index) throws Exception {

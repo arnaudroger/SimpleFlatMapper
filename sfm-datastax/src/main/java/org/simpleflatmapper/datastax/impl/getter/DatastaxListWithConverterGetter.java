@@ -27,7 +27,7 @@ public class DatastaxListWithConverterGetter<I, T> implements Getter<GettableByI
 
         List<T> convertedList = new ArrayList<T>(list.size());
         for(I i : list) {
-            convertedList.add(converter.convert(i));
+            convertedList.add(converter.convert(i, null));
         }
         return convertedList;
     }

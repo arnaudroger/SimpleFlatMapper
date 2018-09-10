@@ -1,5 +1,7 @@
 package org.simpleflatmapper.jdbc.impl;
 
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.converter.ContextFactory;
 import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.CheckedConsumer;
@@ -16,15 +18,17 @@ public abstract class AbstractBatchInsertQueryExecutor<T> implements BatchQueryE
     protected final String[] generatedKeys;
     
     protected final MultiIndexFieldMapper<T>[] multiIndexFieldMappers;
+    protected final ContextFactory contextFactory;
     private final CrudMeta meta;
 
-    public AbstractBatchInsertQueryExecutor(CrudMeta meta, String[] insertColumns, String[] insertColumnExpressions, String[] updateColumns, String[] generatedKeys, MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
+    public AbstractBatchInsertQueryExecutor(CrudMeta meta, String[] insertColumns, String[] insertColumnExpressions, String[] updateColumns, String[] generatedKeys, MultiIndexFieldMapper<T>[] multiIndexFieldMappers, ContextFactory contextFactory) {
         this.meta = meta;
         this.insertColumns = insertColumns;
         this.insertColumnExpressions = insertColumnExpressions;
         this.updateColumns = updateColumns;
         this.generatedKeys = generatedKeys;
         this.multiIndexFieldMappers = multiIndexFieldMappers;
+        this.contextFactory = contextFactory;
     }
 
     @Override
@@ -117,9 +121,10 @@ public abstract class AbstractBatchInsertQueryExecutor<T> implements BatchQueryE
 
     private void bindTo(PreparedStatement preparedStatement, Collection<T> values) throws Exception {
         int i = 0;
+        Context context = contextFactory.newContext();
         for(T value : values) {
             for (MultiIndexFieldMapper<T> multiIndexFieldMapper : multiIndexFieldMappers) {
-                multiIndexFieldMapper.map(preparedStatement, value, i);
+                multiIndexFieldMapper.map(preparedStatement, value, i, context);
                 i++;
             }
         }

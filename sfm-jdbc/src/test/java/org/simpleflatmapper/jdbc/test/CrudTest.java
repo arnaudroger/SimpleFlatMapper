@@ -3,6 +3,7 @@ package org.simpleflatmapper.jdbc.test;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.jdbc.Crud;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.SelectQuery;

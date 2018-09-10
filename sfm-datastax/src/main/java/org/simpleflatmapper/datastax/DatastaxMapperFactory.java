@@ -25,7 +25,7 @@ import org.simpleflatmapper.util.UnaryFactoryWithException;
 
 import java.lang.reflect.Type;
 
-public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>, DatastaxMapperFactory> {
+public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnKey, DatastaxMapperFactory> {
 
     private GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory = new RowGetterFactory(this);
 
@@ -33,7 +33,7 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
         super(new FieldMapperColumnDefinitionProviderImpl<DatastaxColumnKey>(), FieldMapperColumnDefinition.<DatastaxColumnKey>identity());
     }
 
-    private DatastaxMapperFactory(AbstractMapperFactory<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>, ?> config) {
+    private DatastaxMapperFactory(AbstractMapperFactory<DatastaxColumnKey, ?> config) {
         super(config);
     }
 
@@ -41,7 +41,7 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
         return new DatastaxMapperFactory();
     }
 
-    public static DatastaxMapperFactory newInstance(AbstractMapperFactory<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>, ?> config) {
+    public static DatastaxMapperFactory newInstance(AbstractMapperFactory<DatastaxColumnKey, ?> config) {
         return new DatastaxMapperFactory(config);
     }
 
@@ -81,7 +81,7 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
     }
 
     public <T> SettableDataMapperBuilder<T> newBuilderFrom(ClassMeta<T> classMeta) {
-        MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config = mapperConfig();
+        MapperConfig<DatastaxColumnKey> config = mapperConfig();
         return new SettableDataMapperBuilder<T>(
                 classMeta,
                 config,

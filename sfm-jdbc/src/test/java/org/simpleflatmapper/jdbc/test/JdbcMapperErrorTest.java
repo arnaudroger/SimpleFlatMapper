@@ -76,7 +76,7 @@ public class JdbcMapperErrorTest {
 				});
 		
 		try {
-			mapper.map(null);
+			mapper.map(null, null);
 			fail("Expected error");
 		} catch(Exception e) {
             assertTrue(e instanceof IOException);

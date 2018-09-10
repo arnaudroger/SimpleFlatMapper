@@ -39,10 +39,14 @@ public class Issue206Test {
     }
 
     @Test
-    public void testErrorHandler() throws IOException, ParseException {
+    public void testErrorHandler() throws Exception {
         try {
             dsl.iterator(new StringReader("id,p1_p2\n1,aaa")).next();
-        } catch (ParsingException e) {
+        } catch (Exception e) {
+            if (!(e instanceof ParseException))  {
+                throw e;
+            }
+            
             // expected
         }
     }

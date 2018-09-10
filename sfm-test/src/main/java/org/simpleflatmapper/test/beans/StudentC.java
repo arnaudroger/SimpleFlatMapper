@@ -1,7 +1,5 @@
 package org.simpleflatmapper.test.beans;
 
-import org.simpleflatmapper.test.beans.Student;
-
 import java.util.List;
 
 public class StudentC implements Student {

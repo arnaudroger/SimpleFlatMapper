@@ -99,7 +99,7 @@ public class FieldMapperToAppendableFactoryTest {
         FieldMapper<JodaObject, Appendable> fieldMapper =
                 defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
                         builder, null);
-        testFieldMapper("20140607", fieldMapper, jodaObject, builder.newFactory());
+        testFieldMapper("20140607", fieldMapper, jodaObject, builder.build());
     }
 
     @Test
@@ -109,7 +109,7 @@ public class FieldMapperToAppendableFactoryTest {
         FieldMapper<JodaObject, Appendable> fieldMapper =
                 defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
                         builder, null);
-        testFieldMapper("20140607", fieldMapper, jodaObject, builder.newFactory());
+        testFieldMapper("20140607", fieldMapper, jodaObject, builder.build());
     }
 
 
@@ -149,7 +149,7 @@ public class FieldMapperToAppendableFactoryTest {
         FieldMapper<DbPrimitiveObjectWithSetter, Appendable> fieldMapper =
                 defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping("pDouble", dbPrimitiveObjectClassMeta, format),
                         builder, null);
-        testFieldMapper("3.1", fieldMapper, dbPrimitiveObject, builder.newFactory());
+        testFieldMapper("3.1", fieldMapper, dbPrimitiveObject, builder.build());
     }
     @Test
     public void testLongAppender() throws Exception {
@@ -161,7 +161,7 @@ public class FieldMapperToAppendableFactoryTest {
     public <T> void testFieldMapperForClassAndProp(String expected, String propName, ClassMeta<T> classMeta, T object) throws Exception {
         MappingContextFactoryBuilder<T, CsvColumnKey> builder = getMappingContextBuilder();
         FieldMapper<T, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping(propName, classMeta), builder, null);
-        testFieldMapper(expected, fieldMapper, object, builder.newFactory());
+        testFieldMapper(expected, fieldMapper, object, builder.build());
     }
 
     private <T> void testFieldMapper(String expected, FieldMapper<T, Appendable> fieldMapper, T source, MappingContextFactory<T> dbObjectMappingContextFactory) throws Exception {
@@ -170,14 +170,14 @@ public class FieldMapperToAppendableFactoryTest {
         assertEquals(expected, sb.toString());
     }
 
-    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> newPropertyMapping(String col, ClassMeta<T> classMeta) {
+    private <T> PropertyMapping<T, String, CsvColumnKey> newPropertyMapping(String col, ClassMeta<T> classMeta) {
         return newPropertyMapping(col, classMeta, FieldMapperColumnDefinition.<CsvColumnKey>identity());
     }
 
-    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> newPropertyMapping(String col, ClassMeta<T> classMeta, FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
+    private <T> PropertyMapping<T, String, CsvColumnKey> newPropertyMapping(String col, ClassMeta<T> classMeta, FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
         PropertyMeta<T, String> propertyMeta = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(col), new Object[0], (TypeAffinity)null);
         if (propertyMeta == null) throw new IllegalArgumentException("cannot find prop " + col);
-        return new PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>(
+        return new PropertyMapping<T, String, CsvColumnKey>(
                 propertyMeta,
                 new CsvColumnKey(col, 1),
                 columnDefinition);

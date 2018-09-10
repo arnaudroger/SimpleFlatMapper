@@ -11,8 +11,13 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 	}
 
 	@Override
-	public final boolean next() {
-		return false;
+	public boolean isConstant() {
+		return true;
+	}
+
+	@Override
+	public final boolean shiftAndRead(int shiftFrom) {
+		throw new UnsupportedOperationException();
 	}
 
 	private static char[] toCharArray(CharSequence charSequence) {

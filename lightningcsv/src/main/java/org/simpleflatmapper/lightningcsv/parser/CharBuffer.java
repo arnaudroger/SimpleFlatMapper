@@ -6,12 +6,14 @@ public abstract class CharBuffer {
 
 	public char[] buffer;
 	public int bufferSize;
-	public int mark;
+	public int cellStartMark;
+	public int rowStartMark;
 
     public CharBuffer(char[] buffer, final int bufferSize) {
 		this.buffer = buffer;
 		this.bufferSize = bufferSize;
 	}
 
-	public abstract boolean next() throws IOException;
+	public abstract boolean isConstant();
+	public abstract boolean shiftAndRead(int shiftFrom) throws IOException;
 }

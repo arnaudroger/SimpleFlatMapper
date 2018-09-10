@@ -18,17 +18,22 @@ public final class ReaderCharBuffer extends CharBuffer {
 	}
 
 	@Override
-	public final boolean next() throws IOException {
+	public boolean isConstant() {
+		return false;
+	}
+
+	@Override
+	public final boolean shiftAndRead(int shiftFrom) throws IOException {
 		// shift buffer consumer data
 		int currentSize = this.bufferSize;
 		
-		int effectiveMark = Math.min(currentSize, mark);
-		int newSize = currentSize - effectiveMark;
+		int newSize = currentSize - shiftFrom;
 		
 		// shift left over
 		char[] lbuffer = this.buffer;
-		System.arraycopy(lbuffer, effectiveMark, lbuffer, 0, newSize);
-		mark = 0;
+		System.arraycopy(lbuffer, shiftFrom, lbuffer, 0, newSize);
+		cellStartMark -= shiftFrom;
+		rowStartMark -= shiftFrom;
 
 		int bufferLength = lbuffer.length;
 		
@@ -48,8 +53,8 @@ public final class ReaderCharBuffer extends CharBuffer {
 				newBufferSize = maxBufferSize;
 			}
 			
-			if (newBufferSize <= newSize) {
-				throw new BufferOverflowException("The content in the csv cell exceed the maxSizeBuffer " + maxBufferSize + ", see CsvParser.DSL.maxSizeBuffer(int) to change the default value");
+			if (newSize >= newBufferSize) {
+				throw new BufferOverflowException("The content in the csv cell exceed the maxSizeBuffer " + maxBufferSize + ",  "+ newSize  + ", see CsvParser.DSL.maxSizeBuffer(int) to change the default value");
 			}
 			
 			

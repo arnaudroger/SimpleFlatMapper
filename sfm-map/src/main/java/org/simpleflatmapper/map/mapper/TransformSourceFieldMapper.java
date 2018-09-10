@@ -26,11 +26,6 @@ public class TransformSourceFieldMapper<S, I, O> implements SourceFieldMapper<S,
     }
 
     @Override
-    public O map(S source) throws MappingException {
-        return transform.apply(delegate.map(source));
-    }
-
-    @Override
     public O map(S source, MappingContext<? super S> context) throws MappingException {
         return transform.apply(delegate.map(source, context));
     }

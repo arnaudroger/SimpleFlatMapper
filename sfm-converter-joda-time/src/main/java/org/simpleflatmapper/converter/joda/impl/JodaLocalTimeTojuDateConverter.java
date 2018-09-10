@@ -2,6 +2,7 @@ package org.simpleflatmapper.converter.joda.impl;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.util.Date;
@@ -14,7 +15,7 @@ public class JodaLocalTimeTojuDateConverter implements Converter<LocalTime, Date
     }
 
     @Override
-    public Date convert(LocalTime in) throws Exception {
+    public Date convert(LocalTime in, Context context) throws Exception {
         if (in == null) return null;
         return in.toDateTimeToday(dateTimeZone).toDate();
     }

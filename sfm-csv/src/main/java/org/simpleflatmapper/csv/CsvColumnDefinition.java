@@ -8,6 +8,7 @@ import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.property.DateFormatProperty;
 import org.simpleflatmapper.map.property.TimeZoneProperty;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
@@ -16,10 +17,17 @@ import java.util.TimeZone;
 public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColumnDefinition> {
 
     public static final CsvColumnDefinition IDENTITY = new CsvColumnDefinition(new Object[0]);
+    public static final Function<Object[], ColumnDefinition<CsvColumnKey, ?>> COLUMN_DEFINITION_FACTORY = new Function<Object[], ColumnDefinition<CsvColumnKey, ?>>() {
+        @Override
+        public ColumnDefinition<CsvColumnKey, ?> apply(Object[] objects) {
+            return CsvColumnDefinition.of(objects);
+        }
+    };
 
     protected CsvColumnDefinition(Object[] properties) {
         super(properties);
     }
+
 
     @Override
     protected CsvColumnDefinition newColumnDefinition(Object[] properties) {

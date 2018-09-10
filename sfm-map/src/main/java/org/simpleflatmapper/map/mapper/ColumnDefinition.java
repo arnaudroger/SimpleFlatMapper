@@ -71,7 +71,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
         return DEFAULT_APPLIES_TO;
     }
 
-    public CD compose(CD columnDefinition) {
+    public CD compose(ColumnDefinition<K, ?> columnDefinition) {
         ColumnDefinition cdi = requireNonNull("columnDefinition", columnDefinition);
         Object[] properties = Arrays.copyOf(cdi.properties, this.properties.length + cdi.properties.length);
         System.arraycopy(this.properties, 0, properties, cdi.properties.length, this.properties.length);

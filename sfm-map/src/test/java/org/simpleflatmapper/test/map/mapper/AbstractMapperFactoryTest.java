@@ -2,11 +2,13 @@ package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
@@ -41,7 +43,7 @@ public class AbstractMapperFactoryTest {
     public void testDefaultMapperConfig() {
         MapperFactory mapperFactory = new MapperFactory();
 
-        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = mapperFactory.mapperConfig();
+        MapperConfig<SampleFieldKey> mapperConfig = mapperFactory.mapperConfig();
 
         final ArrayList<Object> properties = new ArrayList<Object>();
         mapperConfig.columnDefinitions().forEach(Object.class, new BiConsumer<Predicate<? super SampleFieldKey>, Object>() {
@@ -78,7 +80,7 @@ public class AbstractMapperFactoryTest {
 
         FieldMapperErrorHandler<SampleFieldKey> fieldMapperErrorHandler = new FieldMapperErrorHandler<SampleFieldKey>() {
             @Override
-            public void errorMappingField(SampleFieldKey key, Object source, Object target, Exception error) throws MappingException {
+            public void errorMappingField(SampleFieldKey key, Object source, Object target, Exception error, Context mappingContext) throws MappingException {
             }
         };
         MapperBuilderErrorHandler mapperBuilderErrorHandler = new MapperBuilderErrorHandler() {
@@ -105,7 +107,7 @@ public class AbstractMapperFactoryTest {
         mapperFactory.consumerErrorHandler(consumerErrorHandler);
 
 
-        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = mapperFactory.mapperConfig();
+        MapperConfig<SampleFieldKey> mapperConfig = mapperFactory.mapperConfig();
 
         assertEquals(fieldMapperErrorHandler, mapperConfig.fieldMapperErrorHandler());
         assertEquals(mapperBuilderErrorHandler, mapperConfig.mapperBuilderErrorHandler());
@@ -135,7 +137,7 @@ public class AbstractMapperFactoryTest {
         assertFalse(reflectionService.isAsmActivated());
 
 
-        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = new MapperFactory()
+        MapperConfig<SampleFieldKey> mapperConfig = new MapperFactory()
                 .asmMapperNbFieldsLimit(33)
                 .failOnAsm(true)
                 .maxMethodSize(13)
@@ -269,12 +271,12 @@ public class AbstractMapperFactoryTest {
 
     }
 
-    static class MapperFactory extends AbstractMapperFactory<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>, MapperFactory> {
+    static class MapperFactory extends AbstractMapperFactory<SampleFieldKey, MapperFactory> {
         public MapperFactory() {
             super(new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>(), FieldMapperColumnDefinition.<SampleFieldKey>identity());
         }
 
-        public MapperFactory(AbstractMapperFactory<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>, ?> config) {
+        public MapperFactory(AbstractMapperFactory<SampleFieldKey, ?> config) {
             super(config);
         }
     }

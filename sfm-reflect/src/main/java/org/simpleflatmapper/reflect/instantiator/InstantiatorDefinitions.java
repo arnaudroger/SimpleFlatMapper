@@ -7,6 +7,7 @@ import org.simpleflatmapper.util.TypeHelper;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 
 public class InstantiatorDefinitions {
 
@@ -44,11 +45,12 @@ public class InstantiatorDefinitions {
     }
 
 
-    public static InstantiatorDefinition lookForCompatibleOneArgument(Collection<InstantiatorDefinition> col, CompatibilityScorer scorer) {
+    public static InstantiatorDefinition lookForCompatibleOneArgument(List<InstantiatorDefinition> col, CompatibilityScorer scorer) {
         InstantiatorDefinition current = null;
         int currentScore = -1;
 
-        for(InstantiatorDefinition id : col ) {
+        for(int i = 0; i < col.size(); i++) {
+            InstantiatorDefinition id = col.get(i);
             if (id.getParameters().length == 1) {
                 int score = scorer.score(id);
                 if (score > currentScore) {
@@ -75,8 +77,9 @@ public class InstantiatorDefinitions {
     private static class DefaultCompatibilityScorer implements InstantiatorDefinitions.CompatibilityScorer {
         @Override
         public int score(InstantiatorDefinition id) {
-            Package aPackage = id.getParameters()[0].getType().getPackage();
-            if (aPackage != null && aPackage.getName().equals("java.lang")) {
+            Class<?> type = id.getParameters()[0].getType();
+            Package aPackage = type.getPackage();
+            if (type.isPrimitive() || (aPackage != null && aPackage.getName().equals("java.lang"))) {
                 return 1;
             }
             return 0;

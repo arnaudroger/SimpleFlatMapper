@@ -26,8 +26,8 @@ public class MapWithConverterSettableDataSetter<KI, KO, VI, VO> implements Sette
             Map<KO, VO> map = new HashMap<KO, VO>();
 
             for(Map.Entry<KI, VI> e : value.entrySet()) {
-                map.put(keyConverter.convert(e.getKey()),
-                        valueConverter.convert(e.getValue()));
+                map.put(keyConverter.convert(e.getKey(), null),
+                        valueConverter.convert(e.getValue(), null));
             }
 
             target.setMap(index, map);

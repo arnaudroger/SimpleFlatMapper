@@ -90,8 +90,9 @@ public class CsvMapperOptionalTest {
         assertEquals(2, optionalList.get(1).get().intValue());
 
         optionalList = iterator.next();
-        assertEquals(1, optionalList.size());
+        assertEquals(2, optionalList.size());
         assertEquals(3, optionalList.get(0).get().intValue());
+        assertFalse(optionalList.get(1).isPresent());
     }
 
 	private void testMapDbObject(CsvMapperBuilder<Optional<DbFinalObject>> builder)

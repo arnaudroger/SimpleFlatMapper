@@ -2,6 +2,7 @@ package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ import java.util.stream.Stream;
  * @see CsvParser
  * @see CsvMapperFactory
  */
-public interface CsvMapper<T> {
+public interface CsvMapper<T> extends SetRowMapper<CsvRow, CsvRowSet, T, IOException> {
 
 	/**
 	 * Will map each row of the content of reader to an object of type T and will pass that object to the handle via the {@link CheckedConsumer}.handler(T t) call back.

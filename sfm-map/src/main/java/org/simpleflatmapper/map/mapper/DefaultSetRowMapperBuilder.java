@@ -1,13 +1,14 @@
 package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
+import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
@@ -22,12 +23,14 @@ public class DefaultSetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E ex
      * @param mapperSource        the Mapper source.
      * @param keyFactory
      * @param enumerableFactory
+     * @param keySourceGetter
      */
     public DefaultSetRowMapperBuilder(
             ClassMeta<T> classMeta,
-            MappingContextFactoryBuilder<? super ROW, K> parentBuilder, 
-            MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig, MapperSource<? super ROW, K> mapperSource, 
-            KeyFactory<K> keyFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
+            MappingContextFactoryBuilder<? super ROW, K> parentBuilder,
+            MapperConfig<K> mapperConfig, MapperSource<? super ROW, K> mapperSource,
+            KeyFactory<K> keyFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory, 
+            KeySourceGetter<K, ? super ROW> keySourceGetter) {
         super(
                 classMeta, 
                 parentBuilder, 
@@ -35,19 +38,20 @@ public class DefaultSetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E ex
                 mapperSource, 
                 keyFactory, 
                 enumerableFactory,
-                new DefaultSetRowMapperFactory<ROW, SET, T, E>());
+                new DefaultSetRowMapperFactory<ROW, SET, T, E>(), 
+                keySourceGetter);
     }
 
 
     public static class DefaultSetRowMapperFactory<ROW, SET, T , E extends Exception> implements SetRowMapperFactory<SetRowMapper<ROW, SET, T, E>, ROW, SET, T, E> {
 
         @Override
-        public SetRowMapper<ROW, SET, T, E> newJoinMapper(SourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
+        public SetRowMapper<ROW, SET, T, E> newJoinMapper(ContextualSourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
             return  new JoinMapper<ROW, SET, T, E>(mapper, consumerErrorHandler,mappingContextFactory, enumerableFactory);
         }
 
         @Override
-        public SetRowMapper<ROW, SET, T, E> newStaticMapper(SourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
+        public SetRowMapper<ROW, SET, T, E> newStaticMapper(ContextualSourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
             return  new StaticSetRowMapper<ROW, SET, T, E>(mapper, consumerErrorHandler,mappingContextFactory, enumerableFactory);
         }
 

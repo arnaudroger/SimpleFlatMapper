@@ -14,7 +14,7 @@ public class RethrowFieldMapperErrorHandlerTest {
 		RethrowFieldMapperErrorHandler handler = RethrowFieldMapperErrorHandler.INSTANCE;
 		Exception error = new Exception();
 		try {
-			handler.errorMappingField("prop", this, this, error);
+			handler.errorMappingField("prop", this, this, error, null);
 			fail("Expected exception");
 		} catch(Exception e) {
 			assertSame(error, e);

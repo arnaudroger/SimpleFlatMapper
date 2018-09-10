@@ -59,6 +59,23 @@ public class JdbcMapperDbObjectTest {
 
 			}
 		}, "SELECT id from TEST_DB_OBJECT where id = 1");
+
+
+		DbHelper.testQuery(new TestRowHandler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement preparedStatement) throws Exception {
+				ResultSet rs = preparedStatement.executeQuery();
+
+				rs.next();
+
+				DbObject object = mapper.map(rs);
+
+				assertEquals(1, object.getId());
+				assertEquals("defaultName", object.getName());
+
+
+			}
+		}, "SELECT id, null as name from TEST_DB_OBJECT where id = 1");
 	}
 
 	@Test

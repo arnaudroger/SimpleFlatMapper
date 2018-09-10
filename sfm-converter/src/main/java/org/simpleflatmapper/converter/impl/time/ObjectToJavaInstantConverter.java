@@ -1,6 +1,7 @@
 package org.simpleflatmapper.converter.impl.time;
 
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.time.Instant;
@@ -19,7 +20,7 @@ public class ObjectToJavaInstantConverter implements Converter<Object, Instant> 
     }
 
     @Override
-    public Instant convert(Object in) throws Exception {
+    public Instant convert(Object in, Context context) throws Exception {
         if (in == null) {
             return null;
         }

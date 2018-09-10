@@ -1,5 +1,6 @@
 package org.simpleflatmapper.converter.impl;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.ConversionException;
 import org.simpleflatmapper.converter.Converter;
 
@@ -9,7 +10,7 @@ import java.net.URL;
 public class ToStringToURLConverter implements Converter<Object, URL> {
 
 	@Override
-	public URL convert(Object in) {
+	public URL convert(Object in, Context context) {
 		try {
 			return new URL(String.valueOf(in));
 		} catch (MalformedURLException e) {

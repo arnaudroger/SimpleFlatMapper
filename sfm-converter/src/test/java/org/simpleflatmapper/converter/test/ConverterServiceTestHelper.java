@@ -1,7 +1,10 @@
 package org.simpleflatmapper.converter.test;
 
+import org.simpleflatmapper.converter.ContextFactory;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
+import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
 
 
 import static org.junit.Assert.assertEquals;
@@ -16,9 +19,11 @@ public class ConverterServiceTestHelper {
     }
 
     public static <I, O> void testConverter(I i, O o, Class<I> classi, Class<O> classo, Object... params) throws Exception {
-        final Converter<? super I, ? extends O> converter = ConverterService.getInstance().findConverter(classi, classo, params);
+        DefaultContextFactoryBuilder defaultContextFactoryBuilder = new DefaultContextFactoryBuilder();
+        final Converter<? super I, ? extends O> converter = ConverterService.getInstance().findConverter(classi, classo, defaultContextFactoryBuilder, params);
         assertNotNull("Converter not null", converter);
-        assertEquals(o, converter.convert(i));
+        ContextFactory contextFactory = defaultContextFactoryBuilder.build();
+        assertEquals(o, converter.convert(i, contextFactory.newContext()));
         assertNotNull(converter.toString());
     }
 

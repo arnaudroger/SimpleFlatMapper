@@ -16,6 +16,7 @@ import java.io.StringReader;
 import java.lang.reflect.Type;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class CsvMapperCustomReaderFactoryTest {
 

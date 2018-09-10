@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.fieldmapper.*;
@@ -29,7 +30,6 @@ import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.util.ConstantPredicate;
-import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Method;
 
@@ -51,7 +51,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
     @Before
     public void setUp() {
         getterFactory = mock(GetterFactory.class);
-        constantSourceFieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey>(getterFactory, ConverterService.getInstance(), Object.class);
+        constantSourceFieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey>(new ContextualGetterFactoryAdapter<Object, SampleFieldKey>(getterFactory), ConverterService.getInstance(), Object.class);
         keySourceGetter = mock(KeySourceGetter.class);
         mappingContextFactoryBuilder = null;
     }
@@ -71,56 +71,56 @@ public class ConstantSourceFieldMapperFactoryImplTest {
             FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
                     createFieldMapper(DbPrimitiveObjectWithSetter.class, "pBoolean", new ConstantBooleanGetter<Object>(true));
 
-            assertPrimitiveSetter(fieldMapper, object, "ispBoolean", BooleanFieldMapper.class, false, true);
+            assertPrimitiveSetter(fieldMapper, object, "ispBoolean", BooleanConstantSourceFieldMapper.class, false, true);
         }
 
         {
             FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
                     createFieldMapper(DbPrimitiveObjectWithSetter.class, "pByte", new ConstantByteGetter<Object>((byte) 16));
 
-            assertPrimitiveSetter(fieldMapper, object, "getpByte", ByteFieldMapper.class, (byte) 0, (byte) 16);
+            assertPrimitiveSetter(fieldMapper, object, "getpByte", ByteConstantSourceFieldMapper.class, (byte) 0, (byte) 16);
         }
 
         {
             FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
                     createFieldMapper(DbPrimitiveObjectWithSetter.class, "pCharacter", new ConstantCharacterGetter<Object>((char) 16));
 
-            assertPrimitiveSetter(fieldMapper, object, "getpCharacter", CharacterFieldMapper.class, (char) 0, (char) 16);
+            assertPrimitiveSetter(fieldMapper, object, "getpCharacter", CharacterConstantSourceFieldMapper.class, (char) 0, (char) 16);
         }
 
         {
             FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
                     createFieldMapper(DbPrimitiveObjectWithSetter.class, "pShort", new ConstantShortGetter<Object>((short) 16));
 
-            assertPrimitiveSetter(fieldMapper, object, "getpShort", ShortFieldMapper.class, (short) 0, (short) 16);
+            assertPrimitiveSetter(fieldMapper, object, "getpShort", ShortConstantSourceFieldMapper.class, (short) 0, (short) 16);
         }
 
         {
             FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
                     createFieldMapper(DbPrimitiveObjectWithSetter.class, "pInt", new ConstantIntGetter<Object>(16));
 
-            assertPrimitiveSetter(fieldMapper, object, "getpInt", IntFieldMapper.class, 0, 16);
+            assertPrimitiveSetter(fieldMapper, object, "getpInt", IntConstantSourceFieldMapper.class, 0, 16);
         }
 
         {
             FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
                     createFieldMapper(DbPrimitiveObjectWithSetter.class, "pLong", new ConstantLongGetter<Object>(16l));
 
-            assertPrimitiveSetter(fieldMapper, object, "getpLong", LongFieldMapper.class, 0l, 16l);
+            assertPrimitiveSetter(fieldMapper, object, "getpLong", LongConstantSourceFieldMapper.class, 0l, 16l);
         }
 
         {
             FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
                     createFieldMapper(DbPrimitiveObjectWithSetter.class, "pFloat", new ConstantFloatGetter<Object>(16f));
 
-            assertPrimitiveSetter(fieldMapper, object, "getpFloat", FloatFieldMapper.class, 0f, 16f);
+            assertPrimitiveSetter(fieldMapper, object, "getpFloat", FloatConstantSourceFieldMapper.class, 0f, 16f);
         }
 
         {
             FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
                     createFieldMapper(DbPrimitiveObjectWithSetter.class, "pDouble", new ConstantDoubleGetter<Object>(16.0));
 
-            assertPrimitiveSetter(fieldMapper, object, "getpDouble", DoubleFieldMapper.class, 0.0, 16.0);
+            assertPrimitiveSetter(fieldMapper, object, "getpDouble", DoubleConstantSourceFieldMapper.class, 0.0, 16.0);
         }
 
     }
@@ -136,18 +136,18 @@ public class ConstantSourceFieldMapperFactoryImplTest {
     private <T, P> FieldMapper<Object, T> createFieldMapper(
             Class<T> target, String property, Getter<Object, P> getter) {
 
-        PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm = createPropertyMapping(target, property);
+        PropertyMapping<T, P, SampleFieldKey> pm = createPropertyMapping(target, property);
         when(getterFactory.<P>newGetter(pm.getPropertyMeta().getPropertyType(), pm.getColumnKey(), pm.getColumnDefinition().properties())).thenReturn(getter);
         return constantSourceFieldMapperFactory.newFieldMapper(pm, mappingContextFactoryBuilder, MAPPING_ERROR_HANDLER);
     }
-    public static <T, P> PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> createPropertyMapping(
+    public static <T, P> PropertyMapping<T, P, SampleFieldKey> createPropertyMapping(
             Class<T> target, String property) {
         ClassMeta<T> classMeta = REFLECTION_SERVICE.getClassMeta(target);
 
         PropertyMeta<T, P> propertyMeta = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(property), new Object[0], (TypeAffinity)null);
 
-        PropertyMapping<T, P , SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm =
-                new PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
+        PropertyMapping<T, P , SampleFieldKey> pm =
+                new PropertyMapping<T, P, SampleFieldKey>(
                         propertyMeta,
                         new SampleFieldKey(property, 0),
                         FieldMapperColumnDefinition.<SampleFieldKey>identity());

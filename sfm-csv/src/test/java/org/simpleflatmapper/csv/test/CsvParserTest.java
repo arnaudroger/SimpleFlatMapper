@@ -746,40 +746,6 @@ public class CsvParserTest {
 
 
 	@Test
-	public void testMaxBufferSize() throws IOException {
-		String str = "f1,long field";
-
-		Iterator<String[]> iterator = CsvParser.maxBufferSize(4).bufferSize(2).iterator(new StringReader(str));
-		try {
-			iterator.next();
-			fail("Expect BufferOverflowException");
-		} catch (Exception e) {
-			if (!(e instanceof BufferOverflowException)) {
-				fail("Expect BufferOverflowException");
-			}
-			// expected
-		}
-
-		iterator = CsvParser.maxBufferSize(9).bufferSize(2).iterator(new StringReader(str));
-		try {
-			iterator.next();
-			fail("Expect BufferOverflowException");
-		} catch (Exception e) {
-			// expected
-			if (!(e instanceof BufferOverflowException)) {
-				fail("Expect BufferOverflowException");
-			}
-		}
-
-		iterator = CsvParser.maxBufferSize(11).bufferSize(2).iterator(new StringReader(str));
-
-		String[] row = iterator.next();
-		assertEquals("f1", row[0]);
-		assertEquals("long field", row[1]);
-
-	}
-
-	@Test
 	public void testIterateStringsFromFile() throws IOException {
 		File file = createTempCsv("1,2");
 

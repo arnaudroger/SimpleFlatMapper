@@ -1,6 +1,7 @@
 package org.simpleflatmapper.csv.test;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.CsvMapper;
@@ -8,9 +9,9 @@ import org.simpleflatmapper.csv.CsvMapperBuilder;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.Result;
-import org.simpleflatmapper.map.ResultFieldMapperErrorHandler;
 import org.simpleflatmapper.map.property.ConverterProperty;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.impl.CsvMapperImpl;
@@ -71,12 +72,16 @@ public class CsvMapperImplTest {
             System.out.println(e.toString());
         }
 
-		Integer next = CsvMapperFactory.newInstance().fieldMapperErrorHandler(new FieldMapperErrorHandler<CsvColumnKey>() {
+		CsvMapper<Integer> csvMapper = CsvMapperFactory.newInstance().fieldMapperErrorHandler(new FieldMapperErrorHandler<CsvColumnKey>() {
 			@Override
-			public void errorMappingField(CsvColumnKey key, Object source, Object target, Exception error) throws MappingException {
+			public void errorMappingField(CsvColumnKey key, Object source, Object target, Exception error, Context mappingContext) throws MappingException {
 				System.out.println(error.toString());
 			}
-		}).newMapper(Integer.class).iterator(new StringReader("val\nnnnn")).next();
+		}).newMapper(Integer.class);
+		Integer next = 
+				csvMapper
+						.iterator(new StringReader("val\nnnnn"))
+						.next();
 
 		System.out.println("next = " + next);
 
@@ -86,7 +91,7 @@ public class CsvMapperImplTest {
 	@Test
 	public void test517() throws IOException {
 		CsvMapper<Result<T517, CsvColumnKey>> mapper = 
-				CsvMapperFactory.newInstance()
+				CsvMapperFactory.newInstance().useAsm(false)
 					.newErrorCollectingMapper(T517.class);
 
 		Iterator<Result<T517, CsvColumnKey>> iterator = mapper.iterator(new StringReader("v1,v2\n1,a\na,2"));
@@ -348,7 +353,7 @@ public class CsvMapperImplTest {
 	public void testConverterProperty() throws IOException {
 		DbObject d = CsvParser.mapWith(CsvMapperFactory.newInstance().addColumnProperty("typeName", ConverterProperty.of(new Converter<String, DbObject.Type>() {
 			@Override
-			public DbObject.Type convert(String in) throws Exception {
+			public DbObject.Type convert(String in, Context context) throws Exception {
 				return DbObject.Type.shortForm(in);
 			}
 		})).newMapper(DbObject.class)).iterator("typeName\nt1").next();

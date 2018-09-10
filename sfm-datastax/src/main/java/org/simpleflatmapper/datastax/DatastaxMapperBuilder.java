@@ -2,25 +2,31 @@ package org.simpleflatmapper.datastax;
 
 import com.datastax.driver.core.*;
 import com.datastax.driver.core.exceptions.DriverException;
+import org.simpleflatmapper.datastax.impl.DatastaxKeySourceGetter;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
+import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.DefaultSetRowMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.impl.ResultSetEnumerable;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.util.Iterator;
+import java.util.List;
+
 //IFJAVA8_START
 import java.util.stream.Stream;
 //IFJAVA8_END
@@ -37,6 +43,7 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
             return new DatastaxColumnKey(name, i);
         }
     };
+    public static final Function<Object[], ColumnDefinition<DatastaxColumnKey, ?>> COLUMN_DEFINITION_FACTORY = FieldMapperColumnDefinition.factory();
 
     /**
      * @param classMeta                  the meta for the target class.
@@ -46,21 +53,21 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
      */
     public DatastaxMapperBuilder(
             final ClassMeta<T> classMeta,
-            MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig,
+            MapperConfig<DatastaxColumnKey> mapperConfig,
             GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory,
             MappingContextFactoryBuilder<GettableByIndexData, DatastaxColumnKey> parentBuilder) {
         super(KEY_FACTORY, 
                 new DefaultSetRowMapperBuilder<Row, ResultSet, T, DatastaxColumnKey, DriverException>(
                         classMeta, parentBuilder, mapperConfig,
-                        new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, getterFactory), 
-                        KEY_FACTORY, new ResultSetEnumerableFactory()),
-                new Function<SetRowMapper<Row, ResultSet, T, DriverException>, DatastaxMapper<T>>() {
+                        new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, new ContextualGetterFactoryAdapter<GettableByIndexData, DatastaxColumnKey>(getterFactory)), 
+                        KEY_FACTORY, new ResultSetEnumerableFactory(), DatastaxKeySourceGetter.INSTANCE),
+                new BiFunction<SetRowMapper<Row, ResultSet, T, DriverException>, List<DatastaxColumnKey>, DatastaxMapper<T>>() {
                     @Override
-                    public DatastaxMapper<T> apply(SetRowMapper<Row, ResultSet, T, DriverException> setRowMapper) {
+                    public DatastaxMapper<T> apply(SetRowMapper<Row, ResultSet, T, DriverException> setRowMapper, List<DatastaxColumnKey> keys) {
                         return new DatastaxMapperImpl<T>(setRowMapper);
                     }
                 },
-                0);
+                COLUMN_DEFINITION_FACTORY, 0);
     }
 
 
@@ -105,7 +112,6 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
         private DatastaxMapperImpl(SetRowMapper<Row, ResultSet, T, DriverException> setRowMapper) {
             this.setRowMapper = setRowMapper;
         }
-
         @Override
         public T map(Row source) throws MappingException {
             return setRowMapper.map(source);
@@ -136,6 +142,7 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
         public Stream<T> stream(ResultSet source) throws DriverException, MappingException {
             return setRowMapper.stream(source);
         }
+
         //IFJAVA8_END
 
     }

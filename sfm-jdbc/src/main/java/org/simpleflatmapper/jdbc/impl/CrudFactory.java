@@ -1,9 +1,11 @@
 package org.simpleflatmapper.jdbc.impl;
 
+import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.Crud;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
+import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 import org.simpleflatmapper.jdbc.PreparedStatementMapperBuilder;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
@@ -85,7 +87,9 @@ public class CrudFactory {
                 i++;
             }
         }
-        return new KeyTupleQueryPreparer<K>(builder.buildIndexFieldMappers(), primaryKeys.toArray(new String[0]));
+        DefaultContextFactoryBuilder contextFactoryBuilder = new DefaultContextFactoryBuilder();
+        MultiIndexFieldMapper<K>[] multiIndexFieldMappers = builder.buildIndexFieldMappers(contextFactoryBuilder);
+        return new KeyTupleQueryPreparer<K>(multiIndexFieldMappers, contextFactoryBuilder.build(), primaryKeys.toArray(new String[0]));
     }
 
     private static <T, K>JdbcMapper<K> buildKeyMapper(ClassMeta<K>  keyTarget, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) {

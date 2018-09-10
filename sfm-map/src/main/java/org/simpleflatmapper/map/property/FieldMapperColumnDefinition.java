@@ -6,6 +6,7 @@ import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
@@ -16,6 +17,15 @@ public class FieldMapperColumnDefinition<K extends FieldKey<K>> extends ColumnDe
 
     public FieldMapperColumnDefinition(Object[] properties) {
         super(properties);
+    }
+
+    public static <K extends FieldKey<K>> Function<Object[], ColumnDefinition<K, ?>> factory() {
+        return new Function<Object[], ColumnDefinition<K, ?>>() {
+            @Override
+            public ColumnDefinition<K, ?> apply(Object[] objects) {
+                return FieldMapperColumnDefinition.<K>of(objects);
+            }
+        };
     }
 
     public FieldMapper<?, ?> getCustomFieldMapper() {

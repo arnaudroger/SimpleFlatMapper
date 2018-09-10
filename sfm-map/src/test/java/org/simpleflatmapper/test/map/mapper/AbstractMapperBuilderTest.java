@@ -5,6 +5,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Assert;
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.EnumerableMapper;
 import org.simpleflatmapper.map.FieldMapper;
@@ -12,6 +13,7 @@ import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.property.MandatoryProperty;
 import org.simpleflatmapper.reflect.ModifyInjectedParams;
 import org.simpleflatmapper.reflect.TypeAffinity;
@@ -40,6 +42,7 @@ import org.simpleflatmapper.test.beans.ObjectWith1ParamConstruction;
 import org.simpleflatmapper.test.beans.ObjectWith1ParamConstructionWithLoop;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.BiConsumer;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.Function;
@@ -362,7 +365,7 @@ public class AbstractMapperBuilderTest {
         FieldMapperColumnDefinitionProviderImpl<SampleFieldKey> definitionProvider = new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>();
         definitionProvider.addColumnProperty("type_name", new DefaultValueProperty<DbObject.Type>(DbObject.Type.type4));
 
-        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig =
+        MapperConfig<SampleFieldKey> mapperConfig =
                 MapperConfig.<SampleFieldKey>fieldMapperConfig().columnDefinitions(definitionProvider);
         EnumerableMapper<Object[][], DbObject, ?> mapper =
                 new SampleMapperBuilder<DbObject>(classMeta, mapperConfig)
@@ -421,9 +424,9 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testMandatoryProperty461() {
         ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
-        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = MapperConfig.fieldMapperConfig();
+        MapperConfig<SampleFieldKey> mapperConfig = MapperConfig.fieldMapperConfig();
 
-        mapperConfig = mapperConfig.columnDefinitions(new ColumnDefinitionProvider<FieldMapperColumnDefinition<SampleFieldKey>, SampleFieldKey>() {
+        mapperConfig = mapperConfig.columnDefinitions(new ColumnDefinitionProvider<SampleFieldKey>() {
             @Override
             public FieldMapperColumnDefinition<SampleFieldKey> getColumnDefinition(SampleFieldKey key) {
                 if (key.getName().equals("email")) {
@@ -617,6 +620,43 @@ public class AbstractMapperBuilderTest {
     }
 
     @Test
+    public void testObjectWithMappingContext() throws Exception {
+        SampleMapperBuilder<ObjectContext> builderA = new SampleMapperBuilder<ObjectContext>(ReflectionService.newInstance(true).getClassMeta(ObjectContext.class), MapperConfig.<SampleFieldKey>fieldMapperConfig());
+
+        SetRowMapper<Object[], Object[][], ObjectContext, Exception> mapper = builderA.addKey("foo").mapper();
+        ObjectContext a = mapper.iterator(new Object[][]{{"v1"}}).next();
+
+        assertEquals("v1", a.foo);
+
+        builderA = new SampleMapperBuilder<ObjectContext>(ReflectionService.newInstance(true).getClassMeta(ObjectContext.class), MapperConfig.<SampleFieldKey>fieldMapperConfig());
+
+        mapper = builderA.addKey("bar").mapper();
+        a = mapper.iterator(new Object[][]{{12234l}}).next();
+        assertEquals(12234l, a.bar);
+    }
+    
+    public static class ObjectContext {
+        private final String foo;
+        private final long bar;
+        private final Context context;
+
+        public ObjectContext(long bar) {
+            this.foo = null;
+            this.bar = bar;
+            this.context = null;
+        }
+        public ObjectContext(String foo) {
+            throw new NullPointerException();
+        }
+
+        public ObjectContext(String foo, Context context) {
+            this.foo = foo;
+            this.bar = -1;
+            this.context = context;
+        }
+    }
+
+    @Test
     public void testImmutableListNoBuilderAsm() throws Exception {
 
         SampleMapperBuilder<A3> builderA = new SampleMapperBuilder<A3>(ReflectionService.newInstance(true).getClassMeta(A3.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
@@ -805,6 +845,7 @@ public class AbstractMapperBuilderTest {
     }
 
 
+
     @Test
     // https://github.com/arnaudroger/SimpleFlatMapper/issues/416
     public void testEmptyAndFullConstructor() {
@@ -888,18 +929,20 @@ public class AbstractMapperBuilderTest {
 
     public static class SampleMapperBuilder<T> extends MapperBuilder<Object[], Object[][], T, SampleFieldKey, Exception, SetRowMapper<Object[], Object[][], T, Exception>, SetRowMapper<Object[], Object[][], T, Exception>, SampleMapperBuilder<T>> {
 
-        public SampleMapperBuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig) {
+        public static final KeySourceGetter<SampleFieldKey, Object[]> KEY_SOURCE_GETTER = new KeySourceGetter<SampleFieldKey, Object[]>() {
+            @Override
+            public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
+                return source[key.getIndex()];
+            }
+        };
+
+        public SampleMapperBuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey> mapperConfig) {
             super(KEY_FACTORY, 
                     new DefaultSetRowMapperBuilder<Object[], Object[][], T, SampleFieldKey, Exception>(
                             classMeta,
-                            new MappingContextFactoryBuilder<Object[], SampleFieldKey>(new KeySourceGetter<SampleFieldKey, Object[]>() {
-                                @Override
-                                public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
-                                    return source[key.getIndex()];
-                                }
-                            }), 
+                            new MappingContextFactoryBuilder<Object[], SampleFieldKey>(KEY_SOURCE_GETTER), 
                             mapperConfig,
-                            new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, GETTER_FACTORY),
+                            new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, new ContextualGetterFactoryAdapter<Object[], SampleFieldKey>(GETTER_FACTORY)),
                             KEY_FACTORY,
                             new UnaryFactory<Object[][], Enumerable<Object[]>>() {
                                 @Override
@@ -924,16 +967,16 @@ public class AbstractMapperBuilderTest {
                                         }
                                     };
                                 }
-                            }
-                                
-                    ),
-                    new Function<SetRowMapper<Object[], Object[][], T, Exception>, SetRowMapper<Object[], Object[][], T, Exception>>() {
+                            },
+
+                            KEY_SOURCE_GETTER),
+                    new BiFunction<SetRowMapper<Object[], Object[][], T, Exception>, List<SampleFieldKey>, SetRowMapper<Object[], Object[][], T, Exception>>() {
                         @Override
-                        public SetRowMapper<Object[], Object[][], T, Exception> apply(SetRowMapper<Object[], Object[][], T, Exception> setRowMapper) {
+                        public SetRowMapper<Object[], Object[][], T, Exception> apply(SetRowMapper<Object[], Object[][], T, Exception> setRowMapper, List<SampleFieldKey> keys) {
                             return setRowMapper;
                         }
                     },
-                            0);
+                    FieldMapperColumnDefinition.<SampleFieldKey>factory(), 0);
         }
         public SampleMapperBuilder(ClassMeta<T> classMeta) {
             this(classMeta, MapperConfig.<SampleFieldKey>fieldMapperConfig());

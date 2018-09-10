@@ -23,7 +23,7 @@ public class ListWithConverterSettableDataSetter<I, O> implements Setter<Settabl
         } else {
             List<O> list = new ArrayList<O>(value.size());
             for(int i = 0; i < value.size(); i++) {
-                list.add(converter.convert(value.get(i)));
+                list.add(converter.convert(value.get(i), null));
             }
             target.setList(index, list);
         }

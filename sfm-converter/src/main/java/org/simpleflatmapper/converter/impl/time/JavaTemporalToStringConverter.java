@@ -1,6 +1,7 @@
 package org.simpleflatmapper.converter.impl.time;
 
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.time.format.DateTimeFormatter;
@@ -15,7 +16,7 @@ public class JavaTemporalToStringConverter implements Converter<Temporal, String
     }
 
     @Override
-    public String convert(Temporal in) throws Exception {
+    public String convert(Temporal in, Context context) throws Exception {
         return dateTimeFormatter.format(in);
     }
 }

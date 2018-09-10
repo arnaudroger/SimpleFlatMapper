@@ -418,9 +418,9 @@ public class CsvParserTest {
 
 	@Test
 	public void testMaxBufferSize() throws IOException {
-		String str = "f1,long field";
-
-		Iterator<String[]> iterator = CsvParser.maxBufferSize(4).bufferSize(2).iterator(new StringReader(str));
+		Iterator<String[]> iterator = CsvParser.maxBufferSize(4).bufferSize(2).iterator(new StringReader( "f1\nf11\nf111"));
+		iterator.next();
+		iterator.next();
 		try {
 			iterator.next();
 			fail("Expect BufferOverflowException");
@@ -431,7 +431,8 @@ public class CsvParserTest {
 			// expected
 		}
 
-		iterator = CsvParser.maxBufferSize(9).bufferSize(2).iterator(new StringReader(str));
+		iterator = CsvParser.maxBufferSize(9).bufferSize(2).iterator(new StringReader("12345678\n1234567890"));
+		iterator.next();
 		try {
 			iterator.next();
 			fail("Expect BufferOverflowException");
@@ -442,11 +443,10 @@ public class CsvParserTest {
 			}
 		}
 
-		iterator = CsvParser.maxBufferSize(11).bufferSize(2).iterator(new StringReader(str));
+		iterator = CsvParser.maxBufferSize(11).bufferSize(2).iterator(new StringReader("1234567890"));
 
 		String[] row = iterator.next();
-		assertEquals("f1", row[0]);
-		assertEquals("long field", row[1]);
+		assertEquals("1234567890", row[0]);
 
 	}
 

@@ -6,6 +6,7 @@ import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.map.MapperBuildingException;
+import org.simpleflatmapper.map.mapper.ContextualSourceFieldMapperImpl;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
@@ -101,9 +102,14 @@ public class JdbcMapperBuilderTest {
 			mapperField = setRowMapper.getClass().getSuperclass().getDeclaredField("mapper");
 		}
 		mapperField.setAccessible(true);
+		SourceMapper<ResultSet, DbObject> mapper1 = new FieldGetter<Object, MapperImpl<ResultSet, DbObject>>(mapperField)
+				.get(setRowMapper);
+		
+		if (mapper1 instanceof ContextualSourceFieldMapperImpl) {
+			return ((ContextualSourceFieldMapperImpl)mapper1).getDelegate();
+		}
 		return
-				new FieldGetter<Object, MapperImpl<ResultSet, DbObject>>(mapperField)
-						.get(setRowMapper);
+				mapper1;
 	}
 
 	static class StaticLongGetter<T> implements LongGetter<T>, Getter<T, Long> {

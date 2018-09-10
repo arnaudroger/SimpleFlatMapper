@@ -14,8 +14,8 @@ public class ComposedConverter<I, J, O> implements Converter<I, O> {
 
 
     @Override
-    public O convert(I in) throws Exception {
-        return c2.convert(c1.convert(in));
+    public O convert(I in, Context context) throws Exception {
+        return c2.convert(c1.convert(in, context), context);
     }
 
     @Override

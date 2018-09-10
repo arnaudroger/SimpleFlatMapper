@@ -5,7 +5,7 @@ import org.simpleflatmapper.map.context.impl.SingleValueKey;
 import org.simpleflatmapper.util.ErrorHelper;
 
 public class KeyDefinition<S, K> {
-    private final KeySourceGetter<K, S> keySourceGetter;
+    private final KeySourceGetter<K, ? super S> keySourceGetter;
 
     private final K[] keys;
     private final K singleKey;
@@ -14,7 +14,7 @@ public class KeyDefinition<S, K> {
 
     private final int index;
 
-    public KeyDefinition(K[] keys, KeySourceGetter<K, S> keySourceGetter, int index) {
+    public KeyDefinition(K[] keys, KeySourceGetter<K, ? super S> keySourceGetter, int index) {
         this.singleKey = getSingleKey(keys);
         if (singleKey == null) {
             this.keys = keys;

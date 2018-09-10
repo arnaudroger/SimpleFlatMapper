@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jdbi;
 
 import org.simpleflatmapper.jdbc.DynamicJdbcMapper;
+import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
@@ -20,13 +21,13 @@ public class DynamicSfmResultSetMapper<T> implements ResultSetMapper<T> {
     @SuppressWarnings("unchecked")
     @Override
     public T map(int i, ResultSet resultSet, StatementContext statementContext) throws SQLException {
-        SourceMapper<ResultSet, T> mapper = (SourceMapper<ResultSet, T>) statementContext.getAttribute(STATEMENT_MAPPER);
+        JdbcMapper<T> mapper = (JdbcMapper<T>) statementContext.getAttribute(STATEMENT_MAPPER);
 
         if (mapper == null) {
             mapper = dynamicMapper.getMapper(resultSet.getMetaData());
             statementContext.setAttribute(STATEMENT_MAPPER, mapper);
         }
 
-        return mapper.map(resultSet);
+        return mapper.map(resultSet, mapper.newMappingContext(resultSet));
     }
 }

@@ -42,7 +42,7 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings("unchecked")
 	public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(Type target, final Class<?> s1, final Class<?> s2, List<InstantiatorDefinition> constructors, Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) throws SecurityException {
-		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors);
+		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors, injections.keySet());
 
 		if (instantiatorDefinition == null) {
 			throw new IllegalArgumentException("No constructor available for " + target);
@@ -100,7 +100,7 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<S> source, List<InstantiatorDefinition> constructors, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) throws SecurityException {
-		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors);
+		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors, injections.keySet());
 
 		if (instantiatorDefinition == null) {
 			throw new IllegalArgumentException("No constructor available for " + target);
@@ -112,7 +112,11 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<S> source, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) {
-		checkParameters(instantiatorDefinition, injections.keySet());
+		for(Parameter p : injections.keySet()) {
+			if (!instantiatorDefinition.hasParam(p)) {
+				throw new IllegalArgumentException("Could not find " + p + " in " + instantiatorDefinition + " raise issue");
+			}
+		}
 		
 		if (instantiatorDefinition instanceof KotlinDefaultConstructorInstantiatorDefinition) {
 			KotlinDefaultConstructorInstantiatorDefinition kid = (KotlinDefaultConstructorInstantiatorDefinition) instantiatorDefinition;
@@ -155,12 +159,13 @@ public class InstantiatorFactory {
 		}
 	}
 
-	private void checkParameters(InstantiatorDefinition instantiatorDefinition, Set<Parameter> parameters) {
+	private static boolean checkParameters(InstantiatorDefinition instantiatorDefinition, Set<Parameter> parameters) {
 		for(Parameter p : parameters) {
 			if (!instantiatorDefinition.hasParam(p)) {
-				throw new IllegalArgumentException("Could not find " + p + " in " + instantiatorDefinition + " raise issue");
+				return false;
 			}
 		}
+		return true;
 	}
 
 	@SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
@@ -266,7 +271,7 @@ public class InstantiatorFactory {
 		}
 	}
 
-	public static InstantiatorDefinition getSmallerConstructor(final List<InstantiatorDefinition> constructors) {
+	public static InstantiatorDefinition getSmallerConstructor(final List<InstantiatorDefinition> constructors, Set<Parameter> parameters) {
         if (constructors == null) {
             return null;
         }
@@ -274,7 +279,7 @@ public class InstantiatorFactory {
 		InstantiatorDefinition selectedConstructor = null;
 		
 		for(InstantiatorDefinition c : constructors) {
-			if (selectedConstructor == null || InstantiatorDefinitions.COMPARATOR.compare(c, selectedConstructor) < 0) {
+			if (checkParameters(c, parameters) && (selectedConstructor == null || InstantiatorDefinitions.COMPARATOR.compare(c, selectedConstructor) < 0)) {
 				selectedConstructor = c;
 			}
 		}

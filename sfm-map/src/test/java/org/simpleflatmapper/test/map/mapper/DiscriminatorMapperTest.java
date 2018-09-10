@@ -2,7 +2,9 @@ package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.UncheckedConverter;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SourceFieldMapper;
@@ -15,6 +17,7 @@ import org.simpleflatmapper.test.beans.StudentGS;
 import org.simpleflatmapper.util.ArrayEnumerable;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.UnaryFactory;
@@ -32,7 +35,7 @@ public class DiscriminatorMapperTest {
 
     @Before
     public void setUp() {
-        SourceFieldMapper<Object[], Person> studentMapper = new SourceFieldMapper<Object[], Person>() {
+        ContextualSourceFieldMapper<Object[], Person> studentMapper = new ContextualSourceFieldMapper<Object[], Person>() {
             @Override
             public Person map(Object[] source) throws MappingException {
                 return map(source, null);
@@ -56,7 +59,7 @@ public class DiscriminatorMapperTest {
                 studentGS.setId((Integer) source[2]);
             }
         };
-        SourceFieldMapper<Object[], Person> professorMapper = new SourceFieldMapper<Object[], Person>() {
+        ContextualSourceFieldMapper<Object[], Person> professorMapper = new ContextualSourceFieldMapper<Object[], Person>() {
             @Override
             public Person map(Object[] source) throws MappingException {
                 return map(source, null);
@@ -125,9 +128,9 @@ public class DiscriminatorMapperTest {
                             public Enumerable<Object[]> newInstance(Object[][] objects) {
                                 return new ArrayEnumerable<Object[]>(objects);
                             }
-                        }, new UncheckedConverter<Object[], String>() {
+                        }, new Function<Object[], String>() {
                     @Override
-                    public String convert(Object[] in) {
+                    public String apply(Object[] in) {
                         return Arrays.toString(in);
                     }
                 }, RethrowConsumerErrorHandler.INSTANCE);

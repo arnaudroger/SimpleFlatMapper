@@ -1,12 +1,14 @@
 package org.simpleflatmapper.jdbc.test.samples;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.converter.EmptyContext;
+import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 import org.simpleflatmapper.jdbc.property.IndexedSetterProperty;
 import org.simpleflatmapper.map.MapperBuildingException;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.jdbc.property.IndexedSetterFactoryProperty;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.IndexedSetter;
@@ -65,16 +67,16 @@ public class PsSetterNotFoundTest {
     @Test
     public void jdbcMapperExtrapolateGetterFromConstructor() throws Exception {
         final MultiIndexFieldMapper<Foo>[] fieldMappers =
-                JdbcMapperFactory.newInstance().buildFrom(Foo.class).addColumn("bar").buildIndexFieldMappers();
+                JdbcMapperFactory.newInstance().buildFrom(Foo.class).addColumn("bar").buildIndexFieldMappers(EmptyContextFactoryBuilder.INSTANCE);
 
 
         assertEquals(1, fieldMappers.length);
         PreparedStatement ps = mock(PreparedStatement.class);
-        fieldMappers[0].map(ps, new Foo(new BarOneProp("val")), 0);
+        fieldMappers[0].map(ps, new Foo(new BarOneProp("val")), 0, EmptyContext.INSTANCE);
         verify(ps).setString(1, "val");
 
 
-        JdbcMapperFactory.newInstance().buildFrom(Crux.class).addColumn("foo").buildIndexFieldMappers();
+        JdbcMapperFactory.newInstance().buildFrom(Crux.class).addColumn("foo").buildIndexFieldMappers(EmptyContextFactoryBuilder.INSTANCE);
     }
 
 
@@ -125,7 +127,7 @@ public class PsSetterNotFoundTest {
     public void jdbcMapperExtrapolateFailToFindSetter() {
         try {
             final MultiIndexFieldMapper<Foo2>[] indexFieldMappers =
-                    JdbcMapperFactory.newInstance().buildFrom(Foo2.class).addColumn("bar").buildIndexFieldMappers();
+                    JdbcMapperFactory.newInstance().buildFrom(Foo2.class).addColumn("bar").buildIndexFieldMappers(EmptyContextFactoryBuilder.INSTANCE);
             fail();
         } catch (MapperBuildingException e) {
             // expected
@@ -149,7 +151,7 @@ public class PsSetterNotFoundTest {
                 }))
                 .buildFrom(Foo2.class)
                 .addColumn("bar")
-                .buildIndexFieldMappers();
+                .buildIndexFieldMappers(EmptyContextFactoryBuilder.INSTANCE);
     }
     @Test
     public void jdbcMapperExtrapolateOverrideSetterFactory() {
@@ -157,10 +159,10 @@ public class PsSetterNotFoundTest {
                 .newInstance()
                 .addColumnProperty("bar",
                         new IndexedSetterFactoryProperty(
-                            new IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>>() {
+                            new IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>>() {
                                 @SuppressWarnings("unchecked")
                                 @Override
-                                public <P> IndexedSetter<PreparedStatement, P> getIndexedSetter(final PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> arg, Object... properties) {
+                                public <P> IndexedSetter<PreparedStatement, P> getIndexedSetter(final PropertyMapping<?, ?, JdbcColumnKey> arg, Object... properties) {
                                     return (IndexedSetter<PreparedStatement, P>) new IndexedSetter<PreparedStatement, Bar2Prop>() {
                                         @Override
                                         public void set(PreparedStatement target, Bar2Prop value, int index) throws Exception {
@@ -173,6 +175,6 @@ public class PsSetterNotFoundTest {
                 ))
                 .buildFrom(Foo2.class)
                 .addColumn("bar")
-                .buildIndexFieldMappers();
+                .buildIndexFieldMappers(EmptyContextFactoryBuilder.INSTANCE);
     }
 }

@@ -2,6 +2,7 @@ package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.SqlTypeColumnProperty;
 import org.simpleflatmapper.jdbc.JdbcTypeHelper;
@@ -9,15 +10,16 @@ import org.simpleflatmapper.jdbc.named.NamedParameter;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.PropertyWithGetter;
+import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
-import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
-import org.simpleflatmapper.reflect.getter.GetterWithConverter;
+import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterWithConverter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
@@ -36,15 +38,15 @@ import java.time.*;
 public final class SqlParameterSourceBuilder<T> {
 
 
-    private final PropertyMappingsBuilder<T, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> builder;
-    private final MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig;
+    private final PropertyMappingsBuilder<T, JdbcColumnKey> builder;
+    private final MapperConfig<JdbcColumnKey> mapperConfig;
     private final ReflectionService reflectionService;
     private int index = 1;
 
 
     public SqlParameterSourceBuilder(
             ClassMeta<T> classMeta,
-            MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig) {
+            MapperConfig<JdbcColumnKey> mapperConfig) {
         this.mapperConfig = mapperConfig;
         this.reflectionService = classMeta.getReflectionService();
         this.builder =
@@ -86,30 +88,31 @@ public final class SqlParameterSourceBuilder<T> {
     public PlaceHolderValueGetterSource<T> buildSource() {
         final PlaceHolderValueGetter<T>[] parameters = new PlaceHolderValueGetter[builder.size()];
         builder.forEachProperties(
-                new ForEachCallBack<PropertyMapping<T,?,JdbcColumnKey,FieldMapperColumnDefinition<JdbcColumnKey>>>(){
+                new ForEachCallBack<PropertyMapping<T,?,JdbcColumnKey>>(){
                     int i = 0;
                     @Override
-                    public void handle(PropertyMapping<T, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
+                    public void handle(PropertyMapping<T, ?, JdbcColumnKey> pm) {
                         int parameterType =
                                 getParameterType(pm);
-                        Getter<? super T, ?> getter = pm.getPropertyMeta().getGetter();
-                        
-                        
+                        ContextualGetter<? super T, ?> getter = ContextualGetterAdapter.of(pm.getPropertyMeta().getGetter());
+
+
                         // need conversion ?
+                        final DefaultContextFactoryBuilder contextFactoryBuilder = new DefaultContextFactoryBuilder();
                         Type propertyType = pm.getPropertyMeta().getPropertyType();
                         Class<?> sqlType = JdbcTypeHelper.toJavaType(parameterType, propertyType);
                         if (!TypeHelper.isAssignable(sqlType, propertyType)) {
-                            Converter<? super Object, ?> converter = ConverterService.getInstance().findConverter(propertyType, sqlType);
+                            Converter<? super Object, ?> converter = ConverterService.getInstance().findConverter(propertyType, sqlType, contextFactoryBuilder);
                             
                             if (converter != null) {
-                                getter = new GetterWithConverter(converter, getter);
+                                getter = new FieldMapperGetterWithConverter(converter, getter);
                             }
                         }
                         
                         PlaceHolderValueGetter parameter =
                                 new PlaceHolderValueGetter(pm.getColumnKey().getOrginalName(),
                                         parameterType,
-                                        null, getter);
+                                        null, getter, contextFactoryBuilder.build());
                         parameters[i] = parameter;
                         i++;
                     }
@@ -121,7 +124,7 @@ public final class SqlParameterSourceBuilder<T> {
                 ;
     }
 
-    private static int getParameterType(PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
+    private static int getParameterType(PropertyMapping<?, ?, JdbcColumnKey> pm) {
         Class<?> propertyType = TypeHelper.toClass(pm.getPropertyMeta().getPropertyType());
         
         if (pm.getColumnDefinition().has(SqlTypeColumnProperty.class)) {

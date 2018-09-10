@@ -1,10 +1,14 @@
 package org.simpleflatmapper.test.map.impl;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
@@ -69,8 +73,8 @@ public class ConstantSourceMapperBuilderTest {
         }
 
         @Override
-        public GetterFactory<Object, SampleFieldKey> getterFactory() {
-            return getterFactory;
+        public ContextualGetterFactory<Object, SampleFieldKey> getterFactory() {
+            return new ContextualGetterFactoryAdapter<Object, SampleFieldKey>(getterFactory);
         }
     };
     @Test
@@ -91,7 +95,7 @@ public class ConstantSourceMapperBuilderTest {
 
         SourceMapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
 
-        MyObjectWithInner o = mapper.map(null);
+        MyObjectWithInner o = mapper.map(null, null);
 
         assertEquals(DATE, o.prop.date);
         assertNull(o.prop.str);
@@ -116,7 +120,7 @@ public class ConstantSourceMapperBuilderTest {
 
         SourceMapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
 
-        MyObjectWithInner o = mapper.map(null);
+        MyObjectWithInner o = mapper.map(null, null);
 
         assertEquals(DATE, o.prop.date);
         assertNull(o.prop.str);
@@ -130,7 +134,7 @@ public class ConstantSourceMapperBuilderTest {
                         classMeta,
                         MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()).fieldMapperErrorHandler(new FieldMapperErrorHandler<SampleFieldKey>() {
                             @Override
-                            public void errorMappingField(SampleFieldKey key, Object source, Object target, Exception error) throws MappingException {
+                            public void errorMappingField(SampleFieldKey key, Object source, Object target, Exception error, Context mappingContext) throws MappingException {
                             }
                         }),
                         new MappingContextFactoryBuilder<Object, SampleFieldKey>(null),
@@ -141,10 +145,10 @@ public class ConstantSourceMapperBuilderTest {
 
         SourceMapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
 
-        MyObjectWithInner o = mapper.map(null);
+        MyObjectWithInner o = mapper.map(null, null);
 
         System.out.println("mapper = " + mapper);
-        assertNull(o.prop);
+        assertNull(o.prop.date);
 
     }
 

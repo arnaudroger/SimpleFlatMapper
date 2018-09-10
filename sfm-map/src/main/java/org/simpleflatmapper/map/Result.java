@@ -1,5 +1,6 @@
 package org.simpleflatmapper.map;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.Function;
 
@@ -61,28 +62,24 @@ public class Result<T, K> {
         }
     }
     
-    public static <T, K> ResultBuilder<T, K> builder() {
-        return new ResultBuilder<T, K>();
-    }
 
     @ReflectionService.PassThrough
     public static class ResultBuilder<T, K> {
         private T value;
-        private final List<FieldError<K>> errors = new ArrayList<FieldError<K>>();
+        private final ArrayList<FieldError<K>> errors;
 
-        public ResultBuilder() {
+        public ResultBuilder(Context context) {
+            this.errors = context.context(0);
         }
         
         public void setValue(T value) {
             this.value = value;
         }
         
-        public void addError(FieldError<K> error) {
-            errors.add(error);
-        }
-
         public Result<T, K> build() {
-            return new Result<T, K>(value, errors);
+            ArrayList<FieldError<K>> fieldErrors = new ArrayList<FieldError<K>>(errors);
+            errors.clear();
+            return new Result<T, K>(value, fieldErrors);
         }
     } 
     

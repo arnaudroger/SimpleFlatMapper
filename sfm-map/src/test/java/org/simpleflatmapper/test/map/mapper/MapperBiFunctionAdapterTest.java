@@ -3,7 +3,7 @@ package org.simpleflatmapper.test.map.mapper;
 import org.junit.Test;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.mapper.MapperBiFunctionAdapter;
+import org.simpleflatmapper.map.mapper.MapperFieldMapperGetterAdapter;
 import org.simpleflatmapper.util.Predicate;
 
 import static org.junit.Assert.*;
@@ -22,16 +22,16 @@ public class MapperBiFunctionAdapterTest {
 
         MappingContext mappingContext = mock(MappingContext.class);
 
-        MapperBiFunctionAdapter<Object, String> biFunctionAdapter =
-                new MapperBiFunctionAdapter<Object, String>(mapper, nullChecker, 0);
+        MapperFieldMapperGetterAdapter<Object, String> biFunctionAdapter =
+                new MapperFieldMapperGetterAdapter<Object, String>(mapper, nullChecker, 0);
 
         Object o = new Object();
 
         when(mapper.map(o, mappingContext)).thenReturn("HEllo", "Bye");
         when(nullChecker.test(any())).thenReturn(false, true);
 
-        assertEquals("HEllo", biFunctionAdapter.apply(o, mappingContext));
-        assertNull(biFunctionAdapter.apply(null, null));
+        assertEquals("HEllo", biFunctionAdapter.get(o, mappingContext));
+        assertNull(biFunctionAdapter.get(null, null));
         biFunctionAdapter.toString();
     }
 }

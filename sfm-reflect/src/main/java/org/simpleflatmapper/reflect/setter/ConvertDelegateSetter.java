@@ -14,6 +14,6 @@ public class ConvertDelegateSetter<T, I, O> implements Setter<T, I> {
 
     @Override
     public void set(T target, I value) throws Exception {
-        setter.set(target, converter.convert(value));
+        setter.set(target, converter.convert(value, null));
     }
 }

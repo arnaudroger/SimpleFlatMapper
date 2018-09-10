@@ -83,9 +83,9 @@ public class AbstractConstantTargetMapperBuilderTest {
         assertArrayEquals(row, objects.toArray());
     }
 
-    private static final SetterFactory<List<Object>, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>> SETTER_FACTORY = new SetterFactory<List<Object>, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>>() {
+    private static final SetterFactory<List<Object>, PropertyMapping<?, ?, SampleFieldKey>> SETTER_FACTORY = new SetterFactory<List<Object>, PropertyMapping<?, ?, SampleFieldKey>>() {
         @Override
-        public <P> Setter<List<Object>, P> getSetter(final PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>> arg) {
+        public <P> Setter<List<Object>, P> getSetter(final PropertyMapping<?, ?, SampleFieldKey> arg) {
             return new Setter<List<Object>, P>() {
                 @Override
                 public void set(final List<Object> target, final P v) throws Exception {
@@ -104,7 +104,7 @@ public class AbstractConstantTargetMapperBuilderTest {
         public Writerbuilder(ClassMeta<T> classMeta) {
             this(classMeta, MapperConfig.<SampleFieldKey>fieldMapperConfig().failOnAsm(true));
         }
-        public Writerbuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig) {
+        public Writerbuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey> mapperConfig) {
             super(classMeta, TypeHelper.<List<Object>>toClass(new TypeReference<List<Object>>(){}.getType()), mapperConfig,
                     ConstantTargetFieldMapperFactoryImpl.<List<Object>, SampleFieldKey>newInstance(SETTER_FACTORY, List.class));
         }

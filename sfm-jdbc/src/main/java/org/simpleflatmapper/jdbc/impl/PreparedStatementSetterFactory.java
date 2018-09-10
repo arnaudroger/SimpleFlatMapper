@@ -1,9 +1,14 @@
 package org.simpleflatmapper.jdbc.impl;
 
+import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
+import org.simpleflatmapper.map.setter.ContextualIndexedSetter;
+import org.simpleflatmapper.map.setter.ContextualIndexedSetterFactory;
+import org.simpleflatmapper.map.setter.ContextualSetter;
+import org.simpleflatmapper.map.setter.ContextualSetterFactory;
 import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.reflect.IndexedSetterFactory;
 import org.simpleflatmapper.reflect.Setter;
@@ -23,20 +28,20 @@ import java.lang.reflect.Type;
 import java.sql.*;
 
 public class PreparedStatementSetterFactory implements
-        SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> {
+        ContextualSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>> {
 
     public static final PreparedStatementSetterFactory INSTANCE = new PreparedStatementSetterFactory(PreparedStatementIndexedSetterFactory.INSTANCE);
 
-    private final IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> preparedStatementIndexedSetterFactory;
+    private final ContextualIndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>> preparedStatementIndexedSetterFactory;
 
-    private PreparedStatementSetterFactory(IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> preparedStatementIndexedSetterFactory) {
+    private PreparedStatementSetterFactory(ContextualIndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey>> preparedStatementIndexedSetterFactory) {
         this.preparedStatementIndexedSetterFactory = preparedStatementIndexedSetterFactory;
     }
 
 
     @SuppressWarnings("unchecked")
     @Override
-    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+    public <P> ContextualSetter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey> pm, ContextFactoryBuilder contextFactoryBuilder) {
         int columnIndex = pm.getColumnKey().getIndex();
 
         Type type = pm.getPropertyMeta().getPropertyType();
@@ -44,28 +49,27 @@ public class PreparedStatementSetterFactory implements
         Class<?> clazz = TypeHelper.toBoxedClass(type);
 
         if (Boolean.class.equals(clazz)) {
-            return (Setter<PreparedStatement, P>) new BooleanPreparedStatementSetter(columnIndex);
+            return (ContextualSetter<PreparedStatement, P>) new BooleanPreparedStatementSetter(columnIndex);
         } else if (Byte.class.equals(clazz)) {
-            return (Setter<PreparedStatement, P>) new BytePreparedStatementSetter(columnIndex);
+            return (ContextualSetter<PreparedStatement, P>) new BytePreparedStatementSetter(columnIndex);
         } else if (Character.class.equals(clazz)) {
-            return (Setter<PreparedStatement, P>) new CharacterPreparedStatementSetter(columnIndex);
+            return (ContextualSetter<PreparedStatement, P>) new CharacterPreparedStatementSetter(columnIndex);
         } else if (Short.class.equals(clazz)) {
-            return (Setter<PreparedStatement, P>) new ShortPreparedStatementSetter(columnIndex);
+            return (ContextualSetter<PreparedStatement, P>) new ShortPreparedStatementSetter(columnIndex);
         } else if (Integer.class.equals(clazz)) {
-            return (Setter<PreparedStatement, P>) new IntegerPreparedStatementSetter(columnIndex);
+            return (ContextualSetter<PreparedStatement, P>) new IntegerPreparedStatementSetter(columnIndex);
         } else if (Long.class.equals(clazz)) {
-            return (Setter<PreparedStatement, P>) new LongPreparedStatementSetter(columnIndex);
+            return (ContextualSetter<PreparedStatement, P>) new LongPreparedStatementSetter(columnIndex);
         } else if (Double.class.equals(clazz)) {
-            return (Setter<PreparedStatement, P>) new DoublePreparedStatementSetter(columnIndex);
+            return (ContextualSetter<PreparedStatement, P>) new DoublePreparedStatementSetter(columnIndex);
         } else if (Float.class.equals(clazz)) {
-            return (Setter<PreparedStatement, P>) new FloatPreparedStatementSetter(columnIndex);
+            return (ContextualSetter<PreparedStatement, P>) new FloatPreparedStatementSetter(columnIndex);
         }
 
-        IndexedSetter<PreparedStatement, P> setter = preparedStatementIndexedSetterFactory.getIndexedSetter(pm);
+        ContextualIndexedSetter<PreparedStatement, P> setter = preparedStatementIndexedSetterFactory.getIndexedSetter(pm, contextFactoryBuilder);
 
         if (setter != null) {
             return new PreparedStatementSetterImpl<P>(columnIndex, setter);
         } else return null;
     }
-
 }

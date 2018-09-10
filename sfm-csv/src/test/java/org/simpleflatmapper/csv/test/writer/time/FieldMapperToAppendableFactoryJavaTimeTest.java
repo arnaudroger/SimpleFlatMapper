@@ -118,14 +118,14 @@ public class FieldMapperToAppendableFactoryJavaTimeTest {
         FieldMapper<JavaTimeObject, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldMapper(
                 newPropertyMapping("localDateTime", javaTimeObjectClassMeta, FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("dd/MM/yyyy")))),
                 builder, null);
-        testFieldMapper("03/12/2011", fieldMapper, javaTimeObject, builder.newFactory());
+        testFieldMapper("03/12/2011", fieldMapper, javaTimeObject, builder.build());
 
     }
 
     public void testFieldMapperForClassAndProp(String expected, String propName, ClassMeta<JavaTimeObject> classMeta) throws Exception {
         MappingContextFactoryBuilder<JavaTimeObject, CsvColumnKey> builder = getMappingContextBuilder();
         FieldMapper<JavaTimeObject, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping(propName, classMeta), builder, null);
-        testFieldMapper(expected, fieldMapper, javaTimeObject, builder.newFactory());
+        testFieldMapper(expected, fieldMapper, javaTimeObject, builder.build());
     }
 
     private <T> void testFieldMapper(String expected, FieldMapper<T, Appendable> fieldMapper, T source, MappingContextFactory<T> dbObjectMappingContextFactory) throws Exception {
@@ -134,14 +134,14 @@ public class FieldMapperToAppendableFactoryJavaTimeTest {
         assertEquals(expected, sb.toString());
     }
 
-    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> newPropertyMapping(String col, ClassMeta<T> classMeta) {
+    private <T> PropertyMapping<T, String, CsvColumnKey> newPropertyMapping(String col, ClassMeta<T> classMeta) {
         return newPropertyMapping(col, classMeta, FieldMapperColumnDefinition.<CsvColumnKey>identity());
     }
 
-    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> newPropertyMapping(String col, ClassMeta<T> classMeta, FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
+    private <T> PropertyMapping<T, String, CsvColumnKey> newPropertyMapping(String col, ClassMeta<T> classMeta, FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
         PropertyMeta<T, String> propertyMeta = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(col), new Object[0], (TypeAffinity)null);
         if (propertyMeta == null) throw new IllegalArgumentException("cannot find prop " + col);
-        return new PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>(
+        return new PropertyMapping<T, String, CsvColumnKey>(
                 propertyMeta,
                 new CsvColumnKey(col, 1),
                 columnDefinition);

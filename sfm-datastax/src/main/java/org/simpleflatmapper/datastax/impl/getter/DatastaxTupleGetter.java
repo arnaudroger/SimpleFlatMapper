@@ -5,6 +5,7 @@ import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.TupleType;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 import org.simpleflatmapper.datastax.DatastaxMapperFactory;
+import org.simpleflatmapper.map.ContextualSourceMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
@@ -15,10 +16,10 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 public class DatastaxTupleGetter<T extends Tuple2<?, ?>> implements Getter<GettableByIndexData, T> {
-    private final SourceMapper<GettableByIndexData, T> mapper;
+    private final ContextualSourceMapper<GettableByIndexData, T> mapper;
     private final int index;
 
-    public DatastaxTupleGetter(SourceMapper<GettableByIndexData, T> mapper, int index) {
+    public DatastaxTupleGetter(ContextualSourceMapper<GettableByIndexData, T> mapper, int index) {
         this.mapper = mapper;
         this.index = index;
     }
@@ -30,11 +31,11 @@ public class DatastaxTupleGetter<T extends Tuple2<?, ?>> implements Getter<Getta
 
     @SuppressWarnings("unchecked")
     public static <P extends  Tuple2<?, ?>> Getter<GettableByIndexData, P> newInstance(DatastaxMapperFactory factory, Type target,  TupleType tt, int index) {
-        SourceMapper<GettableByIndexData, P> mapper = newTupleMapper(target, tt, factory);
+        ContextualSourceMapper<GettableByIndexData, P> mapper = newTupleMapper(target, tt, factory);
         return new DatastaxTupleGetter<P>(mapper, index);
     }
 
-    public static <P extends Tuple2<?, ?>> SourceMapper<GettableByIndexData, P> newTupleMapper(Type target, TupleType tt, DatastaxMapperFactory factory) {
+    public static <P extends Tuple2<?, ?>> ContextualSourceMapper<GettableByIndexData, P> newTupleMapper(Type target, TupleType tt, DatastaxMapperFactory factory) {
         ConstantSourceMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> builder =
                 DatastaxUDTGetter.newFieldMapperBuilder(factory, target);
 

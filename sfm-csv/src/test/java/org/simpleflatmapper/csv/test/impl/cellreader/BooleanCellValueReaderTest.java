@@ -1,16 +1,16 @@
 package org.simpleflatmapper.csv.test.impl.cellreader;
 
 import org.junit.Test;
-import org.simpleflatmapper.csv.impl.cellreader.BooleanCellValueReaderImpl;
+import org.simpleflatmapper.csv.CsvColumnKey;
+import org.simpleflatmapper.csv.CsvRow;
+import org.simpleflatmapper.lightningcsv.parser.CharSequenceCharBuffer;
 
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class BooleanCellValueReaderTest {
 
-	BooleanCellValueReaderImpl reader = new BooleanCellValueReaderImpl();
 	@Test
 	public void testRead() throws UnsupportedEncodingException {
 		testReadBoolean(null, "");
@@ -25,14 +25,16 @@ public class BooleanCellValueReaderTest {
 		testReadBoolean(true, "1");
 	}
 
-	@Test
-	public void testReadEmptyStringReturnNull() {
-		assertNull(reader.read(new char[10], 2, 0, null));
-	}
 
 	private void testReadBoolean(Boolean expected, String str) throws UnsupportedEncodingException {
-		final char[] chars = ("_" + str+ "_").toCharArray();
-		assertEquals(expected, reader.read(chars, 1, chars.length-2, null));
+
+
+
+		CsvRow reader = new CsvRow(new CsvColumnKey[1], 1, new CharSequenceCharBuffer("_" + str+ "_"));
+
+		reader.reset();
+		reader.addValue(1, str.length());
+		assertEquals(expected, reader.getBoxedBoolean(0));
 	}
 
 

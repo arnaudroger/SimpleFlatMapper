@@ -35,7 +35,7 @@ public class MapperAsmFactoryTest {
 				DbObject.class);
 		
 		try {
-			jdbcMapper.map(null);
+			jdbcMapper.map(null, null);
 		} catch(Exception e) {
             assertTrue(e instanceof IOException);
 			// ok
@@ -65,7 +65,7 @@ public class MapperAsmFactoryTest {
 				DbObject.class);
 		
 		try {
-			jdbcMapper.map(null);
+			jdbcMapper.map(null, null);
 		} catch(MappingException e) {
 			// ok
 		} 

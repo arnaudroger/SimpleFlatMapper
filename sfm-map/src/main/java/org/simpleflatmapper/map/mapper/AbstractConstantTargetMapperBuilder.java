@@ -29,10 +29,17 @@ import java.util.List;
 
 public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends FieldKey<K>, B extends AbstractConstantTargetMapperBuilder<S, T, K , B>> {
 
+    private static KeySourceGetter KEY_SOURCE_GETTER = new KeySourceGetter() {
+        @Override
+        public Object getValue(Object key, Object source) throws Exception {
+            throw new UnsupportedOperationException();
+        }
+    };
+    
     private final ReflectionService reflectionService;
-    protected final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
+    protected final MapperConfig<K> mapperConfig;
 
-    protected final PropertyMappingsBuilder<T, K,  FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
+    protected final PropertyMappingsBuilder<T, K> propertyMappingsBuilder;
 
     protected final ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory;
     protected final ClassMeta<T> classMeta;
@@ -42,7 +49,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
 
     public AbstractConstantTargetMapperBuilder(
             ClassMeta<T> classMeta,
-            Class<S> sourceClass, MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
+            Class<S> sourceClass, MapperConfig<K> mapperConfig,
             ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory) {
         this.sourceClass = sourceClass;
         this.fieldAppenderFactory = fieldAppenderFactory;
@@ -87,22 +94,17 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
     }
 
     @SuppressWarnings("unchecked")
-    public ContextualFieldMapper<T, S> mapper() {
+    public ContextualSourceFieldMapperImpl<T, S> mapper() {
 
         final List<FieldMapper<T, S>> mappers = new ArrayList<FieldMapper<T, S>>();
 
 
-        final MappingContextFactoryBuilder mappingContextFactoryBuilder = new MappingContextFactoryBuilder(new KeySourceGetter<K, T>() {
-            @Override
-            public Object getValue(K key, T source) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-        });
+        final MappingContextFactoryBuilder<T, K> mappingContextFactoryBuilder = new MappingContextFactoryBuilder<T, K>(keySourceGetter());
 
         propertyMappingsBuilder.forEachProperties(
-                new ForEachCallBack<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>() {
+                new ForEachCallBack<PropertyMapping<T, ?, K>>() {
                     @Override
-                    public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm) {
+                    public void handle(PropertyMapping<T, ?, K> pm) {
                         preFieldProcess(mappers, pm);
                         FieldMapper<T, S> fieldMapper =
                                 fieldAppenderFactory.newFieldMapper(
@@ -154,20 +156,16 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
                     instantiator);
         }
 
-        
-        
-
-        return
-            new ContextualFieldMapper<T, S>(mapper, mappingContextFactoryBuilder.newFactory());
+        return new ContextualSourceFieldMapperImpl<T, S>(mappingContextFactoryBuilder.build(), mapper);
     }
 
     protected void postMapperProcess(List<FieldMapper<T,S>> mappers) {
     }
 
-    protected void postFieldProcess(List<FieldMapper<T,S>> mappers, PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm) {
+    protected void postFieldProcess(List<FieldMapper<T,S>> mappers, PropertyMapping<T, ?, K> pm) {
     }
 
-    protected void preFieldProcess(List<FieldMapper<T,S>> mappers, PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm) {
+    protected void preFieldProcess(List<FieldMapper<T,S>> mappers, PropertyMapping<T, ?, K> pm) {
     }
 
     protected int getStartingIndex() {
@@ -181,5 +179,10 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
     private FieldKey<?>[] getKeys() {
         return propertyMappingsBuilder.getKeys().toArray(new FieldKey[0]);
     }
+
+    protected KeySourceGetter<K, ? super T> keySourceGetter() {
+        return KEY_SOURCE_GETTER;
+    }
+
 
 }

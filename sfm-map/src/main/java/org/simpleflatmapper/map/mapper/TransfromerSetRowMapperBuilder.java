@@ -1,5 +1,6 @@
 package org.simpleflatmapper.map.mapper;
 
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
@@ -8,6 +9,8 @@ import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.util.Function;
+
+import java.util.List;
 
 public class TransfromerSetRowMapperBuilder<MO extends SetRowMapper<ROW, SET, O, E>, MI extends SetRowMapper<ROW, SET, I, E>, ROW, SET, I, O, K extends FieldKey<K>, E extends Exception> 
         implements SetRowMapperBuilder<MO, ROW, SET, O, K, E> {
@@ -27,10 +30,9 @@ public class TransfromerSetRowMapperBuilder<MO extends SetRowMapper<ROW, SET, O,
     }
 
     @Override
-    public final SourceFieldMapper<ROW, O> sourceFieldMapper() {
+    public ContextualSourceFieldMapper<ROW, O> sourceFieldMapper() {
         throw new UnsupportedOperationException();
     }
-
     @Override
     public final boolean isRootAggregate() {
         return delegate.isRootAggregate();
@@ -41,17 +43,22 @@ public class TransfromerSetRowMapperBuilder<MO extends SetRowMapper<ROW, SET, O,
     }
 
     @Override
-    public final void addMapping(K key, FieldMapperColumnDefinition<K> columnDefinition) {
+    public final void addMapping(K key, ColumnDefinition<K, ?> columnDefinition) {
         delegate.addMapping(key, columnDefinition);
     }
 
     @Override
-    public final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig() {
+    public final MapperConfig<K> mapperConfig() {
         return delegate.mapperConfig();
     }
 
     @Override
     public final MappingContextFactoryBuilder<? super ROW, K> getMappingContextFactoryBuilder() {
         return delegate.getMappingContextFactoryBuilder();
+    }
+
+    @Override
+    public List<K> getKeys() {
+        return delegate.getKeys();
     }
 }

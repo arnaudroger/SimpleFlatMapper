@@ -1,5 +1,6 @@
 package org.simpleflatmapper.converter.impl.time;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.Converter;
 
 import java.time.*;
@@ -16,7 +17,7 @@ public class ObjectToJavaYearMonthConverter implements Converter<Object, YearMon
     }
 
     @Override
-    public YearMonth convert(Object o) throws Exception {
+    public YearMonth convert(Object o, Context context) throws Exception {
         if (o == null) {
             return null;
         }

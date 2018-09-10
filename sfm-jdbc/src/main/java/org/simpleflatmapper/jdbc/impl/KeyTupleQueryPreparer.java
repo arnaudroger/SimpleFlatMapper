@@ -1,5 +1,7 @@
 package org.simpleflatmapper.jdbc.impl;
 
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.converter.ContextFactory;
 import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 import org.simpleflatmapper.util.ErrorHelper;
 
@@ -10,10 +12,12 @@ import java.util.Collection;
 
 public class KeyTupleQueryPreparer<T>  {
 
+    private final ContextFactory contextFactory;
     private final MultiIndexFieldMapper<T>[] multiIndexFieldMappers;
     private final String[] keys;
 
-    public KeyTupleQueryPreparer( MultiIndexFieldMapper<T>[] multiIndexFieldMappers, String[] keys) {
+    public KeyTupleQueryPreparer(MultiIndexFieldMapper<T>[] multiIndexFieldMappers, ContextFactory contextFactory, String[] keys) {
+        this.contextFactory = contextFactory;
         if (keys.length != multiIndexFieldMappers.length) {
             throw new IllegalArgumentException("mappers and keys don't match");
         }
@@ -37,10 +41,11 @@ public class KeyTupleQueryPreparer<T>  {
     public void bindTo(Collection<T> values, PreparedStatement ps, int offset) {
 
         int index = offset;
+        Context context = contextFactory.newContext();
         for(T value : values) {
             for(MultiIndexFieldMapper<T> mapper : multiIndexFieldMappers) {
                 try {
-                    mapper.map(ps, value, index);
+                    mapper.map(ps, value, index, context);
                 } catch (Exception e) {
                     ErrorHelper.rethrow(e);
                 }

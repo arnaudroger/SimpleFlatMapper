@@ -2,7 +2,6 @@ package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -11,10 +10,10 @@ public class DynamicPlaceHolderValueGetterSource<T> implements PlaceHolderValueG
 
     private final AtomicReference<PlaceHolderValueGetterSource<T>> delegate;
     private final ClassMeta<T> classMeta;
-    private final MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig;
+    private final MapperConfig<JdbcColumnKey> mapperConfig;
 
     @SuppressWarnings("unchecked")
-    public DynamicPlaceHolderValueGetterSource(ClassMeta<T> classMeta, MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig) {
+    public DynamicPlaceHolderValueGetterSource(ClassMeta<T> classMeta, MapperConfig<JdbcColumnKey> mapperConfig) {
         this.classMeta = classMeta;
         this.mapperConfig = mapperConfig;
         this.delegate = new AtomicReference<PlaceHolderValueGetterSource<T>>(new ArrayPlaceHolderValueGetterSource<T>(new PlaceHolderValueGetter[0]));

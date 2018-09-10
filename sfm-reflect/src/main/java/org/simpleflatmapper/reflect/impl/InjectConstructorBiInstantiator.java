@@ -27,7 +27,8 @@ public final class InjectConstructorBiInstantiator<S1, S2, T> implements BiInsta
 	@Override
 	public T newInstance(S1 s1, S2 s2) throws Exception {
 		try {
-			return constructor.newInstance(argBuilder.build(s1, s2));
+			Object[] args = argBuilder.build(s1, s2);
+			return constructor.newInstance(args);
 		} catch(InvocationTargetException e) {
 			return ErrorHelper.rethrow(e.getCause());
 		}

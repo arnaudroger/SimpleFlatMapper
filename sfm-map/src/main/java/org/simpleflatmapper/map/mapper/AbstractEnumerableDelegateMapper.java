@@ -1,6 +1,7 @@
 package org.simpleflatmapper.map.mapper;
 
 
+import org.simpleflatmapper.map.ContextualSourceMapper;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
@@ -12,7 +13,6 @@ public abstract class AbstractEnumerableDelegateMapper<ROW, SET, T, E extends Ex
     public AbstractEnumerableDelegateMapper(ConsumerErrorHandler errorHandler) {
         super(errorHandler);
     }
-
     @Override
     public final T map(ROW source) throws MappingException {
         return getMapper(source).map(source);
@@ -23,5 +23,5 @@ public abstract class AbstractEnumerableDelegateMapper<ROW, SET, T, E extends Ex
         return getMapper(source).map(source, context);
     }
 
-    protected abstract SourceMapper<ROW, T> getMapper(ROW source);
+    protected abstract ContextualSourceMapper<ROW, T> getMapper(ROW source);
 }

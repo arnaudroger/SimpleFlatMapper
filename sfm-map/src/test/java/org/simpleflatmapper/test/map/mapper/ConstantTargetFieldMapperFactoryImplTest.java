@@ -27,6 +27,8 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.util.TypeHelper;
 
+import java.lang.reflect.Type;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -35,11 +37,37 @@ import static org.mockito.Mockito.mock;
 public class ConstantTargetFieldMapperFactoryImplTest {
 
 
-    SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>> setterFactory =
-            new SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>>() {
+    SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey>> setterFactory =
+            new SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey>>() {
                 @Override
-                public <P> Setter<Appendable, P> getSetter(PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>> arg) {
-                    if (TypeHelper.isJavaLang(arg.getPropertyMeta().getPropertyType())) {
+                public <P> Setter<Appendable, P> getSetter(PropertyMapping<?, ?, SampleFieldKey> arg) {
+                    Type propertyType = arg.getPropertyMeta().getPropertyType();
+                    
+                    if (boolean.class.equals(propertyType)) {
+                        return (Setter<Appendable, P>) new BooleanAppendableSetter();
+                    }
+                    if (byte.class.equals(propertyType)) {
+                        return (Setter<Appendable, P>) new ByteAppendableSetter();
+                    }
+                    if (char.class.equals(propertyType)) {
+                        return (Setter<Appendable, P>) new CharacterAppendableSetter();
+                    }
+                    if (short.class.equals(propertyType)) {
+                        return (Setter<Appendable, P>) new ShortAppendableSetter();
+                    }
+                    if (int.class.equals(propertyType)) {
+                        return (Setter<Appendable, P>) new IntAppendableSetter();
+                    }
+                    if (long.class.equals(propertyType)) {
+                        return (Setter<Appendable, P>) new LongAppendableSetter();
+                    }
+                    if (float.class.equals(propertyType)) {
+                        return (Setter<Appendable, P>) new FloatAppendableSetter();
+                    }
+                    if (double.class.equals(propertyType)) {
+                        return (Setter<Appendable, P>) new DoubleAppendableSetter();
+                    }
+                    if (TypeHelper.isJavaLang(propertyType)) {
                         return new AppendableSetter<P>();
                     }
                     return null;
@@ -76,7 +104,7 @@ public class ConstantTargetFieldMapperFactoryImplTest {
     }
 
     private <T> void testMapping(T object, String property, String expectedValue) throws Exception {
-        PropertyMapping<T, String, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm =
+        PropertyMapping<T, String, SampleFieldKey> pm =
                 ConstantSourceFieldMapperFactoryImplTest.createPropertyMapping((Class<T>) object.getClass(), property);
         FieldMapper<T, Appendable> fieldMapper = factory.newFieldMapper(pm, null, RethrowMapperBuilderErrorHandler.INSTANCE);
 
@@ -93,8 +121,8 @@ public class ConstantTargetFieldMapperFactoryImplTest {
 
         try {
             PropertyMeta<Object, Object> pm = mock(PropertyMeta.class);
-            PropertyMapping<Object, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> propertyMapping =
-                    new PropertyMapping<Object, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(pm, new SampleFieldKey("hh", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+            PropertyMapping<Object, Object, SampleFieldKey> propertyMapping =
+                    new PropertyMapping<Object, Object, SampleFieldKey>(pm, new SampleFieldKey("hh", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
             factory.newFieldMapper(propertyMapping, null, RethrowMapperBuilderErrorHandler.INSTANCE);
             fail();
         } catch (MapperBuildingException e) {
@@ -103,17 +131,17 @@ public class ConstantTargetFieldMapperFactoryImplTest {
 
     @Test
     public void testSetterNotFound() {
-        SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>> setterFactory =
-                new SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>>() {
+        SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey>> setterFactory =
+                new SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey>>() {
                     @Override
-                    public <P> Setter<Appendable, P> getSetter(PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>> arg) {
+                    public <P> Setter<Appendable, P> getSetter(PropertyMapping<?, ?, SampleFieldKey> arg) {
                         return null;
                     }
                 };
 
         ConstantTargetFieldMapperFactory<Appendable, SampleFieldKey> factory = ConstantTargetFieldMapperFactoryImpl.<Appendable, SampleFieldKey>newInstance(setterFactory, Appendable.class);
         try {
-            PropertyMapping<DbObject, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> propertyMapping =
+            PropertyMapping<DbObject, Object, SampleFieldKey> propertyMapping =
                     ConstantSourceFieldMapperFactoryImplTest.createPropertyMapping(DbObject.class, "id");
             assertNotNull(propertyMapping.getPropertyMeta().getGetter());
             factory.newFieldMapper(propertyMapping, null, RethrowMapperBuilderErrorHandler.INSTANCE);
@@ -150,15 +178,7 @@ public class ConstantTargetFieldMapperFactoryImplTest {
     }
 
     private static class AppendableSetter<P> implements
-            Setter<Appendable, P>,
-            BooleanSetter<Appendable>,
-            ByteSetter<Appendable>,
-            CharacterSetter<Appendable>,
-            ShortSetter<Appendable>,
-            IntSetter<Appendable>,
-            LongSetter<Appendable>,
-            FloatSetter<Appendable>,
-            DoubleSetter<Appendable>
+            Setter<Appendable, P>
 
     {
         @Override
@@ -166,44 +186,98 @@ public class ConstantTargetFieldMapperFactoryImplTest {
             target.append(String.valueOf(value));
         }
 
-        @Override
-        public void setInt(Appendable target, int value) throws Exception {
-            target.append("I" + value);
-        }
+      
+    }
 
+    private class BooleanAppendableSetter implements Setter<Appendable, Boolean>, BooleanSetter<Appendable> {
         @Override
-        public void setByte(Appendable target, byte value) throws Exception {
-            target.append("B" + value);
-        }
-
-        @Override
-        public void setLong(Appendable target, long value) throws Exception {
-            target.append("L" + value);
-        }
-
-        @Override
-        public void setFloat(Appendable target, float value) throws Exception {
-            target.append("F" + value);
-        }
-
-        @Override
-        public void setShort(Appendable target, short value) throws Exception {
-            target.append("S" + value);
-        }
-
-        @Override
-        public void setDouble(Appendable target, double value) throws Exception {
-            target.append("D" + value);
+        public void set(Appendable target, Boolean value) throws Exception {
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public void setBoolean(Appendable target, boolean value) throws Exception {
             target.append("Z" + value);
         }
+    }
+
+    private class ByteAppendableSetter implements Setter<Appendable, Byte>, ByteSetter<Appendable> {
+        @Override
+        public void set(Appendable target, Byte value) throws Exception {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setByte(Appendable target, byte value) throws Exception {
+            target.append("B" + value);
+        }
+    }
+
+    private class CharacterAppendableSetter implements Setter<Appendable, Character>, CharacterSetter<Appendable> {
+        @Override
+        public void set(Appendable target, Character value) throws Exception {
+            throw new UnsupportedOperationException();
+        }
 
         @Override
         public void setCharacter(Appendable target, char value) throws Exception {
             target.append("C" + value);
+        }
+    }
+
+    private class ShortAppendableSetter implements Setter<Appendable, Short>, ShortSetter<Appendable> {
+        @Override
+        public void set(Appendable target, Short value) throws Exception {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setShort(Appendable target, short value) throws Exception {
+            target.append("S" + value);
+        }
+    }
+    private class IntAppendableSetter implements Setter<Appendable, Integer>, IntSetter<Appendable> {
+        @Override
+        public void set(Appendable target, Integer value) throws Exception {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setInt(Appendable target, int value) throws Exception {
+            target.append("I" + value);
+        }
+    }
+    private class LongAppendableSetter implements Setter<Appendable, Long>, LongSetter<Appendable> {
+        @Override
+        public void set(Appendable target, Long value) throws Exception {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setLong(Appendable target, long value) throws Exception {
+            target.append("L" + value);
+        }
+    }
+    private class FloatAppendableSetter implements Setter<Appendable, Float>, FloatSetter<Appendable> {
+        @Override
+        public void set(Appendable target, Float value) throws Exception {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setFloat(Appendable target, float value) throws Exception {
+            target.append("F" + value);
+        }
+    }
+    private class DoubleAppendableSetter implements Setter<Appendable, Double>, DoubleSetter<Appendable> {
+        @Override
+        public void set(Appendable target, Double value) throws Exception {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setDouble(Appendable target, double value) throws Exception {
+            target.append("D" + value);
         }
     }
 }

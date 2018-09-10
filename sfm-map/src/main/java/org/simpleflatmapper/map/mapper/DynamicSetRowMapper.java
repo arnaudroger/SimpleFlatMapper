@@ -48,7 +48,7 @@ public class DynamicSetRowMapper<ROW, SET, T, E extends Exception, K extends Fie
 			return null;
 		}
 	}
-
+	
 	@Override
 	public final T map(ROW row, MappingContext<? super ROW> context) throws MappingException {
 		try {

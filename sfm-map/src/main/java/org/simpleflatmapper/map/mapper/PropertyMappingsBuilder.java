@@ -30,11 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> {
+public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 
 	protected final PropertyFinder<T> propertyFinder;
 
-	protected final List<PropertyMapping<T, ?, K, D>> properties = new ArrayList<PropertyMapping<T, ?, K, D>>();
+	protected final List<PropertyMapping<T, ?, K>> properties = new ArrayList<PropertyMapping<T, ?, K>>();
 
 	protected final PropertyNameMatcherFactory propertyNameMatcherFactory;
 
@@ -69,17 +69,17 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	}
 
 
-	public <P> PropertyMapping<T, P, K, D> addProperty(final K key, final D columnDefinition) {
+	public <P> PropertyMapping<T, P, K> addProperty(final K key, final ColumnDefinition<K, ?> columnDefinition) {
 		return
 				_addProperty(key, columnDefinition, propertyNotFoundConsumer);
 	}
 
-	public <P> PropertyMapping<T, P, K, D> addPropertyIfPresent(final K key, final D columnDefinition) {
+	public <P> PropertyMapping<T, P, K> addPropertyIfPresent(final K key, final ColumnDefinition<K, ?> columnDefinition) {
 		return _addProperty(key, columnDefinition, NullConsumer.INSTANCE);
 	}
 
 	@SuppressWarnings("unchecked")
-	private <P> PropertyMapping<T, P, K, D> _addProperty(final K key, final D columnDefinition, Consumer<? super K> propertyNotFound) {
+	private <P> PropertyMapping<T, P, K> _addProperty(final K key, final ColumnDefinition<K, ?> columnDefinition, Consumer<? super K> propertyNotFound) {
 		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
 
 		if (columnDefinition.ignore()) {
@@ -101,7 +101,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 			properties.add(null);
 			return null;
 		} else {
-			PropertyMapping<T, P, K, D> propertyMapping = addProperty(key, columnDefinition, prop);
+			PropertyMapping<T, P, K> propertyMapping = addProperty(key, columnDefinition, prop);
 			propertyMappingsBuilderProbe.map(key, columnDefinition, prop);
 
 			handleSelfPropertyMetaInvalidation(propertyNotFound);
@@ -134,8 +134,8 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	private void handleSelfPropertyMetaInvalidation(Consumer<? super K> propertyNotFound) {
 		List<K> invalidateKeys = new ArrayList<K>();
 
-		for(ListIterator<PropertyMapping<T, ?, K, D>> iterator = properties.listIterator(); iterator.hasNext();) {
-			PropertyMapping<T, ?, K, D> propertyMapping = iterator.next();
+		for(ListIterator<PropertyMapping<T, ?, K>> iterator = properties.listIterator(); iterator.hasNext();) {
+			PropertyMapping<T, ?, K> propertyMapping = iterator.next();
 			if (propertyMapping != null && !propertyMapping.getPropertyMeta().isValid()) {
 				iterator.set(null);
 				invalidateKeys.add(propertyMapping.getColumnKey());
@@ -147,7 +147,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		}
 	}
 
-	public <P> PropertyMapping<T, P, K, D> addProperty(final K key, final D columnDefinition, final PropertyMeta<T, P> prop) {
+	public <P> PropertyMapping<T, P, K> addProperty(final K key, final ColumnDefinition<K, ?> columnDefinition, final PropertyMeta<T, P> prop) {
 		if (columnDefinition.hasCustomSourceFrom(prop.getOwnerType())) {
 			Type type = prop.getPropertyType();
 
@@ -158,9 +158,9 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		}
 
 		Object[] definedProperties = prop.getDefinedProperties();
-		D mergeColumnDefinition = definedProperties != null ? columnDefinition.add(definedProperties) : columnDefinition;
+		ColumnDefinition<K, ?> mergeColumnDefinition = definedProperties != null ? columnDefinition.add(definedProperties) : columnDefinition;
 
-		PropertyMapping<T, P, K, D> propertyMapping = new PropertyMapping<T, P, K, D>(prop, key, mergeColumnDefinition);
+		PropertyMapping<T, P, K> propertyMapping = new PropertyMapping<T, P, K>(prop, key, mergeColumnDefinition);
 
 		properties.add(propertyMapping);
 		
@@ -191,7 +191,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		modifiable = false;
 
 		List<K>  keys = new ArrayList<K>(properties.size());
-		for (PropertyMapping<T, ?, K, D> propMapping : properties) {
+		for (PropertyMapping<T, ?, K> propMapping : properties) {
 			if (propMapping != null) {
 				keys.add(propMapping.getColumnKey());
 			} else {
@@ -202,10 +202,10 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		return keys;
 	}
 
-	public void forEachConstructorProperties(ForEachCallBack<PropertyMapping<T, ?, K, D>> handler)  {
+	public void forEachConstructorProperties(ForEachCallBack<PropertyMapping<T, ?, K>> handler)  {
 		modifiable = false;
 
-		for (PropertyMapping<T, ?, K, D> property : properties) {
+		for (PropertyMapping<T, ?, K> property : properties) {
 			if (property != null) {
 				PropertyMeta<T, ?> propertyMeta = property.getPropertyMeta();
 				if (propertyMeta != null && propertyMeta.isConstructorProperty() && ! propertyMeta.isSubProperty()) {
@@ -215,21 +215,21 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		}
 	}
 
-	public List<PropertyMapping<T, ?, K, D>> currentProperties() {
-		return new ArrayList<PropertyMapping<T, ?, K, D>>(properties);
+	public List<PropertyMapping<T, ?, K>> currentProperties() {
+		return new ArrayList<PropertyMapping<T, ?, K>>(properties);
 	}
 
-	public <H extends ForEachCallBack<PropertyMapping<T, ?, K, D>>> H forEachProperties(H handler)  {
+	public <H extends ForEachCallBack<PropertyMapping<T, ?, K>>> H forEachProperties(H handler)  {
 		return forEachProperties(handler, -1 );
 	}
 
-	public <F extends ForEachCallBack<PropertyMapping<T, ?, K, D>>> F forEachProperties(F handler, int start)  {
+	public <F extends ForEachCallBack<PropertyMapping<T, ?, K>>> F forEachProperties(F handler, int start)  {
 		return forEachProperties(handler, start, -1 );
 	}
 
-	public <F extends ForEachCallBack<PropertyMapping<T, ?, K, D>>> F forEachProperties(F handler, int start, int end)  {
+	public <F extends ForEachCallBack<PropertyMapping<T, ?, K>>> F forEachProperties(F handler, int start, int end)  {
 		modifiable = false;
-		for (PropertyMapping<T, ?, K, D> prop : properties) {
+		for (PropertyMapping<T, ?, K> prop : properties) {
 			if (prop != null
 					&& (prop.getColumnKey().getIndex() >= start || start == -1)
 					&& (prop.getColumnKey().getIndex() < end || end == -1)) {
@@ -257,7 +257,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	public int maxIndex() {
 		int i = -1;
-		for (PropertyMapping<T, ?, K, D> prop : properties) {
+		for (PropertyMapping<T, ?, K> prop : properties) {
 			if (prop != null) {
 				i = Math.max(i, prop.getColumnKey().getIndex());
 			}
@@ -266,7 +266,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	}
 
 	public boolean hasKey(Predicate<? super K> predicate) {
-		for (PropertyMapping<T, ?, K, D> propMapping : properties) {
+		for (PropertyMapping<T, ?, K> propMapping : properties) {
 			if (propMapping != null && predicate.test(propMapping.getColumnKey())) {
 				return true;
 			}
@@ -279,16 +279,16 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		return classMeta;
 	}
 
-	public static <T, K extends FieldKey<K>, D  extends ColumnDefinition<K, D>> PropertyMappingsBuilder<T, K, D> of(
+	public static <T, K extends FieldKey<K>> PropertyMappingsBuilder<T, K> of(
 			ClassMeta<T> classMeta,
-			MapperConfig<K, D> mapperConfig,
+			MapperConfig<K> mapperConfig,
 			Predicate<PropertyMeta<?, ?>> propertyPredicate) {
 		return of(classMeta, mapperConfig, propertyPredicate, null);
 	}
 
-	public static <T, K extends FieldKey<K>, D  extends ColumnDefinition<K, D>> PropertyMappingsBuilder<T, K, D> of(
+	public static <T, K extends FieldKey<K>> PropertyMappingsBuilder<T, K> of(
 			final ClassMeta<T> classMeta,
-			final MapperConfig<K, D> mapperConfig,
+			final MapperConfig<K> mapperConfig,
 			final Predicate<PropertyMeta<?, ?>> propertyPredicate,
 			final PropertyFinder<T> propertyFinder) {
 		final List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties = new ArrayList<ExtendPropertyFinder.CustomProperty<?, ?>>();
@@ -322,7 +322,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		});
 
 		return
-				new PropertyMappingsBuilder<T, K, D>(
+				new PropertyMappingsBuilder<T, K>(
 						classMeta,
 						mapperConfig.propertyNameMatcherFactory(),
 						mapperConfig.mapperBuilderErrorHandler(),

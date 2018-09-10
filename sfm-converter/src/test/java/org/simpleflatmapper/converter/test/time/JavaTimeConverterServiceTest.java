@@ -3,6 +3,7 @@ package org.simpleflatmapper.converter.test.time;
 import org.junit.Test;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -325,19 +326,19 @@ public class JavaTimeConverterServiceTest {
 
     public void testConvertFromCharSequence(Temporal temploral, DateTimeFormatter dateTimeFormatter) throws Exception {
         Converter<? super CharSequence, ? extends Temporal> converter =
-                ConverterService.getInstance().findConverter(CharSequence.class, temploral.getClass(), dateTimeFormatter);
-        assertEquals(temploral, converter.convert(dateTimeFormatter.format(temploral)));
+                ConverterService.getInstance().findConverter(CharSequence.class, temploral.getClass(), EmptyContextFactoryBuilder.INSTANCE, dateTimeFormatter);
+        assertEquals(temploral, converter.convert(dateTimeFormatter.format(temploral), null));
 
-        assertNull(converter.convert(""));
-        assertNull(converter.convert(null));
+        assertNull(converter.convert("", null));
+        assertNull(converter.convert(null, null));
 
         DateTimeFormatter failing = DateTimeFormatter.ofPattern("yyyy////dd");
         Converter<? super CharSequence, ? extends Temporal> multiConverter =
-                ConverterService.getInstance().findConverter(CharSequence.class, temploral.getClass(), failing, dateTimeFormatter);
-        assertEquals(temploral, multiConverter.convert(dateTimeFormatter.format(temploral)));
+                ConverterService.getInstance().findConverter(CharSequence.class, temploral.getClass(), EmptyContextFactoryBuilder.INSTANCE, failing, dateTimeFormatter);
+        assertEquals(temploral, multiConverter.convert(dateTimeFormatter.format(temploral), null));
 
         try {
-            multiConverter.convert("a");
+            multiConverter.convert("a", null);
             fail();
         } catch (DateTimeParseException e) {
 
@@ -347,17 +348,17 @@ public class JavaTimeConverterServiceTest {
 
     @Test
     public void testTemporalToString() throws Exception {
-        Converter<? super ZonedDateTime, ? extends CharSequence> converter = ConverterService.getInstance().findConverter(ZonedDateTime.class, CharSequence.class, DateTimeFormatter.ISO_ZONED_DATE_TIME);
+        Converter<? super ZonedDateTime, ? extends CharSequence> converter = ConverterService.getInstance().findConverter(ZonedDateTime.class, CharSequence.class, EmptyContextFactoryBuilder.INSTANCE, DateTimeFormatter.ISO_ZONED_DATE_TIME);
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
-        assertEquals(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(zonedDateTime), converter.convert(zonedDateTime));
+        assertEquals(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(zonedDateTime), converter.convert(zonedDateTime, null));
     }
 
 
     @Test
     public void testTemporalToStringNoFormat() throws Exception {
-        Converter<? super ZonedDateTime, ? extends CharSequence> converter = ConverterService.getInstance().findConverter(ZonedDateTime.class, CharSequence.class);
+        Converter<? super ZonedDateTime, ? extends CharSequence> converter = ConverterService.getInstance().findConverter(ZonedDateTime.class, CharSequence.class, EmptyContextFactoryBuilder.INSTANCE);
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
-        assertEquals(zonedDateTime.toString(), converter.convert(zonedDateTime));
+        assertEquals(zonedDateTime.toString(), converter.convert(zonedDateTime, null));
     }
 
     private Date trunc(Date date) {

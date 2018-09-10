@@ -37,7 +37,7 @@ public class TupleValueSettableDataSetter implements Setter<SettableByIndexData,
     }
 
     public static <T extends Tuple2<?, ?>> FieldMapper<T, SettableByIndexData> newTupleMapper(Type target, TupleType tt,
-                                                                                              MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
+                                                                                              MapperConfig<DatastaxColumnKey> config,
                                                                                               ReflectionService reflectionService) {
         SettableDataMapperBuilder<T> builder = newFieldMapperBuilder(config, reflectionService, target);
         List<DataType> componentTypes = tt.getComponentTypes();
@@ -47,7 +47,7 @@ public class TupleValueSettableDataSetter implements Setter<SettableByIndexData,
         return builder.mapper();
     }
 
-    public static <T> SettableDataMapperBuilder<T> newFieldMapperBuilder(MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
+    public static <T> SettableDataMapperBuilder<T> newFieldMapperBuilder(MapperConfig<DatastaxColumnKey> config,
                                                                          ReflectionService reflectionService,  Type target) {
         ClassMeta<T> classMeta = reflectionService.getClassMeta(target);
         return new SettableDataMapperBuilder<T>(classMeta, config, ConstantTargetFieldMapperFactoryImpl.newInstance(new SettableDataSetterFactory(config, reflectionService), SettableByIndexData.class));

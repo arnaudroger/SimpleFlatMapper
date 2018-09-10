@@ -17,9 +17,7 @@ import javax.sql.DataSource;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcColumnKey,
-		FieldMapperColumnDefinition<JdbcColumnKey>,
-		JdbcTemplateMapperFactory> {
+public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcColumnKey, JdbcTemplateMapperFactory> {
 
 
 	private JdbcTemplateMapperFactory() {

@@ -1,7 +1,10 @@
 package org.simpleflatmapper.datastax.impl;
 
 import com.datastax.driver.core.*;
+import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.converter.EmptyContextFactory;
+import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
 import org.simpleflatmapper.datastax.DataTypeHelper;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 
@@ -55,46 +58,46 @@ import java.util.*;
 
 public class SettableDataSetterFactory
         implements
-        SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>
+        SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>
 
 {
-    private final Map<Class<?>, SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>> factoryPerClass =
-            new HashMap<Class<?>, SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>>();
-    private final MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig;
+    private final Map<Class<?>, SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>> factoryPerClass =
+            new HashMap<Class<?>, SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>>();
+    private final MapperConfig<DatastaxColumnKey> mapperConfig;
     private final ReflectionService reflectionService;
 
     {
-        factoryPerClass.put(short.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(short.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new ShortSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
         factoryPerClass.put(Short.class, factoryPerClass.get(short.class));
 
-        factoryPerClass.put(byte.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(byte.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new ByteSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
         factoryPerClass.put(Byte.class, factoryPerClass.get(byte.class));
 
-        factoryPerClass.put(int.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(int.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new IntSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
         factoryPerClass.put(Integer.class, factoryPerClass.get(int.class));
 
-        factoryPerClass.put(long.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(long.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 if (arg.getColumnKey().getDataType() == DataType.time()) {
                     return (Setter<SettableByIndexData, P>)new TimeSettableDataSetter(arg.getColumnKey().getIndex());
                 }
@@ -103,98 +106,98 @@ public class SettableDataSetterFactory
         });
         factoryPerClass.put(Long.class, factoryPerClass.get(long.class));
 
-        factoryPerClass.put(float.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(float.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new FloatSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
         factoryPerClass.put(Float.class, factoryPerClass.get(float.class));
 
-        factoryPerClass.put(double.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(double.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new DoubleSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
         factoryPerClass.put(Double.class, factoryPerClass.get(double.class));
 
 
-        factoryPerClass.put(String.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(String.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new StringSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
 
-        factoryPerClass.put(Date.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(Date.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new TimestampSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
 
-        factoryPerClass.put(UUID.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(UUID.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new UUIDSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
 
-        factoryPerClass.put(BigDecimal.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(BigDecimal.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new BigDecimalSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
 
-        factoryPerClass.put(BigInteger.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(BigInteger.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new BigIntegerSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
 
-        factoryPerClass.put(InetAddress.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(InetAddress.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new InetAddressSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
 
-        factoryPerClass.put(TupleValue.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(TupleValue.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new TupleValueSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
 
-        factoryPerClass.put(LocalDate.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+        factoryPerClass.put(LocalDate.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
                 return (Setter<SettableByIndexData, P>) new DateSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
     }
 
-    public SettableDataSetterFactory(MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig, ReflectionService reflectionService) {
+    public SettableDataSetterFactory(MapperConfig<DatastaxColumnKey> mapperConfig, ReflectionService reflectionService) {
         this.mapperConfig = mapperConfig;
         this.reflectionService = reflectionService;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+    public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey> arg) {
         Setter<SettableByIndexData, P> setter = null;
 
         Type propertyType = arg.getPropertyMeta().getPropertyType();
@@ -213,14 +216,16 @@ public class SettableDataSetterFactory
             }
         }
 
-        SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>> setterFactory =
+        SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>> setterFactory =
                 this.factoryPerClass.get(TypeHelper.toClass(type));
 
+        EmptyContextFactoryBuilder contextFactoryBuilder = EmptyContextFactoryBuilder.INSTANCE;
+        
         if (setterFactory != null) {
             setter = setterFactory.getSetter(arg);
 
             if (!TypeHelper.areEquals(TypeHelper.toBoxedClass(type), TypeHelper.toBoxedClass(propertyType))) {
-                Converter<?, ?> converter = getConverter(propertyType, TypeHelper.toClass(type), dataType, arg.getColumnDefinition());
+                Converter<?, ?> converter = getConverter(propertyType, TypeHelper.toClass(type), dataType, arg.getColumnDefinition(), contextFactoryBuilder);
                 if (converter != null) {
                     setter = (Setter<SettableByIndexData, P>) new ConvertDelegateSetter<SettableByIndexData, Object, P>(setter, (Converter<Object, P>) converter);
                 } else {
@@ -244,7 +249,7 @@ public class SettableDataSetterFactory
                 if (TypeHelper.areEquals(lEltType, dEltType)) {
                     setter = new ListSettableDataSetter(arg.getColumnKey().getIndex());
                 } else {
-                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt, arg.getColumnDefinition());
+                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt, arg.getColumnDefinition(), contextFactoryBuilder);
                     if (converter != null) {
                         setter = new ListWithConverterSettableDataSetter(arg.getColumnKey().getIndex(), converter);
                     }
@@ -257,7 +262,7 @@ public class SettableDataSetterFactory
                 if (TypeHelper.areEquals(lEltType, dEltType)) {
                     setter = new SetSettableDataSetter(arg.getColumnKey().getIndex());
                 } else {
-                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt, arg.getColumnDefinition());
+                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt, arg.getColumnDefinition(), contextFactoryBuilder);
                     if (converter != null) {
                         setter = new SetWithConverterSettableDataSetter(arg.getColumnKey().getIndex(), converter);
                     }
@@ -273,8 +278,8 @@ public class SettableDataSetterFactory
                     setter = new MapSettableDataSetter(arg.getColumnKey().getIndex());
                 } else {
                     setter = new MapWithConverterSettableDataSetter(arg.getColumnKey().getIndex(),
-                            getConverter(keyValueTypeOfMap.getKeyType(), DataTypeHelper.asJavaClass(dtKeyType), dtKeyType, arg.getColumnDefinition()),
-                            getConverter(keyValueTypeOfMap.getValueType(), DataTypeHelper.asJavaClass(dtValueType), dtValueType, arg.getColumnDefinition())
+                            getConverter(keyValueTypeOfMap.getKeyType(), DataTypeHelper.asJavaClass(dtKeyType), dtKeyType, arg.getColumnDefinition(), contextFactoryBuilder),
+                            getConverter(keyValueTypeOfMap.getValueType(), DataTypeHelper.asJavaClass(dtValueType), dtValueType, arg.getColumnDefinition(), contextFactoryBuilder)
                             );
                 }
             }
@@ -289,7 +294,7 @@ public class SettableDataSetterFactory
     }
 
     @SuppressWarnings("unchecked")
-    private Converter<?, ?> getConverter(Type elementType, Class<?> dataTypeElt, DataType dtElt, ColumnDefinition<DatastaxColumnKey, ?> columnDefinition) {
+    private Converter<?, ?> getConverter(Type elementType, Class<?> dataTypeElt, DataType dtElt, ColumnDefinition<DatastaxColumnKey, ?> columnDefinition, ContextFactoryBuilder contextFactoryBuilder) {
         if (dtElt != null) {
             if (UDTValue.class.equals(dataTypeElt)) {
                 FieldMapper mapper = UDTObjectSettableDataSetter.newUDTMapper(elementType, (UserType) dtElt, mapperConfig, reflectionService);
@@ -300,6 +305,6 @@ public class SettableDataSetterFactory
                 return new ConverterToTupleValueMapper(mapper, (TupleType) dtElt);
             }
         }
-        return ConverterService.getInstance().findConverter(TypeHelper.toClass(elementType), dataTypeElt, columnDefinition.properties());
+        return ConverterService.getInstance().findConverter(TypeHelper.toClass(elementType), dataTypeElt,contextFactoryBuilder, columnDefinition.properties());
     }
 }

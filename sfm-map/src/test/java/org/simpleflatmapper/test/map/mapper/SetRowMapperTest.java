@@ -1,6 +1,8 @@
 package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
+import org.simpleflatmapper.map.ContextualSourceMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
@@ -40,7 +42,7 @@ public class SetRowMapperTest {
             return new ArrayEnumerable<Object[]>(objects);
         }
     };
-    public static final SourceFieldMapper<Object[], DbObject> ID_NAME_MAPPER =  new SourceFieldMapper<Object[], DbObject>() {
+    public static final ContextualSourceFieldMapper<Object[], DbObject> ID_NAME_MAPPER =  new ContextualSourceFieldMapper<Object[], DbObject>() {
         @Override
         public DbObject map(Object[] source) throws MappingException {
             return map(source, null);
@@ -64,7 +66,7 @@ public class SetRowMapperTest {
         }
     };
 
-    public static final SourceFieldMapper<Object[], DbObject> ID_NAME_EMIL_MAPPER =  new SourceFieldMapper<Object[], DbObject>() {
+    public static final ContextualSourceFieldMapper<Object[], DbObject> ID_NAME_EMIL_MAPPER =  new ContextualSourceFieldMapper<Object[], DbObject>() {
         @Override
         public DbObject map(Object[] source) throws MappingException {
             return map(source, null);
@@ -176,7 +178,7 @@ public class SetRowMapperTest {
                 new UnaryFactory<MapperKey<SampleFieldKey>, SetRowMapper<Object[], Object[][], DbObject, RuntimeException>>() {
                     @Override
                     public SetRowMapper<Object[], Object[][], DbObject, RuntimeException> newInstance(MapperKey<SampleFieldKey> sampleFieldKeyMapperKey) {
-                        SourceMapper<Object[], DbObject> mapper = sampleFieldKeyMapperKey.getColumns().length == 2 ? ID_NAME_MAPPER : ID_NAME_EMIL_MAPPER;
+                        ContextualSourceMapper<Object[], DbObject> mapper = sampleFieldKeyMapperKey.getColumns().length == 2 ? ID_NAME_MAPPER : ID_NAME_EMIL_MAPPER;
                         return new StaticSetRowMapper<Object[], Object[][], DbObject, RuntimeException>(mapper,
                                 RethrowConsumerErrorHandler.INSTANCE, MappingContext.EMPTY_FACTORY, ENUMERABLE_UNARY_FACTORY);
                     }

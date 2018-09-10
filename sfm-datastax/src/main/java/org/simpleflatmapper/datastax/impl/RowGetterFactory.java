@@ -2,6 +2,7 @@ package org.simpleflatmapper.datastax.impl;
 
 import com.datastax.driver.core.*;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
 import org.simpleflatmapper.reflect.getter.GetterFactoryRegistry;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.DataTypeHelper;
@@ -391,7 +392,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                 return new ConverterMapper(DatastaxTupleGetter.newTupleMapper(elementType, (TupleType) dtElt, datastaxMapperFactory));
             }
         }
-        return ConverterService.getInstance().findConverter(dataTypeElt, elementType);
+        return ConverterService.getInstance().findConverter(dataTypeElt, elementType, EmptyContextFactoryBuilder.INSTANCE);
     }
 
     @SuppressWarnings("unchecked")

@@ -1,7 +1,9 @@
 package org.simpleflatmapper.jdbc.impl;
 
+import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.Crud;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
+import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 import org.simpleflatmapper.jdbc.PreparedStatementMapperBuilder;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
@@ -54,6 +56,8 @@ public class PostgresqlCrudFactory {
             }
         }
 
+        DefaultContextFactoryBuilder defaultContextFactoryBuilder = new DefaultContextFactoryBuilder();
+        MultiIndexFieldMapper<T>[] multiIndexFieldMappers = statementMapperBuilder.buildIndexFieldMappers(defaultContextFactoryBuilder);
         PostgresqlBatchInsertQueryExecutor<T> queryExecutor = new PostgresqlBatchInsertQueryExecutor<T>(
                 crudMeta,
                 insertColumns.toArray(new String[0]),
@@ -61,7 +65,8 @@ public class PostgresqlCrudFactory {
                 onDuplicateKeyUpdate ? updateColumns.toArray(new String[0]) : null,
                 generatedKeys.toArray(new String[0]),
                 keys.toArray(new String[0]),
-                statementMapperBuilder.buildIndexFieldMappers());
+                multiIndexFieldMappers,
+                defaultContextFactoryBuilder.build());
 
         return queryExecutor;
     }

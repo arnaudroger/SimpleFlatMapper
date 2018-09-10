@@ -7,7 +7,7 @@ import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.Predicate;
 
-public class IdentityFieldMapperColumnDefinitionProvider<K extends FieldKey<K>> implements ColumnDefinitionProvider<FieldMapperColumnDefinition<K>, K> {
+public class IdentityFieldMapperColumnDefinitionProvider<K extends FieldKey<K>> implements ColumnDefinitionProvider<K> {
     @Override
     public FieldMapperColumnDefinition<K> getColumnDefinition(K key) {
         return FieldMapperColumnDefinition.<K>identity();

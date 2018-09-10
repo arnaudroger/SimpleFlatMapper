@@ -5,6 +5,7 @@ import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.mapper.RowMapperFactory;
 import org.simpleflatmapper.jdbc.DynamicJdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
+import org.simpleflatmapper.map.ContextualSourceMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.util.BiPredicate;
 import org.simpleflatmapper.util.UnaryFactory;
@@ -17,9 +18,9 @@ import java.util.concurrent.ConcurrentMap;
 
 public class SfmRowMapperFactory implements RowMapperFactory {
 
-    private static final UnaryFactory<Type, SourceMapper<ResultSet, ?>> DEFAULT_FACTORY = new UnaryFactory<Type, SourceMapper<ResultSet, ?>>() {
+    private static final UnaryFactory<Type, ContextualSourceMapper<ResultSet, ?>> DEFAULT_FACTORY = new UnaryFactory<Type, ContextualSourceMapper<ResultSet, ?>>() {
         @Override
-        public SourceMapper<ResultSet, ?> newInstance(Type type) {
+        public ContextualSourceMapper<ResultSet, ?> newInstance(Type type) {
             return JdbcMapperFactory.newInstance().newMapper(type);
         }
     };
@@ -30,7 +31,7 @@ public class SfmRowMapperFactory implements RowMapperFactory {
         }
     };
 
-    private final UnaryFactory<Type, SourceMapper<ResultSet, ?>> mapperFactory;
+    private final UnaryFactory<Type, ContextualSourceMapper<ResultSet, ?>> mapperFactory;
     private final ConcurrentMap<Type, RowMapper<?>> cache = new ConcurrentHashMap<Type, RowMapper<?>>();
     private final BiPredicate<Type, ConfigRegistry> acceptsPredicate;
 
@@ -38,16 +39,16 @@ public class SfmRowMapperFactory implements RowMapperFactory {
         this(DEFAULT_FACTORY);
     }
 
-    public SfmRowMapperFactory(UnaryFactory<Type, SourceMapper<ResultSet, ?>> mapperFactory) {
+    public SfmRowMapperFactory(UnaryFactory<Type, ContextualSourceMapper<ResultSet, ?>> mapperFactory) {
         this(DEFAULT_ACCEPT_PREDICATE, mapperFactory);
     }
 
-    public SfmRowMapperFactory(BiPredicate<Type, ConfigRegistry> acceptsPredicate, UnaryFactory<Type, SourceMapper<ResultSet, ?>> mapperFactory) {
+    public SfmRowMapperFactory(BiPredicate<Type, ConfigRegistry> acceptsPredicate, UnaryFactory<Type, ContextualSourceMapper<ResultSet, ?>> mapperFactory) {
         this.mapperFactory = mapperFactory;
         this.acceptsPredicate = acceptsPredicate;
     }
 
-    private <T> RowMapper<T> toRowMapper(SourceMapper<ResultSet, T> resultSetMapper) {
+    private <T> RowMapper<T> toRowMapper(ContextualSourceMapper<ResultSet, T> resultSetMapper) {
         RowMapper<T> mapper;
         if (resultSetMapper instanceof DynamicJdbcMapper) {
             mapper = new DynamicRowMapper<T>((DynamicJdbcMapper<T>) resultSetMapper);
@@ -62,7 +63,7 @@ public class SfmRowMapperFactory implements RowMapperFactory {
         if (acceptsPredicate.test(type, configRegistry)) {
             RowMapper<?> rowMapper = cache.get(type);
             if (rowMapper == null) {
-                SourceMapper<ResultSet, ?> resultSetMapper = mapperFactory.newInstance(type);
+                ContextualSourceMapper<ResultSet, ?> resultSetMapper = mapperFactory.newInstance(type);
                 rowMapper = toRowMapper(resultSetMapper);
                 RowMapper<?> cachedMapper = cache.putIfAbsent(type, rowMapper);
                 if (cachedMapper != null) {

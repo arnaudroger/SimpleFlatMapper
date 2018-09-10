@@ -67,7 +67,7 @@ public class Issue477Test {
         return ReflectionService.disableAsm();
     }
 
-    private MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> getMapperConfig() {
+    private MapperConfig<SampleFieldKey> getMapperConfig() {
         return MapperConfig.fieldMapperConfig();
     }
 

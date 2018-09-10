@@ -1,6 +1,7 @@
 package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
+import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
@@ -28,7 +29,8 @@ import static org.junit.Assert.*;
 
 public class JoinMapperTest {
 
-    private final SourceFieldMapper<Object[], DbListObject> dbListObjectMapper = new SourceFieldMapper<Object[], DbListObject>() {
+    private final ContextualSourceFieldMapper<Object[], DbListObject> dbListObjectMapper = new ContextualSourceFieldMapper<Object[], DbListObject>() {
+
         @Override
         public DbListObject map(Object[] source) throws MappingException {
             return map(source, null);

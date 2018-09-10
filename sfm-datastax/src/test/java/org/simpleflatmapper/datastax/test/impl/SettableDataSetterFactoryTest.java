@@ -65,7 +65,7 @@ import static org.mockito.Mockito.when;
 public class SettableDataSetterFactoryTest {
 
 
-    private final MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig = MapperConfig.<DatastaxColumnKey>fieldMapperConfig();
+    private final MapperConfig<DatastaxColumnKey> mapperConfig = MapperConfig.<DatastaxColumnKey>fieldMapperConfig();
     private final ReflectionService reflectionService = ReflectionService.newInstance();
     SettableDataSetterFactory factory = new SettableDataSetterFactory(mapperConfig, reflectionService);
     private int index;
@@ -652,7 +652,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testJodaLD() throws Exception {
-        PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> pm = newPM(org.joda.time.LocalDate.class, DataType.date());
+        PropertyMapping<?, ?, DatastaxColumnKey> pm = newPM(org.joda.time.LocalDate.class, DataType.date());
         Setter<SettableByIndexData, org.joda.time.LocalDate> setter = factory.getSetter(pm);
 
         org.joda.time.LocalDate ldt = org.joda.time.LocalDate.now();
@@ -666,7 +666,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testJodaLT() throws Exception {
-        PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> pm = newPM(org.joda.time.LocalTime.class, DataType.time());
+        PropertyMapping<?, ?, DatastaxColumnKey> pm = newPM(org.joda.time.LocalTime.class, DataType.time());
         Setter<SettableByIndexData, org.joda.time.LocalTime> setter = factory.getSetter(pm);
 
         org.joda.time.LocalTime ldt = org.joda.time.LocalTime.fromMillisOfDay(3600000);
@@ -705,11 +705,11 @@ public class SettableDataSetterFactoryTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T, P> PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> newPM(Type clazz, DataType datatype, Object... properties) {
+    private <T, P> PropertyMapping<?, ?, DatastaxColumnKey> newPM(Type clazz, DataType datatype, Object... properties) {
         PropertyMeta<T, P> propertyMeta = mock(PropertyMeta.class);
         when(propertyMeta.getPropertyType()).thenReturn(clazz);
         return
-                new PropertyMapping<T, P, DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>>(
+                new PropertyMapping<T, P, DatastaxColumnKey>(
                         propertyMeta,
                         new DatastaxColumnKey("col", index++, datatype),
                         FieldMapperColumnDefinition.<DatastaxColumnKey>of(properties));

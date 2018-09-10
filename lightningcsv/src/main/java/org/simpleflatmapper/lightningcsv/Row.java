@@ -91,7 +91,7 @@ public class Row implements Map<String, String> {
 
     @Override
     public Collection<String> values() {
-        if (valuesCollectionCache != null) {
+        if (valuesCollectionCache == null) {
             valuesCollectionCache = Collections.unmodifiableList(Arrays.asList(values));
         }
         return valuesCollectionCache;
@@ -134,7 +134,7 @@ public class Row implements Map<String, String> {
         }
 
         public final boolean isEmpty() {
-            return headers.length > 0;
+            return headers.length == 0;
         }
         
         public final Set<String> keySet() {
@@ -145,10 +145,6 @@ public class Row implements Map<String, String> {
             return keySet;
         }
         
-        public final String get(int i) {
-            return headers[i];
-        }
-
         public abstract int indexOf(String key);
 
     }

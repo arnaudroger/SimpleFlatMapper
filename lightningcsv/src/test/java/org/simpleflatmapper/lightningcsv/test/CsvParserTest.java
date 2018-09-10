@@ -20,9 +20,12 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 //IFJAVA8_START
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 //IFJAVA8_END
@@ -1023,14 +1026,66 @@ public class CsvParserTest {
 		assertEquals(2, r.size());
 		assertEquals("v1", r.get("h1"));
 		assertEquals("v2", r.get("h2"));
+		assertEquals(null, r.get(3));
+		assertEquals(null, r.get("h4"));
+		assertFalse(r.isEmpty());
+		assertEquals(new HashSet<String>(Arrays.asList("h1", "h2")), r.keySet());
+		assertEquals(Arrays.asList("v1", "v2"), r.values());
+		
+		
+		try {
+			r.clear();
+			fail();
+		} catch (UnsupportedOperationException e) {
+		}
+
+		try {
+			r.remove(null);
+			fail();
+		} catch (UnsupportedOperationException e) {
+		}
+		try {
+			r.putAll(null);
+			fail();
+		} catch (UnsupportedOperationException e) {
+		}
+
+		try {
+			r.put(null, null);
+			fail();
+		} catch (UnsupportedOperationException e) {
+		}
+		Map<String, String> expected = new HashMap<String, String>();
+		expected.put("h1", "v1");
+		expected.put("h2", "v2");
+		
+		for(Map.Entry<String, String> e : r.entrySet()) {
+			assertEquals(expected.get(e.getKey()), e.getValue());
+			expected.remove(e.getKey());
+		}
+		assertTrue(expected.isEmpty());
+
+		assertTrue(r.containsKey("h1"));
+		assertFalse(r.containsKey("h4"));
+		assertFalse(r.containsKey(3));
+
+		assertTrue(r.containsValue("v1"));
+		assertFalse(r.containsValue("v4"));
+
 
 		assertTrue(rowIterator.hasNext());
+		
+		
 
 		r = rowIterator.next();
 
 		assertEquals(2, r.size());
 		assertEquals("v3", r.get("h1"));
 		assertEquals(null, r.get("h2"));
+		assertFalse(r.isEmpty());
+		assertEquals(new HashSet<String>(Arrays.asList("h1", "h2")), r.keySet());
+		assertEquals(Arrays.asList("v3", null), r.values());
+		
 
 		assertTrue(rowIterator.hasNext());
 
@@ -1039,6 +1094,9 @@ public class CsvParserTest {
 		assertEquals(2, r.size());
 		assertEquals("v4", r.get("h1"));
 		assertEquals("v5", r.get("h2"));
+		assertFalse(r.isEmpty());
+		assertEquals(new HashSet<String>(Arrays.asList("h1", "h2")), r.keySet());
+		assertEquals(Arrays.asList("v4", "v5"), r.values());
 
 		assertFalse(rowIterator.hasNext());
 	}

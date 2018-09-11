@@ -58,7 +58,6 @@ import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1039,7 +1038,7 @@ public class AbstractMapperBuilderTest {
 
         @Override
         public boolean getBoolean(Object[] target) throws Exception {
-            return (boolean) target[key.getIndex()];
+            return (Boolean) target[key.getIndex()];
         }
     }
 
@@ -1057,7 +1056,7 @@ public class AbstractMapperBuilderTest {
 
         @Override
         public byte getByte(Object[] target) throws Exception {
-            return (byte) target[key.getIndex()];
+            return (Byte) target[key.getIndex()];
         }
     }
 
@@ -1075,7 +1074,7 @@ public class AbstractMapperBuilderTest {
 
         @Override
         public char getCharacter(Object[] target) throws Exception {
-            return (char) target[key.getIndex()];
+            return (Character) target[key.getIndex()];
         }
     }
     private static class SampleShortGetter implements Getter<Object[], Short>, ShortGetter<Object[]> {
@@ -1092,7 +1091,7 @@ public class AbstractMapperBuilderTest {
 
         @Override
         public short getShort(Object[] target) throws Exception {
-            return (short) target[key.getIndex()];
+            return (Short) target[key.getIndex()];
         }
     }
     private static class SampleIntGetter implements Getter<Object[], Integer>, IntGetter<Object[]> {
@@ -1109,7 +1108,7 @@ public class AbstractMapperBuilderTest {
 
         @Override
         public int getInt(Object[] target) throws Exception {
-            return (int) target[key.getIndex()];
+            return (Integer) target[key.getIndex()];
         }
     }
     private static class SampleLongGetter implements Getter<Object[], Long>, LongGetter<Object[]> {
@@ -1126,7 +1125,7 @@ public class AbstractMapperBuilderTest {
 
         @Override
         public long getLong(Object[] target) throws Exception {
-            return (long) target[key.getIndex()];
+            return (Long) target[key.getIndex()];
         }
     }
     private static class SampleFloatGetter implements Getter<Object[], Float>, FloatGetter<Object[]> {
@@ -1143,7 +1142,7 @@ public class AbstractMapperBuilderTest {
 
         @Override
         public float getFloat(Object[] target) throws Exception {
-            return (float) target[key.getIndex()];
+            return (Float) target[key.getIndex()];
         }
     }
     private static class SampleDoubleGetter implements Getter<Object[], Double>, DoubleGetter<Object[]> {
@@ -1160,7 +1159,7 @@ public class AbstractMapperBuilderTest {
 
         @Override
         public double getDouble(Object[] target) throws Exception {
-            return (double) target[key.getIndex()];
+            return (Double) target[key.getIndex()];
         }
     }
     
@@ -1179,7 +1178,7 @@ public class AbstractMapperBuilderTest {
         validatePrimitiveData(o);
 
 
-        List<SampleFieldKey> errors = new ArrayList<SampleFieldKey>();
+        final List<SampleFieldKey> errors = new ArrayList<SampleFieldKey>();
         MapperConfig<SampleFieldKey> mapperConfig = MapperConfig.<SampleFieldKey>fieldMapperConfig().fieldMapperErrorHandler(new FieldMapperErrorHandler<SampleFieldKey>() {
             @Override
             public void errorMappingField(SampleFieldKey key, Object source, Object target, Exception error, Context mappingContext) throws MappingException {

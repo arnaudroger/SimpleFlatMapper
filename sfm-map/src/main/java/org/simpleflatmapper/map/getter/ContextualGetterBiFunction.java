@@ -16,7 +16,7 @@ public class ContextualGetterBiFunction<S, T> implements BiFunction<S, Context, 
     public static <S, T> BiFunction<? super S, ? super MappingContext<?>, T> of(Class<?> type, ContextualGetter<? super S, ? extends T> getter) {
         if (type.isPrimitive()) {
             if (boolean.class.equals(type) && getter instanceof BooleanContextualGetter) {
-                BooleanContextualGetter pGetter = (BooleanContextualGetter) getter;
+                final BooleanContextualGetter pGetter = (BooleanContextualGetter) getter;
                 return (BiFunction<? super S, ? super MappingContext<?>, T>) new BiFunction<S, MappingContext<?>, Boolean>() {
                     @Override
                     public Boolean apply(S s, MappingContext<?> mappingContext) {
@@ -30,7 +30,7 @@ public class ContextualGetterBiFunction<S, T> implements BiFunction<S, Context, 
             }
 
             if (byte.class.equals(type) && getter instanceof ByteContextualGetter) {
-                ByteContextualGetter pGetter = (ByteContextualGetter) getter;
+                final ByteContextualGetter pGetter = (ByteContextualGetter) getter;
                 return (BiFunction<? super S, ? super MappingContext<?>, T>) new BiFunction<S, MappingContext<?>, Byte>() {
                     @Override
                     public Byte apply(S s, MappingContext<?> mappingContext) {
@@ -44,7 +44,7 @@ public class ContextualGetterBiFunction<S, T> implements BiFunction<S, Context, 
             }
 
             if (char.class.equals(type) && getter instanceof CharacterContextualGetter) {
-                CharacterContextualGetter pGetter = (CharacterContextualGetter) getter;
+                final CharacterContextualGetter pGetter = (CharacterContextualGetter) getter;
                 return (BiFunction<? super S, ? super MappingContext<?>, T>) new BiFunction<S, MappingContext<?>, Character>() {
                     @Override
                     public Character apply(S s, MappingContext<?> mappingContext) {
@@ -58,7 +58,7 @@ public class ContextualGetterBiFunction<S, T> implements BiFunction<S, Context, 
             }
 
             if (short.class.equals(type) && getter instanceof ShortContextualGetter) {
-                ShortContextualGetter pGetter = (ShortContextualGetter) getter;
+                final ShortContextualGetter pGetter = (ShortContextualGetter) getter;
                 return (BiFunction<? super S, ? super MappingContext<?>, T>) new BiFunction<S, MappingContext<?>, Short>() {
                     @Override
                     public Short apply(S s, MappingContext<?> mappingContext) {
@@ -72,7 +72,7 @@ public class ContextualGetterBiFunction<S, T> implements BiFunction<S, Context, 
             }
 
             if (int.class.equals(type) && getter instanceof IntContextualGetter) {
-                IntContextualGetter pGetter = (IntContextualGetter) getter;
+                final IntContextualGetter pGetter = (IntContextualGetter) getter;
                 return (BiFunction<? super S, ? super MappingContext<?>, T>) new BiFunction<S, MappingContext<?>, Integer>() {
                     @Override
                     public Integer apply(S s, MappingContext<?> mappingContext) {
@@ -86,7 +86,7 @@ public class ContextualGetterBiFunction<S, T> implements BiFunction<S, Context, 
             }
 
             if (long.class.equals(type) && getter instanceof LongContextualGetter) {
-                LongContextualGetter pGetter = (LongContextualGetter) getter;
+                final LongContextualGetter pGetter = (LongContextualGetter) getter;
                 return (BiFunction<? super S, ? super MappingContext<?>, T>) new BiFunction<S, MappingContext<?>, Long>() {
                     @Override
                     public Long apply(S s, MappingContext<?> mappingContext) {
@@ -100,7 +100,7 @@ public class ContextualGetterBiFunction<S, T> implements BiFunction<S, Context, 
             }
 
             if (float.class.equals(type) && getter instanceof FloatContextualGetter) {
-                FloatContextualGetter pGetter = (FloatContextualGetter) getter;
+                final FloatContextualGetter pGetter = (FloatContextualGetter) getter;
                 return (BiFunction<? super S, ? super MappingContext<?>, T>) new BiFunction<S, MappingContext<?>, Float>() {
                     @Override
                     public Float apply(S s, MappingContext<?> mappingContext) {
@@ -114,7 +114,7 @@ public class ContextualGetterBiFunction<S, T> implements BiFunction<S, Context, 
             }
 
             if (double.class.equals(type) && getter instanceof DoubleContextualGetter) {
-                DoubleContextualGetter pGetter = (DoubleContextualGetter) getter;
+                final DoubleContextualGetter pGetter = (DoubleContextualGetter) getter;
                 return (BiFunction<? super S, ? super MappingContext<?>, T>) new BiFunction<S, MappingContext<?>, Double>() {
                     @Override
                     public Double apply(S s, MappingContext<?> mappingContext) {

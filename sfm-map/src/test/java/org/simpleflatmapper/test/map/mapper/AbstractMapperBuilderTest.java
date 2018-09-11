@@ -11,12 +11,13 @@ import org.simpleflatmapper.map.EnumerableMapper;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.Result;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
+import org.simpleflatmapper.map.property.FieldMapperProperty;
+import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.map.property.MandatoryProperty;
 import org.simpleflatmapper.reflect.ModifyInjectedParams;
 import org.simpleflatmapper.reflect.TypeAffinity;
@@ -70,6 +71,7 @@ import java.util.Set;
 
 //IFJAVA8_START
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 //IFJAVA8_END
 
 
@@ -915,6 +917,8 @@ public class AbstractMapperBuilderTest {
         public <P> Getter<Object[], P> newGetter(Type target, final SampleFieldKey key, Object... properties) {
             Class<?> aClass = TypeHelper.toClass(target);
             Package p = aClass.getPackage();
+            
+            if (aClass.equals(List.class)) return null;
             if (!Enum.class.isAssignableFrom(aClass) && !aClass.isPrimitive() &&(p == null || ! p.getName().startsWith("java"))) return null;
             
             if (aClass.isPrimitive()) {
@@ -1218,5 +1222,110 @@ public class AbstractMapperBuilderTest {
         builderTuple.addMapping("pFloat");
         builderTuple.addMapping("pDouble");
         return builderTuple.mapper();
+    }
+    
+    @Test
+    public void testFieldMapperProperty() {
+        SampleMapperBuilder<DbObject> mapperBuilder = new SampleMapperBuilder<>(ReflectionService.newInstance().getClassMeta(DbObject.class));
+        
+        mapperBuilder.addMapping("id");
+        mapperBuilder.addMapping("name", new FieldMapperProperty(new FieldMapper<Object[], DbObject>() {
+            @Override
+            public void mapTo(Object[] source, DbObject target, MappingContext<? super Object[]> context) throws Exception {
+                target.setName("n" + source[0]);                
+            }
+        }));
+
+        SetRowMapper<Object[], Object[][], DbObject, Exception> mapper = mapperBuilder.mapper();
+
+        DbObject map = mapper.map(new Object[]{1l});
+        
+        assertEquals(1l, map.getId());
+        assertEquals("n1", map.getName());
+
+
+    }
+
+
+
+
+    @Test
+    public void test543() {
+        final String VALUES = "values";
+
+        SampleFieldKey valuesKeys = new SampleFieldKey(VALUES, 1);
+        try {
+            new SampleMapperBuilder<C543>(ReflectionService.newInstance().getClassMeta(C543.class)).addMapping(valuesKeys).mapper();
+            fail();
+        } catch (MapperBuildingException e) {
+            assertTrue(e.getMessage().contains("If you meant to map to the element of the List you will need to rename the column to 'values_val' or call addAlias(\"values\", \"values_val\") on the Factory"));
+        }
+    }
+
+    @Test
+    public void test543_NamedParam() {
+        final String VALUES = "values";
+
+        SampleFieldKey valuesKeys = new SampleFieldKey(VALUES, 1);
+
+        try {
+            new SampleMapperBuilder<C543_NamedParam>(ReflectionService.newInstance().getClassMeta(C543_NamedParam.class)).addMapping(valuesKeys).mapper();
+            fail();
+        } catch (MapperBuildingException e) {
+            assertTrue(e.getMessage().contains("If you meant to map to the element of the List you will need to rename the column to 'values_name' or call addAlias(\"values\", \"values_name\") on the Factory"));
+        }
+    }
+
+    @Test
+    public void testGenericBuilderWithSubMapper() throws Exception {
+        SampleMapperBuilder<C543_NamedParam> builder = new SampleMapperBuilder<>(ReflectionService.newInstance().getClassMeta(C543_NamedParam.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
+        builder.addMapping("id_id", KeyProperty.DEFAULT);
+        builder.addMapping("values_name", KeyProperty.DEFAULT);
+
+        SetRowMapper<Object[], Object[][], C543_NamedParam, Exception> mapper = builder.mapper();
+
+        C543_NamedParam c = mapper.iterator(new Object[][]{{1, "n"}}).next();
+        
+        assertEquals(1, c.id.getId());
+        assertEquals("n", c.values.get(0).name);
+    }  
+    
+    public static class C543 {
+        private final List<String> values;
+
+        public C543(List<String> values) {
+            this.values = values;
+        }
+    }
+
+    public static class C543_NamedParam {
+        private final C542_Id id;
+        private final List<C543Elt> values;
+
+        public C543_NamedParam(Context context, C542_Id id, List<C543Elt> values) {
+            if (context == null ) throw new NullPointerException();
+            this.id = id;
+            this.values = values;
+        }
+    }
+
+    public static class C543Elt {
+        private final String name;
+
+        public C543Elt(String name) {
+            this.name = name;
+        }
+    }
+
+    public static class C542_Id {
+        private final int id;
+
+        public C542_Id(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return id;
+        }
     }
 }

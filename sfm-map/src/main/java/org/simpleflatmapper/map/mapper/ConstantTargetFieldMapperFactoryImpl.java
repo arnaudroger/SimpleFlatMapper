@@ -131,7 +131,7 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
 
     public static <T, K extends FieldKey<K>> ConstantTargetFieldMapperFactory<T, K> newInstance(
             SetterFactory<T, PropertyMapping<?, ?, K>> setterFactory, Type targetType) {
-        return newInstance(new ContextualSetterFactoryAdapter(setterFactory), targetType);
+        return newInstance(new ContextualSetterFactoryAdapter<T, PropertyMapping<?, ?, K>>(setterFactory), targetType);
     }
 
     public static <T, K extends FieldKey<K>> ConstantTargetFieldMapperFactory<T, K> newInstance(

@@ -1126,22 +1126,6 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
         }
 
-        private class GenericBuilderFieldMapper<S, T> implements FieldMapper<S, T> {
-            private final int index;
-            private final ContextualGetter<? super S, ?> getter;
-
-            public GenericBuilderFieldMapper(int index, ContextualGetter<? super S, ?> getter) {
-                this.index = index;
-                this.getter = getter;
-            }
-
-            @Override
-            public void mapTo(S source, T target, MappingContext<? super S> context) throws Exception {
-                ((GenericBuilder)target).objects[index] = getter.get(source, context);
-            }
-        }
-
-
         @Override
         public boolean needTransformer() {
             return false;

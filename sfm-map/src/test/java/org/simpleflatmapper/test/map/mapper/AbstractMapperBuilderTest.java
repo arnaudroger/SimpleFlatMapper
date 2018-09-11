@@ -1226,7 +1226,7 @@ public class AbstractMapperBuilderTest {
     
     @Test
     public void testFieldMapperProperty() {
-        SampleMapperBuilder<DbObject> mapperBuilder = new SampleMapperBuilder<>(ReflectionService.newInstance().getClassMeta(DbObject.class));
+        SampleMapperBuilder<DbObject> mapperBuilder = new SampleMapperBuilder<DbObject>(ReflectionService.newInstance().getClassMeta(DbObject.class));
         
         mapperBuilder.addMapping("id");
         mapperBuilder.addMapping("name", new FieldMapperProperty(new FieldMapper<Object[], DbObject>() {
@@ -1278,7 +1278,7 @@ public class AbstractMapperBuilderTest {
 
     @Test
     public void testGenericBuilderWithSubMapper() throws Exception {
-        SampleMapperBuilder<C543_NamedParam> builder = new SampleMapperBuilder<>(ReflectionService.newInstance().getClassMeta(C543_NamedParam.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
+        SampleMapperBuilder<C543_NamedParam> builder = new SampleMapperBuilder<C543_NamedParam>(ReflectionService.newInstance().getClassMeta(C543_NamedParam.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
         builder.addMapping("id_id", KeyProperty.DEFAULT);
         builder.addMapping("values_name", KeyProperty.DEFAULT);
 

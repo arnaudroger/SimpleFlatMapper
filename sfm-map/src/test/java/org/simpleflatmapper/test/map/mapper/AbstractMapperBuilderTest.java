@@ -9,6 +9,9 @@ import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.EnumerableMapper;
 import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.Result;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
@@ -18,7 +21,9 @@ import org.simpleflatmapper.map.property.MandatoryProperty;
 import org.simpleflatmapper.reflect.ModifyInjectedParams;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.reflect.primitive.*;
 import org.simpleflatmapper.test.beans.DbListObject;
+import org.simpleflatmapper.test.beans.DbPrimitiveObject;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
@@ -53,6 +58,7 @@ import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
+import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -911,12 +917,34 @@ public class AbstractMapperBuilderTest {
             Class<?> aClass = TypeHelper.toClass(target);
             Package p = aClass.getPackage();
             if (!Enum.class.isAssignableFrom(aClass) && !aClass.isPrimitive() &&(p == null || ! p.getName().startsWith("java"))) return null;
-            return new Getter<Object[], P>() {
-                @Override
-                public P get(Object[] target) throws Exception {
-                    return (P) target[key.getIndex()];
+            
+            if (aClass.isPrimitive()) {
+                if (boolean.class.equals(aClass)) {
+                    return (Getter<Object[], P>) new SampleBooleanGetter(key);
                 }
-            };
+                if (byte.class.equals(aClass)) {
+                    return (Getter<Object[], P>) new SampleByteGetter(key);
+                }
+                if (short.class.equals(aClass)) {
+                    return (Getter<Object[], P>) new SampleShortGetter(key);
+                }
+                if (int.class.equals(aClass)) {
+                    return (Getter<Object[], P>) new SampleIntGetter(key);
+                }
+                if (long.class.equals(aClass)) {
+                    return (Getter<Object[], P>) new SampleLongGetter(key);
+                }
+                if (char.class.equals(aClass)) {
+                    return (Getter<Object[], P>) new SampleCharacterGetter(key);
+                }
+                if (float.class.equals(aClass)) {
+                    return (Getter<Object[], P>) new SampleFloatGetter(key);
+                }
+                if (double.class.equals(aClass)) {
+                    return (Getter<Object[], P>) new SampleDoubleGetter(key);
+                }
+            }
+            return new SampleGetter<P>(key);
         }
     };
 
@@ -984,4 +1012,212 @@ public class AbstractMapperBuilderTest {
 
     }
 
+    private static class SampleGetter<P> implements Getter<Object[], P> {
+        private final SampleFieldKey key;
+
+        public SampleGetter(SampleFieldKey key) {
+            this.key = key;
+        }
+
+        @Override
+        public P get(Object[] target) throws Exception {
+            return (P) target[key.getIndex()];
+        }
+    }
+
+    private static class SampleBooleanGetter implements Getter<Object[], Boolean>, BooleanGetter<Object[]> {
+        private final SampleFieldKey key;
+
+        public SampleBooleanGetter(SampleFieldKey key) {
+            this.key = key;
+        }
+
+        @Override
+        public Boolean get(Object[] target) throws Exception {
+            return (Boolean) target[key.getIndex()];
+        }
+
+        @Override
+        public boolean getBoolean(Object[] target) throws Exception {
+            return (boolean) target[key.getIndex()];
+        }
+    }
+
+    private static class SampleByteGetter implements Getter<Object[], Byte>, ByteGetter<Object[]> {
+        private final SampleFieldKey key;
+
+        public SampleByteGetter(SampleFieldKey key) {
+            this.key = key;
+        }
+
+        @Override
+        public Byte get(Object[] target) throws Exception {
+            return (Byte) target[key.getIndex()];
+        }
+
+        @Override
+        public byte getByte(Object[] target) throws Exception {
+            return (byte) target[key.getIndex()];
+        }
+    }
+
+    private static class SampleCharacterGetter implements Getter<Object[], Character>, CharacterGetter<Object[]> {
+        private final SampleFieldKey key;
+
+        public SampleCharacterGetter(SampleFieldKey key) {
+            this.key = key;
+        }
+
+        @Override
+        public Character get(Object[] target) throws Exception {
+            return (Character) target[key.getIndex()];
+        }
+
+        @Override
+        public char getCharacter(Object[] target) throws Exception {
+            return (char) target[key.getIndex()];
+        }
+    }
+    private static class SampleShortGetter implements Getter<Object[], Short>, ShortGetter<Object[]> {
+        private final SampleFieldKey key;
+
+        public SampleShortGetter(SampleFieldKey key) {
+            this.key = key;
+        }
+
+        @Override
+        public Short get(Object[] target) throws Exception {
+            return (Short) target[key.getIndex()];
+        }
+
+        @Override
+        public short getShort(Object[] target) throws Exception {
+            return (short) target[key.getIndex()];
+        }
+    }
+    private static class SampleIntGetter implements Getter<Object[], Integer>, IntGetter<Object[]> {
+        private final SampleFieldKey key;
+
+        public SampleIntGetter(SampleFieldKey key) {
+            this.key = key;
+        }
+
+        @Override
+        public Integer get(Object[] target) throws Exception {
+            return (Integer) target[key.getIndex()];
+        }
+
+        @Override
+        public int getInt(Object[] target) throws Exception {
+            return (int) target[key.getIndex()];
+        }
+    }
+    private static class SampleLongGetter implements Getter<Object[], Long>, LongGetter<Object[]> {
+        private final SampleFieldKey key;
+
+        public SampleLongGetter(SampleFieldKey key) {
+            this.key = key;
+        }
+
+        @Override
+        public Long get(Object[] target) throws Exception {
+            return (Long) target[key.getIndex()];
+        }
+
+        @Override
+        public long getLong(Object[] target) throws Exception {
+            return (long) target[key.getIndex()];
+        }
+    }
+    private static class SampleFloatGetter implements Getter<Object[], Float>, FloatGetter<Object[]> {
+        private final SampleFieldKey key;
+
+        public SampleFloatGetter(SampleFieldKey key) {
+            this.key = key;
+        }
+
+        @Override
+        public Float get(Object[] target) throws Exception {
+            return (Float) target[key.getIndex()];
+        }
+
+        @Override
+        public float getFloat(Object[] target) throws Exception {
+            return (float) target[key.getIndex()];
+        }
+    }
+    private static class SampleDoubleGetter implements Getter<Object[], Double>, DoubleGetter<Object[]> {
+        private final SampleFieldKey key;
+
+        public SampleDoubleGetter(SampleFieldKey key) {
+            this.key = key;
+        }
+
+        @Override
+        public Double get(Object[] target) throws Exception {
+            return (Double) target[key.getIndex()];
+        }
+
+        @Override
+        public double getDouble(Object[] target) throws Exception {
+            return (double) target[key.getIndex()];
+        }
+    }
+    
+    
+    @Test
+    public void testPrimitive() {
+
+        Object[] data = {true, (byte) 1, (char) 2, (short) 3, 4, (long) 5, (float) 6, (double) 7};
+
+
+        SetRowMapper<Object[], Object[][], DbPrimitiveObject, Exception> mapper;
+        DbPrimitiveObject o;
+        
+        mapper = addPrimitiveFields(new SampleMapperBuilder<DbPrimitiveObject>(ReflectionService.newInstance().getClassMeta(DbPrimitiveObject.class)));
+        o = mapper.map(data);
+        validatePrimitiveData(o);
+
+
+        List<SampleFieldKey> errors = new ArrayList<SampleFieldKey>();
+        MapperConfig<SampleFieldKey> mapperConfig = MapperConfig.<SampleFieldKey>fieldMapperConfig().fieldMapperErrorHandler(new FieldMapperErrorHandler<SampleFieldKey>() {
+            @Override
+            public void errorMappingField(SampleFieldKey key, Object source, Object target, Exception error, Context mappingContext) throws MappingException {
+                errors.add(key);
+            }
+        });
+        ReflectionService reflectionService = ReflectionService.newInstance(false);
+        mapper = addPrimitiveFields(new SampleMapperBuilder<DbPrimitiveObject>(reflectionService.getClassMeta(DbPrimitiveObject.class), mapperConfig));
+        o = mapper.map(data);
+        validatePrimitiveData(o);
+        assertTrue(errors.isEmpty());
+        
+        o = mapper.map(new Object[0]);
+        assertEquals(8, errors.size());
+        assertNotNull(o);
+
+    }
+
+    private void validatePrimitiveData(DbPrimitiveObject map) {
+        assertTrue(map.ispBoolean());
+        assertEquals(1, map.getpByte());
+        assertEquals(2, map.getpCharacter());
+        assertEquals(3, map.getpShort());
+        assertEquals(4, map.getpInt());
+        assertEquals(5, map.getpLong());
+        assertEquals(6, map.getpFloat(), 0.00001);
+        assertEquals(7, map.getpDouble(), 0.000001);
+    }
+
+    private SetRowMapper<Object[], Object[][], DbPrimitiveObject, Exception> addPrimitiveFields(SampleMapperBuilder<DbPrimitiveObject> builderTuple) {
+        builderTuple.addMapping("pBoolean");
+        builderTuple.addMapping("pByte");
+        builderTuple.addMapping("pCharacter");
+        builderTuple.addMapping("pShort");
+        builderTuple.addMapping("pInt");
+        builderTuple.addMapping("pLong");
+        builderTuple.addMapping("pFloat");
+        builderTuple.addMapping("pDouble");
+        return builderTuple.mapper();
+    }
 }

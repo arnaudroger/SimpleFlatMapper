@@ -68,7 +68,7 @@ public class MapperBiInstantiatorFactory {
         Map<Parameter, BiFunction<? super S, ? super MappingContext<?>, ?>> newMap = new HashMap<Parameter, BiFunction<? super S, ? super MappingContext<?>, ?>>(constructorParameterGetterMap.size());
         
         for(Map.Entry<Parameter, ContextualGetter<? super S, ?>> e : constructorParameterGetterMap.entrySet()) {
-            newMap.put(e.getKey(), new ContextualGetterBiFunction<S, Object>(e.getValue()));
+            newMap.put(e.getKey(), ContextualGetterBiFunction.of(e.getKey().getType(), e.getValue()));                 
         }
         
         return newMap;

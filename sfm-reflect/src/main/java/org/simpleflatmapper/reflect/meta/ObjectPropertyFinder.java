@@ -91,7 +91,11 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 
 	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
 		for (final PropertyMeta<T, ?> prop : classMeta.getProperties()) {
-			final String columnName = getColumnName(prop);
+			
+			final String columnName =
+					hasAlias(properties)
+					? prop.getName()
+					: getColumnName(prop);
 			if (propertyNameMatcher.matches(columnName)) {
 				matchingProperties.found(prop, propertiesCallBack(), score.matches(propertyNameMatcher.toString()), typeAffinityScorer);
 			}
@@ -108,6 +112,14 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 				propertyFinderTransformer, typeAffinityScorer);
 			}
 		}
+	}
+
+	private boolean hasAlias(Object[] properties) {
+    	for(Object o : properties) {
+    		if ("org.simpleflatmapper.map.property.RenameProperty".equals(o.getClass().getName())) // not so great... well
+				return true;
+		}
+		return false;
 	}
 
 	private void lookForSubProperty(

@@ -5,11 +5,8 @@ import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.RecordType;
 import org.junit.Test;
-import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.jooq.SfmRecordMapperProvider;
 import org.simpleflatmapper.jooq.SfmRecordMapperProviderFactory;
-import org.simpleflatmapper.map.property.ConverterProperty;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;

@@ -127,13 +127,12 @@ public class Issue537Test {
         }
     }
 
-    public static Field createField(String name, Class<?> aClass) {
+    //IFJAVA8_END
 
+    public static Field createField(String name, Class<?> aClass) {
         Field field = mock(Field.class);
         when(field.getName()).thenReturn(name);
         when(field.getType()).thenReturn(aClass);
         return field;
     }
-    //IFJAVA8_END
-
 }

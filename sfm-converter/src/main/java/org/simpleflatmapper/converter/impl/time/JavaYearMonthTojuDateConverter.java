@@ -1,13 +1,13 @@
 package org.simpleflatmapper.converter.impl.time;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.util.Date;
 import java.time.YearMonth;
 import java.time.ZoneId;
 
-public class JavaYearMonthTojuDateConverter implements Converter<YearMonth, Date> {
+public class JavaYearMonthTojuDateConverter implements ContextualConverter<YearMonth, Date> {
     private final ZoneId zoneId;
 
     public JavaYearMonthTojuDateConverter(ZoneId zoneId) {

@@ -1,7 +1,6 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.converter.ContextFactory;
-import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
@@ -10,7 +9,7 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -22,7 +21,7 @@ import java.util.concurrent.ConcurrentMap;
 public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	private final ReflectionService reflectionService;
-	private final Converter<? super CharSequence, ? extends K> keyConverter;
+	private final ContextualConverter<? super CharSequence, ? extends K> keyConverter;
 	private final ContextFactory keyContextFactory;
 	private final ClassMeta<V> valueClassMeta;
 	private final Type type;

@@ -1,12 +1,12 @@
 package org.simpleflatmapper.converter.impl.time;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
 
-public class CharSequenceToYearConverter implements Converter<CharSequence, Year> {
+public class CharSequenceToYearConverter implements ContextualConverter<CharSequence, Year> {
 
     private final DateTimeFormatter dateTimeFormatter;
 

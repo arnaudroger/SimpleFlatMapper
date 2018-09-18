@@ -2,12 +2,12 @@ package org.simpleflatmapper.converter.impl.time;
 
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 
-public class JavaTemporalToStringConverter implements Converter<Temporal, String> {
+public class JavaTemporalToStringConverter implements ContextualConverter<Temporal, String> {
 
     private final DateTimeFormatter dateTimeFormatter;
 

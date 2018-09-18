@@ -2,7 +2,7 @@ package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
 import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,10 +12,10 @@ public class DatastaxMapWithConverterGetter<K, V, KO, VO> implements Getter<Gett
     private final int index;
     private final Class<K> keyType;
     private final Class<V> valueType;
-    private final Converter<K, KO> keyConverter;
-    private final Converter<V, VO> valueConverter;
+    private final ContextualConverter<K, KO> keyConverter;
+    private final ContextualConverter<V, VO> valueConverter;
 
-    public DatastaxMapWithConverterGetter(int index, Class<K> keyType, Class<V> valueType, Converter<K, KO> keyConverter, Converter<V, VO> valueConverter) {
+    public DatastaxMapWithConverterGetter(int index, Class<K> keyType, Class<V> valueType, ContextualConverter<K, KO> keyConverter, ContextualConverter<V, VO> valueConverter) {
         this.index = index;
         this.keyType = keyType;
         this.valueType = valueType;

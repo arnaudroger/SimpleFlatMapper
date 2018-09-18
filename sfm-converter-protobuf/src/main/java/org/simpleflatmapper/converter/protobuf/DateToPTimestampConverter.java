@@ -2,12 +2,12 @@ package org.simpleflatmapper.converter.protobuf;
 
 import com.google.protobuf.Timestamp;
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-public class DateToPTimestampConverter implements Converter<Date, Timestamp> {
+public class DateToPTimestampConverter implements ContextualConverter<Date, Timestamp> {
     @Override
     public Timestamp convert(Date in, Context context) throws Exception {
         if (in == null) return null;

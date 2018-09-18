@@ -1,6 +1,6 @@
 package org.simpleflatmapper.map.fieldmapper;
 
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.getter.BooleanContextualGetter;
 import org.simpleflatmapper.map.getter.BoxedBooleanContextualGetter;
@@ -268,7 +268,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		Type propertyType = classMeta.getType();
 		Type sourceType = key.getType(propertyType);
 		Object[] properties = columnDefinition.properties();
-		Converter<? super J, ? extends P> converter = converterService.findConverter(sourceType, propertyType, mappingContextFactoryBuilder, properties);
+		ContextualConverter<? super J, ? extends P> converter = converterService.findConverter(sourceType, propertyType, mappingContextFactoryBuilder, properties);
 
 		if (converter != null) {
 			ContextualGetter<? super S, ? extends J> getter = getterFactory.newGetter(sourceType, key, mappingContextFactoryBuilder, properties);
@@ -313,7 +313,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 			types.add(paramType);
 			// converter?
 			Type sourceType = key.getType(paramType);
-			Converter converter = converterService.findConverter(sourceType, paramType, mappingContextFactoryBuilder, columnDefinition.properties());
+			ContextualConverter converter = converterService.findConverter(sourceType, paramType, mappingContextFactoryBuilder, columnDefinition.properties());
 			
 			if (converter != null) {
 				ContextualGetter sourceTypeGetter = getterFactory.newGetter(sourceType, key, mappingContextFactoryBuilder, columnDefinition);

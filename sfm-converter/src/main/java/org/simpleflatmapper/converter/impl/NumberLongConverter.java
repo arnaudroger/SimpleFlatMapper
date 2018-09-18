@@ -1,9 +1,9 @@
 package org.simpleflatmapper.converter.impl;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
-public class NumberLongConverter implements Converter<Number, Long> {
+public class NumberLongConverter implements ContextualConverter<Number, Long> {
     @Override
     public Long convert(Number in, Context context) {
         if (in == null) return null;

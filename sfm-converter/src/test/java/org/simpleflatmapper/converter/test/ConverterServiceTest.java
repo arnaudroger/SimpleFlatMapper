@@ -1,9 +1,9 @@
 package org.simpleflatmapper.converter.test;
 
 import org.junit.Test;
-import org.simpleflatmapper.converter.ComposedConverter;
+import org.simpleflatmapper.converter.ComposedContextualConverter;
 import org.simpleflatmapper.converter.ConversionException;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
 import org.simpleflatmapper.converter.ToStringConverter;
@@ -146,12 +146,22 @@ public class ConverterServiceTest {
     @Test
     public void testListToNumberSOE() {
         ConverterService converterService = ConverterService.getInstance();
-        Converter<? super List, ? extends Integer> converter = 
+        ContextualConverter<? super List, ? extends Integer> converter = 
                 converterService.findConverter(List.class, Integer.class, EmptyContextFactoryBuilder.INSTANCE);
         
-        assertTrue(converter instanceof ComposedConverter);
-        ComposedConverter composedConverter = (ComposedConverter) converter;
+        assertTrue(converter instanceof ComposedContextualConverter);
+        ComposedContextualConverter composedConverter = (ComposedContextualConverter) converter;
         assertTrue(composedConverter.c1 instanceof ToStringConverter);
         assertTrue(composedConverter.c2 instanceof CharSequenceIntegerConverter);
+    }
+    
+    @Test
+    public void testFooBar() throws Exception {
+        ConverterService converterService = ConverterService.getInstance();
+
+        ContextualConverter<? super Bar, ? extends Foo> converter = converterService.findConverter(Bar.class, Foo.class, EmptyContextFactoryBuilder.INSTANCE);
+        
+        Bar b = new Bar();
+        assertEquals(b, converter.convert(b, EmptyContextFactoryBuilder.INSTANCE.build().newContext()).b);
     }
 }

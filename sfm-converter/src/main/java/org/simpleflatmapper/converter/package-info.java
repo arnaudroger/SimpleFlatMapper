@@ -1,4 +1,4 @@
 /**
- * {@link org.simpleflatmapper.converter.Converter} classes.
+ * {@link org.simpleflatmapper.converter.ContextualConverter} classes.
  */
 package org.simpleflatmapper.converter;

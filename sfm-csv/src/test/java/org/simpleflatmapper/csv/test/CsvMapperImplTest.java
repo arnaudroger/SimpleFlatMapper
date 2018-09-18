@@ -2,14 +2,13 @@ package org.simpleflatmapper.csv.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperBuilder;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.Result;
 import org.simpleflatmapper.map.property.ConverterProperty;
@@ -351,7 +350,7 @@ public class CsvMapperImplTest {
 	
 	@Test
 	public void testConverterProperty() throws IOException {
-		DbObject d = CsvParser.mapWith(CsvMapperFactory.newInstance().addColumnProperty("typeName", ConverterProperty.of(new Converter<String, DbObject.Type>() {
+		DbObject d = CsvParser.mapWith(CsvMapperFactory.newInstance().addColumnProperty("typeName", ConverterProperty.of(new ContextualConverter<String, DbObject.Type>() {
 			@Override
 			public DbObject.Type convert(String in, Context context) throws Exception {
 				return DbObject.Type.shortForm(in);

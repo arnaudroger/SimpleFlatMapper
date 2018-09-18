@@ -3,10 +3,10 @@ package org.simpleflatmapper.converter.joda.impl;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 
-public class CharSequenceToJodaLocalTimeConverter implements Converter<CharSequence, LocalTime> {
+public class CharSequenceToJodaLocalTimeConverter implements ContextualConverter<CharSequence, LocalTime> {
     private final DateTimeFormatter dateTimeFormatter;
 
     public CharSequenceToJodaLocalTimeConverter(DateTimeFormatter dateTimeFormatter) {

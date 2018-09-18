@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.converter.ContextFactoryBuilder;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.jdbc.JdbcTypeHelper;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
@@ -37,12 +37,9 @@ import org.simpleflatmapper.jdbc.impl.setter.TimestampPreparedStatementIndexSett
 import org.simpleflatmapper.jdbc.impl.setter.URLPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.UUIDBinaryPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.UUIDStringPreparedStatementIndexSetter;
-import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.setter.ContextualIndexedSetter;
 import org.simpleflatmapper.map.setter.ContextualIndexedSetterFactory;
-import org.simpleflatmapper.reflect.IndexedSetter;
-import org.simpleflatmapper.reflect.IndexedSetterFactory;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.io.InputStream;
@@ -357,7 +354,7 @@ public class PreparedStatementIndexedSetterFactory
 
     @SuppressWarnings("unchecked")
     private <P, I> ContextualIndexedSetter<PreparedStatement, P> getSetterWithConvertion(Class<P> pclazz, Class<I> iclass, ContextFactoryBuilder contextFactoryBuilder, PropertyMapping<?, ?, JdbcColumnKey> pm) {
-        Converter<? super P, ? extends I> converter = ConverterService.getInstance().findConverter(pclazz, iclass, contextFactoryBuilder, pm.getColumnDefinition().properties());
+        ContextualConverter<? super P, ? extends I> converter = ConverterService.getInstance().findConverter(pclazz, iclass, contextFactoryBuilder, pm.getColumnDefinition().properties());
 
         if (converter != null) {
             ContextualIndexedSetter<PreparedStatement, I> indexedSetter = getIndexedSetter(iclass, pm, contextFactoryBuilder);

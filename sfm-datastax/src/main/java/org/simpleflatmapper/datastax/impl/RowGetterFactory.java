@@ -20,7 +20,7 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 
 
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import org.simpleflatmapper.datastax.impl.getter.DatastaxBigDecimalGetter;
 import org.simpleflatmapper.datastax.impl.getter.DatastaxBigIntegerGetter;
@@ -286,7 +286,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                         }
                     }
                 } else {
-                    Converter<?, ?> converter = getConverter(elementType, dataTypeElt, dtElt);
+                    ContextualConverter<?, ?> converter = getConverter(elementType, dataTypeElt, dtElt);
 
                     if (converter != null) {
                         if (Set.class.equals(dataTypeClass)) {
@@ -328,8 +328,8 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                         && TypeHelper.areEquals(keyValueTypeOfMap.getValueType(), dtValueType)) {
                     return new DatastaxMapGetter(key.getIndex(), TypeHelper.toClass(keyValueTypeOfMap.getKeyType()), TypeHelper.toClass(keyValueTypeOfMap.getValueType()));
                 } else {
-                    Converter<?, ?> keyConverter = getConverter(keyValueTypeOfMap.getKeyType(), dtKeyType, dtKey);
-                    Converter<?, ?> valueConverter = getConverter(keyValueTypeOfMap.getValueType(), dtValueType, dtValue);
+                    ContextualConverter<?, ?> keyConverter = getConverter(keyValueTypeOfMap.getKeyType(), dtKeyType, dtKey);
+                    ContextualConverter<?, ?> valueConverter = getConverter(keyValueTypeOfMap.getValueType(), dtValueType, dtValue);
 
                     if (keyConverter != null && valueConverter != null) {
                         return new DatastaxMapWithConverterGetter(key.getIndex(), dtKeyType, dtValueType, keyConverter, valueConverter);
@@ -383,7 +383,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
     }
 
     @SuppressWarnings("unchecked")
-    private Converter<?, ?> getConverter(Type elementType,  Class<?> dataTypeElt, DataType dtElt) {
+    private ContextualConverter<?, ?> getConverter(Type elementType, Class<?> dataTypeElt, DataType dtElt) {
         if (dtElt != null) {
             if (UDTValue.class.equals(dataTypeElt)) {
                 return new ConverterMapper(DatastaxUDTGetter.newUDTMapper(elementType, (UserType) dtElt, datastaxMapperFactory));

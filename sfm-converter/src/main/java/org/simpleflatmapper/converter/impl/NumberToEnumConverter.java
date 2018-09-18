@@ -1,10 +1,10 @@
 package org.simpleflatmapper.converter.impl;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.util.EnumHelper;
 
-public class NumberToEnumConverter<E extends Enum<E>> implements Converter<Number, E> {
+public class NumberToEnumConverter<E extends Enum<E>> implements ContextualConverter<Number, E> {
     private final Class<E> enumClass;
     private final E[] values;
 

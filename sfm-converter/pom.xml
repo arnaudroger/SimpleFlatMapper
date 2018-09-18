@@ -50,7 +50,7 @@
 						<Export-Package>org.simpleflatmapper.converter</Export-Package>
 						<Import-Package>org.simpleflatmapper.util</Import-Package>
 						<Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
-						<Provide-Capability>osgi.serviceloader;osgi.serviceloader=org.simpleflatmapper.converter.ConverterFactoryProducer</Provide-Capability>
+						<Provide-Capability>osgi.serviceloader;osgi.serviceloader=org.simpleflatmapper.converter.ContextualConverterFactoryProducer</Provide-Capability>
 					</instructions>
 					<archive>
 						<manifestEntries>

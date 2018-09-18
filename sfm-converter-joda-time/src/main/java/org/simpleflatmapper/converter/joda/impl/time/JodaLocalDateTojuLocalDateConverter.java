@@ -2,10 +2,10 @@ package org.simpleflatmapper.converter.joda.impl.time;
 
 import org.joda.time.LocalDate;
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 
-public class JodaLocalDateTojuLocalDateConverter implements Converter<LocalDate, java.time.LocalDate> {
+public class JodaLocalDateTojuLocalDateConverter implements ContextualConverter<LocalDate, java.time.LocalDate> {
 
 
     @Override

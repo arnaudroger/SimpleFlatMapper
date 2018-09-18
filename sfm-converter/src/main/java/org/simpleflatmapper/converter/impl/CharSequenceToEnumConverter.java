@@ -1,10 +1,10 @@
 package org.simpleflatmapper.converter.impl;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.util.EnumHelper;
 
-public class CharSequenceToEnumConverter<E extends Enum<E>> implements Converter<CharSequence, E> {
+public class CharSequenceToEnumConverter<E extends Enum<E>> implements ContextualConverter<CharSequence, E> {
     private final Class<E> enumClass;
     private final E[] values;
 

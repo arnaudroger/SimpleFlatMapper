@@ -5,7 +5,7 @@ import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.setter.ConvertDelegateSetter;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.util.UUID;
 
@@ -25,7 +25,7 @@ public class ConvertDelegateSetterTest {
                                 target.setName(value);
                             }
                         },
-                        new Converter<UUID, String>() {
+                        new ContextualConverter<UUID, String>() {
                             @Override
                             public String convert(UUID in, Context context) throws Exception {
                                 return in.toString();

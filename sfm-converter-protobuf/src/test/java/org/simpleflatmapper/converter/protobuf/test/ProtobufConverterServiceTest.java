@@ -2,13 +2,10 @@ package org.simpleflatmapper.converter.protobuf.test;
 
 import com.google.protobuf.Timestamp;
 import org.junit.Test;
-import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.converter.test.ConverterServiceTestHelper;
 
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;

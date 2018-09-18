@@ -3,22 +3,19 @@ package org.simpleflatmapper.datastax.impl;
 import com.datastax.driver.core.*;
 import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.converter.ConverterService;
-import org.simpleflatmapper.converter.EmptyContextFactory;
 import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
 import org.simpleflatmapper.datastax.DataTypeHelper;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.setter.ConvertDelegateSetter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.datastax.impl.setter.BigDecimalSettableDataSetter;
 import org.simpleflatmapper.datastax.impl.setter.BigIntegerSettableDataSetter;
 import org.simpleflatmapper.datastax.impl.setter.ByteSettableDataSetter;
@@ -225,9 +222,9 @@ public class SettableDataSetterFactory
             setter = setterFactory.getSetter(arg);
 
             if (!TypeHelper.areEquals(TypeHelper.toBoxedClass(type), TypeHelper.toBoxedClass(propertyType))) {
-                Converter<?, ?> converter = getConverter(propertyType, TypeHelper.toClass(type), dataType, arg.getColumnDefinition(), contextFactoryBuilder);
+                ContextualConverter<?, ?> converter = getConverter(propertyType, TypeHelper.toClass(type), dataType, arg.getColumnDefinition(), contextFactoryBuilder);
                 if (converter != null) {
-                    setter = (Setter<SettableByIndexData, P>) new ConvertDelegateSetter<SettableByIndexData, Object, P>(setter, (Converter<Object, P>) converter);
+                    setter = (Setter<SettableByIndexData, P>) new ConvertDelegateSetter<SettableByIndexData, Object, P>(setter, (ContextualConverter<Object, P>) converter);
                 } else {
                     setter = null;
                 }
@@ -249,7 +246,7 @@ public class SettableDataSetterFactory
                 if (TypeHelper.areEquals(lEltType, dEltType)) {
                     setter = new ListSettableDataSetter(arg.getColumnKey().getIndex());
                 } else {
-                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt, arg.getColumnDefinition(), contextFactoryBuilder);
+                    ContextualConverter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt, arg.getColumnDefinition(), contextFactoryBuilder);
                     if (converter != null) {
                         setter = new ListWithConverterSettableDataSetter(arg.getColumnKey().getIndex(), converter);
                     }
@@ -262,7 +259,7 @@ public class SettableDataSetterFactory
                 if (TypeHelper.areEquals(lEltType, dEltType)) {
                     setter = new SetSettableDataSetter(arg.getColumnKey().getIndex());
                 } else {
-                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt, arg.getColumnDefinition(), contextFactoryBuilder);
+                    ContextualConverter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt, arg.getColumnDefinition(), contextFactoryBuilder);
                     if (converter != null) {
                         setter = new SetWithConverterSettableDataSetter(arg.getColumnKey().getIndex(), converter);
                     }
@@ -294,7 +291,7 @@ public class SettableDataSetterFactory
     }
 
     @SuppressWarnings("unchecked")
-    private Converter<?, ?> getConverter(Type elementType, Class<?> dataTypeElt, DataType dtElt, ColumnDefinition<DatastaxColumnKey, ?> columnDefinition, ContextFactoryBuilder contextFactoryBuilder) {
+    private ContextualConverter<?, ?> getConverter(Type elementType, Class<?> dataTypeElt, DataType dtElt, ColumnDefinition<DatastaxColumnKey, ?> columnDefinition, ContextFactoryBuilder contextFactoryBuilder) {
         if (dtElt != null) {
             if (UDTValue.class.equals(dataTypeElt)) {
                 FieldMapper mapper = UDTObjectSettableDataSetter.newUDTMapper(elementType, (UserType) dtElt, mapperConfig, reflectionService);

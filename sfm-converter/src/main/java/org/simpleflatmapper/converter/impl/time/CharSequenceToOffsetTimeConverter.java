@@ -1,12 +1,12 @@
 package org.simpleflatmapper.converter.impl.time;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.time.OffsetTime;
 import java.time.format.DateTimeFormatter;
 
-public class CharSequenceToOffsetTimeConverter implements Converter<CharSequence, OffsetTime> {
+public class CharSequenceToOffsetTimeConverter implements ContextualConverter<CharSequence, OffsetTime> {
 
     private final DateTimeFormatter dateTimeFormatter;
 

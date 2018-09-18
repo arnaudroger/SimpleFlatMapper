@@ -19,12 +19,12 @@ public class ConverterService {
 
     private static final ConverterService INSTANCE = new ConverterService(getConverterFactories());
 
-    private static List<ConverterFactory> getConverterFactories() {
-        final List<ConverterFactory> converterFactories = new ArrayList<ConverterFactory>();
+    private static List<ContextualConverterFactory> getConverterFactories() {
+        final List<ContextualConverterFactory> converterFactories = new ArrayList<ContextualConverterFactory>();
 
-        Consumer<ConverterFactory<?, ?>> factoryConsumer = new Consumer<ConverterFactory<?, ?>>() {
+        Consumer<ContextualConverterFactory<?, ?>> factoryConsumer = new Consumer<ContextualConverterFactory<?, ?>>() {
             @Override
-            public void accept(ConverterFactory<?, ?> converterFactory) {
+            public void accept(ContextualConverterFactory<?, ?> converterFactory) {
                 converterFactories.add(converterFactory);
             }
         };
@@ -35,7 +35,13 @@ public class ConverterService {
         new JavaTimeConverterFactoryProducer().produce(factoryConsumer);
         //IFJAVA8_END
 
-        ProducerServiceLoader.produceFromServiceLoader(ConverterFactoryProducer.class, factoryConsumer);
+        ProducerServiceLoader.produceFromServiceLoader(ContextualConverterFactoryProducer.class, factoryConsumer);
+        ProducerServiceLoader.produceFromServiceLoader(ConverterFactoryProducer.class, new Consumer<ConverterFactory<?, ?>>() {
+            @Override
+            public void accept(ConverterFactory<?, ?> converterFactory) {
+                factoryConsumer.accept(new ContextualConverterFactoryAdapter(converterFactory));
+            }
+        });
 
         return converterFactories;
     }
@@ -45,16 +51,16 @@ public class ConverterService {
         return INSTANCE;
     }
 
-    private ConverterService(List<ConverterFactory> converters) {
+    private ConverterService(List<ContextualConverterFactory> converters) {
         this.converters = converters;
     }
 
-    public <F, P> Converter<? super F, ? extends P> findConverter(Class<F> inType, Class<P> outType, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+    public <F, P> ContextualConverter<? super F, ? extends P> findConverter(Class<F> inType, Class<P> outType, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
         return findConverter((Type)inType, (Type)outType, contextFactoryBuilder, params);
     }
 
     @SuppressWarnings("unchecked")
-    public <F, P> Converter<? super F, ? extends P> findConverter(Type inType, Type outType, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+    public <F, P> ContextualConverter<? super F, ? extends P> findConverter(Type inType, Type outType, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
         if (TypeHelper.isAssignable(outType, inType)) {
             return new IdentityConverter();
         }
@@ -64,7 +70,7 @@ public class ConverterService {
 
         ConvertingTypes targetedTypes = new ConvertingTypes(inType, outType);
         for(ScoredConverterFactory p : potentials) {
-            Converter<F, P> converter = p.converterFactory.newConverter(targetedTypes, contextFactoryBuilder, params);
+            ContextualConverter<F, P> converter = p.converterFactory.newConverter(targetedTypes, contextFactoryBuilder, params);
             if (converter != null) return converter;
         }
         return null;
@@ -79,7 +85,7 @@ public class ConverterService {
 
         ConvertingTypes targetedTypes = new ConvertingTypes(inType, outType);
 
-        for(ConverterFactory converterFactory : converters) {
+        for(ContextualConverterFactory converterFactory : converters) {
             ConvertingScore score = converterFactory.score(targetedTypes);
             int globalScore = score.getScore();
             if (globalScore >= 0) {
@@ -136,14 +142,14 @@ public class ConverterService {
         return potentials;
     }
 
-    private final List<ConverterFactory> converters;
+    private final List<ContextualConverterFactory> converters;
 
 
     private static class ScoredConverterFactory implements Comparable<ScoredConverterFactory>{
         private final int score;
-        private final ConverterFactory converterFactory;
+        private final ContextualConverterFactory converterFactory;
 
-        private ScoredConverterFactory(int score, ConverterFactory converterFactory) {
+        private ScoredConverterFactory(int score, ContextualConverterFactory converterFactory) {
             this.score = score;
             this.converterFactory = converterFactory;
         }
@@ -155,25 +161,25 @@ public class ConverterService {
     }
     
 
-    private static class ComposedConverterFactory<I, T, O> implements ConverterFactory<I, O> {
+    private static class ComposedConverterFactory<I, T, O> implements ContextualConverterFactory<I, O> {
 
-        private final ConverterFactory<I, T> headConverterFactory;
-        private final ConverterFactory<T, O> tailConverterFactory;
+        private final ContextualConverterFactory<I, T> headConverterFactory;
+        private final ContextualConverterFactory<T, O> tailConverterFactory;
         private final Type tType;
 
-        private ComposedConverterFactory(ConverterFactory<I, T> headConverterFactory, ConverterFactory<T, O> tailConverterFactory, Type tType) {
+        private ComposedConverterFactory(ContextualConverterFactory<I, T> headConverterFactory, ContextualConverterFactory<T, O> tailConverterFactory, Type tType) {
             this.headConverterFactory = headConverterFactory;
             this.tailConverterFactory = tailConverterFactory;
             this.tType = tType;
         }
 
         @Override
-        public Converter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
-            Converter<? super I, ? extends T> head = headConverterFactory.newConverter(new ConvertingTypes(targetedTypes.getFrom(), tType), contextFactoryBuilder, params);
+        public ContextualConverter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+            ContextualConverter<? super I, ? extends T> head = headConverterFactory.newConverter(new ConvertingTypes(targetedTypes.getFrom(), tType), contextFactoryBuilder, params);
             if (head == null) return null;
-            Converter<? super T, ? extends O> tail = tailConverterFactory.newConverter(new ConvertingTypes(tType, targetedTypes.getTo()), contextFactoryBuilder);
+            ContextualConverter<? super T, ? extends O> tail = tailConverterFactory.newConverter(new ConvertingTypes(tType, targetedTypes.getTo()), contextFactoryBuilder);
             if (tail == null) return null;
-            return new ComposedConverter<I, T, O>(head, tail);
+            return new ComposedContextualConverter<I, T, O>(head, tail);
         }
 
         @Override

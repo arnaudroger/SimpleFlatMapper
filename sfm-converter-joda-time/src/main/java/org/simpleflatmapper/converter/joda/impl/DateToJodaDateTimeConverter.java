@@ -3,12 +3,12 @@ package org.simpleflatmapper.converter.joda.impl;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.util.Date;
 
 
-public class DateToJodaDateTimeConverter implements Converter<Date, DateTime> {
+public class DateToJodaDateTimeConverter implements ContextualConverter<Date, DateTime> {
     private final DateTimeZone dateTimeZone;
 
     public DateToJodaDateTimeConverter(DateTimeZone dateTimeZone) {

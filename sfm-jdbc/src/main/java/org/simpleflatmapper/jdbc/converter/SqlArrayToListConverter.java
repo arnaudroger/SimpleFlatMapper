@@ -2,7 +2,7 @@ package org.simpleflatmapper.jdbc.converter;
 
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.reflect.Getter;
 
 import java.sql.Array;
@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqlArrayToListConverter<T> implements Converter<Array, List<T>> {
+public class SqlArrayToListConverter<T> implements ContextualConverter<Array, List<T>> {
     private final Getter<? super ResultSet, ? extends T> getter;
 
     @SuppressWarnings("unchecked")

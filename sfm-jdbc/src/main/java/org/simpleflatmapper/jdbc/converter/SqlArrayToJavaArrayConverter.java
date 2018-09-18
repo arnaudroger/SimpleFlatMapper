@@ -2,14 +2,14 @@ package org.simpleflatmapper.jdbc.converter;
 
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.reflect.Getter;
 
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.util.List;
 
-public class SqlArrayToJavaArrayConverter<T> implements Converter<Array, T[]> {
+public class SqlArrayToJavaArrayConverter<T> implements ContextualConverter<Array, T[]> {
     private final T[] emptyArray;
 
     private final SqlArrayToListConverter<T> sqlArrayToListConverter;

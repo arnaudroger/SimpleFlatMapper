@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc.spring;
 
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
@@ -102,7 +102,7 @@ public final class SqlParameterSourceBuilder<T> {
                         Type propertyType = pm.getPropertyMeta().getPropertyType();
                         Class<?> sqlType = JdbcTypeHelper.toJavaType(parameterType, propertyType);
                         if (!TypeHelper.isAssignable(sqlType, propertyType)) {
-                            Converter<? super Object, ?> converter = ConverterService.getInstance().findConverter(propertyType, sqlType, contextFactoryBuilder);
+                            ContextualConverter<? super Object, ?> converter = ConverterService.getInstance().findConverter(propertyType, sqlType, contextFactoryBuilder);
                             
                             if (converter != null) {
                                 getter = new FieldMapperGetterWithConverter(converter, getter);

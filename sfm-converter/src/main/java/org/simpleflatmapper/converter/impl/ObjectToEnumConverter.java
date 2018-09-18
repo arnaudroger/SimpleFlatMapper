@@ -1,9 +1,9 @@
 package org.simpleflatmapper.converter.impl;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
-public class ObjectToEnumConverter<E extends Enum<E>> implements Converter<Object, E> {
+public class ObjectToEnumConverter<E extends Enum<E>> implements ContextualConverter<Object, E> {
     private final Class<E> enumClass;
 
     private final NumberToEnumConverter<E> numberToEnumConverter;

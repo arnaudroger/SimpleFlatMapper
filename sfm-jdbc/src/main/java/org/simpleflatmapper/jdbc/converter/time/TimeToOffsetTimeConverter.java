@@ -1,13 +1,13 @@
 package org.simpleflatmapper.jdbc.converter.time;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.sql.Time;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 
-public class TimeToOffsetTimeConverter implements Converter<Time, OffsetTime> {
+public class TimeToOffsetTimeConverter implements ContextualConverter<Time, OffsetTime> {
     private final ZoneOffset offset;
 
     public TimeToOffsetTimeConverter(ZoneOffset offset) {

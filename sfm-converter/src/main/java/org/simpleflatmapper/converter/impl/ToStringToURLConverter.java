@@ -2,12 +2,12 @@ package org.simpleflatmapper.converter.impl;
 
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.ConversionException;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class ToStringToURLConverter implements Converter<Object, URL> {
+public class ToStringToURLConverter implements ContextualConverter<Object, URL> {
 
 	@Override
 	public URL convert(Object in, Context context) {

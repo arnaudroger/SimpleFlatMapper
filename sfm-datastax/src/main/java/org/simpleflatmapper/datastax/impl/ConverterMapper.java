@@ -2,11 +2,9 @@ package org.simpleflatmapper.datastax.impl;
 
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.ContextualSourceMapper;
-import org.simpleflatmapper.map.SourceMapper;
-import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.map.context.MappingContextFactory;
+import org.simpleflatmapper.converter.ContextualConverter;
 
-public class ConverterMapper<I, O> implements Converter<I, O> {
+public class ConverterMapper<I, O> implements ContextualConverter<I, O> {
 
     private final ContextualSourceMapper<I, O> mapper;
 

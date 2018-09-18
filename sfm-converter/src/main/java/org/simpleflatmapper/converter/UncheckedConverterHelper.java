@@ -6,14 +6,14 @@ public final class UncheckedConverterHelper {
 
     private UncheckedConverterHelper() {}
 
-    public static <I, O> UncheckedConverter<I, O> toUnchecked(final Converter<I, O> converter) {
+    public static <I, O> UncheckedConverter<I, O> toUnchecked(final ContextualConverter<I, O> converter) {
         return new UncheckedConverterImpl<I, O>(converter);
     }
 
     private static class UncheckedConverterImpl<I, O> implements UncheckedConverter<I, O> {
-        private final Converter<I, O> converter;
+        private final ContextualConverter<I, O> converter;
 
-        public UncheckedConverterImpl(Converter<I, O> converter) {
+        public UncheckedConverterImpl(ContextualConverter<I, O> converter) {
             this.converter = converter;
         }
 

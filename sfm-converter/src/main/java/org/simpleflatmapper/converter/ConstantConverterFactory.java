@@ -9,7 +9,7 @@ public class ConstantConverterFactory<I, O> extends AbstractConverterFactory<I, 
     }
 
     @Override
-    public Converter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+    public Converter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, Object... params) {
         return converter;
     }
 

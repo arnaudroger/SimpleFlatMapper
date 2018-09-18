@@ -1,7 +1,7 @@
 package org.simpleflatmapper.converter.impl.time;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 
-public class ObjectToJavaLocalDateTimeConverter implements Converter<Object, LocalDateTime> {
+public class ObjectToJavaLocalDateTimeConverter implements ContextualConverter<Object, LocalDateTime> {
     private final ZoneId zone;
 
     public ObjectToJavaLocalDateTimeConverter(ZoneId zoneId) {

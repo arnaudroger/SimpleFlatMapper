@@ -2,7 +2,7 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.converter.ContextFactory;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.reflect.property.MapTypeProperty;
 import org.simpleflatmapper.util.Predicate;
 
@@ -20,7 +20,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     private final ClassMeta<MapKeyValueElementPropertyMeta.KeyValue<K, V>> keyValueClassMeta;
     private final ClassMeta<V> valueMetaData;
     private final ClassMeta<T> mapMeta;
-    private final Converter<? super CharSequence, ? extends K> keyConverter;
+    private final ContextualConverter<? super CharSequence, ? extends K> keyConverter;
     private final ContextFactory keyContextFactory;
     private final Map<PropertyNameMatcher, PropertyFinder<V>> finders = new HashMap<PropertyNameMatcher, PropertyFinder<V>>();
     private final Map<PropertyMeta<?, ?>, PropertyFinder<?>> findersByKey = new HashMap<PropertyMeta<?, ?>, PropertyFinder<?>>();
@@ -31,7 +31,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
 
     private int keyValueMode = NONE;
 
-    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter, ContextFactory keyContextFactory, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
+    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, ContextualConverter<? super CharSequence, ? extends K> keyConverter, ContextFactory keyContextFactory, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
         super(propertyFilter, selfScoreFullName);
         this.mapMeta = mapMeta;
         this.valueMetaData = valueMetaData;

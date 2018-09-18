@@ -1,16 +1,9 @@
 package org.simpleflatmapper.jdbc;
 
 
-import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.UncheckedConverter;
-import org.simpleflatmapper.converter.UncheckedConverterHelper;
 import org.simpleflatmapper.jdbc.impl.ResultSetEnumerable;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
-import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
 import org.simpleflatmapper.map.mapper.DiscriminatorMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.util.Enumerable;

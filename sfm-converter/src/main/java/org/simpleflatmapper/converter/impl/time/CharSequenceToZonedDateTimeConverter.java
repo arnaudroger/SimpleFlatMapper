@@ -1,12 +1,12 @@
 package org.simpleflatmapper.converter.impl.time;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class CharSequenceToZonedDateTimeConverter implements Converter<CharSequence, ZonedDateTime> {
+public class CharSequenceToZonedDateTimeConverter implements ContextualConverter<CharSequence, ZonedDateTime> {
 
     private final DateTimeFormatter dateTimeFormatter;
 

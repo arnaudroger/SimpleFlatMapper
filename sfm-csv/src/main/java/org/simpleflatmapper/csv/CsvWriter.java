@@ -1,13 +1,12 @@
 package org.simpleflatmapper.csv;
 
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
 import org.simpleflatmapper.converter.ToStringConverter;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
 import org.simpleflatmapper.lightningcsv.CellWriter;
 import org.simpleflatmapper.lightningcsv.CsvCellWriter;
-import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.PropertyWithGetter;
@@ -193,7 +192,7 @@ public class CsvWriter<T>  {
     }
 
     private static <P, E> boolean canWrite(Type type) {
-        Converter<? super Object, ?> converter = ConverterService.getInstance().findConverter(type, CharSequence.class, new DefaultContextFactoryBuilder());
+        ContextualConverter<? super Object, ?> converter = ConverterService.getInstance().findConverter(type, CharSequence.class, new DefaultContextFactoryBuilder());
         return (converter != null && (! (converter instanceof ToStringConverter) || allowToStringConverter(type) ) );
     }
 

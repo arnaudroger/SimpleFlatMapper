@@ -2,17 +2,17 @@ package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.SettableByIndexData;
 import org.simpleflatmapper.reflect.Setter;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MapWithConverterSettableDataSetter<KI, KO, VI, VO> implements Setter<SettableByIndexData<?>, Map<KI, VI>> {
     private final int index;
-    private final Converter<KI, KO> keyConverter;
-    private final Converter<VI, VO> valueConverter;
+    private final ContextualConverter<KI, KO> keyConverter;
+    private final ContextualConverter<VI, VO> valueConverter;
 
-    public MapWithConverterSettableDataSetter(int index, Converter<KI, KO> keyConverter, Converter<VI, VO> valueConverter) {
+    public MapWithConverterSettableDataSetter(int index, ContextualConverter<KI, KO> keyConverter, ContextualConverter<VI, VO> valueConverter) {
         this.index = index;
         this.keyConverter = keyConverter;
         this.valueConverter = valueConverter;

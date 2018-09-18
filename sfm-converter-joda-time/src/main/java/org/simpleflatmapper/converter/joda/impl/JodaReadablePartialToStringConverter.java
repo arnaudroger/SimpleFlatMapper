@@ -3,10 +3,10 @@ package org.simpleflatmapper.converter.joda.impl;
 import org.joda.time.ReadablePartial;
 import org.joda.time.format.DateTimeFormatter;
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 
-public class JodaReadablePartialToStringConverter implements Converter<ReadablePartial, String> {
+public class JodaReadablePartialToStringConverter implements ContextualConverter<ReadablePartial, String> {
 
     private final DateTimeFormatter dateTimeFormatter;
 

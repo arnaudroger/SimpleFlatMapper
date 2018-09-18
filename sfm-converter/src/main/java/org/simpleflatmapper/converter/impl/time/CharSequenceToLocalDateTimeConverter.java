@@ -1,12 +1,12 @@
 package org.simpleflatmapper.converter.impl.time;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class CharSequenceToLocalDateTimeConverter implements Converter<CharSequence, LocalDateTime> {
+public class CharSequenceToLocalDateTimeConverter implements ContextualConverter<CharSequence, LocalDateTime> {
 
     private final DateTimeFormatter dateTimeFormatter;
 

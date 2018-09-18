@@ -1,12 +1,12 @@
 package org.simpleflatmapper.converter.impl;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class NumberBigIntegerConverter implements Converter<Number, BigInteger> {
+public class NumberBigIntegerConverter implements ContextualConverter<Number, BigInteger> {
     @Override
     public BigInteger convert(Number in, Context context) {
         if (in == null) return null;

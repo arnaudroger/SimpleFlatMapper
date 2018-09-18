@@ -1,3 +1,5 @@
+import org.simpleflatmapper.converter.ContextualConverterFactoryProducer;
+
 module org.simpleflatmapper.jooq {
         requires transitive org.simpleflatmapper.map;
         requires org.simpleflatmapper.jdbc;
@@ -5,7 +7,7 @@ module org.simpleflatmapper.jooq {
         requires java.sql;
         exports org.simpleflatmapper.jooq;
 
-        provides org.simpleflatmapper.converter.ConverterFactoryProducer
+        provides ContextualConverterFactoryProducer
                 with org.simpleflatmapper.jooq.converter.JooqConverterFactoryProducer;
 
 }

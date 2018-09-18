@@ -1,7 +1,7 @@
 package org.simpleflatmapper.converter;
 
 
-public class ToStringConverter implements Converter<Object, String> {
+public class ToStringConverter implements ContextualConverter<Object, String> {
 
 	public static final ToStringConverter INSTANCE = new ToStringConverter();
 

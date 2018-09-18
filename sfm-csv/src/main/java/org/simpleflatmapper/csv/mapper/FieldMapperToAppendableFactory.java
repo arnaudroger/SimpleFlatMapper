@@ -1,6 +1,6 @@
 package org.simpleflatmapper.csv.mapper;
 
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.lightningcsv.CellWriter;
 import org.simpleflatmapper.csv.CsvColumnKey;
@@ -124,7 +124,7 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
         }
 
         if (setter == null) {
-            Converter<? super P, ? extends CharSequence> converter =
+            ContextualConverter<? super P, ? extends CharSequence> converter =
                     converterService.findConverter(
                             pm.getPropertyMeta().getPropertyType(),
                             CharSequence.class,

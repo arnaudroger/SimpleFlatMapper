@@ -1,9 +1,9 @@
 package org.simpleflatmapper.converter.impl;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
-public class CharSequenceFloatConverter implements Converter<CharSequence, Float> {
+public class CharSequenceFloatConverter implements ContextualConverter<CharSequence, Float> {
     @Override
     public Float convert(CharSequence in, Context context) throws Exception {
         if (in == null) return null;

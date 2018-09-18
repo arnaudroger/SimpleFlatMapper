@@ -1,11 +1,12 @@
 package org.simpleflatmapper.converter.impl;
 
 
+import org.simpleflatmapper.converter.AbstractContextualConverterFactory;
 import org.simpleflatmapper.converter.AbstractConverterFactory;
-import org.simpleflatmapper.converter.AbstractConverterFactoryProducer;
+import org.simpleflatmapper.converter.AbstractContextualConverterFactoryProducer;
 import org.simpleflatmapper.converter.ContextFactoryBuilder;
-import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.ConverterFactory;
+import org.simpleflatmapper.converter.ContextualConverter;
+import org.simpleflatmapper.converter.ContextualConverterFactory;
 import org.simpleflatmapper.converter.ConvertingScore;
 import org.simpleflatmapper.converter.ConvertingTypes;
 
@@ -26,9 +27,9 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
-public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryProducer {
+public class JavaBaseConverterFactoryProducer extends AbstractContextualConverterFactoryProducer {
 	@Override
-	public void produce(Consumer<? super ConverterFactory<?, ?>> consumer) {
+	public void produce(Consumer<? super ContextualConverterFactory<?, ?>> consumer) {
 		constantConverter(consumer, Number.class, Byte.class      , new NumberByteConverter());
 		constantConverter(consumer, Number.class, Short.class     , new NumberShortConverter());
 		constantConverter(consumer, Number.class, Integer.class   , new NumberIntegerConverter());
@@ -63,13 +64,13 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		constantConverter(consumer, Object.class, URL.class, new ToStringToURLConverter());
 	}
 
-	private static class DateConverterFactory extends AbstractConverterFactory<CharSequence, Date> {
+	private static class DateConverterFactory extends AbstractContextualConverterFactory<CharSequence, Date> {
 		public DateConverterFactory() {
 			super(CharSequence.class, Date.class);
 		}
 
 		@Override
-		public Converter<? super CharSequence, ? extends Date> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+		public ContextualConverter<? super CharSequence, ? extends Date> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
 			List<String> formats = getFormat(params);
 			TimeZone timeZone = getTimeZone(params);
 			if (formats.isEmpty()) {
@@ -145,13 +146,13 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		}
 	}
 
-	private static class EnumConverterFactory extends AbstractConverterFactory<CharSequence, Enum> {
+	private static class EnumConverterFactory extends AbstractContextualConverterFactory<CharSequence, Enum> {
 		public EnumConverterFactory() {
 			super(CharSequence.class, Enum.class);
 		}
 
 		@SuppressWarnings("unchecked")
-		public Converter<? super CharSequence, ? extends Enum> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+		public ContextualConverter<? super CharSequence, ? extends Enum> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
 			return new CharSequenceToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
 		}
 
@@ -164,13 +165,13 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		}
 	}
 
-	private static class NumberEnumConverterFactory extends AbstractConverterFactory<Number, Enum> {
+	private static class NumberEnumConverterFactory extends AbstractContextualConverterFactory<Number, Enum> {
 		public NumberEnumConverterFactory() {
 			super(Number.class, Enum.class);
 		}
 
 		@SuppressWarnings("unchecked")
-		public Converter<? super Number, ? extends Enum> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+		public ContextualConverter<? super Number, ? extends Enum> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
 			return new NumberToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
 		}
 
@@ -183,13 +184,13 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		}
 	}
 
-	private static class ObjectEnumConverterFactory extends AbstractConverterFactory<Object, Enum> {
+	private static class ObjectEnumConverterFactory extends AbstractContextualConverterFactory<Object, Enum> {
 		public ObjectEnumConverterFactory() {
 			super(Object.class, Enum.class);
 		}
 
 		@SuppressWarnings("unchecked")
-		public Converter<? super Object, ? extends Enum> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+		public ContextualConverter<? super Object, ? extends Enum> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
 			return new ObjectToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
 		}
 

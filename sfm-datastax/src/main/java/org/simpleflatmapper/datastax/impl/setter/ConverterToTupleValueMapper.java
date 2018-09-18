@@ -4,9 +4,9 @@ import com.datastax.driver.core.TupleType;
 import com.datastax.driver.core.TupleValue;
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
-public class ConverterToTupleValueMapper<I> implements Converter<I, TupleValue> {
+public class ConverterToTupleValueMapper<I> implements ContextualConverter<I, TupleValue> {
 
     private final FieldMapper<I, TupleValue> mapper;
     private final TupleType tupleType;

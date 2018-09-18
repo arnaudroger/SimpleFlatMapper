@@ -1,3 +1,5 @@
+import org.simpleflatmapper.converter.ContextualConverterFactoryProducer;
+
 module org.simpleflatmapper.jdbc {
     requires transitive org.simpleflatmapper.map;
 
@@ -8,7 +10,7 @@ module org.simpleflatmapper.jdbc {
     exports org.simpleflatmapper.jdbc.property;
     exports org.simpleflatmapper.jdbc.property.time;
 
-    provides org.simpleflatmapper.converter.ConverterFactoryProducer
+    provides ContextualConverterFactoryProducer
         with org.simpleflatmapper.jdbc.converter.JdbcConverterFactoryProducer;
     provides org.simpleflatmapper.reflect.meta.AliasProviderProducer
         with org.simpleflatmapper.jdbc.impl.JpaAliasProviderFactory;

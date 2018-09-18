@@ -2,11 +2,11 @@ package org.simpleflatmapper.converter.protobuf;
 
 import com.google.protobuf.Timestamp;
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.util.concurrent.TimeUnit;
 
-public class LongToPTimestampConverter implements Converter<Long, Timestamp> {
+public class LongToPTimestampConverter implements ContextualConverter<Long, Timestamp> {
     @Override
     public Timestamp convert(Long in, Context context) throws Exception {
         if (in == null) return null;

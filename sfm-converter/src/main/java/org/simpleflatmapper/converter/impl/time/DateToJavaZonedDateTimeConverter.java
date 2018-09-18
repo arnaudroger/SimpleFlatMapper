@@ -1,13 +1,13 @@
 package org.simpleflatmapper.converter.impl.time;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
-public class DateToJavaZonedDateTimeConverter implements Converter<Date, ZonedDateTime> {
+public class DateToJavaZonedDateTimeConverter implements ContextualConverter<Date, ZonedDateTime> {
     private final ZoneId zoneId;
 
     public DateToJavaZonedDateTimeConverter(ZoneId zoneId) {

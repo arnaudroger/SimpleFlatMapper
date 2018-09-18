@@ -2,7 +2,7 @@ package org.simpleflatmapper.jdbc.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
 import org.simpleflatmapper.map.property.ConverterProperty;
@@ -61,7 +61,7 @@ public class JdbcMapperEnumTest {
     public void testIndexedEnumFactoryMethod() throws Exception {
         JdbcMapperBuilder<DbEnumObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbEnumObject.class);
         builder.addMapping("val",1, Types.VARCHAR, new Object[] {
-                ConverterProperty.of(new Converter<String, DbObject.Type>() {
+                ConverterProperty.of(new ContextualConverter<String, DbObject.Type>() {
             @Override
             public DbObject.Type convert(String s, Context context) throws Exception {
                 return DbObject.Type.shortForm(s);

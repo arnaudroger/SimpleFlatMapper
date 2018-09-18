@@ -1,16 +1,14 @@
 package org.simpleflatmapper.converter.impl;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ContextualConverter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
 
 
-public class MultiFormatCharSequenceToDateConverter implements Converter<CharSequence, Date> {
+public class MultiFormatCharSequenceToDateConverter implements ContextualConverter<CharSequence, Date> {
 
     private final int contextIndex;
     

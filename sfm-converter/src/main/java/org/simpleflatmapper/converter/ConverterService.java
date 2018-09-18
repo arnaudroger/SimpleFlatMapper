@@ -22,7 +22,7 @@ public class ConverterService {
     private static List<ContextualConverterFactory> getConverterFactories() {
         final List<ContextualConverterFactory> converterFactories = new ArrayList<ContextualConverterFactory>();
 
-        Consumer<ContextualConverterFactory<?, ?>> factoryConsumer = new Consumer<ContextualConverterFactory<?, ?>>() {
+        final Consumer<ContextualConverterFactory<?, ?>> factoryConsumer = new Consumer<ContextualConverterFactory<?, ?>>() {
             @Override
             public void accept(ContextualConverterFactory<?, ?> converterFactory) {
                 converterFactories.add(converterFactory);

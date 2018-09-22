@@ -55,6 +55,18 @@ public class ConverterService {
         this.converters = converters;
     }
 
+    public <F, P> Converter<? super F, ? extends P> findConverter(Class<F> inType, Class<P> outType, Object... params) {
+        return findConverter((Type)inType, (Type)outType, params);
+    }
+
+    public <F, P> Converter<? super F, ? extends P> findConverter(Type inType, Type outType, Object... params) {
+
+        DefaultContextFactoryBuilder builder = new DefaultContextFactoryBuilder();
+
+        ContextualConverter<? super F, ? extends P> converter = findConverter((Type) inType, (Type) outType, builder, params);
+        return new ConverterToContextualAdapter<>(converter, builder.build());
+    }
+
     public <F, P> ContextualConverter<? super F, ? extends P> findConverter(Class<F> inType, Class<P> outType, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
         return findConverter((Type)inType, (Type)outType, contextFactoryBuilder, params);
     }

@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.converter.ComposedContextualConverter;
 import org.simpleflatmapper.converter.ConversionException;
 import org.simpleflatmapper.converter.ContextualConverter;
+import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
 import org.simpleflatmapper.converter.ToStringConverter;
@@ -13,6 +14,7 @@ import org.simpleflatmapper.util.date.DateFormatSupplier;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.text.SimpleDateFormat;
@@ -163,5 +165,24 @@ public class ConverterServiceTest {
         
         Bar b = new Bar();
         assertEquals(b, converter.convert(b, EmptyContextFactoryBuilder.INSTANCE.build().newContext()).b);
+    }
+    
+    @Test
+    public void testBackwardCompatibleConverter() throws Exception {
+        ConverterService converterService = ConverterService.getInstance();
+
+        Converter<? super String, ? extends URL> urlConv = converterService.findConverter(String.class, URL.class);
+        assertEquals(new URL("http://simpleflatmapper.org"), urlConv.convert("http://simpleflatmapper.org"));
+
+
+        Converter<? super String, ? extends Date> dateConv = converterService.findConverter(String.class, Date.class, new DateFormatSupplier() {
+            @Override
+            public String get() {
+                return "yyyyMMdd";
+            }
+        });
+        
+        assertEquals(new SimpleDateFormat("yyyyMMdd").parse("20180927"), dateConv.convert("20180927"));
+
     }
 }

@@ -33,7 +33,7 @@ public class AsmUtilsTest {
 	public void testAPI() {
 		String version = System.getProperty("java.version");
 		System.out.println("version = " + version);
-		if (version.equals("1.6") || version.equals("1.7")) {
+		if (version.startsWith("1.6") || version.startsWith("1.7")) {
 			assertEquals(Opcodes.ASM5, AsmUtils.API);
 		} else {
 			//IFJAVA8_START

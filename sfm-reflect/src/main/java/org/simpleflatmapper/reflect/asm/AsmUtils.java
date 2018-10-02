@@ -56,7 +56,13 @@ public class AsmUtils {
 
 	public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
-
+	public static final int API;
+	static {
+		//IFJAVA8_START
+		if (true) API = Opcodes.ASM7_EXPERIMENTAL; else
+		//IFJAVA8_END
+		API = Opcodes.ASM5;
+	}
 	static final Map<Class<?>, Class<?>> wrappers = new HashMap<Class<?>, Class<?>>();
 
 	static {
@@ -408,7 +414,7 @@ public class AsmUtils {
 		final List<String> types = new ArrayList<String>();
 
 		SignatureReader reader = new SignatureReader(sig);
-		reader.accept(new SignatureVisitor(Opcodes.ASM5) {
+		reader.accept(new SignatureVisitor(AsmUtils.API) {
 
 			//TypeSignature =
 			// visitBaseType | visitTypeVariable | visitArrayType | ( visitClassType visitTypeArgument* ( visitInnerClassType visitTypeArgument* )* visitEnd ) )
@@ -417,7 +423,7 @@ public class AsmUtils {
 				StringBuilder sb = new StringBuilder();
 				int l = 0;
 				public AppendType() {
-					super(Opcodes.ASM5);
+					super(AsmUtils.API);
 				}
 
 				@Override

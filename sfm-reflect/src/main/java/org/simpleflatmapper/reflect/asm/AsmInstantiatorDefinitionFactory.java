@@ -38,7 +38,7 @@ public class AsmInstantiatorDefinitionFactory {
                 throw new IOException("Cannot find file " + fileName + " in " + cl);
             }
             ClassReader classReader = new ClassReader(is);
-            classReader.accept(new ClassVisitor(Opcodes.ASM5) {
+            classReader.accept(new ClassVisitor(AsmUtils.API) {
                 List<String> genericTypeNames;
 
                 @Override
@@ -85,7 +85,7 @@ public class AsmInstantiatorDefinitionFactory {
                             } else return null;
                         }
 
-                        return new MethodVisitor(Opcodes.ASM5) {
+                        return new MethodVisitor(AsmUtils.API) {
 
 
                             Label firstLabel;

@@ -1,6 +1,8 @@
 package org.simpleflatmapper.lightningcsv.impl;
 
 
+import org.simpleflatmapper.ow2asm.Opcodes;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,8 +20,15 @@ public class AsmUtils {
 			targetDir.mkdirs();
 		}
 	}
-
-
+	
+	public static final int API;
+	static {
+		//IFJAVA8_START
+		if (true) API = Opcodes.ASM7_EXPERIMENTAL; else
+			//IFJAVA8_END
+			API = Opcodes.ASM5;
+	}
+	
 	public static byte[] writeClassToFile (final String className, final byte[] bytes) throws IOException {
 		return writeClassToFileInDir(className, bytes,  AsmUtils.targetDir);
 	}

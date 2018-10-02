@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.simpleflatmapper.ow2asm.Opcodes.ASM5;
 import static org.simpleflatmapper.ow2asm.Opcodes.BIPUSH;
 import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_0;
 import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_1;
@@ -89,7 +88,7 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
             );
             ClassWriter writer = new ClassWriter(reader,      ClassWriter.COMPUTE_MAXS |
                     ClassWriter.COMPUTE_FRAMES);
-            ClassVisitor visitor = new ClassVisitor(ASM5, writer) {
+            ClassVisitor visitor = new ClassVisitor(AsmUtils.API, writer) {
                 @Override
                 public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
                     super.visit(version, access, newName, signature, superName, interfaces);
@@ -139,7 +138,7 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
                         return null;
 
                     } else {
-                        return new MethodVisitor(ASM5, mv) {
+                        return new MethodVisitor(AsmUtils.API, mv) {
                             public void visitTypeInsn(int i, String s) {
                                 if (oldNames.contains(s)) {
                                     s = newName;

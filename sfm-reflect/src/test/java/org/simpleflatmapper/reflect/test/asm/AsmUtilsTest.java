@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect.test.asm;
 import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.ow2asm.MethodVisitor;
+import org.simpleflatmapper.ow2asm.Opcodes;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.asm.AsmUtils;
 import org.simpleflatmapper.tuple.Tuple2;
@@ -21,11 +22,27 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static org.simpleflatmapper.ow2asm.Opcodes.*;
 
 public class AsmUtilsTest {
 
+	
+	@Test
+	public void testAPI() {
+		String version = System.getProperty("java.version");
+		
+		if (version.equals("1.6") || version.equals("1.7")) {
+			assertEquals(Opcodes.ASM5, AsmUtils.API);
+		} else {
+			//IFJAVA8_START
+			assertEquals(Opcodes.ASM7_EXPERIMENTAL, AsmUtils.API);
+			if (true) return;
+			//IFJAVA8_END
+			fail();
+		}
+	}
 	@Test
 	public void testToClass() throws  Exception {
 		Assert.assertEquals(int.class, AsmUtils.toGenericType("I", null, null));

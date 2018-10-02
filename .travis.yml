@@ -27,7 +27,8 @@ matrix:
       install: . ./.travis/install-jdk-10.sh
     - script:  mvn package -B -Pasm,jdk19 -DskipTests
       install: . ./.travis/install-jdk-11.sh
-    
+    - script:  mvn package -B -Pasm,jdk19 -DskipTests
+      install: . ./.travis/install-jdk-12.sh
 
 env:
   - MAVEN_SKIP_RC=true TRAVISBUILD=true

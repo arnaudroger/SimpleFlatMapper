@@ -4,6 +4,7 @@ package org.simpleflatmapper.converter.impl;
 import org.simpleflatmapper.converter.AbstractContextualConverterFactory;
 import org.simpleflatmapper.converter.AbstractConverterFactory;
 import org.simpleflatmapper.converter.AbstractContextualConverterFactoryProducer;
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.converter.ContextualConverterFactory;
@@ -17,6 +18,8 @@ import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.date.DateFormatSupplier;
 import org.simpleflatmapper.util.date.DefaultDateFormatSupplier;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
@@ -59,6 +62,7 @@ public class JavaBaseConverterFactoryProducer extends AbstractContextualConverte
 		factoryConverter (consumer, new NumberEnumConverterFactory());
 
 		factoryConverter (consumer, new ObjectEnumConverterFactory());
+		factoryConverter (consumer, new ArrayToListConverterFactory());
 
 		constantConverter(consumer, Object.class, String.class, ToStringConverter.INSTANCE);
 		constantConverter(consumer, Object.class, URL.class, new ToStringToURLConverter());
@@ -201,5 +205,39 @@ public class JavaBaseConverterFactoryProducer extends AbstractContextualConverte
 			}
 			return ConvertingScore.NO_MATCH;
 		}
+	}
+
+
+	private static class ArrayToListConverterFactory extends AbstractContextualConverterFactory<Object, List> {
+		protected ArrayToListConverterFactory() {
+			super(Object.class, List.class);
+		}
+
+		@Override
+		public ContextualConverter<? super Object, ? extends List> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+			return new ContextualConverter<Object, List>() {
+				@Override
+				public List convert(Object in, Context context) throws Exception {
+					if (in == null) return null;
+
+					int length = Array.getLength(in);
+					ArrayList arrayList = new ArrayList(length);
+					
+					for(int i = 0; i < length; i++) {
+						arrayList.add(Array.get(in, i));
+					}
+					return arrayList;
+				}
+			};
+		}
+
+		@Override
+		public ConvertingScore score(ConvertingTypes targetedTypes) {
+			if (TypeHelper.isArray(targetedTypes.getFrom())) {
+				return new ConvertingScore(ConvertingScore.MAX_SCORE, ConvertingTypes.getSourceScore(convertingTypes.getTo(), targetedTypes.getTo()));
+			}
+			return ConvertingScore.NO_MATCH;
+		}
+
 	}
 }

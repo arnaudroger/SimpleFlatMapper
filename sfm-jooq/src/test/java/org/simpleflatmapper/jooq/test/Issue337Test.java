@@ -151,6 +151,14 @@ public class Issue337Test {
             return this;
         }
 
+        public String component1() {
+            return value1();
+        }
+
+        public String component2() {
+            return value2();
+        }
+
         // -------------------------------------------------------------------------
         // Constructors
         // -------------------------------------------------------------------------

@@ -1,12 +1,13 @@
 package org.simpleflatmapper.jooq;
 
+import org.jooq.Record;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 
 public class SfmRecordMapperProviderFactory
-        extends AbstractMapperFactory<JooqFieldKey, SfmRecordMapperProviderFactory> {
+        extends AbstractMapperFactory<JooqFieldKey, SfmRecordMapperProviderFactory, Record> {
 
 
     public static SfmRecordMapperProviderFactory newInstance() {
@@ -14,11 +15,11 @@ public class SfmRecordMapperProviderFactory
     }
 
     public static SfmRecordMapperProviderFactory newInstance(
-            AbstractMapperFactory<JooqFieldKey, ?> config) {
+            AbstractMapperFactory<JooqFieldKey, ?, Record> config) {
         return new SfmRecordMapperProviderFactory(config);
     }
 
-    public SfmRecordMapperProviderFactory(AbstractMapperFactory<JooqFieldKey, ?> config) {
+    public SfmRecordMapperProviderFactory(AbstractMapperFactory<JooqFieldKey, ?, Record> config) {
         super(config);
     }
 

@@ -25,7 +25,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public abstract class AbstractMapperFactory<
 		K extends FieldKey<K>,
-		MF extends AbstractMapperFactory<K, MF>> {
+		MF extends AbstractMapperFactory<K, MF, S>, S> {
 
 
 	private FieldMapperErrorHandler<K> fieldMapperErrorHandler = null;
@@ -46,7 +46,7 @@ public abstract class AbstractMapperFactory<
 	private boolean assumeInjectionModifiesValues;
 
 
-	public AbstractMapperFactory(AbstractMapperFactory<K, ?> config) {
+	public AbstractMapperFactory(AbstractMapperFactory<K, ?, S> config) {
 		this.fieldMapperErrorHandler = config.fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = config.mapperBuilderErrorHandler;
 		this.consumerErrorHandler = config.consumerErrorHandler;
@@ -136,7 +136,8 @@ public abstract class AbstractMapperFactory<
         this.reflectionService = reflectionService;
         return (MF) this;
     }
-
+    
+    
 	public final MapperConfig<K> mapperConfig() {
 		return MapperConfig
 				.<K>config(enrichColumnDefinitions(columnDefinitions))

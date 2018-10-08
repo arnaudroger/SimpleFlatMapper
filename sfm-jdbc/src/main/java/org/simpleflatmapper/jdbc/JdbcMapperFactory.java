@@ -56,7 +56,7 @@ import java.sql.SQLException;
  *
  */
 public final class JdbcMapperFactory
-		extends AbstractMapperFactory<JdbcColumnKey, JdbcMapperFactory> {
+		extends AbstractMapperFactory<JdbcColumnKey, JdbcMapperFactory, ResultSet> {
 
     /**
 	 * instantiate a new JdbcMapperFactory
@@ -67,13 +67,13 @@ public final class JdbcMapperFactory
 	}
 
 	public static JdbcMapperFactory newInstance(
-			AbstractMapperFactory<JdbcColumnKey, ?> config) {
+			AbstractMapperFactory<JdbcColumnKey, ?, ResultSet> config) {
 		return new JdbcMapperFactory(config);
 	}
 
 	private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = ResultSetGetterFactory.INSTANCE;
 
-	private JdbcMapperFactory(AbstractMapperFactory<JdbcColumnKey, ?> config) {
+	private JdbcMapperFactory(AbstractMapperFactory<JdbcColumnKey, ?, ResultSet> config) {
 		super(config);
 	}
 

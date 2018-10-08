@@ -15,9 +15,10 @@ import org.springframework.jdbc.core.namedparam.ParsedSql;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Type;
+import java.sql.ResultSet;
 import java.util.List;
 
-public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcColumnKey, JdbcTemplateMapperFactory> {
+public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcColumnKey, JdbcTemplateMapperFactory, ResultSet> {
 
 
 	private JdbcTemplateMapperFactory() {

@@ -64,7 +64,7 @@ import java.util.stream.Stream;
  *     <br>
  * </code>
  */
-public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, CsvMapperFactory> {
+public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, CsvMapperFactory, CsvRow> {
 
 
 	private ContextualGetterFactory<CsvRow, CsvColumnKey> getterFactory = CsvRowGetterFactory.INSTANCE;

@@ -14,7 +14,7 @@ import org.simpleflatmapper.csv.CsvColumnKey;
 
 import java.lang.reflect.Type;
 
-public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, SheetMapperFactory> {
+public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, SheetMapperFactory, Row> {
 
     private GetterFactory<Row, CsvColumnKey> getterFactory = new RowGetterFactory();
 

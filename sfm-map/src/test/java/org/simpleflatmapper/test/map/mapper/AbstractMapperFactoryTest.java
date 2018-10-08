@@ -271,12 +271,12 @@ public class AbstractMapperFactoryTest {
 
     }
 
-    static class MapperFactory extends AbstractMapperFactory<SampleFieldKey, MapperFactory> {
+    static class MapperFactory extends AbstractMapperFactory<SampleFieldKey, MapperFactory, Object[]> {
         public MapperFactory() {
             super(new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>(), FieldMapperColumnDefinition.<SampleFieldKey>identity());
         }
 
-        public MapperFactory(AbstractMapperFactory<SampleFieldKey, ?> config) {
+        public MapperFactory(AbstractMapperFactory<SampleFieldKey, ?, Object[]> config) {
             super(config);
         }
     }

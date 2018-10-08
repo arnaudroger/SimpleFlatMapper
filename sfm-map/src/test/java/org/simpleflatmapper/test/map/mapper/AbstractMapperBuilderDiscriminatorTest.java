@@ -39,7 +39,7 @@ public class AbstractMapperBuilderDiscriminatorTest {
                 }, reflectionService.getClassMeta(IntegerValue.class))
         );
 
-        AbstractMapperBuilderTest.SampleMapperBuilder<Common> builder = new AbstractMapperBuilderTest.SampleMapperBuilder<>(classMeta, mapperConfig);
+        AbstractMapperBuilderTest.SampleMapperBuilder<Common> builder = new AbstractMapperBuilderTest.SampleMapperBuilder<Common>(classMeta, mapperConfig);
         
         builder.addMapping("id");
         builder.addMapping("valueStr");

@@ -58,7 +58,7 @@ public class AbstractMapperBuilderDiscriminatorTest {
     }
     
     
-    public abstract class Common {
+    public static abstract class Common {
         public final long id;
 
         Common(long id) {
@@ -66,7 +66,7 @@ public class AbstractMapperBuilderDiscriminatorTest {
         }
     }
     
-    public class StringValue extends Common {
+    public static class StringValue extends Common {
         public final String valueStr;
 
         public StringValue(long id, String valueStr) {
@@ -75,7 +75,7 @@ public class AbstractMapperBuilderDiscriminatorTest {
         }
     }
 
-    public class IntegerValue extends Common {
+    public static class IntegerValue extends Common {
         public final int valueInt;
 
         public IntegerValue(long id, int valueInt) {

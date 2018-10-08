@@ -286,19 +286,21 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         for(InjectionParam p : params) {
             GenericBuilderGetterAndFieldMapper getterAndFieldMapper = p.getterAndfieldMapperGenericBuilder(i);
 
-            if (getterAndFieldMapper.fieldMapper == null)  {
-                throw new IllegalStateException();
-            }
-            
-            genericBuilderFieldMappers.add(getterAndFieldMapper.fieldMapper);
-            
-            if (getterAndFieldMapper.fieldMapperAfterConstruct != null) {
-                targetConstructorFieldMapper.add(getterAndFieldMapper.fieldMapperAfterConstruct);
-            }
+            if (getterAndFieldMapper != null) {
+                if (getterAndFieldMapper.fieldMapper == null) {
+                    throw new IllegalStateException();
+                }
 
-            indexMapping[i] = p.parameter;
-            transformers[i] = getterAndFieldMapper.transform;
-            i++;
+                genericBuilderFieldMappers.add(getterAndFieldMapper.fieldMapper);
+
+                if (getterAndFieldMapper.fieldMapperAfterConstruct != null) {
+                    targetConstructorFieldMapper.add(getterAndFieldMapper.fieldMapperAfterConstruct);
+                }
+
+                indexMapping[i] = p.parameter;
+                transformers[i] = getterAndFieldMapper.transform;
+                i++;
+            }
         }
 
 
@@ -1097,6 +1099,13 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         GenericBuilderGetterAndFieldMapper getterAndfieldMapperGenericBuilder(final int index) {
             final ContextualGetter<? super S, ?> getter = getGetter();
 
+            if (NullContextualGetter.isNull(getter)) {
+                PropertyMapping<T, ?, K> propertyMapping = this.propertyMapping;
+                mapperConfig.mapperBuilderErrorHandler()
+                        .accessorNotFound(getterNotFoundErrorMessage(propertyMapping));
+                return null;
+            }
+            
             FieldMapper<S, GenericBuilder<S, T>> fieldMapper =  wrapFieldMapperWithErrorHandler(propertyMapping.getColumnKey(), new GenericBuilderFieldMapper<S, T>(index, getter));
             FieldMapper<S, T> fieldMapperAfterConstruct =
                     NullSetter.isNull(propertyMeta.getSetter()) ? 

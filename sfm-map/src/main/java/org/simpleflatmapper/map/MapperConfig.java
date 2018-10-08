@@ -8,6 +8,7 @@ import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.DefaultPropertyNameMatcherFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -249,6 +250,15 @@ public final class MapperConfig<K extends FieldKey<K>> {
                 maxMethodSize,
                 assumeInjectionModifiesValues,
                 discriminators);
+    }
+
+    public <S, T> Discriminator<S, T> getDiscriminator(ClassMeta<T> classMeta) {
+        for(Discriminator<?, ?> d : discriminators) {
+            if (TypeHelper.areEquals(classMeta.getType(), d.type)) {
+                return (Discriminator<S, T>) d;
+            }
+        }
+        return null;
     }
 
 

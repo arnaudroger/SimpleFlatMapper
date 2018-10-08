@@ -42,7 +42,7 @@ public final class QueryDslMapperBuilder<T> {
 	
 	public QueryDslMapperBuilder(final ClassMeta<T> classMeta, MappingContextFactoryBuilder<Tuple, TupleElementKey> parentBuilder) throws MapperBuildingException {
 		constantSourceMapperBuilder =
-				new DefaultConstantSourceMapperBuilder<Tuple, T, TupleElementKey>(
+				ConstantSourceMapperBuilder.<Tuple, T, TupleElementKey>newConstantSourceMapperBuilder(
 						FIELD_MAPPER_SOURCE,
 						classMeta,
 						MapperConfig.<TupleElementKey>fieldMapperConfig(),

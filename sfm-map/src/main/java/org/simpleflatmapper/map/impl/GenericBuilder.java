@@ -4,11 +4,13 @@ import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.Function;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public final class GenericBuilder<S, T> implements FieldMapper<S, T> {
+public final class GenericBuilder<S, T>  {
 
     public static final Method BUILD;
     
@@ -39,10 +41,25 @@ public final class GenericBuilder<S, T> implements FieldMapper<S, T> {
         return t;
     }
 
-    @Override
-    public void mapTo(S source, T target, MappingContext<? super S> context) throws Exception {
+    public void mapFrom(S source, MappingContext<? super S> context) throws Exception {
         for(FieldMapper<S, GenericBuilder<S, T>> fm : genericBuilderFieldMappers) {
             fm.mapTo(source, this, context);
+        }
+    }
+
+    public static <S, T> Function<GenericBuilder<S, T>, T> buildFunction() {
+        return new GenericBuilderTransformFunction<S, T>();
+    }
+
+    private static class GenericBuilderTransformFunction<S, T> implements Function<GenericBuilder<S, T>, T> {
+        @Override
+        public T apply(GenericBuilder<S, T> o) {
+            try {
+                if (o == null) return null;
+                return o.build();
+            } catch (Exception e) {
+                return ErrorHelper.rethrow(e);
+            }
         }
     }
 }

@@ -41,19 +41,19 @@ public class AbstractMapperBuilderDiscriminatorTest {
 
         AbstractMapperBuilderTest.SampleMapperBuilder<Common> builder = new AbstractMapperBuilderTest.SampleMapperBuilder<>(classMeta, mapperConfig);
         
-//        builder.addMapping("id");
-//        builder.addMapping("valueStr");
-//        builder.addMapping("valueInt");
-//
-//        SetRowMapper<Object[], Object[][], Common, Exception> mapper = builder.mapper();
+        builder.addMapping("id");
+        builder.addMapping("valueStr");
+        builder.addMapping("valueInt");
 
-//        StringValue stringValue = (StringValue) mapper.map(new Object[] {1, "strValue", 2, "str"});
-//        assertEquals(1, stringValue.id);
-//        assertEquals("strValue", stringValue.valueStr);
-//                
-//        IntegerValue integerValue = (IntegerValue) mapper.map(new Object[] {2, "str", 3, "int"});
-//        assertEquals(2, integerValue.id);
-//        assertEquals(3, integerValue.valueInt);
+        SetRowMapper<Object[], Object[][], Common, Exception> mapper = builder.mapper();
+
+        StringValue stringValue = (StringValue) mapper.map(new Object[] {1l, "strValue", 2, "str"});
+        assertEquals(1, stringValue.id);
+        assertEquals("strValue", stringValue.valueStr);
+
+        IntegerValue integerValue = (IntegerValue) mapper.map(new Object[] {2l, "str", 3, "int"});
+        assertEquals(2, integerValue.id);
+        assertEquals(3, integerValue.valueInt);
 
     }
     

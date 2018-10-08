@@ -67,7 +67,7 @@ import java.util.*;
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 import static org.simpleflatmapper.util.ErrorDoc.CSFM_GETTER_NOT_FOUND;
 
-public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K>> implements ConstantSourceMapperBuilder<S, T, K> {
+public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K>> extends ConstantSourceMapperBuilder<S, T, K> {
 
     private static final FieldKey[] FIELD_KEYS = new FieldKey[0];
     public static final FieldMapper[] EMPTY_FIELD_MAPPERS = new FieldMapper[0];
@@ -87,22 +87,13 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
     private final KeyFactory<K> keyFactory;
 
-
     public DefaultConstantSourceMapperBuilder(
             final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
             final MapperConfig<K> mapperConfig,
             MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder,
-            KeyFactory<K> keyFactory) throws MapperBuildingException {
-                this(mapperSource, classMeta, mapperConfig, mappingContextFactoryBuilder, keyFactory, null);
-    }
-
-    public DefaultConstantSourceMapperBuilder(
-            final MapperSource<? super S, K> mapperSource,
-            final ClassMeta<T> classMeta,
-            final MapperConfig<K> mapperConfig,
-            MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder,
-            KeyFactory<K> keyFactory, PropertyFinder<T> propertyFinder) throws MapperBuildingException {
+            KeyFactory<K> keyFactory, 
+            PropertyFinder<T> propertyFinder) throws MapperBuildingException {
         this.mapperSource = requireNonNull("fieldMapperSource", mapperSource);
         this.mapperConfig = requireNonNull("mapperConfig", mapperConfig);
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
@@ -201,7 +192,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         } else {
             ConstructorInjections<S, T> constructorInjections = toConstructorInjections(injectionParams);
             InstantiatorAndFieldMappers<S, T> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator(constructorInjections);
-            mapper = buildMapper(targetFieldMappers(), constructorFieldMappersAndInstantiator, getKeys(), getTargetClass(), reflectionService, mapperSource, mapperConfig);
+            mapper = buildMapper(targetFieldMappers(), constructorFieldMappersAndInstantiator, getKeys().toArray(FIELD_KEYS), getTargetClass(), reflectionService, mapperSource, mapperConfig);
         }
         return mapper;
     }
@@ -226,7 +217,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 mutableBuilder != null) {
             return builderWithTransformer(injections, mutableBuilder);
         } else {
-            return buildWithGenericBuilder(injections, fields(), getKeys());
+            return buildWithGenericBuilder(injections, fields(), getKeys().toArray(FIELD_KEYS));
         }
     }
 
@@ -274,7 +265,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     }
     
     public GenericBuilderMapping<S, T, K> getGenericBuilderMapping() {
-        return getGenericBuilderMapping(constructorInjections(), fields(), getKeys());
+        return getGenericBuilderMapping(constructorInjections(), fields(), getKeys().toArray(FIELD_KEYS));
     }
 
     private GenericBuilderMapping<S, T, K> getGenericBuilderMapping(List<InjectionParam> params, List<FieldMeta> fields, FieldKey<K>[] keys) {
@@ -357,10 +348,14 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 mapperSource,
                 mapperConfig);
 
-        return new TransformSourceFieldMapper<S, GenericBuilder<S, T>, T>(delegate, gbm.targetFieldMappers, new GenericBuilderTransformFunction<S, T>());
+        return new TransformSourceFieldMapper<S, GenericBuilder<S, T>, T>(delegate, gbm.targetFieldMappers, GenericBuilder.<S, T>buildFunction());
         
-    } 
-    
+    }
+
+    public Type getTargetType() {
+        return propertyMappingsBuilder.getClassMeta().getType();
+    }
+
     public static class GenericBuilderMapping<S, T, K extends FieldKey<K>> {
         public final GenericBuildBiInstantiator<S, T> genericBuilderInstantiator;
         public final InstantiatorAndFieldMappers<S, GenericBuilder<S, T>> instantiatorAndFieldMappers;
@@ -453,7 +448,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 return builderBiInstantiator.newInitialisedBuilderInstace(o, o2);
             }
         });
-        SourceFieldMapper delegate = buildMapper(fields, newConstantSourceMapperBuilder, getKeys(), targetClass, reflectionService, mapperSource, mapperConfig);
+        SourceFieldMapper delegate = buildMapper(fields, newConstantSourceMapperBuilder, getKeys().toArray(FIELD_KEYS), targetClass, reflectionService, mapperSource, mapperConfig);
         return new TransformSourceFieldMapper<S, Object, T>(delegate, fields, f);
     }
 
@@ -639,7 +634,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
     // call use towards sub jdbcMapper
     // the keys are initialised
-    private <P> void addMapping(K columnKey, ColumnDefinition<K, ?> columnDefinition,  PropertyMeta<T, P> prop) {
+    protected  <P> void addMapping(K columnKey, ColumnDefinition<K, ?> columnDefinition,  PropertyMeta<T, P> prop) {
 		propertyMappingsBuilder.addProperty(columnKey, columnDefinition, prop);
 	}
 
@@ -896,7 +891,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
     @SuppressWarnings("unchecked")
     private <P> SourceMapper<S, P> subPropertyMapper(PropertyMeta<T, P> owner, List<PropertyMapping<T, ?, K>> properties, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
-        final DefaultConstantSourceMapperBuilder<S, P, K> builder =
+        final ConstantSourceMapperBuilder<S, P, K> builder =
                 newSubBuilder(owner.getPropertyClassMeta(),
                         mappingContextFactoryBuilder,
                         (PropertyFinder<P>) propertyMappingsBuilder.getPropertyFinder().getSubPropertyFinder(owner));
@@ -944,11 +939,11 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 		additionalMappers.add(mapper);
 	}
 
-    private <ST> DefaultConstantSourceMapperBuilder<S, ST, K> newSubBuilder(
+    private <ST> ConstantSourceMapperBuilder<S, ST, K> newSubBuilder(
             ClassMeta<ST> classMeta,
             MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder,
             PropertyFinder<ST> propertyFinder) {
-        return new DefaultConstantSourceMapperBuilder<S, ST, K>(
+        return ConstantSourceMapperBuilder.<S, ST, K>newConstantSourceMapperBuilder(
                 mapperSource,
                 classMeta,
                 mapperConfig,
@@ -957,13 +952,15 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 propertyFinder);
     }
 
-    @SuppressWarnings("unchecked")
-    private FieldKey<K>[] getKeys() {
-        return propertyMappingsBuilder.getKeys().toArray(FIELD_KEYS);
+    @Override
+    public List<K> getKeys() {
+        return propertyMappingsBuilder.getKeys();
     }
 
-
-
+    @Override
+    public <H extends ForEachCallBack<PropertyMapping<T, ?, K>>> H forEachProperties(H handler) {
+        return propertyMappingsBuilder.forEachProperties(handler);
+    }
     @SuppressWarnings("unchecked")
     private List<K> getSubKeys(List<PropertyMapping<T, ?, K>> properties) {
         List<K> keys = new ArrayList<K>();
@@ -992,20 +989,6 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
         return keys;
     }
-
-    public static class GenericBuilderTransformFunction<S, T> implements Function<GenericBuilder<S, T>, T> {
-        @Override
-        public T apply(GenericBuilder<S, T> o) {
-            try {
-                if (o == null) return null;
-                return o.build();
-            } catch (Exception e) {
-                return ErrorHelper.rethrow(e);
-            }
-        }
-    }
-
-
 
     public static class TargetFromBuilderParamBiFunction implements BiFunction<Object[], Object, Object> {
         private final int builderIndex;

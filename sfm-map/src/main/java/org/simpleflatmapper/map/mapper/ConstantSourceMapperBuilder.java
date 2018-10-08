@@ -2,27 +2,75 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
-import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
+import org.simpleflatmapper.reflect.meta.PropertyFinder;
+import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.ForEachCallBack;
 
-import static org.simpleflatmapper.util.ErrorDoc.CSFM_GETTER_NOT_FOUND;
+import java.util.List;
 
-public interface ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>> {
+public abstract class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>> {
 
     @SuppressWarnings("unchecked")
-    ConstantSourceMapperBuilder<S, T, K> addMapping(K key, ColumnDefinition<K, ?> columnDefinition);
+    public abstract ConstantSourceMapperBuilder<S, T, K> addMapping(K key, ColumnDefinition<K, ?> columnDefinition);
 
-    @SuppressWarnings("unchecked")
-    ContextualSourceFieldMapperImpl<S, T> mapper();
+    protected abstract <P> void addMapping(K columnKey, ColumnDefinition<K, ?> columnDefinition,  PropertyMeta<T, P> prop);
 
-    SourceFieldMapper<S, T> sourceFieldMapper();
+        @SuppressWarnings("unchecked")
+    public abstract ContextualSourceFieldMapperImpl<S, T> mapper();
 
-    boolean isRootAggregate();
+    public abstract SourceFieldMapper<S, T> sourceFieldMapper();
 
-    MappingContextFactory<? super S> contextFactory();
+    public abstract boolean isRootAggregate();
 
-    void addMapper(FieldMapper<S, T> mapper);
+    public abstract MappingContextFactory<? super S> contextFactory();
+
+    public abstract void addMapper(FieldMapper<S, T> mapper);
+
+    public abstract List<K> getKeys();
+
+    public abstract <H extends ForEachCallBack<PropertyMapping<T, ?, K>>> H forEachProperties(H handler);
+
+    public static <S, T, K extends FieldKey<K>> ConstantSourceMapperBuilder<S, T, K> newConstantSourceMapperBuilder(
+            MapperSource<? super S, K> mapperSource, 
+            ClassMeta<T> classMeta, 
+            MapperConfig<K> config, 
+            MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder, 
+            KeyFactory<K> keyFactory) {
+        return newConstantSourceMapperBuilder(mapperSource, classMeta, config, mappingContextFactoryBuilder, keyFactory, null);
+    }
+
+    public static <S, T, K extends FieldKey<K>> ConstantSourceMapperBuilder<S, T, K> newConstantSourceMapperBuilder(
+            MapperSource<? super S, K> mapperSource,
+            ClassMeta<T> classMeta, MapperConfig<K> config, 
+            MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder, 
+            KeyFactory<K> keyFactory, 
+            PropertyFinder<T> propertyFinder) {
+        
+        MapperConfig.Discriminator<S, T> discriminator = config.getDiscriminator(classMeta);
+        if (discriminator == null) {
+            return new DefaultConstantSourceMapperBuilder<S, T, K>(
+                    mapperSource,
+                    classMeta,
+                    config,
+                    mappingContextFactoryBuilder,
+                    keyFactory,
+                    propertyFinder);
+        } else {
+            return new DiscriminatorConstantSourceMapperBuilder<S, T, K>(
+              discriminator,
+              mapperSource, 
+              classMeta, 
+              config, 
+              mappingContextFactoryBuilder,
+              keyFactory, 
+              propertyFinder      
+            );
+        }
+    }
+
 }

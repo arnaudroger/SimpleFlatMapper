@@ -81,7 +81,7 @@ public class ConstantSourceMapperBuilderTest {
     public void testAnonymousParameterWithDifferentType() throws Exception {
 
         ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey> constantSourceMapperBuilder =
-                new DefaultConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
+                ConstantSourceMapperBuilder.<Object, MyObjectWithInner, SampleFieldKey>newConstantSourceMapperBuilder(
                         mapperSource,
                         classMeta,
                         MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()),
@@ -107,7 +107,7 @@ public class ConstantSourceMapperBuilderTest {
 
 
         ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey> constantSourceMapperBuilder =
-                new DefaultConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
+                ConstantSourceMapperBuilder.<Object, MyObjectWithInner, SampleFieldKey>newConstantSourceMapperBuilder(
                         mapperSource,
                         classMeta,
                         MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()),
@@ -129,7 +129,7 @@ public class ConstantSourceMapperBuilderTest {
     @Test
     public void testFieldMapperErrorHandler() throws  Exception{
         ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey> constantSourceMapperBuilder =
-                new DefaultConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
+                ConstantSourceMapperBuilder.<Object, MyObjectWithInner, SampleFieldKey>newConstantSourceMapperBuilder(
                         mapperSource,
                         classMeta,
                         MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()).fieldMapperErrorHandler(new FieldMapperErrorHandler<SampleFieldKey>() {

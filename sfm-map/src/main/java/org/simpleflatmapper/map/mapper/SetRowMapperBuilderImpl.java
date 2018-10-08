@@ -19,15 +19,18 @@ import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.PredicatedEnumerable;
 import org.simpleflatmapper.util.UnaryFactory;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @param <T> the targeted type of the mapper
  */
 public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW, SET, T, K extends FieldKey<K>, E extends Exception> implements SetRowMapperBuilder<M, ROW, SET, T, K, E> {
 
-    private final DefaultConstantSourceMapperBuilder<ROW, T, K> constantSourceMapperBuilder;
+    private final ConstantSourceMapperBuilder<ROW, T, K> constantSourceMapperBuilder;
 
     protected final MapperConfig<K> mapperConfig;
     protected final MappingContextFactoryBuilder<? super ROW, K> mappingContextFactoryBuilder;
@@ -57,7 +60,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
         this.enumerableFactory = enumerableFactory;
         this.keySourceGetter = keySourceGetter;
         this.constantSourceMapperBuilder =
-                new DefaultConstantSourceMapperBuilder<ROW, T, K>(
+                ConstantSourceMapperBuilder.<ROW, T, K>newConstantSourceMapperBuilder(
                         mapperSource,
                         classMeta,
                         mapperConfig,
@@ -117,8 +120,8 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
     }
 
     private Predicate<ROW> getRowPredicate() {
-        final List<K> mandatoryKeys = constantSourceMapperBuilder.propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K>>() {
-            List<K> mandatoryKeys = new ArrayList<K>();
+        final Set<K> mandatoryKeys = constantSourceMapperBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K>>() {
+            Set<K> mandatoryKeys = new HashSet<K>();
 
             @Override
             public void handle(PropertyMapping<T, ?, K> tkPropertyMapping) {
@@ -131,10 +134,16 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
         if (mandatoryKeys.isEmpty()) {
             return null;
         } else {
+            
+            final K[] keys = (K[]) Array.newInstance(mandatoryKeys.iterator().next().getClass(), mandatoryKeys.size());
+            int i = 0;
+            for(K k : mandatoryKeys) {
+                keys[i++] = k;
+            }
             return new Predicate<ROW>() {
                 @Override
                 public boolean test(ROW row) {
-                    for(K k : mandatoryKeys) {
+                    for(K k : keys) {
                         try {
                             if (keySourceGetter.getValue(k, row) == null) return false;
                         } catch (Exception e) {
@@ -182,7 +191,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
     @Override
     public List<K> getKeys() {
-        return constantSourceMapperBuilder.propertyMappingsBuilder.getKeys();
+        return constantSourceMapperBuilder.getKeys();
     }
 
     public interface SetRowMapperFactory<M extends SetRowMapper<ROW, SET, T, E>, ROW, SET, T, E extends Exception> {

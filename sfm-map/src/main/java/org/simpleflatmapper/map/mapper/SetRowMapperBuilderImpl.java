@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW, SET, T, K extends FieldKey<K>, E extends Exception> implements SetRowMapperBuilder<M, ROW, SET, T, K, E> {
 
-    private final ConstantSourceMapperBuilder<ROW, T, K> constantSourceMapperBuilder;
+    private final DefaultConstantSourceMapperBuilder<ROW, T, K> constantSourceMapperBuilder;
 
     protected final MapperConfig<K> mapperConfig;
     protected final MappingContextFactoryBuilder<? super ROW, K> mappingContextFactoryBuilder;
@@ -57,7 +57,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
         this.enumerableFactory = enumerableFactory;
         this.keySourceGetter = keySourceGetter;
         this.constantSourceMapperBuilder =
-                new ConstantSourceMapperBuilder<ROW, T, K>(
+                new DefaultConstantSourceMapperBuilder<ROW, T, K>(
                         mapperSource,
                         classMeta,
                         mapperConfig,

@@ -8,6 +8,7 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
+import org.simpleflatmapper.map.mapper.DefaultConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSource;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -41,7 +42,7 @@ public final class QueryDslMapperBuilder<T> {
 	
 	public QueryDslMapperBuilder(final ClassMeta<T> classMeta, MappingContextFactoryBuilder<Tuple, TupleElementKey> parentBuilder) throws MapperBuildingException {
 		constantSourceMapperBuilder =
-				new ConstantSourceMapperBuilder<Tuple, T, TupleElementKey>(
+				new DefaultConstantSourceMapperBuilder<Tuple, T, TupleElementKey>(
 						FIELD_MAPPER_SOURCE,
 						classMeta,
 						MapperConfig.<TupleElementKey>fieldMapperConfig(),

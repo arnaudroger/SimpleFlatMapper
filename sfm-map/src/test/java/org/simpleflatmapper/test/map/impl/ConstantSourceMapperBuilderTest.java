@@ -3,12 +3,12 @@ package org.simpleflatmapper.test.map.impl;
 import org.junit.Test;
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
+import org.simpleflatmapper.map.mapper.DefaultConstantSourceMapperBuilder;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
@@ -81,7 +81,7 @@ public class ConstantSourceMapperBuilderTest {
     public void testAnonymousParameterWithDifferentType() throws Exception {
 
         ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey> constantSourceMapperBuilder =
-                new ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
+                new DefaultConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
                         mapperSource,
                         classMeta,
                         MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()),
@@ -107,7 +107,7 @@ public class ConstantSourceMapperBuilderTest {
 
 
         ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey> constantSourceMapperBuilder =
-                new ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
+                new DefaultConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
                         mapperSource,
                         classMeta,
                         MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()),
@@ -129,7 +129,7 @@ public class ConstantSourceMapperBuilderTest {
     @Test
     public void testFieldMapperErrorHandler() throws  Exception{
         ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey> constantSourceMapperBuilder =
-                new ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
+                new DefaultConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
                         mapperSource,
                         classMeta,
                         MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()).fieldMapperErrorHandler(new FieldMapperErrorHandler<SampleFieldKey>() {

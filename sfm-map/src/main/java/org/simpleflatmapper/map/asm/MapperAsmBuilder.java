@@ -48,8 +48,8 @@ public class MapperAsmBuilder {
 
     public static <S,T> byte[] dump (
             final String className,
-            final FieldMapper<S, T>[] mappers,
-            final FieldMapper<S, T>[] constructorMappers,
+            final FieldMapper<? super S, ? super T>[] mappers,
+            final FieldMapper<? super S, ? super T>[] constructorMappers,
             final Class<? super S> sourceClass,
             final Class<T> target
     ) throws Exception {

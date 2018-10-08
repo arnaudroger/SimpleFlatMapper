@@ -2,12 +2,10 @@ package org.simpleflatmapper.map.fieldmapper;
 
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.getter.IntContextualGetter;
-import org.simpleflatmapper.map.setter.ContextualSetterAdapter;
-import org.simpleflatmapper.map.setter.IntContextualSetter;
-import org.simpleflatmapper.reflect.primitive.IntGetter;
 import org.simpleflatmapper.reflect.primitive.IntSetter;
+
+import static java.util.Objects.requireNonNull;
 
 public final class IntConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {
 
@@ -15,8 +13,8 @@ public final class IntConstantSourceFieldMapper<S, T> implements FieldMapper<S, 
 	private final IntSetter<? super T> setter;
 	
  	public IntConstantSourceFieldMapper(final IntContextualGetter<? super S> getter, final IntSetter<? super T> setter) {
-		this.getter = getter;
-		this.setter = setter;
+		this.getter = requireNonNull(getter);
+		this.setter = requireNonNull(setter);
 	}
 	
 

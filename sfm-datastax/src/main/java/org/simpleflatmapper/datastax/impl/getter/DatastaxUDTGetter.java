@@ -8,9 +8,9 @@ import org.simpleflatmapper.datastax.DatastaxMapperFactory;
 import org.simpleflatmapper.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.simpleflatmapper.datastax.impl.RowGetterFactory;
 import org.simpleflatmapper.map.ContextualSourceMapper;
-import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
+import org.simpleflatmapper.map.mapper.DefaultConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
@@ -60,7 +60,7 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
         MapperConfig<DatastaxColumnKey> config = factory.mapperConfig();
         MapperSourceImpl<GettableByIndexData, DatastaxColumnKey> mapperSource = new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, new ContextualGetterFactoryAdapter<GettableByIndexData, DatastaxColumnKey>(new RowGetterFactory(factory)));
         ClassMeta<P> classMeta = factory.getClassMeta(target);
-        return new ConstantSourceMapperBuilder<GettableByIndexData, P, DatastaxColumnKey>(
+        return new DefaultConstantSourceMapperBuilder<GettableByIndexData, P, DatastaxColumnKey>(
                 mapperSource,
                 classMeta,
                 config,

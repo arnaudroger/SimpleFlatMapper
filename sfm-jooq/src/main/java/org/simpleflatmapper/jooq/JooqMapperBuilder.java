@@ -11,6 +11,7 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
+import org.simpleflatmapper.map.mapper.DefaultConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSource;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -52,7 +53,7 @@ public class JooqMapperBuilder<E> {
 							 MappingContextFactoryBuilder<Record, JooqFieldKey> mappingContextFactoryBuilder,
 							 MapperConfig<JooqFieldKey> mapperConfig) throws MapperBuildingException {
 		constantSourceMapperBuilder =
-				new ConstantSourceMapperBuilder<Record, E, JooqFieldKey>(
+				new DefaultConstantSourceMapperBuilder<Record, E, JooqFieldKey>(
 						FIELD_MAPPER_SOURCE,
 						classMeta,
 						mapperConfig,

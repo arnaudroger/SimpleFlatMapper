@@ -1278,7 +1278,7 @@ public class AbstractMapperBuilderTest {
 
     @Test
     public void testGenericBuilderWithSubMapper() throws Exception {
-        SampleMapperBuilder<C543_NamedParam> builder = new SampleMapperBuilder<C543_NamedParam>(ReflectionService.newInstance().getClassMeta(C543_NamedParam.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
+        SampleMapperBuilder<C543_NamedParam> builder = new SampleMapperBuilder<C543_NamedParam>(ReflectionService.newInstance().disableAsm().getClassMeta(C543_NamedParam.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
         builder.addMapping("id_id", KeyProperty.DEFAULT);
         builder.addMapping("values_name", KeyProperty.DEFAULT);
 

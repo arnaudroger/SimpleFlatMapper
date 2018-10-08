@@ -26,6 +26,7 @@ import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
+import org.simpleflatmapper.map.mapper.DefaultConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.property.ConverterProperty;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
@@ -198,7 +199,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 		if (getter == null) {
 			
-			mappingErrorHandler.accessorNotFound(ConstantSourceMapperBuilder.getterNotFoundErrorMessage(propertyMapping));
+			mappingErrorHandler.accessorNotFound(DefaultConstantSourceMapperBuilder.getterNotFoundErrorMessage(propertyMapping));
 			return null;
 		} else {
 			if (type.isPrimitive() ) {

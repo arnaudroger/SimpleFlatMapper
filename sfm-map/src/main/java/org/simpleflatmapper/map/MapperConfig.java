@@ -30,7 +30,7 @@ public final class MapperConfig<K extends FieldKey<K>> {
                 false,
                 NO_ASM_MAPPER_THRESHOLD,
                 RethrowFieldMapperErrorHandler.INSTANCE,
-                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false, Collections.emptyList());
+                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false, Collections.<Discriminator<?, ?>>emptyList());
     }
 
     public static <K extends FieldKey<K>> MapperConfig<K> config(ColumnDefinitionProvider<K> columnDefinitionProvider) {
@@ -41,7 +41,7 @@ public final class MapperConfig<K extends FieldKey<K>> {
                 false,
                 NO_ASM_MAPPER_THRESHOLD,
                 RethrowFieldMapperErrorHandler.INSTANCE,
-                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false, Collections.emptyList());
+                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false, Collections.<Discriminator<?, ?>>emptyList());
     }
 
     private final ColumnDefinitionProvider<K> columnDefinitions;

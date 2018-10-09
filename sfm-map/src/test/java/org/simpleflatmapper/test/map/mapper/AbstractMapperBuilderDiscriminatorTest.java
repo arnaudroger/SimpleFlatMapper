@@ -113,10 +113,6 @@ public class AbstractMapperBuilderDiscriminatorTest {
         return newBuilder(reflectionService.getClassMeta(Common.class));
     }
     private AbstractMapperBuilderTest.SampleMapperBuilder<ListOfCommon> newListOfCommonBuilder() {
-        Map<Type, List<ClassMeta<?>>> discriminators = new HashMap<Type, List<ClassMeta<?>>>();
-        
-        discriminators.put(Common.class, Arrays.asList(reflectionService.getClassMeta(IntegerValue.class), reflectionService.getClassMeta(StringValue.class)));
-                
         return newBuilder(reflectionService.getClassMeta(ListOfCommon.class));
     }
 

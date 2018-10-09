@@ -16,6 +16,7 @@ import org.simpleflatmapper.reflect.meta.MapClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 //IFJAVA8_START
 import org.simpleflatmapper.reflect.meta.OptionalClassMeta;
+import java.util.Optional;
 //IFJAVA8_END
 
 import org.simpleflatmapper.reflect.meta.PassThroughClassMeta;
@@ -38,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 

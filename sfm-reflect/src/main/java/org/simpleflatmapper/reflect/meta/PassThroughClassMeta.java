@@ -41,6 +41,19 @@ public class PassThroughClassMeta<T, V> implements ClassMeta<T> {
 		}
 	}
 
+	public PassThroughClassMeta(ReflectionService reflectionService, Type type, InstantiatorDefinition instantiatorDefinition, PropertyMeta<T, V> propertyMeta, ClassMeta<V> innerMeta) {
+		this.reflectionService = reflectionService;
+		this.type = type;
+		this.instantiatorDefinition = instantiatorDefinition;
+		this.propertyMeta = propertyMeta;
+		this.innerMeta = innerMeta;
+	}
+
+	@Override
+	public ClassMeta<T> withReflectionService(ReflectionService reflectionService) {
+		return new PassThroughClassMeta<T, V>(reflectionService, type, instantiatorDefinition, propertyMeta.withReflectionService(reflectionService), reflectionService.getClassMeta(innerMeta.getType()));
+	}
+
 
     @Override
 	public ReflectionService getReflectionService() {
@@ -83,5 +96,7 @@ public class PassThroughClassMeta<T, V> implements ClassMeta<T> {
 	public boolean needTransformer() {
 		return false;
 	}
+
+
 
 }

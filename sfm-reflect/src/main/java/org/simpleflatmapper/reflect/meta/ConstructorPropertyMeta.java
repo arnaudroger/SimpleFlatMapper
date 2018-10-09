@@ -108,4 +108,9 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
                 '}';
     }
 
+    public ConstructorPropertyMeta<T,P> withReflectionService(ReflectionService reflectionService) {
+        return new ConstructorPropertyMeta<T, P>(getName(), getOwnerType(), reflectionService, parameter, scoredGetter, scoredSetter, instantiatorDefinition, defineProperties);
+    }
+
+
 }

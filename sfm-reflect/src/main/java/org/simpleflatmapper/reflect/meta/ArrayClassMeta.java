@@ -57,6 +57,20 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 		this.elementClassMeta = reflectionService.getClassMeta(elementTarget);
 		this.instInfo = typeInfo;
 	}
+
+	public ArrayClassMeta(Type type, Type elementTarget, ReflectionService reflectionService, boolean needTransformer, ClassMeta<E> elementClassMeta, InstantiatorDefinitionAndIntermediatType instInfo) {
+		this.reflectionService = reflectionService;
+		this.elementTarget = elementTarget;
+		this.elementClassMeta = elementClassMeta;
+		this.type = type;
+		this.instInfo = instInfo;
+		this.needTransformer = needTransformer;
+	}
+
+	@Override
+	public ArrayClassMeta<T, E> withReflectionService(ReflectionService reflectionService) {
+		return new ArrayClassMeta<T, E>(type, elementTarget, reflectionService, needTransformer, reflectionService.getClassMeta(elementClassMeta.getType()), instInfo);
+	}
 	
 	public ClassMeta<E> getElementClassMeta() {
 		return elementClassMeta;
@@ -103,6 +117,8 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	public boolean needTransformer() {
 		return needTransformer;
 	}
+
+
 
 	@SuppressWarnings("unchecked")
 	public <T, E> IntFactory<Setter<T, E>> newSetterFactory(final BooleanSupplier appendSetter) {

@@ -99,19 +99,26 @@ public abstract class PropertyFinder<T> {
 		}
 	}
 
-	private static class MatchedProperty<T, P extends PropertyMeta<T, ?>> implements Comparable<MatchedProperty<T, ?>>{
+	public static class MatchedProperty<T, P extends PropertyMeta<T, ?>> implements Comparable<MatchedProperty<T, ?>>{
 		private final P propertyMeta;
 		private final Runnable selectionCallback;
 		private final PropertyMatchingScore score;
 		private final int typeAffinityScore;
 
-		private MatchedProperty(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score, int typeAffinityScore) {
+		public MatchedProperty(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score, int typeAffinityScore) {
 			this.propertyMeta = propertyMeta;
 			this.selectionCallback = selectionCallback;
 			this.score = score;
 			this.typeAffinityScore = typeAffinityScore;
 		}
 
+		public PropertyMatchingScore getScore() {
+			return score;
+		}
+
+		public P getPropertyMeta() {
+			return propertyMeta;
+		}
 
 		@Override
 		public int compareTo(MatchedProperty<T, ?> o) {
@@ -180,6 +187,8 @@ public abstract class PropertyFinder<T> {
 					", setter=" + propertyMeta.getSetter() +
 					'}';
 		}
+
+
 	}
 
 	public static class TypeAffinityScorer {
@@ -210,7 +219,8 @@ public abstract class PropertyFinder<T> {
     public interface FoundProperty<T> {
         <P extends  PropertyMeta<T, ?>> void found(P propertyMeta,
 												   Runnable selectionCallback,
-												   PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer);
+												   PropertyMatchingScore score,
+												   TypeAffinityScorer typeAffinityScorer);
     }
 
 

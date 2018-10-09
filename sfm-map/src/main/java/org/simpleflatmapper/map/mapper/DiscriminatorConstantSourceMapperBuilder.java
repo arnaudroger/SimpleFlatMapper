@@ -1,22 +1,21 @@
 package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.impl.DiscriminatorPropertyFinder;
 import org.simpleflatmapper.map.impl.GenericBuilder;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
@@ -31,7 +30,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     
     private final DiscriminatedBuilder<S, T, K>[] builders;
     private final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder;
-    private final CaptureError mapperBuilderErrorHandler = new CaptureError();
+    private final CaptureError mapperBuilderErrorHandler;
 
     @SuppressWarnings("unchecked")
     public DiscriminatorConstantSourceMapperBuilder(
@@ -46,11 +45,19 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         
         builders = new DiscriminatedBuilder[discriminator.cases.length];
 
+        mapperBuilderErrorHandler = new CaptureError(mapperConfig.mapperBuilderErrorHandler(), builders.length);
         MapperConfig<K> kMapperConfig = mapperConfig.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
         
         for(int i = 0; i < discriminator.cases.length; i++) {
             MapperConfig.DiscrimnatorCase<? super S, ? extends T> discrimnatorCase = discriminator.cases[i];
-            builders[i] = getDiscriminatedBuilder(mapperSource, mappingContextFactoryBuilder, keyFactory, propertyFinder, kMapperConfig, discrimnatorCase);
+
+            PropertyFinder<T> subPropertyFinder = propertyFinder;
+            
+            if (propertyFinder instanceof DiscriminatorPropertyFinder) {
+                subPropertyFinder = ((DiscriminatorPropertyFinder<T>)subPropertyFinder).getImplementationPropertyFinder(discrimnatorCase.classMeta.getType());
+            }
+            
+            builders[i] = getDiscriminatedBuilder(mapperSource, mappingContextFactoryBuilder, keyFactory, subPropertyFinder, kMapperConfig, discrimnatorCase);
         }
     }
 
@@ -64,24 +71,39 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         for(DiscriminatedBuilder<S, T, K> builder : builders) {
             builder.builder.addMapping(key, columnDefinition);
         }
+        mapperBuilderErrorHandler.successfullyMapAtLeastToOne();
         return this;
     }
 
     @Override
     protected <P> void addMapping(K columnKey, ColumnDefinition<K, ?> columnDefinition, PropertyMeta<T, P> prop) {
 
-        int i = 0;
-        for(DiscriminatedBuilder<S, T, K> builder : builders) {
-            if (TypeHelper.isAssignable(prop.getOwnerType(), builder.builder.getTargetType())) {
-                builder.builder.addMapping(columnKey, columnDefinition, prop);
-                i++;
+        if (prop instanceof DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) {
+            DiscriminatorPropertyFinder.DiscriminatorPropertyMeta pm = (DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) prop;
+            pm.forEachProperty(new BiConsumer<Type, PropertyMeta<?, ?>>() {
+                @Override
+                public void accept(Type type, PropertyMeta<?, ?> propertyMeta) {
+                    getBuilder(type).addMapping(columnKey, columnDefinition, propertyMeta);
+                }
+            });
+            
+        } else {
+            for (DiscriminatedBuilder<S, T, K> builder : builders) {
+                    builder.builder.addMapping(columnKey, columnDefinition, prop);
             }
-        }
-        if (i == 0) {
-            throw new IllegalStateException("No builder compatible with " + prop);
         }
         
     }
+
+    private ConstantSourceMapperBuilder getBuilder(Type type) {
+        for (DiscriminatedBuilder<S, T, K> builder : builders) {
+            if (TypeHelper.areEquals(builder.builder.getTargetType(), type)) {
+                return builder.builder;
+            }
+        }
+        throw new IllegalArgumentException("Unknown type " + type);
+    }
+
     @Override
     public List<K> getKeys() {
         HashSet<K> keys = new HashSet<K>();
@@ -206,20 +228,52 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         }
     }
 
-    private class CaptureError implements MapperBuilderErrorHandler {
+    private static class CaptureError implements MapperBuilderErrorHandler {
+        private final MapperBuilderErrorHandler delegate;
+        private final List<PropertyNotFound> errorCollector;
+        private final int nbBuilders;
+
+        private CaptureError(MapperBuilderErrorHandler delegate, int nbBuilders) {
+            this.delegate = delegate;
+            this.nbBuilders = nbBuilders;
+            errorCollector = new ArrayList<PropertyNotFound>();
+        }
+
         @Override
         public void accessorNotFound(String msg) {
-            
+            delegate.accessorNotFound(msg);
         }
 
         @Override
         public void propertyNotFound(Type target, String property) {
-
+            errorCollector.add(new PropertyNotFound(target, property));
         }
 
         @Override
         public void customFieldError(FieldKey<?> key, String message) {
-
+            delegate.customFieldError(key, message);
         }
+        
+        public void successfullyMapAtLeastToOne() {
+            try {
+                if (errorCollector.size() == nbBuilders) {
+                    PropertyNotFound propertyNotFound = errorCollector.get(0);
+                    delegate.propertyNotFound(propertyNotFound.target, propertyNotFound.property);
+                }
+            } finally {
+                errorCollector.clear();
+            }
+        }
+        
+        private static class PropertyNotFound {
+            final Type target;
+            final String property;
+
+            private PropertyNotFound(Type target, String property) {
+                this.target = target;
+                this.property = property;
+            }
+        }
+        
     }
 }

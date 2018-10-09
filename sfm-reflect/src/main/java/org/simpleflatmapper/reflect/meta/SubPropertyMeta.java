@@ -27,6 +27,12 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 		this.getter = new GetterOnGetter<O, I, P>(this.ownerProperty.getGetter(), subProperty.getGetter());
 	}
 
+	@Override
+	public PropertyMeta<O, P> withReflectionService(ReflectionService reflectionService) {
+		return new SubPropertyMeta<O, I, P>(reflectionService, ownerProperty.withReflectionService(reflectionService), subProperty.withReflectionService(reflectionService));
+	}
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Setter<O, P> getSetter() {
@@ -85,6 +91,7 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 	public Object[] getDefinedProperties() {
 		return subProperty.getDefinedProperties();
 	}
+
 
 	@Override
     public String toString() {

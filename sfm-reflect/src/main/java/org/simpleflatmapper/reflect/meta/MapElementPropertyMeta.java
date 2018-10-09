@@ -22,6 +22,14 @@ public class MapElementPropertyMeta<T extends Map<K, V>, K, V> extends PropertyM
 		getter = new MapGetter<T, K, V>(key);
 	}
 
+	public MapElementPropertyMeta(String name, Type ownerType, ReflectionService reflectService, ClassMeta<V> valueMetaData, K key, MapSetter<T, K, V> setter, MapGetter<T, K, V> getter) {
+		super(name, ownerType, reflectService);
+		this.valueMetaData = valueMetaData;
+		this.key = key;
+		this.setter = setter;
+		this.getter = getter;
+	}
+
 	@Override
 	public Setter<T, V> getSetter() {
         return setter;
@@ -41,6 +49,11 @@ public class MapElementPropertyMeta<T extends Map<K, V>, K, V> extends PropertyM
 	@Override
 	public String getPath() {
 		return key + "." + getName();
+	}
+
+	@Override
+	public PropertyMeta<T, V> withReflectionService(ReflectionService reflectionService) {
+		return new MapElementPropertyMeta<T, K, V>(getName(), getOwnerType(), reflectionService, reflectionService.getClassMeta(valueMetaData.getType()), key, setter, getter);
 	}
 
 	public K getKey() {

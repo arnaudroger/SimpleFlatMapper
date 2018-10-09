@@ -65,7 +65,21 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		this.needTransformer = needTransformer;
 	}
 
-    private Map<String, String> aliases(final ReflectionService reflectService, Class<T> target) {
+	@Override
+	public ClassMeta<T> withReflectionService(ReflectionService reflectionService) {
+		
+		return new ObjectClassMeta<T>(target, 
+				instantiatorDefinitions, 
+				withReflectionServiceConstructor(constructorProperties, reflectionService), 
+				fieldAliases,
+				withReflectionService(properties, reflectionService),
+				reflectionService,
+				needTransformer
+		);
+	}
+
+
+	private Map<String, String> aliases(final ReflectionService reflectService, Class<T> target) {
 		final Map<String, String> map = new HashMap<String, String>();
 
 		ClassVisitor.visit(target, new FieldAndMethodCallBack() {
@@ -317,6 +331,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return needTransformer;
 	}
 
+
 	public PropertyMeta<T, ?> getFirstProperty() {
 		if (!constructorProperties.isEmpty()) {
 			return constructorProperties.get(0);
@@ -325,5 +340,21 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			return properties.get(0);
 		}
 		return null;
+	}
+	
+	
+	public static <T> List<PropertyMeta<T, ?>> withReflectionService(List<PropertyMeta<T, ?>> props, ReflectionService reflectionService) {
+		ArrayList<PropertyMeta<T, ?>> list = new ArrayList<PropertyMeta<T, ?>>();
+		for(PropertyMeta<T, ?> p : props) {
+			list.add(p.withReflectionService(reflectionService));
+		}
+		return list;
+	}
+	public static <T> List<ConstructorPropertyMeta<T, ?>> withReflectionServiceConstructor(List<ConstructorPropertyMeta<T, ?>> props, ReflectionService reflectionService) {
+		ArrayList<ConstructorPropertyMeta<T, ?>> list = new ArrayList<ConstructorPropertyMeta<T, ?>>();
+		for(ConstructorPropertyMeta<T, ?> p : props) {
+			list.add(p.withReflectionService(reflectionService));
+		}
+		return list;
 	}
 }

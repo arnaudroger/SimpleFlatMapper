@@ -43,6 +43,10 @@ public class MapKeyValueElementPropertyMeta<T extends Map<K, V>, K, V> extends P
 		return getName();
 	}
 
+	@Override
+	public PropertyMeta<T, KeyValue<K, V>> withReflectionService(ReflectionService reflectionService) {
+		return new MapKeyValueElementPropertyMeta<T, K, V>(getOwnerType(), reflectionService, propertyType);
+	}
 
 
 	private static class MapSetter<T extends  Map<K, V>, K, V> implements Setter<T, KeyValue<K, V>> {

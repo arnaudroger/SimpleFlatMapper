@@ -30,8 +30,13 @@ public class ObjectPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		this.defineProperties = defineProperties;
 	}
 
+	@Override
+	public PropertyMeta<T, P> withReflectionService(ReflectionService reflectionService) {
+		return new ObjectPropertyMeta<T, P>(getName(), getOwnerType(), reflectionService, type, getter, setter, defineProperties);
+	}
 
-    public PropertyMeta<T, P> getterSetter(ScoredGetter<T, P> getter, ScoredSetter<T, P> setter, Object[] defineProperties) {
+
+	public PropertyMeta<T, P> getterSetter(ScoredGetter<T, P> getter, ScoredSetter<T, P> setter, Object[] defineProperties) {
         return new ObjectPropertyMeta<T, P>(getName(), getOwnerType(), reflectService, type, this.getter.best(getter), this.setter.best(setter), concatenate(this.defineProperties, defineProperties));
     }
 
@@ -85,6 +90,7 @@ public class ObjectPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	public Object[] getDefinedProperties() {
 		return defineProperties;
 	}
+
 
 	@Override
     public String toString() {

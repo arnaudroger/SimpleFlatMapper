@@ -40,6 +40,20 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 		this.constructor = getConstructor(type);
 	}
 
+	public MapClassMeta(ReflectionService reflectionService, ContextualConverter<? super CharSequence, ? extends K> keyConverter, ContextFactory keyContextFactory, ClassMeta<V> valueClassMeta, Type type, Constructor<?> constructor) {
+		this.reflectionService = reflectionService;
+		this.keyConverter = keyConverter;
+		this.keyContextFactory = keyContextFactory;
+		this.valueClassMeta = valueClassMeta;
+		this.type = type;
+		this.constructor = constructor;
+	}
+
+	@Override
+	public ClassMeta<M> withReflectionService(ReflectionService reflectionService) {
+		return new MapClassMeta<M, K, V>(reflectionService, keyConverter, keyContextFactory, reflectionService.getClassMeta(valueClassMeta.getType()), type, constructor);
+	}
+
 	private Constructor<?> getConstructor(Type type) {
 
 		Class<?> implClass = findMapImpl(type);
@@ -100,4 +114,6 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 	public boolean needTransformer() {
 		return false;
 	}
+
+
 }

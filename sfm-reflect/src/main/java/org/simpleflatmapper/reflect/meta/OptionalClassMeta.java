@@ -23,6 +23,13 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
     private final ConstructorPropertyMeta<Optional<T>, ?> propertyMeta;
 	private final ClassMeta<T> innerMeta;
 
+	public OptionalClassMeta(ReflectionService reflectionService, Type type, InstantiatorDefinition instantiatorDefinition, ConstructorPropertyMeta<Optional<T>, ?> propertyMeta, ClassMeta<T> innerMeta) {
+		this.reflectionService = reflectionService;
+		this.type = type;
+		this.instantiatorDefinition = instantiatorDefinition;
+		this.propertyMeta = propertyMeta;
+		this.innerMeta = innerMeta;
+	}
 
 	public OptionalClassMeta(Type type, ReflectionService reflectionService) {
 		this.type = type;
@@ -41,6 +48,11 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
             ErrorHelper.rethrow(e);
             throw new IllegalStateException();
 		}
+	}
+
+	@Override
+	public ClassMeta<Optional<T>> withReflectionService(ReflectionService reflectionService) {
+		return new OptionalClassMeta<T>(reflectionService, type, instantiatorDefinition, propertyMeta.withReflectionService(reflectionService), reflectionService.getClassMeta(innerMeta.getType()));
 	}
 
     private InstantiatorDefinition getInstantiatorDefinition(Type type) throws NoSuchMethodException {
@@ -92,6 +104,8 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 	public boolean needTransformer() {
 		return false;
 	}
+
+
 
 
 	private static class OptionalGetter<T> implements Getter<Optional<T>, Object> {

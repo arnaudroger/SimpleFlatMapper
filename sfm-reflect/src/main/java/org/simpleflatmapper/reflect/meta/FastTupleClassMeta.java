@@ -49,6 +49,16 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
         }
     }
 
+    public FastTupleClassMeta(ClassMeta<T> delegate, List<InstantiatorDefinition> instantiatorDefinitions) {
+        this.delegate = delegate;
+        this.instantiatorDefinitions = instantiatorDefinitions;
+    }
+
+    @Override
+    public ClassMeta<T> withReflectionService(ReflectionService reflectionService) {
+        return new FastTupleClassMeta<T>(reflectionService.getClassMeta(delegate.getType()), instantiatorDefinitions);
+    }
+
     private static <T> ArrayList<PropertyMeta<T, ?>> getPropertyMetas(Type ownerType, ReflectionService reflectionService) throws NoSuchMethodException {
         final ArrayList<PropertyMeta<T, ?>> propertyMetas = new ArrayList<PropertyMeta<T, ?>>();
         Class<?> clazz = TypeHelper.toClass(ownerType);
@@ -137,5 +147,7 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
     public boolean needTransformer() {
         return false;
     }
+
+  
 
 }

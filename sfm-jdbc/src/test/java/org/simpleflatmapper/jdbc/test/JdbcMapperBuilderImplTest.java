@@ -8,6 +8,7 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.mapper.StaticSetRowMapper;
 import org.simpleflatmapper.reflect.BiInstantiator;
+import org.simpleflatmapper.reflect.DefaultReflectionService;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -46,7 +47,7 @@ public class JdbcMapperBuilderImplTest {
 	@Test
 	public void testAsmFailureOnmapper() throws NoSuchFieldException, IllegalAccessException {
 
-		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new DefaultReflectionService(newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
 
 		final JdbcMapper<DbObject> mapper = builder.mapper();
 		Field f = mapper.getClass().getDeclaredField("setRowMapper");
@@ -66,7 +67,7 @@ public class JdbcMapperBuilderImplTest {
 
 	@Test
     public void testAsmFailureOnJdbcMapperFailOnAsm() {
-		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().reflectionService(new ReflectionService(newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().reflectionService(new DefaultReflectionService(newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
 
         try {
             builder.mapper();
@@ -78,7 +79,7 @@ public class JdbcMapperBuilderImplTest {
 	
 	@Test
 	public void testAsmFailureOnInstantiator() {
-		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(null) {
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new DefaultReflectionService(null) {
 			@Override
 			public InstantiatorFactory getInstantiatorFactory() {
 				return new InstantiatorFactory(null) {

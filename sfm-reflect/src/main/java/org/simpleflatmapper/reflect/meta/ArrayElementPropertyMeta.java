@@ -53,7 +53,12 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 		return  "[" + index + "]";
 	}
 
-    @Override
+	@Override
+	public PropertyMeta<T, E> withReflectionService(ReflectionService reflectionService) {
+		return new ArrayElementPropertyMeta<T, E>(getName(), getOwnerType(), reflectionService, index, arrayMetaData.withReflectionService(reflectionService), setterFactory, getterFactory);
+	}
+
+	@Override
     public String toString() {
         return "ArrayElementPropertyMeta{" +
                 "index=" + index +

@@ -12,6 +12,7 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.reflect.DefaultReflectionService;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
@@ -147,7 +148,7 @@ public class AbstractMapperFactoryTest {
         assertEquals(13, mapperConfig.maxMethodSize());
         assertEquals(true, mapperConfig.failOnAsm());
 
-        reflectionService = new ReflectionService(null);
+        reflectionService = new DefaultReflectionService(null);
 
         assertSame(reflectionService, new MapperFactory().reflectionService(reflectionService).getReflectionService());
 

@@ -42,6 +42,18 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 		}
 	}
 
+    public TupleClassMeta(ReflectionService reflectionService, Type type, InstantiatorDefinition instantiatorDefinition, List<ConstructorPropertyMeta<T, ?>> propertyMetas) {
+        this.reflectionService = reflectionService;
+        this.type = type;
+        this.instantiatorDefinition = instantiatorDefinition;
+        this.propertyMetas = propertyMetas;
+    }
+
+    @Override
+    public ClassMeta<T> withReflectionService(ReflectionService reflectionService) {
+        return new TupleClassMeta<T>(reflectionService, type, instantiatorDefinition, ObjectClassMeta.withReflectionServiceConstructor(propertyMetas, reflectionService));
+    }
+
     private static <T> List<ConstructorPropertyMeta<T, ?>> getPropertyMetas(InstantiatorDefinition instantiatorDefinition, ReflectionService reflectionService, Type type) {
         int size = instantiatorDefinition.getParameters().length;
         List<ConstructorPropertyMeta<T, ?>> propertyMetas = new ArrayList<ConstructorPropertyMeta<T, ?>>();
@@ -147,6 +159,8 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
     public boolean needTransformer() {
         return false;
     }
+
+
 
     public int getTupleSize() {
 		return instantiatorDefinition.getParameters().length;

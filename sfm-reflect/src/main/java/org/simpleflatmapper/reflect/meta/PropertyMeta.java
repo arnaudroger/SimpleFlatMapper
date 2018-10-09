@@ -89,4 +89,5 @@ public abstract class PropertyMeta<O, P> {
 		return new Object[0];
 	}
 
+	public abstract PropertyMeta<O,P> withReflectionService(ReflectionService reflectionService);
 }

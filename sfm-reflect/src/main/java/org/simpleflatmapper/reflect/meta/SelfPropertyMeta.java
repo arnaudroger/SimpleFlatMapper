@@ -32,6 +32,11 @@ public class SelfPropertyMeta<T, E> extends PropertyMeta<T, E> {
     }
 
     @Override
+    public PropertyMeta<T, E> withReflectionService(ReflectionService reflectionService) {
+        return new SelfPropertyMeta<T, E>(reflectionService, getOwnerType(), isValid);
+    }
+
+    @Override
     public Setter<? super T, ? super E> getSetter() {
         return NullSetter.NULL_SETTER;
     }

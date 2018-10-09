@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.test.meta;
 
 import org.junit.Test;
 import org.simpleflatmapper.reflect.ConstructorNotFoundException;
+import org.simpleflatmapper.reflect.DefaultReflectionService;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.TypeAffinity;
@@ -142,7 +143,7 @@ public class TupleClassMetaTest {
                 return null;
             }
         };
-        ReflectionService reflectionService = new ReflectionService(null) {
+        ReflectionService reflectionService = new DefaultReflectionService(null) {
         };
 
         Class<?> tuple2Class = cl.loadClass(Tuple2.class.getName());

@@ -144,6 +144,11 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
         public boolean isValid() {
             return true;
         }
+
+        @Override
+        public PropertyMeta<T, P> withReflectionService(ReflectionService reflectionService) {
+            return new CustomProperty<T, P>(getOwnerType(), reflectionService, getName(), type, setter, getter);
+        }
     }
 
 

@@ -46,6 +46,7 @@ public class InstantiatorDefinitions {
 
 
     public static InstantiatorDefinition lookForCompatibleOneArgument(List<InstantiatorDefinition> col, CompatibilityScorer scorer) {
+        if (col == null) return null;
         InstantiatorDefinition current = null;
         int currentScore = -1;
 

@@ -24,4 +24,6 @@ public interface ClassMeta<T> {
     int getNumberOfProperties();
 
     boolean needTransformer();
+    
+    ClassMeta<T> withReflectionService(ReflectionService reflectionService);
 }

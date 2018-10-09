@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -327,6 +328,7 @@ public class DiscriminatorJdbcMapperTest {
         when(rs.getString(anyInt())).then(getValue);
         when(rs.getString(any(String.class))).then(getColumnValue);
         when(rs.getObject(anyInt())).then(getValue);
+        when(rs.getObject(anyString(), any(Class.class))).then(getColumnValue);
 
         return rs;
     }

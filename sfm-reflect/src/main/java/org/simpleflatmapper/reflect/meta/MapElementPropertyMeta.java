@@ -53,7 +53,7 @@ public class MapElementPropertyMeta<T extends Map<K, V>, K, V> extends PropertyM
 
 	@Override
 	public PropertyMeta<T, V> withReflectionService(ReflectionService reflectionService) {
-		return new MapElementPropertyMeta<T, K, V>(getName(), getOwnerType(), reflectionService, reflectionService.getClassMeta(valueMetaData.getType()), key, setter, getter);
+		return new MapElementPropertyMeta<T, K, V>(getName(), getOwnerType(), reflectionService, reflectionService.<V>getClassMeta(valueMetaData.getType()), key, setter, getter);
 	}
 
 	public K getKey() {

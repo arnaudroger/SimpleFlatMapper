@@ -51,7 +51,7 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	@Override
 	public ClassMeta<M> withReflectionService(ReflectionService reflectionService) {
-		return new MapClassMeta<M, K, V>(reflectionService, keyConverter, keyContextFactory, reflectionService.getClassMeta(valueClassMeta.getType()), type, constructor);
+		return new MapClassMeta<M, K, V>(reflectionService, keyConverter, keyContextFactory, reflectionService.<V>getClassMeta(valueClassMeta.getType()), type, constructor);
 	}
 
 	private Constructor<?> getConstructor(Type type) {

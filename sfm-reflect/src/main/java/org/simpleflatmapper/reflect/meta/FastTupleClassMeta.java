@@ -56,7 +56,7 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
 
     @Override
     public ClassMeta<T> withReflectionService(ReflectionService reflectionService) {
-        return new FastTupleClassMeta<T>(reflectionService.getClassMeta(delegate.getType()), instantiatorDefinitions);
+        return new FastTupleClassMeta<T>(reflectionService.<T>getClassMeta(delegate.getType()), instantiatorDefinitions);
     }
 
     private static <T> ArrayList<PropertyMeta<T, ?>> getPropertyMetas(Type ownerType, ReflectionService reflectionService) throws NoSuchMethodException {

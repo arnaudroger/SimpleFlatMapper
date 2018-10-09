@@ -69,7 +69,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 
 	@Override
 	public ArrayClassMeta<T, E> withReflectionService(ReflectionService reflectionService) {
-		return new ArrayClassMeta<T, E>(type, elementTarget, reflectionService, needTransformer, reflectionService.getClassMeta(elementClassMeta.getType()), instInfo);
+		return new ArrayClassMeta<T, E>(type, elementTarget, reflectionService, needTransformer, reflectionService.<E>getClassMeta(elementClassMeta.getType()), instInfo);
 	}
 	
 	public ClassMeta<E> getElementClassMeta() {

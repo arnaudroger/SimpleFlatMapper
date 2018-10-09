@@ -51,7 +51,7 @@ public class PassThroughClassMeta<T, V> implements ClassMeta<T> {
 
 	@Override
 	public ClassMeta<T> withReflectionService(ReflectionService reflectionService) {
-		return new PassThroughClassMeta<T, V>(reflectionService, type, instantiatorDefinition, propertyMeta.withReflectionService(reflectionService), reflectionService.getClassMeta(innerMeta.getType()));
+		return new PassThroughClassMeta<T, V>(reflectionService, type, instantiatorDefinition, propertyMeta.withReflectionService(reflectionService), reflectionService.<V>getClassMeta(innerMeta.getType()));
 	}
 
 

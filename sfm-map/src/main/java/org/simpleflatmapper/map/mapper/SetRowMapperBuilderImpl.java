@@ -9,6 +9,7 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.impl.DiscriminatorReflectionService;
 import org.simpleflatmapper.map.property.IgnoreRowIfNullProperty;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.Enumerable;
@@ -20,9 +21,12 @@ import org.simpleflatmapper.util.PredicatedEnumerable;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -62,12 +66,31 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
         this.constantSourceMapperBuilder =
                 ConstantSourceMapperBuilder.<ROW, T, K>newConstantSourceMapperBuilder(
                         mapperSource,
-                        classMeta,
+                        prepareClassMetaForDiscriminator(classMeta, mapperConfig),
                         mapperConfig,
                         parentBuilder,
                         keyFactory);
         this.mapperConfig = mapperConfig;
         this.mappingContextFactoryBuilder = parentBuilder;
+    }
+
+    private ClassMeta<T> prepareClassMetaForDiscriminator(ClassMeta<T> classMeta, MapperConfig<K> mapperConfig) {
+        List<MapperConfig.Discriminator<?, ?>> discriminators = mapperConfig.getDiscriminators();
+        
+        if (discriminators.isEmpty()) {
+            return classMeta;
+        } else {
+            Map<Type, List<ClassMeta<?>>> discriminatorMap = new HashMap<>();
+            for(MapperConfig.Discriminator<?, ?> d : discriminators) {
+                List<ClassMeta<?>> implementations = new ArrayList<ClassMeta<?>>();
+                for(MapperConfig.DiscrimnatorCase<?, ?> dc : d.cases) {
+                    implementations.add(dc.classMeta);
+                }
+                discriminatorMap.put(d.type, implementations);
+            }
+            DiscriminatorReflectionService dfs = new DiscriminatorReflectionService(classMeta.getReflectionService(), discriminatorMap);
+            return classMeta.withReflectionService(dfs);
+        }
     }
 
     /**

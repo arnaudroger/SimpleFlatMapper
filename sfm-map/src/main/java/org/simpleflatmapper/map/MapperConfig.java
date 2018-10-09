@@ -261,6 +261,9 @@ public final class MapperConfig<K extends FieldKey<K>> {
         return null;
     }
 
+    public List<Discriminator<?, ?>> getDiscriminators() {
+        return discriminators;
+    }
 
     public static final class DiscrimnatorCase<ROW, T> {
         public final Predicate<ROW> predicate;

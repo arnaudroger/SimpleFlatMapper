@@ -5,7 +5,6 @@ import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.property.IgnoreProperty;
-import org.simpleflatmapper.map.impl.DiscriminatorReflectionService;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
@@ -118,7 +117,7 @@ public class AbstractMapperBuilderDiscriminatorTest {
         
         discriminators.put(Common.class, Arrays.asList(reflectionService.getClassMeta(IntegerValue.class), reflectionService.getClassMeta(StringValue.class)));
                 
-        return newBuilder(new DiscriminatorReflectionService(reflectionService, discriminators).getClassMeta(ListOfCommon.class));
+        return newBuilder(reflectionService.getClassMeta(ListOfCommon.class));
     }
 
     ReflectionService reflectionService = ReflectionService.newInstance();

@@ -13,6 +13,7 @@ import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.EqualsPredicate;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
@@ -405,43 +406,43 @@ public abstract class AbstractMapperFactory<
 		}
 
 		private Predicate<S> toEqualsSPredicate(V value) {
-			return new Predicate<S>() {
-				@Override
-				public boolean test(S s) {
-					try {
-						V sValue = getter.get(s);
-						return value == null ? sValue == null : value.equals(sValue);
-					} catch (Exception e) {
-						return ErrorHelper.rethrow(e);
-					}
-				}
-			};
+			return toSourcePredicate(EqualsPredicate.<V>of(value));
 		}
 
 		public DiscriminatorConditionBuilder<S, V, T> discriminatorCase(Predicate<V> predicate, Type type) {
-			discriminatorBuilder.discriminatorCase(toSPredicate(predicate), type);
+			discriminatorBuilder.discriminatorCase(toSourcePredicate(predicate), type);
 			return this;
 		}
 		public DiscriminatorConditionBuilder<S, V, T> discriminatorCase(Predicate<V> predicate, Class<T> type) {
-			discriminatorBuilder.discriminatorCase(toSPredicate(predicate), type);
+			discriminatorBuilder.discriminatorCase(toSourcePredicate(predicate), type);
 			return this;
 		}
 		public DiscriminatorConditionBuilder<S, V, T> discriminatorCase(Predicate<V> predicate, ClassMeta<? extends T> classMeta) {
-			discriminatorBuilder.discriminatorCase(toSPredicate(predicate), classMeta);
+			discriminatorBuilder.discriminatorCase(toSourcePredicate(predicate), classMeta);
 			return this;
 		}
 
-		private Predicate<S> toSPredicate(Predicate<V> predicate) {
-			return new Predicate<S>() {
-				@Override
-				public boolean test(S s) {
-					try {
-						return predicate.test(getter.get(s));
-					} catch (Exception e) {
-						return ErrorHelper.rethrow(e);
-					}
+		private Predicate<S> toSourcePredicate(Predicate<V> predicate) {
+			return new SourcePredicate<S, V>(predicate, getter);
+		}
+
+		private static class SourcePredicate<S, V> implements Predicate<S> {
+			private final Predicate<? super V> predicate;
+			private final Getter<? super S, ? extends V> getter;
+
+			public SourcePredicate(Predicate<? super V> predicate, Getter<? super S, ? extends V> getter) {
+				this.predicate = predicate;
+				this.getter = getter;
+			}
+
+			@Override
+			public boolean test(S s) {
+				try {
+					return predicate.test(getter.get(s));
+				} catch (Exception e) {
+					return ErrorHelper.rethrow(e);
 				}
-			};
+			}
 		}
 	}
 

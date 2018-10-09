@@ -42,7 +42,75 @@ import static org.mockito.Mockito.when;
 
 public class DiscriminatorJdbcMapperTest {
 
+    @Test
+    public void testNewDiscriminator() throws Exception {
+        JdbcMapper<Person> mapper =
+                JdbcMapperFactoryHelper.asm()
+                        .addKeys("id", "students_id")
+                        .discriminator(Person.class, "person_type", String.class, builder -> {
+                                    builder
+                                            .discriminatorCase("student", StudentGS.class)
+                                            .discriminatorCase("professor", ProfessorGS.class);
+                                }
+                        )
+                        .newMapper(Person.class);
+        validateMapper(mapper);
+    }
 
+    @Test
+    public void testNewDiscriminatorNoAsm() throws Exception {
+        JdbcMapper<Person> mapper =
+                JdbcMapperFactoryHelper.noAsm()
+                        .addKeys("id", "students_id")
+                        .discriminator(Person.class, "person_type", String.class, builder -> {
+                                    builder
+                                            .discriminatorCase("student", StudentGS.class)
+                                            .discriminatorCase("professor", ProfessorGS.class);
+                                }
+                        )
+                        .newMapper(Person.class);
+
+
+        validateMapper(mapper);
+
+    }
+
+    @Test
+    public void testNewJoinTableCNoAsmMultiThread() throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+
+
+        try {
+            final JdbcMapper<Person> mapper =
+                    JdbcMapperFactoryHelper.noAsm()
+                            .addKeys("id", "students_id")
+                            .discriminator(Person.class, "person_type", String.class, builder -> {
+                                        builder
+                                                .discriminatorCase("student", StudentGS.class)
+                                                .discriminatorCase("professor", ProfessorGS.class);
+                                    }
+                            )
+                            .newMapper(Person.class);
+
+            List<Future<Object>> futures  = new ArrayList<Future<Object>>(100);
+            for (int i = 0; i <300; i++) {
+                futures.add(executor.submit(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        validateMapper(mapper);
+                        return null;
+                    }
+                }));
+            }
+
+            for(Future<Object> f : futures) {
+                f.get();
+            }
+        } finally {
+            executor.shutdown();
+        }
+    }
+    
     @Test
     public void testDiscriminator() throws Exception {
         JdbcMapper<Person> mapper =

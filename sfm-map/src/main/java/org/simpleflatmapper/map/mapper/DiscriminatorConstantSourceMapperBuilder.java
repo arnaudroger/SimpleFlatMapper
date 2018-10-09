@@ -32,6 +32,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     private final DiscriminatedBuilder<S, T, K>[] builders;
     private final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder;
     private final CaptureError mapperBuilderErrorHandler;
+    private final MapperConfig<K, ? extends S> mapperConfig;
 
     @SuppressWarnings("unchecked")
     public DiscriminatorConstantSourceMapperBuilder(
@@ -43,7 +44,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             KeyFactory<K> keyFactory,
             PropertyFinder<T> propertyFinder) throws MapperBuildingException {
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
-        
+        this.mapperConfig = mapperConfig;
         builders = new DiscriminatedBuilder[discriminator.cases.length];
 
         mapperBuilderErrorHandler = new CaptureError(mapperConfig.mapperBuilderErrorHandler(), builders.length);
@@ -72,7 +73,8 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         for(DiscriminatedBuilder<S, T, K> builder : builders) {
             builder.builder.addMapping(key, columnDefinition);
         }
-        mapperBuilderErrorHandler.successfullyMapAtLeastToOne(columnDefinition);
+        final ColumnDefinition<K, ?> composedDefinition = columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
+        mapperBuilderErrorHandler.successfullyMapAtLeastToOne(composedDefinition);
         return this;
     }
 

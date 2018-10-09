@@ -139,7 +139,9 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 			PropertyMapping<T, ?, K> propertyMapping = iterator.next();
 			if (propertyMapping != null && !propertyMapping.getPropertyMeta().isValid()) {
 				iterator.set(null);
-				invalidateKeys.add(propertyMapping.getColumnKey());
+				if (!propertyMapping.getColumnDefinition().has(OptionalProperty.class)) {
+					invalidateKeys.add(propertyMapping.getColumnKey());
+				}
 			}
 		}
 

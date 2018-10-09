@@ -3,7 +3,9 @@ package org.simpleflatmapper.jdbc.spring;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
+import org.simpleflatmapper.jdbc.NameBasedResultSetGetterFactory;
 import org.simpleflatmapper.map.MapperBuildingException;
+import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFactory;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
@@ -18,11 +20,11 @@ import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.util.List;
 
-public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcColumnKey, JdbcTemplateMapperFactory, ResultSet> {
+public final class JdbcTemplateMapperFactory extends AbstractColumnNameDiscriminatorMapperFactory<JdbcColumnKey, JdbcTemplateMapperFactory, ResultSet> {
 
 
 	private JdbcTemplateMapperFactory() {
-		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(), FieldMapperColumnDefinition.<JdbcColumnKey>identity());
+		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(), FieldMapperColumnDefinition.<JdbcColumnKey>identity(), NameBasedResultSetGetterFactory.INSTANCE);
 	}
 
 	public static JdbcTemplateMapperFactory newInstance() {

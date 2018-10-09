@@ -1,5 +1,7 @@
 package org.simpleflatmapper.csv;
 
+import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.mapper.CsvMappingContextFactoryBuilder;
 import org.simpleflatmapper.csv.mapper.CsvRowGetterFactory;
@@ -14,11 +16,13 @@ import org.simpleflatmapper.map.ResultFieldMapperErrorHandler;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
+import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFactory;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.DynamicSetRowMapper;
 import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.map.mapper.TransformSetRowMapper;
 import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ParameterizedTypeImpl;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.util.CheckedConsumer;
@@ -64,9 +68,28 @@ import java.util.stream.Stream;
  *     <br>
  * </code>
  */
-public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, CsvMapperFactory, CsvRow> {
+public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMapperFactory<CsvColumnKey, CsvMapperFactory, CsvRow> {
 
 
+	private static final ColumnNameGetterFactory<CsvRow> NAMED_GETTER = new ColumnNameGetterFactory<CsvRow>() {
+		@Override
+		public <T> Getter<? super CsvRow, ? extends T> getGetter(final String discriminatorColumn, final Class<T> discriminatorType) {
+			
+			final Converter<? super String, ? extends T> converter = ConverterService.getInstance().findConverter(String.class, discriminatorType);
+			
+			return new Getter<CsvRow, T>() {
+				@Override
+				public T get(CsvRow target) throws Exception {
+					int index = target.getIndex(discriminatorColumn);
+					if (index < 0) {
+						return null;
+					}
+					return converter.convert(target.getString(index));
+				}
+			};
+		}
+	};
+	
 	private ContextualGetterFactory<CsvRow, CsvColumnKey> getterFactory = CsvRowGetterFactory.INSTANCE;
 
 	/**
@@ -82,15 +105,15 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 	private String defaultDateFormat = CsvMapperBuilder.DEFAULT_DATE_FORMAT;
 
 	private CsvMapperFactory(AbstractColumnDefinitionProvider<CsvColumnKey> columnDefinitionProvider) {
-		super(columnDefinitionProvider, CsvColumnDefinition.identity());
+		super(columnDefinitionProvider, CsvColumnDefinition.identity(), NAMED_GETTER);
 	}
 
 	private CsvMapperFactory() {
-		super(new CsvColumnDefinitionProviderImpl(), CsvColumnDefinition.identity());
+		super(new CsvColumnDefinitionProviderImpl(), CsvColumnDefinition.identity(), NAMED_GETTER);
 	}
 	
 	private CsvMapperFactory(CsvMapperFactory parent)  {
-		super(parent);
+		super(parent, NAMED_GETTER);
 	}
 
 	@Override

@@ -14,7 +14,7 @@ public final class NameBasedResultSetGetterFactory implements AbstractColumnName
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Getter<? super ResultSet, ? extends T> getGetter(String discriminatorColumn, Class<T> discriminatorType) {
+	public <T> Getter<? super ResultSet, ? extends T> getGetter(final String discriminatorColumn, final Class<T> discriminatorType) {
 		return new Getter<ResultSet, T>() {
 			@Override
 			public T get(ResultSet target) throws Exception {

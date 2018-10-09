@@ -24,6 +24,15 @@ public final class CsvRow {
         this.charBuffer = charBuffer;
         fieldsBoundaries = new int[nbColumns * 2];
     }
+    
+    public int getIndex(String column) {
+        for(CsvColumnKey key : keys) {
+            if (key.getName().equals(column)) {
+                return key.getIndex();
+            }
+        }
+        return -1;
+    }
 
     public CsvColumnKey[] getKeys() {
         return keys;

@@ -80,7 +80,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
         if (discriminators.isEmpty()) {
             return classMeta;
         } else {
-            Map<Type, List<ClassMeta<?>>> discriminatorMap = new HashMap<>();
+            Map<Type, List<ClassMeta<?>>> discriminatorMap = new HashMap<Type, List<ClassMeta<?>>>();
             for(MapperConfig.Discriminator<?, ?> d : discriminators) {
                 List<ClassMeta<?>> implementations = new ArrayList<ClassMeta<?>>();
                 for(MapperConfig.DiscrimnatorCase<?, ?> dc : d.cases) {

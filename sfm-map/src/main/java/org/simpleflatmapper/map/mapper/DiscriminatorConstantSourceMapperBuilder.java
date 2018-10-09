@@ -76,7 +76,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     }
 
     @Override
-    protected <P> void addMapping(K columnKey, ColumnDefinition<K, ?> columnDefinition, PropertyMeta<T, P> prop) {
+    protected <P> void addMapping(final K columnKey, final ColumnDefinition<K, ?> columnDefinition, final PropertyMeta<T, P> prop) {
 
         if (prop instanceof DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) {
             DiscriminatorPropertyFinder.DiscriminatorPropertyMeta pm = (DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) prop;

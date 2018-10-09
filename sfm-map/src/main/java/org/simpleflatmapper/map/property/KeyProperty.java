@@ -1,6 +1,7 @@
 package org.simpleflatmapper.map.property;
 
 
+import org.simpleflatmapper.map.impl.DiscriminatorPropertyFinder;
 import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
@@ -18,6 +19,12 @@ public class KeyProperty {
 //                return false;
 //            }
             
+            // for now assume discriminator property are fine are they?
+            // what if we have conflicting result
+            if (propertyMeta instanceof DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) {
+                return true;
+            }
+            // where does the buck stop? on arrays
             if (propertyMeta.isSubProperty()) {
                 SubPropertyMeta subPropertyMeta = (SubPropertyMeta) propertyMeta;
                 if (JoinUtils.isArrayElement(subPropertyMeta.getOwnerProperty())) {

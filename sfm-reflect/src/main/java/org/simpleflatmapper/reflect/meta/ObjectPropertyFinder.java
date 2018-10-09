@@ -69,7 +69,9 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 				final String columnName = getColumnName(prop);
 				if (propertyNameMatcher.matches(columnName)
 						&& hasConstructorMatching(prop.getParameter())) {
-					matchingProperties.found(prop, propertiesRemoveNonMatchingCallBack(prop), score.matches(propertyNameMatcher), typeAffinityScorer);
+					if (propertyFilter.test(prop)) {
+						matchingProperties.found(prop, propertiesRemoveNonMatchingCallBack(prop), score.matches(propertyNameMatcher), typeAffinityScorer);
+					}
 				}
 
 				PropertyNameMatch partialMatch = propertyNameMatcher.partialMatch(columnName);
@@ -97,7 +99,9 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 					? prop.getName()
 					: getColumnName(prop);
 			if (propertyNameMatcher.matches(columnName)) {
-				matchingProperties.found(prop, propertiesCallBack(), score.matches(propertyNameMatcher.toString()), typeAffinityScorer);
+				if (propertyFilter.test(prop)) {
+					matchingProperties.found(prop, propertiesCallBack(), score.matches(propertyNameMatcher.toString()), typeAffinityScorer);
+				}
 			}
 			final PropertyNameMatch subPropMatch = propertyNameMatcher.partialMatch(columnName);
 			if (subPropMatch != null) {

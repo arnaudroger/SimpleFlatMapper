@@ -77,7 +77,6 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                             subProperty = new SubPropertyMeta(classMeta.getReflectionService(), indexedElement.getPropertyMeta(), propertyMeta);
                         }
 
-
                         matchingProperties.found(subProperty, new Runnable() {
                             @Override
                             public void run() {

@@ -18,13 +18,11 @@ import java.lang.reflect.Type;
 public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 	private final PropertyMeta<O, I> ownerProperty;
 	private final PropertyMeta<I, P> subProperty;
-	private final GetterOnGetter<O, I, P> getter;
 
 	public SubPropertyMeta(ReflectionService reflectService, PropertyMeta<O, I> ownerProperty, PropertyMeta<I, P> subProperty) {
 		super(ownerProperty.getName(), ownerProperty.getOwnerType(), reflectService);
 		this.ownerProperty = ownerProperty;
 		this.subProperty = subProperty;
-		this.getter = new GetterOnGetter<O, I, P>(this.ownerProperty.getGetter(), subProperty.getGetter());
 	}
 
 	@Override
@@ -50,7 +48,7 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 
     @Override
     public Getter<O, P> getGetter() {
-		return getter;
+		return  new GetterOnGetter<O, I, P>(this.ownerProperty.getGetter(), subProperty.getGetter());
     }
 
 	@Override

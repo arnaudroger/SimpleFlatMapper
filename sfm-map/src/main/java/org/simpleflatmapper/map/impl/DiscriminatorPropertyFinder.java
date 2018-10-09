@@ -41,9 +41,9 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
     }
 
     @Override
-    public void lookForProperties(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+    public void lookForProperties(PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
         
-        List<DiscriminatorMatch> matches = new ArrayList<DiscriminatorMatch>();
+        final List<DiscriminatorMatch> matches = new ArrayList<DiscriminatorMatch>();
 
         PropertyMatchingScore bestScore = null;
         for(PropertyFinder<?> propertyFinder : implementationPropertyFinders) {
@@ -127,6 +127,21 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
         return propertyFinder;
     }
 
+    public void manualMatch(PropertyMeta<?, ?> prop) {
+        if (!(prop instanceof DiscriminatorPropertyMeta)) {
+            super.manualMatch(prop);
+        }
+        DiscriminatorPropertyMeta<?,?> dpm = (DiscriminatorPropertyMeta<?, ?>) prop;
+        
+        dpm.forEachProperty(new BiConsumer<Type, PropertyMeta<?, ?>>() {
+            @Override
+            public void accept(Type type, PropertyMeta<?, ?> propertyMeta) {
+                PropertyFinder<?> pf = getImplementationPropertyFinder(type);
+                pf.manualMatch(propertyMeta);
+            }
+        });
+    }
+
 
     @Override
     public Type getOwnerType() {
@@ -151,46 +166,22 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
 
         @Override
         public Setter<? super O, ? super P> getSetter() {
-            for(DiscriminatorMatch m : matches) {
-                Setter<?, ?> setter = m.matchedProperty.getPropertyMeta().getSetter();
-                if (!NullSetter.isNull(setter)) {
-                    return (Setter<? super O, ? super P>) setter;
-                }
-            }
-            
-            return NullSetter.NULL_SETTER;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public Getter<? super O, ? extends P> getGetter() {
-            for(DiscriminatorMatch m : matches) {
-                Getter<?, ?> setter = m.matchedProperty.getPropertyMeta().getGetter();
-                if (!NullGetter.isNull(setter)) {
-                    return (Getter<? super O, ? extends P>) setter;
-                }
-            }
-
-            return NullGetter.getter();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public boolean isConstructorProperty() {
-            for(DiscriminatorMatch m : matches) {
-                if (m.matchedProperty.getPropertyMeta().isConstructorProperty()) {
-                    return true;
-                }
-            }
-            return false;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public boolean isSubProperty() {
-            for(DiscriminatorMatch m : matches) {
-                if (m.matchedProperty.getPropertyMeta().isSubProperty()) {
-                    return true;
-                }
-            }
-            return false;
+            throw new UnsupportedOperationException();
         }
 
         @Override

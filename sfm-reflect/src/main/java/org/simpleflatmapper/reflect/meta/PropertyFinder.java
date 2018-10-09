@@ -33,7 +33,7 @@ public abstract class PropertyFinder<T> {
 	}
 		@SuppressWarnings("unchecked")
 	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity, PropertyFinderProbe propertyFinderProbe) {
-		MatchingProperties matchingProperties = new MatchingProperties(propertyFilter, propertyFinderProbe);
+		MatchingProperties matchingProperties = new MatchingProperties(propertyFinderProbe);
 		lookForProperties(propertyNameMatcher, properties, matchingProperties, PropertyMatchingScore.newInstance(selfScoreFullName), true, IDENTITY_TRANSFORMER,  typeAffinity);
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
 	}
@@ -69,11 +69,9 @@ public abstract class PropertyFinder<T> {
 
 	protected static class MatchingProperties<T> implements FoundProperty<T> {
 		private final List<MatchedProperty<T, ?>> matchedProperties = new ArrayList<MatchedProperty<T, ?>>();
-		private final Predicate<PropertyMeta<?, ?>> propertyFilter;
 		private final PropertyFinderProbe propertyFinderProbe;
 
-		public MatchingProperties(Predicate<PropertyMeta<?, ?>> propertyFilter, PropertyFinderProbe propertyFinderProbe) {
-			this.propertyFilter = propertyFilter;
+		public MatchingProperties(PropertyFinderProbe propertyFinderProbe) {
 			this.propertyFinderProbe = propertyFinderProbe;
 		}
 
@@ -81,10 +79,8 @@ public abstract class PropertyFinder<T> {
 		public <P extends  PropertyMeta<T, ?>> void found(P propertyMeta,
 														  Runnable selectionCallback,
 														  PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
-			if (propertyFilter.test(propertyMeta)) {
-				propertyFinderProbe.found(propertyMeta, score);
-				matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score, typeAffinityScorer.score(propertyMeta.getPropertyType())));
-			}
+			propertyFinderProbe.found(propertyMeta, score);
+			matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score, typeAffinityScorer.score(propertyMeta.getPropertyType())));
 		}
 
 		public PropertyMeta<T, ?> selectBestMatch() {

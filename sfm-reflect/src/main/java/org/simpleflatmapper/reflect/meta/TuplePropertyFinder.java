@@ -53,6 +53,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
                                 subProperty = new SubPropertyMeta(classMeta.getReflectionService(), element.getPropertyMeta(), propertyMeta);
                             }
 
+                            
                             foundProperty.found(subProperty, new Runnable() {
                                 @Override
                                 public void run() {

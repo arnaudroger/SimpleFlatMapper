@@ -471,7 +471,7 @@ public abstract class AbstractMapperFactory<
 			if (!TypeHelper.isAssignable(commonType, target)) {
 				throw new IllegalArgumentException("type " + target + " is not a subclass of " + commonType);
 			}
-			return discriminatorCase(predicate, reflectionService.getClassMeta(target));
+			return discriminatorCase(predicate, reflectionService.<T>getClassMeta(target));
 		}
 	}
 }

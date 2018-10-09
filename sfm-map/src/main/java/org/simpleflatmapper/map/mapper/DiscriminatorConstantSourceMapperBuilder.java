@@ -11,6 +11,7 @@ import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.impl.DiscriminatorPropertyFinder;
 import org.simpleflatmapper.map.impl.GenericBuilder;
+import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
@@ -71,7 +72,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         for(DiscriminatedBuilder<S, T, K> builder : builders) {
             builder.builder.addMapping(key, columnDefinition);
         }
-        mapperBuilderErrorHandler.successfullyMapAtLeastToOne();
+        mapperBuilderErrorHandler.successfullyMapAtLeastToOne(columnDefinition);
         return this;
     }
 
@@ -254,9 +255,9 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             delegate.customFieldError(key, message);
         }
         
-        public void successfullyMapAtLeastToOne() {
+        public void successfullyMapAtLeastToOne(ColumnDefinition<?, ?> columnDefinition) {
             try {
-                if (errorCollector.size() == nbBuilders) {
+                if (errorCollector.size() == nbBuilders && ! columnDefinition.has(OptionalProperty.class)) {
                     PropertyNotFound propertyNotFound = errorCollector.get(0);
                     delegate.propertyNotFound(propertyNotFound.target, propertyNotFound.property);
                 }

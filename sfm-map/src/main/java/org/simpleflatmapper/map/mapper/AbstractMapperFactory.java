@@ -355,39 +355,39 @@ public abstract class AbstractMapperFactory<
 		return columnDefinitions;
 	}
 
-	public <T> MF discriminator(Type type, Consumer<DiscriminatorBuilder<S, T>> consumer) {
-		DiscriminatorBuilder<S, T> db = new DiscriminatorBuilder<S, T>(type, getReflectionService());
+	public <T> MF discriminator(Type commonType, Consumer<DiscriminatorBuilder<S, T>> consumer) {
+		DiscriminatorBuilder<S, T> db = new DiscriminatorBuilder<S, T>(commonType, getReflectionService());
 		
 		consumer.accept(db);
 		
-		discriminators.add(new MapperConfig.Discriminator<S, T>(type, db.cases.toArray(new MapperConfig.DiscriminatorCase[0])));
+		discriminators.add(new MapperConfig.Discriminator<S, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0])));
     	
     	return (MF) this;
 	}
 
-	public <T, V> MF discriminator(Type type, Getter<S, V> getter, Consumer<DiscriminatorConditionBuilder<S, V, T>> consumer) {
-		DiscriminatorBuilder<S, T> db = new DiscriminatorBuilder<S, T>(type, getReflectionService());
+	public <T, V> MF discriminator(Type commonType, Getter<? super S, ? extends V> getter, Consumer<DiscriminatorConditionBuilder<S, V, T>> consumer) {
+		DiscriminatorBuilder<S, T> db = new DiscriminatorBuilder<S, T>(commonType, getReflectionService());
 		DiscriminatorConditionBuilder<S, V, T> dcb = new DiscriminatorConditionBuilder<S, V, T>(db, getter);
 		
 		consumer.accept(dcb);
 
-		discriminators.add(new MapperConfig.Discriminator<S, T>(type, db.cases.toArray(new MapperConfig.DiscriminatorCase[0])));
+		discriminators.add(new MapperConfig.Discriminator<S, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0])));
 
 		return (MF) this;
 	}
-	public <T> MF discriminator(Class<T> type, Consumer<DiscriminatorBuilder<S, T>> consumer) {
-    	return discriminator((Type)type, consumer);
+	public <T> MF discriminator(Class<T> commonType, Consumer<DiscriminatorBuilder<S, T>> consumer) {
+    	return discriminator((Type)commonType, consumer);
 	}
 
-	public <T, V> MF discriminator(Class<T> type, Getter<S, V> getter, Consumer<DiscriminatorConditionBuilder<S, V, T>> consumer) {
-		return discriminator((Type)type, getter, consumer);
+	public <T, V> MF discriminator(Class<T> commonType, Getter<? super S, ? extends V> getter, Consumer<DiscriminatorConditionBuilder<S, V, T>> consumer) {
+		return discriminator((Type)commonType, getter, consumer);
 	}
 	
 	public static final class DiscriminatorConditionBuilder<S, V, T> {
     	private final DiscriminatorBuilder<S, T> discriminatorBuilder;
-    	private final Getter<S, V> getter;
+    	private final Getter<? super S, ? extends V> getter;
 
-		public DiscriminatorConditionBuilder(DiscriminatorBuilder<S, T> discriminatorBuilder, Getter<S, V> getter) {
+		public DiscriminatorConditionBuilder(DiscriminatorBuilder<S, T> discriminatorBuilder, Getter<? super S, ? extends V> getter) {
 			this.discriminatorBuilder = discriminatorBuilder;
 			this.getter = getter;
 		}
@@ -458,7 +458,7 @@ public abstract class AbstractMapperFactory<
 		}
 
 		public DiscriminatorBuilder<S, T> discriminatorCase(Predicate<S> predicate, ClassMeta<? extends T> classMeta) {
-			MapperConfig.DiscriminatorCase<S, T> dCase = new MapperConfig.DiscriminatorCase<>(predicate, classMeta);
+			MapperConfig.DiscriminatorCase<S, T> dCase = new MapperConfig.DiscriminatorCase<S, T>(predicate, classMeta);
 			cases.add(dCase);
 			return this;
 		}

@@ -2,6 +2,7 @@ package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFactory;
 import org.simpleflatmapper.map.mapper.ContextualSourceFieldMapperImpl;
 import org.simpleflatmapper.map.mapper.DynamicSourceFieldMapper;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
@@ -56,7 +57,7 @@ import java.sql.SQLException;
  *
  */
 public final class JdbcMapperFactory
-		extends AbstractMapperFactory<JdbcColumnKey, JdbcMapperFactory, ResultSet> {
+		extends AbstractColumnNameDiscriminatorMapperFactory<JdbcColumnKey, JdbcMapperFactory, ResultSet> {
 
     /**
 	 * instantiate a new JdbcMapperFactory
@@ -74,11 +75,11 @@ public final class JdbcMapperFactory
 	private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = ResultSetGetterFactory.INSTANCE;
 
 	private JdbcMapperFactory(AbstractMapperFactory<JdbcColumnKey, ?, ResultSet> config) {
-		super(config);
+		super(config, NameBasedResultSetGetterFactory.INSTANCE);
 	}
 
 	private JdbcMapperFactory() {
-		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(), FieldMapperColumnDefinition.<JdbcColumnKey>identity());
+		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(), FieldMapperColumnDefinition.<JdbcColumnKey>identity(), NameBasedResultSetGetterFactory.INSTANCE);
 	}
 
 	/**

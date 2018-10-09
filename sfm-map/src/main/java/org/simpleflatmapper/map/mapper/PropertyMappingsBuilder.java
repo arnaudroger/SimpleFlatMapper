@@ -7,6 +7,7 @@ import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.impl.ExtendPropertyFinder;
 import org.simpleflatmapper.map.property.GetterProperty;
+import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.map.property.SetterProperty;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.getter.NullGetter;
@@ -96,7 +97,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 						.findProperty(propertyNameMatcher, columnDefinition.properties(), toTypeAffinity(key), propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher));
 
 
-		if (prop == null) {
+		if (prop == null && ! columnDefinition.has(OptionalProperty.class)) {
 			propertyNotFound.accept(key);
 			properties.add(null);
 			return null;

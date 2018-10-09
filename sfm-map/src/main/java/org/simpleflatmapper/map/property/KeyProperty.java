@@ -5,7 +5,10 @@ import org.simpleflatmapper.map.impl.DiscriminatorPropertyFinder;
 import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
+import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.Predicate;
+
+import java.lang.reflect.Type;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
@@ -22,7 +25,16 @@ public class KeyProperty {
             // for now assume discriminator property are fine are they?
             // what if we have conflicting result
             if (propertyMeta instanceof DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) {
-                return true;
+                DiscriminatorPropertyFinder.DiscriminatorPropertyMeta<?, ?> dpm = (DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) propertyMeta;
+                return dpm.forEachProperty(new BiConsumer<Type, PropertyMeta<?, ?>>() {
+                    boolean valid = true;
+                    @Override
+                    public void accept(Type type, PropertyMeta<?, ?> propertyMeta) {
+                        if (valid && !test(propertyMeta)) {
+                            valid = false;
+                        }
+                    }
+                }).valid;
             }
             // where does the buck stop? on arrays
             if (propertyMeta.isSubProperty()) {

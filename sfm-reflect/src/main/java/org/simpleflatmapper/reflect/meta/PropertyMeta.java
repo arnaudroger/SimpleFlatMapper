@@ -90,4 +90,8 @@ public abstract class PropertyMeta<O, P> {
 	}
 
 	public abstract PropertyMeta<O,P> withReflectionService(ReflectionService reflectionService);
+
+	public int typeAffinityScore(PropertyFinder.TypeAffinityScorer typeAffinityScorer) {
+		return typeAffinityScorer.score(getPropertyType());
+	}
 }

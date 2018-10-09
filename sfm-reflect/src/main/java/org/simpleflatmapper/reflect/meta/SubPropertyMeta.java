@@ -60,6 +60,12 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 	public Type getPropertyType() {
 		return subProperty.getPropertyType();
 	}
+
+	@Override
+	public int typeAffinityScore(PropertyFinder.TypeAffinityScorer typeAffinityScorer) {
+		return subProperty.typeAffinityScore(typeAffinityScorer);
+	}
+
 	public PropertyMeta<O, I> getOwnerProperty() {
 		return ownerProperty;
 	}

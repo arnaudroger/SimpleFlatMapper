@@ -80,7 +80,7 @@ public abstract class PropertyFinder<T> {
 														  Runnable selectionCallback,
 														  PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
 			propertyFinderProbe.found(propertyMeta, score);
-			matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score, typeAffinityScorer.score(propertyMeta.getPropertyType())));
+			matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score, propertyMeta.typeAffinityScore(typeAffinityScorer)));
 		}
 
 		public PropertyMeta<T, ?> selectBestMatch() {

@@ -47,7 +47,7 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
 
         PropertyMatchingScore bestScore = null;
         for(PropertyFinder<?> propertyFinder : implementationPropertyFinders) {
-            List<MatchedProperty> matchedProperties = new ArrayList<MatchedProperty>();            
+            final List<MatchedProperty> matchedProperties = new ArrayList<MatchedProperty>();            
             
             propertyFinder.lookForProperties(propertyNameMatcher, properties,
                     new FoundProperty() {
@@ -158,10 +158,11 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
             this.matches = matches;
         }
         
-        public void forEachProperty(BiConsumer<Type, PropertyMeta<?, ?>> consumer) {
+        public <C extends BiConsumer<Type, PropertyMeta<?, ?>>> C forEachProperty(C consumer) {
             for(DiscriminatorMatch dm : matches) {
                 consumer.accept(dm.type, dm.matchedProperty.getPropertyMeta());
             }
+            return consumer;
         }
 
         @Override
@@ -186,7 +187,7 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
 
         @Override
         public Type getPropertyType() {
-            return matches.get(0).matchedProperty.getPropertyMeta().getPropertyType();
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -197,6 +198,15 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
         @Override
         public PropertyMeta<O, P> withReflectionService(ReflectionService reflectionService) {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int typeAffinityScore(TypeAffinityScorer typeAffinityScorer) {
+            int bestScore = -1;
+            for(DiscriminatorMatch dm : matches) {
+                bestScore = Math.max(bestScore,  dm.matchedProperty.getPropertyMeta().typeAffinityScore(typeAffinityScorer));
+            }
+            return bestScore;
         }
     }
 }

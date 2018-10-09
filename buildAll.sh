@@ -14,7 +14,7 @@ function java6 {
 
 java9 && git reset --hard && mvn clean install -Pdev9 && \
 java8 && git reset --hard && mvn clean install javadoc:javadoc -Pdev && \
-java7 && git reset --hard && mvn clean install && \
-java6 && git reset --hard && mvn clean install && \
+java7 && git reset --hard && mvn clean install -Dhttps.protocols=TLSv1.2 && \
+java6 && git reset --hard && mvn clean install -Dhttps.protocols=TLSv1.2 && \
 git reset --hard
 

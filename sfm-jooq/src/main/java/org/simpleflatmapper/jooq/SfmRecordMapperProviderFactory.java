@@ -18,7 +18,7 @@ public class SfmRecordMapperProviderFactory
             return new Getter<Record, T>() {
                 @Override
                 public T get(Record target) throws Exception {
-                    return target.<T>get(discriminatorColumn, discriminatorType);
+                    return target.<T>getValue(discriminatorColumn, discriminatorType);
                 }
             };
         }

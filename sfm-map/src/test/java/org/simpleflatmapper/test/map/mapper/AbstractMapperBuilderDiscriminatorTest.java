@@ -7,6 +7,7 @@ import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.property.IgnoreProperty;
 import org.simpleflatmapper.map.property.KeyProperty;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.test.map.SampleFieldKey;
@@ -118,27 +119,19 @@ public class AbstractMapperBuilderDiscriminatorTest {
 
     private <T> AbstractMapperBuilderTest.SampleMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
         return AbstractMapperBuilderTest.SampleMapperFactory.newInstance()
-                .discriminator(Common.class, new Consumer<AbstractMapperFactory.DiscriminatorBuilder<Object[],Common>>() {
+                .discriminator(Common.class,
+                        new Getter<Object[], String>() {
+                            @Override
+                            public String get(Object[] target) throws Exception {
+                                return (String) target[3];
+                            }
+                        },
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common>>() {
                     @Override
-                    public void accept(AbstractMapperFactory.DiscriminatorBuilder<Object[], Common> builder) {
+                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common> builder) {
                         builder
-                            .discriminatorCase(
-                                new Predicate<Object[]>() {
-                                    @Override
-                                    public boolean test(Object[] objects) {
-                                        return "str".equals(objects[3]);
-                                    }
-                                },
-                                StringValue.class
-                            ).discriminatorCase(
-                                new Predicate<Object[]>() {
-                                    @Override
-                                    public boolean test(Object[] objects) {
-                                        return "int".equals(objects[3]);
-                                    }
-                                },
-                                IntegerValue.class
-                        );
+                            .discriminatorCase("str", StringValue.class).
+                            discriminatorCase("int", IntegerValue.class);
                     }
                 })
                 .newBuilder(classMeta);

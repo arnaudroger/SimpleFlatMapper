@@ -37,7 +37,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
     };
     
     private final ReflectionService reflectionService;
-    protected final MapperConfig<K> mapperConfig;
+    protected final MapperConfig<K, ?> mapperConfig;
 
     protected final PropertyMappingsBuilder<T, K> propertyMappingsBuilder;
 
@@ -49,7 +49,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
 
     public AbstractConstantTargetMapperBuilder(
             ClassMeta<T> classMeta,
-            Class<S> sourceClass, MapperConfig<K> mapperConfig,
+            Class<S> sourceClass, MapperConfig<K, ?> mapperConfig,
             ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory) {
         this.sourceClass = sourceClass;
         this.fieldAppenderFactory = fieldAppenderFactory;

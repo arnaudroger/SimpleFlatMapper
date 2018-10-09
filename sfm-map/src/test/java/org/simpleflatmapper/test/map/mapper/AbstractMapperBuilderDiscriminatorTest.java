@@ -4,20 +4,18 @@ import org.junit.Test;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.property.IgnoreProperty;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.test.map.SampleFieldKey;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.Predicate;
 
 
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -119,24 +117,31 @@ public class AbstractMapperBuilderDiscriminatorTest {
     ReflectionService reflectionService = ReflectionService.newInstance();
 
     private <T> AbstractMapperBuilderTest.SampleMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
-        MapperConfig<SampleFieldKey> mapperConfig = MapperConfig.fieldMapperConfig();
-        mapperConfig = mapperConfig.discriminator(
-                Common.class, 
-                new MapperConfig.DiscrimnatorCase<Object[], Common>(new Predicate<Object[]>() {
+        return AbstractMapperBuilderTest.SampleMapperFactory.newInstance()
+                .discriminator(Common.class, new Consumer<AbstractMapperFactory.DiscriminatorBuilder<Object[],Common>>() {
                     @Override
-                    public boolean test(Object[] objects) {
-                        return "str".equals(objects[3]);
+                    public void accept(AbstractMapperFactory.DiscriminatorBuilder<Object[], Common> builder) {
+                        builder
+                            .discriminatorCase(
+                                new Predicate<Object[]>() {
+                                    @Override
+                                    public boolean test(Object[] objects) {
+                                        return "str".equals(objects[3]);
+                                    }
+                                },
+                                StringValue.class
+                            ).discriminatorCase(
+                                new Predicate<Object[]>() {
+                                    @Override
+                                    public boolean test(Object[] objects) {
+                                        return "int".equals(objects[3]);
+                                    }
+                                },
+                                IntegerValue.class
+                        );
                     }
-                }, reflectionService.getClassMeta(StringValue.class)),
-                new MapperConfig.DiscrimnatorCase<Object[], Common>(new Predicate<Object[]>() {
-                    @Override
-                    public boolean test(Object[] objects) {
-                        return "int".equals(objects[3]);
-                    }
-                }, reflectionService.getClassMeta(IntegerValue.class))
-        );
-
-        return new AbstractMapperBuilderTest.SampleMapperBuilder<T>(classMeta, mapperConfig);
+                })
+                .newBuilder(classMeta);
     }
 
     public static class ListOfCommon {

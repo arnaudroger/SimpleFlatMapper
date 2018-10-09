@@ -53,7 +53,7 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
      */
     public DatastaxMapperBuilder(
             final ClassMeta<T> classMeta,
-            MapperConfig<DatastaxColumnKey> mapperConfig,
+            MapperConfig<DatastaxColumnKey, Row> mapperConfig,
             GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory,
             MappingContextFactoryBuilder<GettableByIndexData, DatastaxColumnKey> parentBuilder) {
         super(KEY_FACTORY, 

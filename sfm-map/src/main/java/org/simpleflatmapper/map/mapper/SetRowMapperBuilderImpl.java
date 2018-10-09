@@ -36,7 +36,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
     private final ConstantSourceMapperBuilder<ROW, T, K> constantSourceMapperBuilder;
 
-    protected final MapperConfig<K> mapperConfig;
+    protected final MapperConfig<K, ROW> mapperConfig;
     protected final MappingContextFactoryBuilder<? super ROW, K> mappingContextFactoryBuilder;
     private final UnaryFactory<SET, Enumerable<ROW>> enumerableFactory;
     private final SetRowMapperFactory<M, ROW, SET, T, E> setRowMapperFactory;
@@ -54,7 +54,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
     public SetRowMapperBuilderImpl(
             final ClassMeta<T> classMeta,
             MappingContextFactoryBuilder<? super ROW, K> parentBuilder,
-            MapperConfig<K> mapperConfig,
+            MapperConfig<K, ROW> mapperConfig,
             MapperSource<? super ROW, K> mapperSource,
             KeyFactory<K> keyFactory,
             UnaryFactory<SET, Enumerable<ROW>> enumerableFactory,
@@ -74,8 +74,8 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
         this.mappingContextFactoryBuilder = parentBuilder;
     }
 
-    private ClassMeta<T> prepareClassMetaForDiscriminator(ClassMeta<T> classMeta, MapperConfig<K> mapperConfig) {
-        List<MapperConfig.Discriminator<?, ?>> discriminators = mapperConfig.getDiscriminators();
+    private ClassMeta<T> prepareClassMetaForDiscriminator(ClassMeta<T> classMeta, MapperConfig<K, ROW> mapperConfig) {
+        List<MapperConfig.Discriminator<ROW, ?>> discriminators = mapperConfig.getDiscriminators();
         
         if (discriminators.isEmpty()) {
             return classMeta;
@@ -83,7 +83,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
             Map<Type, List<ClassMeta<?>>> discriminatorMap = new HashMap<Type, List<ClassMeta<?>>>();
             for(MapperConfig.Discriminator<?, ?> d : discriminators) {
                 List<ClassMeta<?>> implementations = new ArrayList<ClassMeta<?>>();
-                for(MapperConfig.DiscrimnatorCase<?, ?> dc : d.cases) {
+                for(MapperConfig.DiscriminatorCase<?, ?> dc : d.cases) {
                     implementations.add(dc.classMeta);
                 }
                 discriminatorMap.put(d.type, implementations);
@@ -203,7 +203,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
 
     @Override
-    public MapperConfig<K>  mapperConfig() {
+    public MapperConfig<K, ROW>  mapperConfig() {
         return mapperConfig;
     }
 

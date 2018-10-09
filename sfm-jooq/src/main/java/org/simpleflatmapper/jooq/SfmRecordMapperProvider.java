@@ -16,15 +16,15 @@ import java.util.concurrent.ConcurrentMap;
 public class SfmRecordMapperProvider implements RecordMapperProvider {
 
 	private final ConcurrentMap<TargetColumnsMapperKey, MapperAndContext> mapperCache = new ConcurrentHashMap<TargetColumnsMapperKey, MapperAndContext>();
-	private final MapperConfig<JooqFieldKey> mapperConfig;
+	private final MapperConfig<JooqFieldKey, Record> mapperConfig;
 	private final ReflectionService reflectionService;
 
 	public SfmRecordMapperProvider() {
-		this(MapperConfig.<JooqFieldKey>fieldMapperConfig(), ReflectionService.newInstance());
+		this(MapperConfig.<JooqFieldKey, Record>fieldMapperConfig(), ReflectionService.newInstance());
 	}
 
 	public SfmRecordMapperProvider(
-			MapperConfig<JooqFieldKey> mapperConfig, ReflectionService reflectionService) {
+			MapperConfig<JooqFieldKey, Record> mapperConfig, ReflectionService reflectionService) {
 		this.mapperConfig = mapperConfig;
 		this.reflectionService = reflectionService;
 	}

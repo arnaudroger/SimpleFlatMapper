@@ -11,12 +11,16 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -33,6 +37,7 @@ public abstract class AbstractMapperFactory<
     private ConsumerErrorHandler consumerErrorHandler = RethrowConsumerErrorHandler.INSTANCE;
 
     private final AbstractColumnDefinitionProvider<K> columnDefinitions;
+    private final List<MapperConfig.Discriminator<S, ?>> discriminators = new ArrayList<MapperConfig.Discriminator<S, ?>>();
 	private final ColumnDefinition<K, ?> identity;
 
 	private boolean useAsm = true;
@@ -138,9 +143,9 @@ public abstract class AbstractMapperFactory<
     }
     
     
-	public final MapperConfig<K> mapperConfig() {
+	public final MapperConfig<K, S> mapperConfig() {
 		return MapperConfig
-				.<K>config(enrichColumnDefinitions(columnDefinitions))
+				.<K, S>config(enrichColumnDefinitions(columnDefinitions))
 				.mapperBuilderErrorHandler(mapperBuilderErrorHandler)
 				.propertyNameMatcherFactory(propertyNameMatcherFactory)
 				.failOnAsm(failOnAsm)
@@ -148,7 +153,8 @@ public abstract class AbstractMapperFactory<
 				.fieldMapperErrorHandler(fieldMapperErrorHandler)
 				.consumerErrorHandler(consumerErrorHandler)
 				.maxMethodSize(maxMethodSize)
-				.assumeInjectionModifiesValues(assumeInjectionModifiesValues);
+				.assumeInjectionModifiesValues(assumeInjectionModifiesValues)
+				.discriminators(discriminators);
 	}
 
 	public AbstractColumnDefinitionProvider<K> enrichColumnDefinitions(AbstractColumnDefinitionProvider<K> columnDefinitions) {
@@ -347,4 +353,44 @@ public abstract class AbstractMapperFactory<
 		return columnDefinitions;
 	}
 
+	public <T> MF discriminator(Type type, Consumer<DiscriminatorBuilder<S, T>> consumer) {
+		DiscriminatorBuilder<S, T> db = new DiscriminatorBuilder<S, T>(type, getReflectionService());
+		
+		consumer.accept(db);
+		
+		discriminators.add(new MapperConfig.Discriminator<S, T>(type, db.cases.toArray(new MapperConfig.DiscriminatorCase[0])));
+    	
+    	return (MF) this;
+	}
+	public <T> MF discriminator(Class<T> type, Consumer<DiscriminatorBuilder<S, T>> consumer) {
+    	return discriminator((Type)type, consumer);
+	}
+	
+	public static final class DiscriminatorBuilder<S, T> {
+
+		private final Type commonType;
+		private final ReflectionService reflectionService;
+
+		List<MapperConfig.DiscriminatorCase<S, T>> cases = new ArrayList<MapperConfig.DiscriminatorCase<S, T>>();
+		
+		public DiscriminatorBuilder(Type type, ReflectionService reflectionService) {
+			this.commonType = type;
+			this.reflectionService = reflectionService;
+		}
+
+		public DiscriminatorBuilder<S, T> discriminatorCase(Predicate<S> predicate, ClassMeta<? extends T> classMeta) {
+			MapperConfig.DiscriminatorCase<S, T> dCase = new MapperConfig.DiscriminatorCase<>(predicate, classMeta);
+			cases.add(dCase);
+			return this;
+		}
+		public DiscriminatorBuilder<S, T> discriminatorCase(Predicate<S> predicate, Class<? extends T> target) {
+			return discriminatorCase(predicate, reflectionService.getClassMeta(target));
+		}
+		public DiscriminatorBuilder<S, T> discriminatorCase(Predicate<S> predicate, Type target) {
+			if (!TypeHelper.isAssignable(commonType, target)) {
+				throw new IllegalArgumentException("type " + target + " is not a subclass of " + commonType);
+			}
+			return discriminatorCase(predicate, reflectionService.getClassMeta(target));
+		}
+	}
 }

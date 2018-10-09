@@ -45,7 +45,7 @@ public final class QueryDslMapperBuilder<T> {
 				ConstantSourceMapperBuilder.<Tuple, T, TupleElementKey>newConstantSourceMapperBuilder(
 						FIELD_MAPPER_SOURCE,
 						classMeta,
-						MapperConfig.<TupleElementKey>fieldMapperConfig(),
+						MapperConfig.<TupleElementKey, Tuple>fieldMapperConfig(),
 						parentBuilder, KEY_FACTORY);
 	}
 

@@ -25,7 +25,7 @@ public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<App
 
     public CsvWriterBuilder(
             ClassMeta<T> classMeta,
-            MapperConfig<CsvColumnKey> mapperConfig,
+            MapperConfig<CsvColumnKey, ?> mapperConfig,
             ConstantTargetFieldMapperFactory<Appendable, CsvColumnKey> fieldAppenderFactory,
             CellWriter cellWriter) {
         super(classMeta, Appendable.class, mapperConfig, fieldAppenderFactory);
@@ -43,8 +43,8 @@ public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<App
     }
 
     public static <T> CsvWriterBuilder<T> newBuilder(ClassMeta<T> classMeta, CellWriter cellWriter) {
-        MapperConfig<CsvColumnKey> config =
-                MapperConfig.<CsvColumnKey>fieldMapperConfig();
+        MapperConfig<CsvColumnKey, ?> config =
+                MapperConfig.<CsvColumnKey, CsvRow>fieldMapperConfig();
         FieldMapperToAppendableFactory appenderFactory = new FieldMapperToAppendableFactory(cellWriter);
         CsvWriterBuilder<T> builder =
                 new CsvWriterBuilder<T>(

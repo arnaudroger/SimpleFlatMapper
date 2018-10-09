@@ -59,6 +59,7 @@ import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -372,8 +373,8 @@ public class AbstractMapperBuilderTest {
         FieldMapperColumnDefinitionProviderImpl<SampleFieldKey> definitionProvider = new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>();
         definitionProvider.addColumnProperty("type_name", new DefaultValueProperty<DbObject.Type>(DbObject.Type.type4));
 
-        MapperConfig<SampleFieldKey> mapperConfig =
-                MapperConfig.<SampleFieldKey>fieldMapperConfig().columnDefinitions(definitionProvider);
+        MapperConfig<SampleFieldKey, Object[]> mapperConfig =
+                MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().columnDefinitions(definitionProvider);
         EnumerableMapper<Object[][], DbObject, ?> mapper =
                 new SampleMapperBuilder<DbObject>(classMeta, mapperConfig)
                         .addMapping("id")
@@ -431,7 +432,7 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testMandatoryProperty461() {
         ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
-        MapperConfig<SampleFieldKey> mapperConfig = MapperConfig.fieldMapperConfig();
+        MapperConfig<SampleFieldKey, Object[]> mapperConfig = MapperConfig.fieldMapperConfig();
 
         mapperConfig = mapperConfig.columnDefinitions(new ColumnDefinitionProvider<SampleFieldKey>() {
             @Override
@@ -565,7 +566,7 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testImmutableSetWithBuilder() throws Exception {
 
-        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(false).getClassMeta(A.class),  MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
+        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(false).getClassMeta(A.class),  MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().assumeInjectionModifiesValues(true));
         
         builderA.addKey("id").addMapping("bs_v");
 
@@ -582,7 +583,7 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testImmutableSetWithBuilderAsm() throws Exception {
 
-        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(true).getClassMeta(A.class),  MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
+        SampleMapperBuilder<A> builderA = new SampleMapperBuilder<A>(ReflectionService.newInstance(true).getClassMeta(A.class),  MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().assumeInjectionModifiesValues(true));
 
         builderA.addKey("id").addMapping("bs_v");
 
@@ -597,7 +598,7 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testImmutableSetNoBuilder() throws Exception {
 
-        SampleMapperBuilder<A2> builderA = new SampleMapperBuilder<A2>(ReflectionService.newInstance(false).getClassMeta(A2.class),  MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
+        SampleMapperBuilder<A2> builderA = new SampleMapperBuilder<A2>(ReflectionService.newInstance(false).getClassMeta(A2.class),  MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().assumeInjectionModifiesValues(true));
 
         builderA.addKey("id").addMapping("bs_v");
 
@@ -613,7 +614,7 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testImmutableSetNoBuilderAsm() throws Exception {
 
-        SampleMapperBuilder<A2> builderA = new SampleMapperBuilder<A2>(ReflectionService.newInstance(true).getClassMeta(A2.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
+        SampleMapperBuilder<A2> builderA = new SampleMapperBuilder<A2>(ReflectionService.newInstance(true).getClassMeta(A2.class), MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().assumeInjectionModifiesValues(true));
 
         builderA.addKey("id").addMapping("bs_v");
 
@@ -628,14 +629,14 @@ public class AbstractMapperBuilderTest {
 
     @Test
     public void testObjectWithMappingContext() throws Exception {
-        SampleMapperBuilder<ObjectContext> builderA = new SampleMapperBuilder<ObjectContext>(ReflectionService.newInstance(true).getClassMeta(ObjectContext.class), MapperConfig.<SampleFieldKey>fieldMapperConfig());
+        SampleMapperBuilder<ObjectContext> builderA = new SampleMapperBuilder<ObjectContext>(ReflectionService.newInstance(true).getClassMeta(ObjectContext.class), MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig());
 
         SetRowMapper<Object[], Object[][], ObjectContext, Exception> mapper = builderA.addKey("foo").mapper();
         ObjectContext a = mapper.iterator(new Object[][]{{"v1"}}).next();
 
         assertEquals("v1", a.foo);
 
-        builderA = new SampleMapperBuilder<ObjectContext>(ReflectionService.newInstance(true).getClassMeta(ObjectContext.class), MapperConfig.<SampleFieldKey>fieldMapperConfig());
+        builderA = new SampleMapperBuilder<ObjectContext>(ReflectionService.newInstance(true).getClassMeta(ObjectContext.class), MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig());
 
         mapper = builderA.addKey("bar").mapper();
         a = mapper.iterator(new Object[][]{{12234l}}).next();
@@ -666,7 +667,7 @@ public class AbstractMapperBuilderTest {
     @Test
     public void testImmutableListNoBuilderAsm() throws Exception {
 
-        SampleMapperBuilder<A3> builderA = new SampleMapperBuilder<A3>(ReflectionService.newInstance(true).getClassMeta(A3.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
+        SampleMapperBuilder<A3> builderA = new SampleMapperBuilder<A3>(ReflectionService.newInstance(true).getClassMeta(A3.class), MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().assumeInjectionModifiesValues(true));
 
         builderA.addKey("id").addMapping("bs_v");
 
@@ -957,7 +958,33 @@ public class AbstractMapperBuilderTest {
             return new SampleFieldKey(name, i);
         }
     };
+    public static class SampleMapperFactory extends AbstractMapperFactory<SampleFieldKey, SampleMapperFactory, Object[]> {
 
+        public static SampleMapperFactory newInstance() {
+            return new SampleMapperFactory();
+        }
+
+        public static SampleMapperFactory newInstance(
+                AbstractMapperFactory<SampleFieldKey, ?, Object[]> config) {
+            return new SampleMapperFactory(config);
+        }
+        
+        public SampleMapperFactory() {
+            super(new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>(), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+        }
+
+        public SampleMapperFactory(AbstractMapperFactory<SampleFieldKey, ?, Object[]> config) {
+            super(config);
+        }
+
+        public <T> SampleMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
+            return new SampleMapperBuilder<T>(
+                    classMeta, mapperConfig()
+            );
+        }
+    }
+    
+    
     public static class SampleMapperBuilder<T> extends MapperBuilder<Object[], Object[][], T, SampleFieldKey, Exception, SetRowMapper<Object[], Object[][], T, Exception>, SetRowMapper<Object[], Object[][], T, Exception>, SampleMapperBuilder<T>> {
 
         public static final KeySourceGetter<SampleFieldKey, Object[]> KEY_SOURCE_GETTER = new KeySourceGetter<SampleFieldKey, Object[]>() {
@@ -967,7 +994,7 @@ public class AbstractMapperBuilderTest {
             }
         };
 
-        public SampleMapperBuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey> mapperConfig) {
+        public SampleMapperBuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey, Object[]> mapperConfig) {
             super(KEY_FACTORY, 
                     new DefaultSetRowMapperBuilder<Object[], Object[][], T, SampleFieldKey, Exception>(
                             classMeta,
@@ -1010,7 +1037,7 @@ public class AbstractMapperBuilderTest {
                     FieldMapperColumnDefinition.<SampleFieldKey>factory(), 0);
         }
         public SampleMapperBuilder(ClassMeta<T> classMeta) {
-            this(classMeta, MapperConfig.<SampleFieldKey>fieldMapperConfig());
+            this(classMeta, MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig());
         }
 
     }
@@ -1183,7 +1210,7 @@ public class AbstractMapperBuilderTest {
 
 
         final List<SampleFieldKey> errors = new ArrayList<SampleFieldKey>();
-        MapperConfig<SampleFieldKey> mapperConfig = MapperConfig.<SampleFieldKey>fieldMapperConfig().fieldMapperErrorHandler(new FieldMapperErrorHandler<SampleFieldKey>() {
+        MapperConfig<SampleFieldKey, Object[]> mapperConfig = MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().fieldMapperErrorHandler(new FieldMapperErrorHandler<SampleFieldKey>() {
             @Override
             public void errorMappingField(SampleFieldKey key, Object source, Object target, Exception error, Context mappingContext) throws MappingException {
                 errors.add(key);
@@ -1278,7 +1305,7 @@ public class AbstractMapperBuilderTest {
 
     @Test
     public void testGenericBuilderWithSubMapper() throws Exception {
-        SampleMapperBuilder<C543_NamedParam> builder = new SampleMapperBuilder<C543_NamedParam>(ReflectionService.newInstance().disableAsm().getClassMeta(C543_NamedParam.class), MapperConfig.<SampleFieldKey>fieldMapperConfig().assumeInjectionModifiesValues(true));
+        SampleMapperBuilder<C543_NamedParam> builder = new SampleMapperBuilder<C543_NamedParam>(ReflectionService.newInstance().disableAsm().getClassMeta(C543_NamedParam.class), MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().assumeInjectionModifiesValues(true));
         builder.addMapping("id_id", KeyProperty.DEFAULT);
         builder.addMapping("values_name", KeyProperty.DEFAULT);
 

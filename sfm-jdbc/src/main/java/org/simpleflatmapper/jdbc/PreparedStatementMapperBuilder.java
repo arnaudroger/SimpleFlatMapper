@@ -43,6 +43,7 @@ import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
 
     public PreparedStatementMapperBuilder(
             ClassMeta<T> classMeta,
-            MapperConfig<JdbcColumnKey> mapperConfig,
+            MapperConfig<JdbcColumnKey, ?> mapperConfig,
             ConstantTargetFieldMapperFactory<PreparedStatement, JdbcColumnKey> preparedStatementFieldMapperFactory) {
         super(classMeta, PreparedStatement.class, mapperConfig, preparedStatementFieldMapperFactory);
     }

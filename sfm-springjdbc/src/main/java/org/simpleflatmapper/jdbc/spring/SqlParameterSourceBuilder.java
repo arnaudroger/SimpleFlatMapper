@@ -39,14 +39,14 @@ public final class SqlParameterSourceBuilder<T> {
 
 
     private final PropertyMappingsBuilder<T, JdbcColumnKey> builder;
-    private final MapperConfig<JdbcColumnKey> mapperConfig;
+    private final MapperConfig<JdbcColumnKey, ?> mapperConfig;
     private final ReflectionService reflectionService;
     private int index = 1;
 
 
     public SqlParameterSourceBuilder(
             ClassMeta<T> classMeta,
-            MapperConfig<JdbcColumnKey> mapperConfig) {
+            MapperConfig<JdbcColumnKey, ?> mapperConfig) {
         this.mapperConfig = mapperConfig;
         this.reflectionService = classMeta.getReflectionService();
         this.builder =

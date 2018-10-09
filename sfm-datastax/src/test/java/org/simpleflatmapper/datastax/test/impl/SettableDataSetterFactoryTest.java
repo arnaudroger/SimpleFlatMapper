@@ -65,7 +65,7 @@ import static org.mockito.Mockito.when;
 public class SettableDataSetterFactoryTest {
 
 
-    private final MapperConfig<DatastaxColumnKey> mapperConfig = MapperConfig.<DatastaxColumnKey>fieldMapperConfig();
+    private final MapperConfig<DatastaxColumnKey, ?> mapperConfig = MapperConfig.<DatastaxColumnKey, Row>fieldMapperConfig();
     private final ReflectionService reflectionService = ReflectionService.newInstance();
     SettableDataSetterFactory factory = new SettableDataSetterFactory(mapperConfig, reflectionService);
     private int index;

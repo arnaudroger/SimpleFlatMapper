@@ -132,12 +132,12 @@ public class Issue365Test {
         assertEquals("type", data.data.type);
     }
 
-    private MapperConfig<SampleFieldKey> mapperConfig() {
+    private MapperConfig<SampleFieldKey, Object[]> mapperConfig() {
         FieldMapperColumnDefinitionProviderImpl<SampleFieldKey> provider =
                 new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>();
 
         provider.addColumnDefinition("benchmark",
                 FieldMapperColumnDefinition.<SampleFieldKey>identity().add(new SetterProperty(SETTER)).add(new GetterProperty(GETTER)));
-        return MapperConfig.<SampleFieldKey>fieldMapperConfig().columnDefinitions(provider);
+        return MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().columnDefinitions(provider);
     }
 }

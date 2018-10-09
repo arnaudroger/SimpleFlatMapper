@@ -279,16 +279,16 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		return classMeta;
 	}
 
-	public static <T, K extends FieldKey<K>> PropertyMappingsBuilder<T, K> of(
+	public static <T, K extends FieldKey<K>, S> PropertyMappingsBuilder<T, K> of(
 			ClassMeta<T> classMeta,
-			MapperConfig<K> mapperConfig,
+			MapperConfig<K, S> mapperConfig,
 			Predicate<PropertyMeta<?, ?>> propertyPredicate) {
 		return of(classMeta, mapperConfig, propertyPredicate, null);
 	}
 
-	public static <T, K extends FieldKey<K>> PropertyMappingsBuilder<T, K> of(
+	public static <T, K extends FieldKey<K>, S> PropertyMappingsBuilder<T, K> of(
 			final ClassMeta<T> classMeta,
-			final MapperConfig<K> mapperConfig,
+			final MapperConfig<K, S> mapperConfig,
 			final Predicate<PropertyMeta<?, ?>> propertyPredicate,
 			final PropertyFinder<T> propertyFinder) {
 		final List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties = new ArrayList<ExtendPropertyFinder.CustomProperty<?, ?>>();

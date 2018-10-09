@@ -215,7 +215,7 @@ public class MapKeyValueTest {
         return ReflectionService.disableAsm();
     }
 
-    private MapperConfig<SampleFieldKey> getMapperConfig() {
+    private MapperConfig<SampleFieldKey, Object[]> getMapperConfig() {
         return MapperConfig.fieldMapperConfig();
     }
 

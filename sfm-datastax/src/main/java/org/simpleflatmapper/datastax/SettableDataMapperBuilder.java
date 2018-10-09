@@ -16,7 +16,7 @@ public class SettableDataMapperBuilder<T> extends AbstractConstantTargetMapperBu
 
     public SettableDataMapperBuilder(
             ClassMeta<T> classMeta,
-            MapperConfig<DatastaxColumnKey> mapperConfig,
+            MapperConfig<DatastaxColumnKey, ?> mapperConfig,
             ConstantTargetFieldMapperFactory<SettableByIndexData, DatastaxColumnKey> fieldMapperFactory) {
         super(classMeta, SettableByIndexData.class, mapperConfig, fieldMapperFactory);
     }

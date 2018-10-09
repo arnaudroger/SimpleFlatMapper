@@ -2,6 +2,7 @@ package org.simpleflatmapper.csv.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.csv.CsvColumnKey;
+import org.simpleflatmapper.csv.CsvRow;
 import org.simpleflatmapper.csv.CsvWriterBuilder;
 import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.mapper.ContextualSourceFieldMapperImpl;
@@ -16,8 +17,8 @@ public class CsvWriterBuilderTest {
 
     @Test
     public void testWriteCsvOnDbObject() throws Exception {
-        MapperConfig<CsvColumnKey> config =
-                MapperConfig.<CsvColumnKey>fieldMapperConfig();
+        MapperConfig<CsvColumnKey, ?> config =
+                MapperConfig.<CsvColumnKey, CsvRow>fieldMapperConfig();
         CsvWriterBuilder<DbObject> builder = CsvWriterBuilder.newBuilder(DbObject.class);
 
         ContextualSourceFieldMapperImpl<DbObject, Appendable> mapper =

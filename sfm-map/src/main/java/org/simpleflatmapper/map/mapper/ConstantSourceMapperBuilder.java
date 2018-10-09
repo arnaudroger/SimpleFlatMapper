@@ -38,7 +38,7 @@ public abstract class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>> {
     public static <S, T, K extends FieldKey<K>> ConstantSourceMapperBuilder<S, T, K> newConstantSourceMapperBuilder(
             MapperSource<? super S, K> mapperSource, 
             ClassMeta<T> classMeta, 
-            MapperConfig<K> config, 
+            MapperConfig<K, ? extends S> config, 
             MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder, 
             KeyFactory<K> keyFactory) {
         return newConstantSourceMapperBuilder(mapperSource, classMeta, config, mappingContextFactoryBuilder, keyFactory, null);
@@ -46,7 +46,7 @@ public abstract class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>> {
 
     public static <S, T, K extends FieldKey<K>> ConstantSourceMapperBuilder<S, T, K> newConstantSourceMapperBuilder(
             MapperSource<? super S, K> mapperSource,
-            ClassMeta<T> classMeta, MapperConfig<K> config, 
+            ClassMeta<T> classMeta, MapperConfig<K, ? extends S> config, 
             MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder, 
             KeyFactory<K> keyFactory, 
             PropertyFinder<T> propertyFinder) {

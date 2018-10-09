@@ -48,7 +48,7 @@ public class TransfromerSetRowMapperBuilder<MO extends SetRowMapper<ROW, SET, O,
     }
 
     @Override
-    public final MapperConfig<K> mapperConfig() {
+    public final MapperConfig<K, ROW> mapperConfig() {
         return delegate.mapperConfig();
     }
 

@@ -2,6 +2,7 @@ package org.simpleflatmapper.datastax.test;
 
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
+import com.datastax.driver.core.Row;
 import com.datastax.driver.core.SettableByIndexData;
 import org.junit.Test;
 import org.simpleflatmapper.datastax.DataTypeHelper;
@@ -248,7 +249,7 @@ public class DataTypeTest {
 
     public static <N> Setter<SettableByIndexData, N> getSetter(Class<N> target, DataType dataType) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
 
-        MapperConfig<DatastaxColumnKey> mapperConfig = MapperConfig.<DatastaxColumnKey>fieldMapperConfig();
+        MapperConfig<DatastaxColumnKey, ?> mapperConfig = MapperConfig.<DatastaxColumnKey, Row>fieldMapperConfig();
         ReflectionService reflectionService = ReflectionService.newInstance();
         SettableDataSetterFactory factory = new SettableDataSetterFactory(mapperConfig, reflectionService);
 

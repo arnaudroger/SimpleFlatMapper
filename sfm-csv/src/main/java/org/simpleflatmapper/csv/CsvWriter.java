@@ -123,7 +123,7 @@ public class CsvWriter<T>  {
         CsvWriterBuilder<T> builder = CsvWriterBuilder
                 .newBuilder(classMeta, cellWriter);
 
-        MapperConfig<CsvColumnKey> mapperConfig = MapperConfig.<CsvColumnKey>fieldMapperConfig();
+        MapperConfig<CsvColumnKey, ?> mapperConfig = MapperConfig.<CsvColumnKey, CsvRow>fieldMapperConfig();
         try {
             String[] headers = defaultHeaders(classMeta);
             for(String header : headers) {
@@ -234,7 +234,7 @@ public class CsvWriter<T>  {
         protected final ContextualSourceFieldMapperImpl<T, Appendable> mapper;
         protected final CellWriter cellWriter;
         protected final ClassMeta<T> classMeta;
-        protected final MapperConfig<CsvColumnKey> mapperConfig;
+        protected final MapperConfig<CsvColumnKey, ?> mapperConfig;
         protected final boolean skipHeaders;
 
         private CsvWriterDSL(
@@ -242,7 +242,7 @@ public class CsvWriter<T>  {
                 CellWriter cellWriter,
                 ContextualSourceFieldMapperImpl<T, Appendable> mapper,
                 ClassMeta<T> classMeta,
-                MapperConfig<CsvColumnKey> mapperConfig,
+                MapperConfig<CsvColumnKey, ?> mapperConfig,
                 boolean skipHeaders) {
             this.columns = columns;
             this.mapper = mapper;
@@ -330,7 +330,7 @@ public class CsvWriter<T>  {
          * @param mapperConfig the mapperConfig
          * @return the new DSL
          */
-        public CsvWriterDSL<T> mapperConfig(MapperConfig<CsvColumnKey> mapperConfig) {
+        public CsvWriterDSL<T> mapperConfig(MapperConfig<CsvColumnKey, ?> mapperConfig) {
             return newMapDSL(classMeta, columns, mapperConfig, cellWriter, skipHeaders);
         }
 
@@ -387,14 +387,14 @@ public class CsvWriter<T>  {
         }
 
 
-        public MapperConfig<CsvColumnKey> mapperConfig() {
+        public MapperConfig<CsvColumnKey, ?> mapperConfig() {
             return mapperConfig;
         }
 
         protected CsvWriterDSL<T> newColumnMapDSL(
                 ClassMeta<T> classMeta,
                 Column[] columns,
-                MapperConfig<CsvColumnKey> mapperConfig,
+                MapperConfig<CsvColumnKey, ?> mapperConfig,
                 CellWriter cellWriter,
                 boolean skipHeaders) {
 
@@ -412,7 +412,7 @@ public class CsvWriter<T>  {
         protected CsvWriterDSL<T> newMapDSL(
                 ClassMeta<T> classMeta,
                 Column[] columns,
-                MapperConfig<CsvColumnKey> mapperConfig,
+                MapperConfig<CsvColumnKey, ?> mapperConfig,
                 CellWriter cellWriter,
                 boolean skipHeaders) {
 
@@ -429,7 +429,7 @@ public class CsvWriter<T>  {
 
         protected CsvWriterDSL<T> newCsvWriterDSL(Column[] columns,
                                                 CellWriter cellWriter, ContextualSourceFieldMapperImpl<T, Appendable> mapper, ClassMeta<T> classMeta,
-                                                MapperConfig<CsvColumnKey> mapperConfig,
+                                                MapperConfig<CsvColumnKey, ?> mapperConfig,
                                                 boolean skipHeaders) {
             return new CsvWriterDSL<T>(columns, cellWriter, mapper, classMeta, mapperConfig, skipHeaders);
         }
@@ -440,7 +440,7 @@ public class CsvWriter<T>  {
         public NoColumnCsvWriterDSL(
                 CellWriter cellWriter,
                 ClassMeta<T> classMeta,
-                MapperConfig<CsvColumnKey> mapperConfig, boolean skipHeaders) {
+                MapperConfig<CsvColumnKey, ?> mapperConfig, boolean skipHeaders) {
             super(new Column[0], cellWriter, null, classMeta, mapperConfig, skipHeaders);
         }
 
@@ -453,7 +453,7 @@ public class CsvWriter<T>  {
         protected NoColumnCsvWriterDSL<T> newCsvWriterDSL(Column[] columns,
                                                   CellWriter cellWriter,
                                                   ContextualSourceFieldMapperImpl<T, Appendable> mapper, ClassMeta<T> classMeta,
-                                                  MapperConfig<CsvColumnKey> mapperConfig,
+                                                  MapperConfig<CsvColumnKey, ?> mapperConfig,
                                                   boolean skipHeaders) {
             return new NoColumnCsvWriterDSL<T>(cellWriter, classMeta, mapperConfig, skipHeaders);
         }
@@ -466,7 +466,7 @@ public class CsvWriter<T>  {
                 CellWriter cellWriter,
                 ContextualSourceFieldMapperImpl<T, Appendable> mapper,
                 ClassMeta<T> classMeta,
-                MapperConfig<CsvColumnKey> mapperConfig, boolean skipHeaders) {
+                MapperConfig<CsvColumnKey, ?> mapperConfig, boolean skipHeaders) {
             super(columns, cellWriter, mapper, classMeta, mapperConfig, skipHeaders);
         }
 
@@ -501,7 +501,7 @@ public class CsvWriter<T>  {
         protected CsvWriterDSL<T> newCsvWriterDSL(Column[] columns,
                                                   CellWriter cellWriter,
                                                   ContextualSourceFieldMapperImpl<T, Appendable> mapper, ClassMeta<T> classMeta,
-                                                  MapperConfig<CsvColumnKey> mapperConfig,
+                                                  MapperConfig<CsvColumnKey, ?> mapperConfig,
                                                   boolean skipHeaders) {
             return new DefaultCsvWriterDSL<T>(columns, cellWriter, mapper, classMeta, mapperConfig, skipHeaders);
         }

@@ -46,12 +46,12 @@ public class JooqMapperBuilder<E> {
 
 	public JooqMapperBuilder(final ClassMeta<E> classMeta,
 							 MappingContextFactoryBuilder<Record, JooqFieldKey> mappingContextFactoryBuilder) throws MapperBuildingException {
-		this(classMeta, mappingContextFactoryBuilder, MapperConfig.<JooqFieldKey>fieldMapperConfig());
+		this(classMeta, mappingContextFactoryBuilder, MapperConfig.<JooqFieldKey, Record>fieldMapperConfig());
 	}
 
 	public JooqMapperBuilder(final ClassMeta<E> classMeta,
 							 MappingContextFactoryBuilder<Record, JooqFieldKey> mappingContextFactoryBuilder,
-							 MapperConfig<JooqFieldKey> mapperConfig) throws MapperBuildingException {
+							 MapperConfig<JooqFieldKey, Record> mapperConfig) throws MapperBuildingException {
 		constantSourceMapperBuilder =
 				ConstantSourceMapperBuilder.<Record, E, JooqFieldKey>newConstantSourceMapperBuilder(
 						FIELD_MAPPER_SOURCE,

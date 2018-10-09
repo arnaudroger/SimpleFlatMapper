@@ -60,7 +60,7 @@ public class SettableDataSetterFactory
 {
     private final Map<Class<?>, SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>> factoryPerClass =
             new HashMap<Class<?>, SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey>>>();
-    private final MapperConfig<DatastaxColumnKey> mapperConfig;
+    private final MapperConfig<DatastaxColumnKey, ?> mapperConfig;
     private final ReflectionService reflectionService;
 
     {
@@ -187,7 +187,7 @@ public class SettableDataSetterFactory
         });
     }
 
-    public SettableDataSetterFactory(MapperConfig<DatastaxColumnKey> mapperConfig, ReflectionService reflectionService) {
+    public SettableDataSetterFactory(MapperConfig<DatastaxColumnKey, ?> mapperConfig, ReflectionService reflectionService) {
         this.mapperConfig = mapperConfig;
         this.reflectionService = reflectionService;
     }

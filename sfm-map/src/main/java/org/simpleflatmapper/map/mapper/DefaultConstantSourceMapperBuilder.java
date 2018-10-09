@@ -82,7 +82,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 	private final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
 
     private final MapperSource<? super S, K> mapperSource;
-    private final MapperConfig<K> mapperConfig;
+    private final MapperConfig<K, ? extends S> mapperConfig;
     protected final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder;
 
     private final KeyFactory<K> keyFactory;
@@ -90,7 +90,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     public DefaultConstantSourceMapperBuilder(
             final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
-            final MapperConfig<K> mapperConfig,
+            final MapperConfig<K, ? extends S> mapperConfig,
             MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder,
             KeyFactory<K> keyFactory, 
             PropertyFinder<T> propertyFinder) throws MapperBuildingException {
@@ -461,7 +461,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
              Class<T> target, 
              ReflectionService reflectionService, 
              MapperSource<? super S, K> mapperSource, 
-             MapperConfig<K> mapperConfig) {
+             MapperConfig<K, ? extends S> mapperConfig) {
         SourceFieldMapper<S, T> mapper;
 
         if (reflectionService.isAsmActivated() 

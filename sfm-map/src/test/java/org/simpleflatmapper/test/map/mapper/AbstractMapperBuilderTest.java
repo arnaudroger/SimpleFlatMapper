@@ -59,7 +59,6 @@ import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,7 +71,6 @@ import java.util.Set;
 
 //IFJAVA8_START
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 //IFJAVA8_END
 
 

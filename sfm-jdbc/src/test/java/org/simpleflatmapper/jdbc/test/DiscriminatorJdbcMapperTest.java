@@ -6,12 +6,14 @@ import org.mockito.stubbing.Answer;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.test.beans.Person;
 import org.simpleflatmapper.test.beans.Professor;
 import org.simpleflatmapper.test.beans.Student;
 import org.simpleflatmapper.test.beans.StudentGS;
 import org.simpleflatmapper.test.beans.ProfessorGS;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
 
@@ -47,10 +49,13 @@ public class DiscriminatorJdbcMapperTest {
         JdbcMapper<Person> mapper =
                 JdbcMapperFactoryHelper.asm()
                         .addKeys("id", "students_id")
-                        .discriminator(Person.class, "person_type", String.class, builder -> {
-                                    builder
-                                            .discriminatorCase("student", StudentGS.class)
-                                            .discriminatorCase("professor", ProfessorGS.class);
+                        .discriminator(Person.class, "person_type", String.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object>>() {
+                                    @Override
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
+                                        builder
+                                                .discriminatorCase("student", StudentGS.class)
+                                                .discriminatorCase("professor", ProfessorGS.class);
+                                    }
                                 }
                         )
                         .newMapper(Person.class);
@@ -62,10 +67,13 @@ public class DiscriminatorJdbcMapperTest {
         JdbcMapper<Person> mapper =
                 JdbcMapperFactoryHelper.noAsm()
                         .addKeys("id", "students_id")
-                        .discriminator(Person.class, "person_type", String.class, builder -> {
-                                    builder
-                                            .discriminatorCase("student", StudentGS.class)
-                                            .discriminatorCase("professor", ProfessorGS.class);
+                        .discriminator(Person.class, "person_type", String.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object>>() {
+                                    @Override
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
+                                        builder
+                                                .discriminatorCase("student", StudentGS.class)
+                                                .discriminatorCase("professor", ProfessorGS.class);
+                                    }
                                 }
                         )
                         .newMapper(Person.class);
@@ -84,10 +92,13 @@ public class DiscriminatorJdbcMapperTest {
             final JdbcMapper<Person> mapper =
                     JdbcMapperFactoryHelper.noAsm()
                             .addKeys("id", "students_id")
-                            .discriminator(Person.class, "person_type", String.class, builder -> {
-                                        builder
-                                                .discriminatorCase("student", StudentGS.class)
-                                                .discriminatorCase("professor", ProfessorGS.class);
+                            .discriminator(Person.class, "person_type", String.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object>>() {
+                                        @Override
+                                        public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
+                                            builder
+                                                    .discriminatorCase("student", StudentGS.class)
+                                                    .discriminatorCase("professor", ProfessorGS.class);
+                                        }
                                     }
                             )
                             .newMapper(Person.class);

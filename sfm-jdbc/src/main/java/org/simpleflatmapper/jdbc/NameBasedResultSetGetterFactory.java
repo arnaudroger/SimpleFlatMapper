@@ -18,7 +18,19 @@ public final class NameBasedResultSetGetterFactory implements AbstractColumnName
 		return new Getter<ResultSet, T>() {
 			@Override
 			public T get(ResultSet target) throws Exception {
-				return target.getObject(discriminatorColumn, discriminatorType);
+				try {
+					return target.getObject(discriminatorColumn, discriminatorType);
+				} catch (NoSuchMethodError e) {
+					throw jdbc40Error(target, e);	
+				} catch (UnsupportedOperationException e) {
+					throw jdbc40Error(target, e);
+				}
+			}
+
+			private Exception jdbc40Error(ResultSet target, Throwable e) {
+				String message = "The ResultSet " + target.getClass().getName() + " does not support the T getObject(String, Class<T>) method, " +
+						"you will need to use the JdbcMapperFactory.discriminator(Class<T> commonType, final String discriminatorColumn, CheckedBiFunction<S, String, V> discriminatorFieldAccessor, Consumer<DiscriminatorConditionBuilder<S, V, T>> consumer) call passing ResultSet::getXXX as the discriminatorFieldAccessor reason : " + e.getMessage();
+				return new UnsupportedOperationException(message, e);
 			}
 		};
 	}

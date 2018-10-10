@@ -3,11 +3,9 @@ package org.simpleflatmapper.map.mapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.Consumer;
 
 import java.lang.reflect.Type;
-import java.util.function.Function;
 
 public class AbstractColumnNameDiscriminatorMapperFactory<
         K extends FieldKey<K>,

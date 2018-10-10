@@ -411,20 +411,13 @@ public abstract class AbstractMapperFactory<
 			this.getter = getter;
 		}
 		public DiscriminatorConditionBuilder<S, V, T> discriminatorCase(V value, Type type) {
-			discriminatorBuilder.discriminatorCase(toEqualsSPredicate(value), type);
-			return this;
+			return discriminatorCase(toEqualsPredicate(value), type);
 		}
 		public DiscriminatorConditionBuilder<S, V, T> discriminatorCase(V value, Class<T> type) {
-			discriminatorBuilder.discriminatorCase(toEqualsSPredicate(value), type);
-			return this;
+			return discriminatorCase(toEqualsPredicate(value), type);
 		}
 		public DiscriminatorConditionBuilder<S, V, T> discriminatorCase(V value, ClassMeta<? extends T> classMeta) {
-			discriminatorBuilder.discriminatorCase(toEqualsSPredicate(value), classMeta);
-			return this;
-		}
-
-		private Predicate<S> toEqualsSPredicate(V value) {
-			return toSourcePredicate(EqualsPredicate.<V>of(value));
+			return discriminatorCase(toEqualsPredicate(value), classMeta);
 		}
 
 		public DiscriminatorConditionBuilder<S, V, T> discriminatorCase(Predicate<V> predicate, Type type) {
@@ -440,6 +433,10 @@ public abstract class AbstractMapperFactory<
 			return this;
 		}
 
+		private Predicate<V> toEqualsPredicate(V value) {
+			return EqualsPredicate.<V>of(value);
+		}
+		
 		private Predicate<S> toSourcePredicate(Predicate<V> predicate) {
 			return new SourcePredicate<S, V>(predicate, getter);
 		}

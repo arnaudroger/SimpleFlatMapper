@@ -13,6 +13,7 @@ import org.simpleflatmapper.test.beans.Professor;
 import org.simpleflatmapper.test.beans.Student;
 import org.simpleflatmapper.test.beans.StudentGS;
 import org.simpleflatmapper.test.beans.ProfessorGS;
+import org.simpleflatmapper.util.CheckedBiFunction;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
@@ -45,6 +46,29 @@ import static org.mockito.Mockito.when;
 
 public class DiscriminatorJdbcMapperTest {
 
+    @Test
+    public void testNewDiscriminatorFieldAccessor() throws Exception {
+        JdbcMapper<Person> mapper =
+                JdbcMapperFactoryHelper.asm()
+                        .addKeys("id", "students_id")
+                        .discriminator(Person.class, "person_type", new CheckedBiFunction<ResultSet, String, String>() {
+                                    @Override
+                                    public String apply(ResultSet rs, String columnName) throws Exception {
+                                        return rs.getString(columnName);
+                                    }
+                                }, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object>>() {
+                                    @Override
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
+                                        builder
+                                                .discriminatorCase("student", StudentGS.class)
+                                                .discriminatorCase("professor", ProfessorGS.class);
+                                    }
+                                }
+                        )
+                        .newMapper(Person.class);
+        validateMapper(mapper);
+    }
+    
     @Test
     public void testNewDiscriminator() throws Exception {
         JdbcMapper<Person> mapper =

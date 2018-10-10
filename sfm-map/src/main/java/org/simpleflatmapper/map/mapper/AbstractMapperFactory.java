@@ -6,12 +6,15 @@ import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
+import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.util.BiFunction;
+import org.simpleflatmapper.util.CheckedBiFunction;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.EqualsPredicate;
 import org.simpleflatmapper.util.ErrorHelper;
@@ -382,6 +385,21 @@ public abstract class AbstractMapperFactory<
 
 	public <T, V> MF discriminator(Class<T> commonType, Getter<? super S, ? extends V> getter, Consumer<DiscriminatorConditionBuilder<S, V, T>> consumer) {
 		return discriminator((Type)commonType, getter, consumer);
+	}
+
+	public <T, V> MF discriminator(Class<T> commonType, final String discriminatorColumn, CheckedBiFunction<S, String, V> discriminatorFieldAccessor, Consumer<DiscriminatorConditionBuilder<S, V, T>> consumer) {
+		return discriminator((Type) commonType, discriminatorColumn, discriminatorFieldAccessor, consumer);
+	}
+
+	public <T, V> MF discriminator(Type commonType, final String discriminatorColumn, final CheckedBiFunction<S, String, V> discriminatorFieldAccessor, Consumer<DiscriminatorConditionBuilder<S, V, T>> consumer) {
+		addColumnProperty(discriminatorColumn, OptionalProperty.INSTANCE);
+		Getter<? super S, ? extends V> getter = new Getter<S, V>() {
+			@Override
+			public V get(S target) throws Exception {
+				return discriminatorFieldAccessor.apply(target, discriminatorColumn);
+			}
+		};
+		return discriminator(commonType, getter, consumer);
 	}
 	
 	public static final class DiscriminatorConditionBuilder<S, V, T> {

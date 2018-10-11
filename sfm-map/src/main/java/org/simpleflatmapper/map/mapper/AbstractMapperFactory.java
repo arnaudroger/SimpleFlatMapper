@@ -402,7 +402,7 @@ public abstract class AbstractMapperFactory<
 		return discriminator(commonType, getter, consumer);
 	}
 	
-	public static final class DiscriminatorConditionBuilder<S, V, T> {
+	public static class DiscriminatorConditionBuilder<S, V, T> {
     	private final DiscriminatorBuilder<S, T> discriminatorBuilder;
     	private final Getter<? super S, ? extends V> getter;
 
@@ -410,6 +410,28 @@ public abstract class AbstractMapperFactory<
 			this.discriminatorBuilder = discriminatorBuilder;
 			this.getter = getter;
 		}
+
+		public DiscriminatorConditionBuilder<S, V, T> when(V value, Type type) {
+			return discriminatorCase(value, type);
+		}
+		public DiscriminatorConditionBuilder<S, V, T> when(V value, Class<T> type) {
+			return discriminatorCase(value, type);
+		}
+		public DiscriminatorConditionBuilder<S, V, T> when(V value, ClassMeta<? extends T> classMeta) {
+			return discriminatorCase(value, classMeta);
+		}
+
+		public DiscriminatorConditionBuilder<S, V, T> when(Predicate<V> predicate, Type type) {
+			return discriminatorCase(predicate, type);
+		}
+		
+		public DiscriminatorConditionBuilder<S, V, T> when(Predicate<V> predicate, Class<T> type) {
+			return discriminatorCase(predicate, type);
+		}
+		public DiscriminatorConditionBuilder<S, V, T> when(Predicate<V> predicate, ClassMeta<? extends T> classMeta) {
+			return discriminatorCase(predicate, classMeta);
+		}
+		
 		public DiscriminatorConditionBuilder<S, V, T> discriminatorCase(V value, Type type) {
 			return discriminatorCase(toEqualsPredicate(value), type);
 		}
@@ -421,15 +443,15 @@ public abstract class AbstractMapperFactory<
 		}
 
 		public DiscriminatorConditionBuilder<S, V, T> discriminatorCase(Predicate<V> predicate, Type type) {
-			discriminatorBuilder.discriminatorCase(toSourcePredicate(predicate), type);
+			discriminatorBuilder.when(toSourcePredicate(predicate), type);
 			return this;
 		}
 		public DiscriminatorConditionBuilder<S, V, T> discriminatorCase(Predicate<V> predicate, Class<T> type) {
-			discriminatorBuilder.discriminatorCase(toSourcePredicate(predicate), type);
+			discriminatorBuilder.when(toSourcePredicate(predicate), type);
 			return this;
 		}
 		public DiscriminatorConditionBuilder<S, V, T> discriminatorCase(Predicate<V> predicate, ClassMeta<? extends T> classMeta) {
-			discriminatorBuilder.discriminatorCase(toSourcePredicate(predicate), classMeta);
+			discriminatorBuilder.when(toSourcePredicate(predicate), classMeta);
 			return this;
 		}
 
@@ -473,6 +495,18 @@ public abstract class AbstractMapperFactory<
 			this.reflectionService = reflectionService;
 		}
 
+
+		public DiscriminatorBuilder<S, T> when(Predicate<S> predicate, ClassMeta<? extends T> classMeta) {
+			return discriminatorCase(predicate, classMeta);
+		}
+
+		public DiscriminatorBuilder<S, T> when(Predicate<S> predicate, Class<? extends T> target) {
+			return discriminatorCase(predicate, target);
+		}
+		public DiscriminatorBuilder<S, T> when(Predicate<S> predicate, Type target) {
+			return discriminatorCase(predicate, target);
+		}
+		
 		public DiscriminatorBuilder<S, T> discriminatorCase(Predicate<S> predicate, ClassMeta<? extends T> classMeta) {
 			MapperConfig.DiscriminatorCase<S, T> dCase = new MapperConfig.DiscriminatorCase<S, T>(predicate, classMeta);
 			cases.add(dCase);

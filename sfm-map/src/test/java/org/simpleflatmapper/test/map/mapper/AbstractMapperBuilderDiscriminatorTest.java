@@ -130,8 +130,8 @@ public class AbstractMapperBuilderDiscriminatorTest {
                     @Override
                     public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common> builder) {
                         builder
-                            .discriminatorCase("str", StringValue.class).
-                            discriminatorCase("int", IntegerValue.class);
+                            .when("str", StringValue.class).
+                            when("int", IntegerValue.class);
                     }
                 })
                 .newBuilder(classMeta);

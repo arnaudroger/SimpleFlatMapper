@@ -60,8 +60,8 @@ public class DiscriminatorJdbcMapperTest {
                                     @Override
                                     public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
                                         builder
-                                                .discriminatorCase("student", StudentGS.class)
-                                                .discriminatorCase("professor", ProfessorGS.class);
+                                                .when("student", StudentGS.class)
+                                                .when("professor", ProfessorGS.class);
                                     }
                                 }
                         )
@@ -78,8 +78,8 @@ public class DiscriminatorJdbcMapperTest {
                                     @Override
                                     public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
                                         builder
-                                                .discriminatorCase("student", StudentGS.class)
-                                                .discriminatorCase("professor", ProfessorGS.class);
+                                                .when("student", StudentGS.class)
+                                                .when("professor", ProfessorGS.class);
                                     }
                                 }
                         )
@@ -96,8 +96,8 @@ public class DiscriminatorJdbcMapperTest {
                                     @Override
                                     public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
                                         builder
-                                                .discriminatorCase("student", StudentGS.class)
-                                                .discriminatorCase("professor", ProfessorGS.class);
+                                                .when("student", StudentGS.class)
+                                                .when("professor", ProfessorGS.class);
                                     }
                                 }
                         )
@@ -121,8 +121,8 @@ public class DiscriminatorJdbcMapperTest {
                                         @Override
                                         public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
                                             builder
-                                                    .discriminatorCase("student", StudentGS.class)
-                                                    .discriminatorCase("professor", ProfessorGS.class);
+                                                    .when("student", StudentGS.class)
+                                                    .when("professor", ProfessorGS.class);
                                         }
                                     }
                             )

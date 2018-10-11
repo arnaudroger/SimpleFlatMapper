@@ -56,19 +56,24 @@ public class DiscriminatorReflectionService extends ReflectionService {
     @Override
     public <T> ClassMeta<T> getClassMeta(Type target) {
         
-        List<ClassMeta<?>> discriminator = discriminators.get(target); 
-        if (discriminator == null) {
+        List<ClassMeta<?>> implementations = discriminators.get(target); 
+        if (implementations == null || implementations.isEmpty()) {
             ClassMeta<T> classMeta = delegate.getClassMeta(target);
             return classMeta.withReflectionService(this);
         }
         
-        List<ClassMeta<?>> reassigned = new ArrayList<ClassMeta<?>>();
-        
-        for(ClassMeta<?> cm : discriminator) {
-            reassigned.add(cm.withReflectionService(this));
+        if (implementations.size() == 1) {
+            // only one implementation
+            return (ClassMeta<T>) implementations.get(0).withReflectionService(this);
         }
         
-        return new DiscriminatorClassMeta<T>(target, reassigned, this);
+        List<ClassMeta<?>> reassignedImplementations = new ArrayList<ClassMeta<?>>();
+        
+        for(ClassMeta<?> cm : implementations) {
+            reassignedImplementations.add(cm.withReflectionService(this));
+        }
+        
+        return new DiscriminatorClassMeta<T>(target, reassignedImplementations, this);
     }
 
     @Override

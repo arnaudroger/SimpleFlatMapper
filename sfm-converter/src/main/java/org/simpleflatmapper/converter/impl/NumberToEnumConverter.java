@@ -2,7 +2,6 @@ package org.simpleflatmapper.converter.impl;
 
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.ContextualConverter;
-import org.simpleflatmapper.util.EnumHelper;
 
 public class NumberToEnumConverter<E extends Enum<E>> implements ContextualConverter<Number, E> {
     private final Class<E> enumClass;
@@ -10,7 +9,7 @@ public class NumberToEnumConverter<E extends Enum<E>> implements ContextualConve
 
     public NumberToEnumConverter(Class<E> enumClass) {
         this.enumClass = enumClass;
-        this.values = EnumHelper.getValues(enumClass);
+        this.values = enumClass.getEnumConstants();
     }
 
     @Override

@@ -51,7 +51,6 @@
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
-				<version>2.5.4</version>
 				<configuration>
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
@@ -63,6 +62,10 @@
 						</manifestEntries>
 					</archive>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
@@ -150,14 +153,11 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.20.1</version>
-						<dependencies>
-							<dependency>
-								<groupId>org.apache.maven.surefire</groupId>
-								<artifactId>maven-surefire-common</artifactId>
-								<version>2.20.1-pj10</version>
-							</dependency>
-						</dependencies>
+						<configuration>
+							<excludes>
+								<exclude>org.simpleflatmapper.util.test.ProducerServiceLoaderTest</exclude>
+							</excludes>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>

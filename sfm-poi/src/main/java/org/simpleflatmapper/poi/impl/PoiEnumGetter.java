@@ -3,7 +3,6 @@ package org.simpleflatmapper.poi.impl;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.util.EnumHelper;
 
 public class PoiEnumGetter<E extends Enum<E>> implements Getter<Row, E> {
 
@@ -13,7 +12,7 @@ public class PoiEnumGetter<E extends Enum<E>> implements Getter<Row, E> {
     public PoiEnumGetter(int index, Class<E> enumClass) {
         this.index = index;
         this.enumClass = enumClass;
-        this.values = EnumHelper.getValues(enumClass);
+        this.values = enumClass.getEnumConstants();
     }
 
     @Override

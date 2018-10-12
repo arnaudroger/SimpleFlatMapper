@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -63,7 +64,7 @@ public class DefaultReflectionService extends ReflectionService {
 		};
 
 		ProducerServiceLoader.produceFromServiceLoader(
-				BuilderProducer.class,
+				ServiceLoader.load(BuilderProducer.class),
 				consumer
 		);
 		
@@ -91,7 +92,7 @@ public class DefaultReflectionService extends ReflectionService {
 		new JavaLangClassMetaFactoryProducer().produce(consumer);
 
 		ProducerServiceLoader.produceFromServiceLoader(
-				ClassMetaFactoryProducer.class,
+				ServiceLoader.load(ClassMetaFactoryProducer.class),
 				consumer
 		);
 

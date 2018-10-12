@@ -5,6 +5,7 @@ import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ProducerServiceLoader;
 
 import java.util.ArrayList;
+import java.util.ServiceLoader;
 
 public final class AliasProviderService {
 
@@ -16,7 +17,7 @@ public final class AliasProviderService {
 	private static AliasProvider findAliasProviders() {
 		final ArrayList<AliasProvider> providers = new ArrayList<AliasProvider>();
 
-		ProducerServiceLoader.produceFromServiceLoader(AliasProviderProducer.class, new Consumer<AliasProvider>() {
+		ProducerServiceLoader.produceFromServiceLoader(ServiceLoader.load(AliasProviderProducer.class), new Consumer<AliasProvider>() {
 			@Override
 			public void accept(AliasProvider t) {
 				providers.add(t);

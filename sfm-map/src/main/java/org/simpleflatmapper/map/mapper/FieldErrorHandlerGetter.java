@@ -1,9 +1,8 @@
-package org.simpleflatmapper.map.impl;
+package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.getter.BooleanContextualGetter;
 import org.simpleflatmapper.map.getter.ByteContextualGetter;
 import org.simpleflatmapper.map.getter.CharacterContextualGetter;

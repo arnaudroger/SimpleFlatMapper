@@ -1,4 +1,4 @@
-package org.simpleflatmapper.test.core.mapper;
+package org.simpleflatmapper.test.map.issue.core.mapper;
 
 import org.junit.Assert;
 import org.simpleflatmapper.map.FieldKey;

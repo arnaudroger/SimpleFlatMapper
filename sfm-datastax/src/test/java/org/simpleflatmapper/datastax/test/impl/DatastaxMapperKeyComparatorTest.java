@@ -4,7 +4,7 @@ import com.datastax.driver.core.DataType;
 import org.junit.Test;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 import org.simpleflatmapper.datastax.impl.DatastaxMapperKeyComparator;
-import org.simpleflatmapper.test.core.mapper.MapperKeyComparatorTest;
+import org.simpleflatmapper.test.map.issue.core.mapper.MapperKeyComparatorTest;
 
 import java.util.Random;
 

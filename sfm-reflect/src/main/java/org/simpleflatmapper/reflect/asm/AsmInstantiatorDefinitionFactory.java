@@ -113,7 +113,7 @@ public class AsmInstantiatorDefinitionFactory {
 
                                     int l = descTypes.size() - (isConstructor ? 0 : 1);
                                     for(int i = 0; i < l; i ++) {
-                                        String name = "arg" + i;
+                                        String name = null;
                                         if (i < names.size()) {
                                             name =names.get(i);
                                         }

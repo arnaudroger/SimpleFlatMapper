@@ -3,7 +3,7 @@ package org.simpleflatmapper.jdbc.test.impl;
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.impl.JdbcColumnKeyMapperKeyComparator;
-import org.simpleflatmapper.test.core.mapper.MapperKeyComparatorTest;
+import org.simpleflatmapper.test.map.issue.core.mapper.MapperKeyComparatorTest;
 
 public class JdbcColumnKeyMapperKeyComparatorTest {
 

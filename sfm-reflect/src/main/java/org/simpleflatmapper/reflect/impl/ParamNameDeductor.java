@@ -1,7 +1,6 @@
 package org.simpleflatmapper.reflect.impl;
 
 import org.simpleflatmapper.reflect.getter.GetterHelper;
-import org.simpleflatmapper.util.EnumHelper;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
@@ -120,7 +119,7 @@ public class ParamNameDeductor<T> {
         else if (TypeHelper.areEquals(type, String.class)) {
             return (V) "1";
         } else if (TypeHelper.isAssignable(Enum.class, type)) {
-            Enum[] values = EnumHelper.getValues(TypeHelper.<Enum>toClass(type));
+            Enum[] values = TypeHelper.<Enum>toClass(type).getEnumConstants();
             return (V) (values.length > 1 ? values[1] : values[0]);
         } else {
             return createValueFromInstantiator(type, builderIgnoresNullValues);
@@ -137,7 +136,7 @@ public class ParamNameDeductor<T> {
         if (TypeHelper.areEquals(type, String.class)) {
             return (V) "0";
         } else if (TypeHelper.isAssignable(Enum.class, type)) {
-            Enum[] values = EnumHelper.getValues(TypeHelper.<Enum>toClass(type));
+            Enum[] values = TypeHelper.<Enum>toClass(type).getEnumConstants();
             return (V) values[0];
         } else {
             return createValueFromInstantiator(type, builderIgnoresNullValues);

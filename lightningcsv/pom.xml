@@ -55,7 +55,6 @@
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
-				<version>2.5.4</version>
 				<configuration>
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
@@ -114,10 +113,6 @@
 						<groupId>com.google.code.maven-replacer-plugin</groupId>
 						<artifactId>replacer</artifactId>
 					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -172,49 +167,9 @@
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-
-						<executions>
-							<execution>
-								<id>default-testCompile</id>
-								<phase>test-compile</phase>
-								<configuration>
-									<fork>true</fork>
-									<compilerArgs>
-										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.mapper=org.simpleflatmapper.lightningcsv.test</arg>
-										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.impl=org.simpleflatmapper.lightningcsv.test</arg>
-										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.impl.cellreader=org.simpleflatmapper.lightningcsv.test</arg>
-										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.impl.primitive=org.simpleflatmapper.lightningcsv.test</arg>
-										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.impl.writer=org.simpleflatmapper.lightningcsv.test</arg>
-										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.lightningcsv/org.simpleflatmapper.lightningcsv.parser=org.simpleflatmapper.lightningcsv.test</arg>
-									</compilerArgs>
-								</configuration>
-								<goals>
-									<goal>testCompile</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.20.1</version>
-						<dependencies>
-							<dependency>
-								<groupId>org.apache.maven.surefire</groupId>
-								<artifactId>maven-surefire-common</artifactId>
-								<version>2.20.1-pj10</version>
-							</dependency>
-						</dependencies>
 						<configuration>
-							<argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+							<argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-modules org.simpleflatmapper.ow2asm</argLine>
 						</configuration>
 					</plugin>
 				</plugins>

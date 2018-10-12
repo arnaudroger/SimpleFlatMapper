@@ -2,7 +2,6 @@ package org.simpleflatmapper.converter.impl;
 
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.ContextualConverter;
-import org.simpleflatmapper.util.EnumHelper;
 
 public class CharSequenceToEnumConverter<E extends Enum<E>> implements ContextualConverter<CharSequence, E> {
     private final Class<E> enumClass;
@@ -10,7 +9,7 @@ public class CharSequenceToEnumConverter<E extends Enum<E>> implements Contextua
 
     public CharSequenceToEnumConverter(Class<E> enumClass) {
         this.enumClass = enumClass;
-        this.values = EnumHelper.getValues(enumClass);
+        this.values = enumClass.getEnumConstants();
     }
 
     @Override

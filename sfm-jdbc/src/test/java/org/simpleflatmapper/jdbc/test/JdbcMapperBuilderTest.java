@@ -139,20 +139,27 @@ public class JdbcMapperBuilderTest {
 	}
 
 	private void test501(JdbcMapperBuilder<C501> builder) throws SQLException {
-		builder.addMapping("zone_id", 1, Types.VARCHAR);
+		
+		try {
+			builder.addMapping("zone_id", 1, Types.VARCHAR);
 
 
-		JdbcMapper<C501> mapper = builder.mapper();
+			JdbcMapper<C501> mapper = builder.mapper();
 
-		String zoneId = ZoneId.getAvailableZoneIds().iterator().next();
-		ResultSet rs = mock(ResultSet.class);
-		when(rs.next()).thenReturn(true, false);
-		when(rs.getString(1)).thenReturn(zoneId);
+			String zoneId = ZoneId.getAvailableZoneIds().iterator().next();
+			ResultSet rs = mock(ResultSet.class);
+			when(rs.next()).thenReturn(true, false);
+			when(rs.getString(1)).thenReturn(zoneId);
 
-		List<C501> l = mapper.forEach(rs, new ListCollector<C501>()).getList();
+			List<C501> l = mapper.forEach(rs, new ListCollector<C501>()).getList();
 
-		assertEquals(1, l.size());
-		assertEquals(ZoneId.of(zoneId), l.get(0).zoneId);
+			assertEquals(1, l.size());
+			assertEquals(ZoneId.of(zoneId), l.get(0).zoneId);
+		} catch (Throwable e) {
+			System.out.println("XXXXXX = " + e);
+			e.printStackTrace(System.out);
+			throw e;
+		}
 	}
 	
 	

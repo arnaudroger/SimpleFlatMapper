@@ -1,6 +1,5 @@
 package org.simpleflatmapper.reflect.getter;
 
-import org.simpleflatmapper.util.EnumHelper;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.primitive.IntGetter;
 
@@ -13,7 +12,7 @@ public final class OrdinalEnumGetter<R, E extends Enum<E>> implements Getter<R, 
 	
 	public OrdinalEnumGetter(IntGetter<R> getter, final Class<E> enumType)  {
 		this.getter = getter;
-		this.values = EnumHelper.getValues(enumType);
+		this.values = enumType.getEnumConstants();
 	}
 
 	@Override

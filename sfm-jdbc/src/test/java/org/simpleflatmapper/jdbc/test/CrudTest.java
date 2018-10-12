@@ -509,10 +509,9 @@ public class CrudTest {
             try {
                 objectCrud.createOrUpdate(connection, object);
                 objectCrud.createOrUpdate(connection, Arrays.asList(new OnlyKey(1), new OnlyKey(2)));
-            } catch (UnsupportedOperationException e ) {
+            } catch (UnsupportedOperationException e) {
                 // 
             }
-
         } finally {
             connection.close();
         }

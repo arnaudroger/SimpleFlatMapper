@@ -6,6 +6,7 @@ import org.simpleflatmapper.util.ProducerServiceLoader;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.ServiceLoader;
 
 public final class AnnotationToPropertyUtil {
 
@@ -16,7 +17,7 @@ public final class AnnotationToPropertyUtil {
 	private static AnnotationToPropertyService findAnnotationToProperty() {
 		final ArrayList<AnnotationToPropertyService> providers = new ArrayList<AnnotationToPropertyService>();
 
-		ProducerServiceLoader.produceFromServiceLoader(AnnotationToPropertyServiceProducer.class, new Consumer<AnnotationToPropertyService>() {
+		ProducerServiceLoader.produceFromServiceLoader(ServiceLoader.load(AnnotationToPropertyServiceProducer.class), new Consumer<AnnotationToPropertyService>() {
 			@Override
 			public void accept(AnnotationToPropertyService t) {
 				providers.add(t);

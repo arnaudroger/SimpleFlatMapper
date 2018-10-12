@@ -3,7 +3,7 @@ import org.simpleflatmapper.converter.ContextualConverterFactoryProducer;
 module org.simpleflatmapper.converter.joda {
         requires org.simpleflatmapper.util;
         requires org.simpleflatmapper.converter;
-        requires joda.time;
+        requires org.joda.time;
         exports org.simpleflatmapper.converter.joda;
 
         provides ContextualConverterFactoryProducer

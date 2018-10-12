@@ -1,4 +1,4 @@
-package org.simpleflatmapper.map.impl;
+package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
@@ -8,7 +8,6 @@ import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.Function;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 public final class GenericBuilder<S, T>  {
 

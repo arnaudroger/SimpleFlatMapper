@@ -1,6 +1,5 @@
 package org.simpleflatmapper.reflect.getter;
 
-import org.simpleflatmapper.util.EnumHelper;
 import org.simpleflatmapper.reflect.Getter;
 
 public final class EnumUnspecifiedTypeGetter<R, E extends Enum<E>> implements Getter<R, E> {
@@ -12,7 +11,7 @@ public final class EnumUnspecifiedTypeGetter<R, E extends Enum<E>> implements Ge
 	public EnumUnspecifiedTypeGetter(Getter<R, ?> getter, final Class<E> enumType)  {
 		this.getter = getter;
 		this.enumType = enumType;
-		this.values = EnumHelper.getValues(enumType);
+		this.values = enumType.getEnumConstants();
 	}
 
 	@Override

@@ -109,7 +109,7 @@ public class OsgiTest {
 
         String javaVersion = System.getProperty("java.version");
         System.out.println("javaVersion = " + javaVersion);
-        if (!javaVersion.startsWith("1.8") && !javaVersion.startsWith("9") && !javaVersion.startsWith("10")) {
+        if (javaVersion.startsWith("1.7") && javaVersion.startsWith("1.6")) {
             hostApplication.install(ASM);
             hostApplication.install(OW2ASM);
             hostApplication.install(ARIES);
@@ -146,6 +146,10 @@ public class OsgiTest {
                     jos.putNextEntry(zentry);
                     IOUtils.copy(jis, jos);
                 }
+            } catch (Throwable t) {
+                System.out.println("t = " + t);
+                t.printStackTrace(System.out);
+                throw t;
             }
         }
 

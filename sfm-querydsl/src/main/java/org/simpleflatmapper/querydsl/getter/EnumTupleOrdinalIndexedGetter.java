@@ -2,7 +2,6 @@ package org.simpleflatmapper.querydsl.getter;
 
 import com.mysema.query.Tuple;
 import org.simpleflatmapper.querydsl.TupleElementKey;
-import org.simpleflatmapper.util.EnumHelper;
 import org.simpleflatmapper.reflect.Getter;
 
 public final class EnumTupleOrdinalIndexedGetter<E extends Enum<E>> implements  Getter<Tuple, E> {
@@ -15,7 +14,7 @@ public final class EnumTupleOrdinalIndexedGetter<E extends Enum<E>> implements  
 	public EnumTupleOrdinalIndexedGetter(TupleElementKey key, final Class<E> enumType) {
 		this.index = key.getIndex();
 		this.type = key.getExpression().getType();
-		this.values = EnumHelper.getValues(enumType);
+		this.values = enumType.getEnumConstants();
 	}
 
 	@Override

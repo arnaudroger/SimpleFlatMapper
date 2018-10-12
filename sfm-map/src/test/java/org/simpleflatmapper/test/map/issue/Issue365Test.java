@@ -1,4 +1,4 @@
-package org.simpleflatmapper.test.issue;
+package org.simpleflatmapper.test.map.issue;
 
 import org.junit.Test;
 import org.simpleflatmapper.map.EnumerableMapper;

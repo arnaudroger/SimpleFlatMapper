@@ -13,13 +13,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ServiceLoader;
 
 public class ConverterService {
 
 
-    private static final ConverterService INSTANCE = new ConverterService(getConverterFactories());
+    private static final ConverterService INSTANCE = new ConverterService(getConverterFactories(ConverterService.class.getClassLoader()));
 
-    private static List<ContextualConverterFactory> getConverterFactories() {
+    private static List<ContextualConverterFactory> getConverterFactories(ClassLoader classLoader) {
         final List<ContextualConverterFactory> converterFactories = new ArrayList<ContextualConverterFactory>();
 
         final Consumer<ContextualConverterFactory<?, ?>> factoryConsumer = new Consumer<ContextualConverterFactory<?, ?>>() {
@@ -35,8 +36,8 @@ public class ConverterService {
         new JavaTimeConverterFactoryProducer().produce(factoryConsumer);
         //IFJAVA8_END
 
-        ProducerServiceLoader.produceFromServiceLoader(ContextualConverterFactoryProducer.class, factoryConsumer);
-        ProducerServiceLoader.produceFromServiceLoader(ConverterFactoryProducer.class, new Consumer<ConverterFactory<?, ?>>() {
+        ProducerServiceLoader.produceFromServiceLoader(ServiceLoader.load(ContextualConverterFactoryProducer.class, classLoader), factoryConsumer);
+        ProducerServiceLoader.produceFromServiceLoader(ServiceLoader.load(ConverterFactoryProducer.class, classLoader), new Consumer<ConverterFactory<?, ?>>() {
             @Override
             public void accept(ConverterFactory<?, ?> converterFactory) {
                 factoryConsumer.accept(new ContextualConverterFactoryAdapter(converterFactory));
@@ -49,6 +50,10 @@ public class ConverterService {
 
     public static ConverterService getInstance() {
         return INSTANCE;
+    }
+
+    public static ConverterService getInstance(ClassLoader classLoader) {
+        return new ConverterService(getConverterFactories(classLoader));
     }
 
     private ConverterService(List<ContextualConverterFactory> converters) {

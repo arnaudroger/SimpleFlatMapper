@@ -1,4 +1,4 @@
-package org.simpleflatmapper.test;
+package org.simpleflatmapper.test.map;
 
 import java.util.Map;
 import java.util.Set;

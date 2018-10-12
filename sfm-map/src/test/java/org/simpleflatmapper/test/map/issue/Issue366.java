@@ -1,6 +1,7 @@
 package org.simpleflatmapper.test.map.issue;
 
 import org.junit.Test;
+import org.simpleflatmapper.map.context.KeyAndPredicate;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.KeyDefinition;
 import org.simpleflatmapper.map.context.impl.BreakDetector;
@@ -24,7 +25,9 @@ public class Issue366 {
         when(keySourceGetter.getValue(key, object)).thenReturn(new byte[] {1, 2}, new byte[] {1, 2}, new byte[] {1, 3});
 
         KeyDefinition<Object, SampleFieldKey> keyDefinition =
-                new KeyDefinition<Object, SampleFieldKey>(new SampleFieldKey[] {key}, keySourceGetter, 0);
+                new KeyDefinition<Object, SampleFieldKey>(
+                        new KeyAndPredicate[] { new KeyAndPredicate<Object[], SampleFieldKey>(key, null) },
+                        keySourceGetter, 0);
         BreakDetector<Object> breakDetector = new BreakDetector<Object>(keyDefinition);
 
         assertTrue(breakDetector.broke(object));

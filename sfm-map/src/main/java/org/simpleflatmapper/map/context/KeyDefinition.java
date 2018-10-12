@@ -7,29 +7,28 @@ import org.simpleflatmapper.util.ErrorHelper;
 public class KeyDefinition<S, K> {
     private final KeySourceGetter<K, ? super S> keySourceGetter;
 
-    private final K[] keys;
-    private final K singleKey;
+    private final KeyAndPredicate<S, K>[] keyAndPredicates;
+    private final KeyAndPredicate<S, K> singleKeyAndPredicate;
 
     private final boolean empty;
 
     private final int index;
 
-    public KeyDefinition(K[] keys, KeySourceGetter<K, ? super S> keySourceGetter, int index) {
-        this.singleKey = getSingleKey(keys);
-        if (singleKey == null) {
-            this.keys = keys;
+    public KeyDefinition(KeyAndPredicate<S, K>[] keyAndPredicates, KeySourceGetter<K, ? super S> keySourceGetter, int index) {
+        this.singleKeyAndPredicate = getSingle(keyAndPredicates);
+        if (singleKeyAndPredicate == null) {
+            this.keyAndPredicates = keyAndPredicates;
         } else {
-            this.keys = null;
+            this.keyAndPredicates = null;
         }
-
         this.keySourceGetter = keySourceGetter;
-        this.empty = keys == null || keys.length == 0;
+        this.empty = keyAndPredicates == null || keyAndPredicates.length == 0;
         this.index = index;
     }
 
-    private static <K> K getSingleKey(K[] keys) {
+    private static <K> K getSingle(K[] array) {
         //IFJAVA8_START
-        if (keys != null && keys.length == 1) return keys[0];
+        if (array != null && array.length == 1) return array[0];
         //IFJAVA8_END
         return null;
     }
@@ -41,7 +40,7 @@ public class KeyDefinition<S, K> {
     public Key getValues(S source) {
         if (empty) throw new IllegalStateException("cannot get value on empty keys");
         try {
-            if (singleKey != null) {
+            if (singleKeyAndPredicate != null) {
                 return singleValueKeys(source);
             } else {
                 return multiValueKeys(source);
@@ -52,13 +51,22 @@ public class KeyDefinition<S, K> {
     }
 
     private Key singleValueKeys(S source) throws Exception {
-        return new SingleValueKey(keySourceGetter.getValue(singleKey, source));
+        Object value = null;
+        if (singleKeyAndPredicate.test(source)) {
+            value = keySourceGetter.getValue(singleKeyAndPredicate.key, source);
+        }
+        return new SingleValueKey(value);
     }
 
     private Key multiValueKeys(S source) throws Exception {
-        Object[] values = new Object[keys.length];
+        Object[] values = new Object[keyAndPredicates.length];
         for (int i = 0; i < values.length; i++) {
-            values[i] = keySourceGetter.getValue(keys[i], source);
+            Object value = null;
+            KeyAndPredicate<S, K> keyAndPredicate = keyAndPredicates[i];
+            if (keyAndPredicate.test(source)) {
+                value = keySourceGetter.getValue(keyAndPredicate.key, source);
+            }
+            values[i] = value;
         }
         return new MultiValueKey(values);
     }

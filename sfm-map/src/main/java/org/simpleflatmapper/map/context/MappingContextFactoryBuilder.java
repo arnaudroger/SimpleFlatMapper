@@ -23,17 +23,17 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
     private final Counter counter;
     private final int currentIndex;
     private final MappingContextFactoryBuilder<S, K> parent;
-    private final List<K> keys;
+    private final List<KeyAndPredicate<S, K>> keys;
     private final KeySourceGetter<K, ? super S> keySourceGetter;
     private final List<MappingContextFactoryBuilder<S, K>> children = new ArrayList<MappingContextFactoryBuilder<S, K>>();
     private final List<Supplier<?>> suppliers = new ArrayList<Supplier<?>>();
     private final PropertyMeta<?, ?> owner;
 
     public MappingContextFactoryBuilder(KeySourceGetter<K, ? super S> keySourceGetter) {
-        this(new Counter(), new ArrayList<K>(), keySourceGetter, null, null);
+        this(new Counter(), new ArrayList<KeyAndPredicate<S, K>>(), keySourceGetter, null, null);
     }
 
-    protected MappingContextFactoryBuilder(Counter counter, List<K> keys, KeySourceGetter<K, ? super S> keySourceGetter, MappingContextFactoryBuilder<S, K> parent, PropertyMeta<?, ?> owner) {
+    protected MappingContextFactoryBuilder(Counter counter, List<KeyAndPredicate<S, K>> keys, KeySourceGetter<K, ? super S> keySourceGetter, MappingContextFactoryBuilder<S, K> parent, PropertyMeta<?, ?> owner) {
         this.counter = counter;
         this.currentIndex = counter.value;
         this.keys = keys;
@@ -44,10 +44,19 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
     }
 
 
-    public void addKey(K key) {
-        if (!keys.contains(key)) {
-            keys.add(key);
+    public void addKey(KeyAndPredicate<S, K> keyAndPredicate) {
+        addKeyTo(keyAndPredicate, keys);
+    }
+
+    private void addKeyTo(KeyAndPredicate<S, K> keyAndPredicate, List<KeyAndPredicate<S, K>> keyAndPredicates) {
+        for(int i = 0; i < keyAndPredicates.size(); i++) {
+            KeyAndPredicate<S, K> kp = keyAndPredicates.get(i);
+            if (kp.key.equals(keyAndPredicate.key)) {
+                keyAndPredicates.set(i, kp.mergeWith(keyAndPredicate));
+                return;
+            }
         }
+        keyAndPredicates.add(keyAndPredicate);
     }
 
     @Override
@@ -65,7 +74,7 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
         return new NullChecker<S, K>(keys, keySourceGetter);
     }
 
-    public MappingContextFactoryBuilder<S, K> newBuilder(List<K> subKeys, PropertyMeta<?, ?> owner) {
+    public MappingContextFactoryBuilder<S, K> newBuilder(List<KeyAndPredicate<S, K>> subKeys, PropertyMeta<?, ?> owner) {
         MappingContextFactoryBuilder<S, K> subBuilder = new MappingContextFactoryBuilder<S, K>(counter, subKeys, keySourceGetter, this, owner);
         children.add(subBuilder);
         return subBuilder;
@@ -142,13 +151,13 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
         if (parent != null && builder.inheritKeys(parentIndex)) {
              keyDefinition = parent.asChild(builder.currentIndex);
         } else {
-            List<K> keys = new ArrayList<K>(builder.effectiveKeys());
+            List<KeyAndPredicate<S, K>> keys = new ArrayList<KeyAndPredicate<S, K>>(builder.effectiveKeys());
 
             // ignore root parent
             if (parent != null && parentIndex >0) {
                 appendParentKeys(parent, keys);
             }
-
+            
             keyDefinition = new KeyDefinitionBuilder<S, K>(keys, builder.keySourceGetter, builder.currentIndex);
         }
 
@@ -160,24 +169,22 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
         return (effectiveKeys().isEmpty() && ! newObjectOnEachRow(parentIndex));
     }
 
-    private void appendParentKeys(KeyDefinitionBuilder<S, K> parent, List<K> keys) {
+    private void appendParentKeys(KeyDefinitionBuilder<S, K> parent, List<KeyAndPredicate<S, K>> keys) {
         // if keys is empty we generate a new row every time so leave empty
         if (!keys.isEmpty()) {
-            for(K k : parent.getKeys()) {
-                if (!keys.contains(k)) {
-                    keys.add(k);
-                }
+            for(KeyAndPredicate<S, K> k : parent.getKeyAndPredicates()) {
+                addKeyTo(k, keys);
             }
         }
     }
 
-    private List<K> effectiveKeys() {
+    private List<KeyAndPredicate<S, K>> effectiveKeys() {
 
         if (!keys.isEmpty()) {
             return keys;
         }
 
-        List<K> keys = new ArrayList<K>();
+        List<KeyAndPredicate<S, K>> keys = new ArrayList<KeyAndPredicate<S, K>>();
         for(MappingContextFactoryBuilder<S, K> child : children) {
             if (child.isEligibleAsSubstituteKey()) {
                 keys.addAll(child.effectiveKeys());

@@ -5,6 +5,7 @@ import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.context.KeyAndPredicate;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.KeyDefinition;
@@ -64,7 +65,7 @@ public class JoinMapperTest {
     };
     private final KeyDefinition<Object[], SampleFieldKey> keyDefinition = 
             new KeyDefinition<Object[], SampleFieldKey>(
-                    new SampleFieldKey[] {new SampleFieldKey("id", 0) },
+                    new KeyAndPredicate[] { new KeyAndPredicate<Object[], SampleFieldKey>(new SampleFieldKey("id", 0), null) },
                     new SampleFieldKeyObjectKeySourceGetter(), 
                     0);
 

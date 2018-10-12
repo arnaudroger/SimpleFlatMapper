@@ -53,7 +53,7 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
      */
     public SetRowMapperBuilderImpl(
             final ClassMeta<T> classMeta,
-            MappingContextFactoryBuilder<? super ROW, K> parentBuilder,
+            MappingContextFactoryBuilder<ROW, K> parentBuilder,
             MapperConfig<K, ROW> mapperConfig,
             MapperSource<? super ROW, K> mapperSource,
             KeyFactory<K> keyFactory,

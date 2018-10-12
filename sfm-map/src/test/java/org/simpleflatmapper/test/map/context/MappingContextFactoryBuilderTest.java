@@ -3,6 +3,7 @@ package org.simpleflatmapper.test.map.context;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.context.KeyAndPredicate;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactory;
@@ -45,7 +46,7 @@ public class MappingContextFactoryBuilderTest {
 
     @Test
     public void testKeys() throws Exception {
-        builder.addKey(new SampleFieldKey("k1", 0));
+        builder.addKey(new KeyAndPredicate<Object[], SampleFieldKey>(new SampleFieldKey("k1", 0), null));
 
         assertFalse(builder.hasNoKeys());
         MappingContextFactory<Object[]> mappingContextFactory = builder.build();
@@ -64,7 +65,7 @@ public class MappingContextFactoryBuilderTest {
     @Test
     public void testKeysAndSuppliers() {
         int i = builder.addSupplier( new ConstantSupplier<String>("hh"));
-        builder.addKey(new SampleFieldKey("k1", 0));
+        builder.addKey(new KeyAndPredicate<Object[], SampleFieldKey>(new SampleFieldKey("k1", 0), null));
 
         assertFalse(builder.hasNoKeys());
         MappingContextFactory<Object[]> mappingContextFactory = builder.build();
@@ -75,10 +76,10 @@ public class MappingContextFactoryBuilderTest {
 
     @Test
     public void testKeysWithSubBuilder() {
-        builder.addKey(new SampleFieldKey("k1", 0));
-        MappingContextFactoryBuilder<Object[], SampleFieldKey> subBuilder = builder.newBuilder(Arrays.asList(new SampleFieldKey("k2", 3)), null);
+        builder.addKey(new KeyAndPredicate<Object[], SampleFieldKey>(new SampleFieldKey("k1", 0), null));
+        MappingContextFactoryBuilder<Object[], SampleFieldKey> subBuilder = builder.newBuilder(Arrays.asList(new KeyAndPredicate<Object[], SampleFieldKey>(new SampleFieldKey("k2", 3), null)), null);
 
-        subBuilder.newBuilder(Arrays.asList(new SampleFieldKey("k3", 6)), null);
+        subBuilder.newBuilder(Arrays.asList(new KeyAndPredicate<Object[], SampleFieldKey>(new SampleFieldKey("k3", 6), null)), null);
 
         MappingContextFactory<Object[]> mappingContextFactory = builder.build();
 

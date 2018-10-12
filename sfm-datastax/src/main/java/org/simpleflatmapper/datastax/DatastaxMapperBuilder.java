@@ -55,7 +55,7 @@ public final class DatastaxMapperBuilder<T> extends MapperBuilder<Row, ResultSet
             final ClassMeta<T> classMeta,
             MapperConfig<DatastaxColumnKey, Row> mapperConfig,
             GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory,
-            MappingContextFactoryBuilder<GettableByIndexData, DatastaxColumnKey> parentBuilder) {
+            MappingContextFactoryBuilder<Row, DatastaxColumnKey> parentBuilder) {
         super(KEY_FACTORY, 
                 new DefaultSetRowMapperBuilder<Row, ResultSet, T, DatastaxColumnKey, DriverException>(
                         classMeta, parentBuilder, mapperConfig,

@@ -5,7 +5,6 @@ import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
-import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
@@ -27,7 +26,7 @@ public class DefaultSetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E ex
      */
     public DefaultSetRowMapperBuilder(
             ClassMeta<T> classMeta,
-            MappingContextFactoryBuilder<? super ROW, K> parentBuilder,
+            MappingContextFactoryBuilder<ROW, K> parentBuilder,
             MapperConfig<K, ROW> mapperConfig, MapperSource<? super ROW, K> mapperSource,
             KeyFactory<K> keyFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory, 
             KeySourceGetter<K, ? super ROW> keySourceGetter) {

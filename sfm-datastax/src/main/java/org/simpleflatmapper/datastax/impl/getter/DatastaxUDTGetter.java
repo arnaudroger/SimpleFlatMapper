@@ -65,7 +65,7 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
                 mapperSource,
                 classMeta,
                 config,
-                new DatastaxMappingContextFactoryBuilder(),
+                new DatastaxMappingContextFactoryBuilder<GettableByIndexData>(),
                 DatastaxMapperBuilder.KEY_FACTORY);
     }
 }

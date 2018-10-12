@@ -65,7 +65,7 @@ public class MysqlDbHelper {
 
 
 	private static Connection newMysqlDbConnection() throws SQLException {
-		return DriverManager.getConnection("jdbc:mysql://localhost:3306/sfm", "sfm", null);
+		return DriverManager.getConnection("jdbc:mysql://localhost:3306/sfm?useOldAliasMetadataBehavior=false", "sfm", null);
 	}
 
 	public static void main(String[] args) throws SQLException {

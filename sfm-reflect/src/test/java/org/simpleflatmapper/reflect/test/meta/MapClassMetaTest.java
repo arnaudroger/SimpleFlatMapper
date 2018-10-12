@@ -75,16 +75,10 @@ public class MapClassMetaTest {
         MapElementPropertyMeta<?, ?, ?> idMeta = (MapElementPropertyMeta<?, ?, ?>) k_kv_k_id.getOwnerProperty();
         assertEquals("k_kv_k", idMeta.getKey());
 
-        try {
-            final SubPropertyMeta<Map<String, DbObject>, DbObject, Object> k_kv_k_creation_time = (SubPropertyMeta<Map<String, DbObject>, DbObject, Object>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_creation_time"), new Object[0], (TypeAffinity) null);
-            assertNotNull(k_kv_k_creation_time);
-            MapElementPropertyMeta<?, ?, ?> creationTimeMeta = (MapElementPropertyMeta<?, ?, ?>) k_kv_k_creation_time.getOwnerProperty();
-            assertEquals("k_kv_k", creationTimeMeta.getKey());
-        } catch (Throwable t) {
-            System.out.println("t = " + t);
-            t.printStackTrace(System.out);
-            throw t;
-        }
+        final SubPropertyMeta<Map<String, DbObject>, DbObject, Object> k_kv_k_creation_time = (SubPropertyMeta<Map<String, DbObject>, DbObject, Object>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_creation_time"), new Object[0], (TypeAffinity) null);
+        assertNotNull(k_kv_k_creation_time);
+        MapElementPropertyMeta<?, ?, ?> creationTimeMeta = (MapElementPropertyMeta<?, ?, ?>) k_kv_k_creation_time.getOwnerProperty();
+        assertEquals("k_kv_k", creationTimeMeta.getKey());
             
     }
 

@@ -254,8 +254,12 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
     }
 
     public <S, T> Discriminator<S, T> getDiscriminator(ClassMeta<T> classMeta) {
+        return getDiscriminator(classMeta.getType());
+    }
+
+    public <S, T> Discriminator<S, T> getDiscriminator(Type type) {
         for(Discriminator<?, ?> d : discriminators) {
-            if (TypeHelper.areEquals(classMeta.getType(), d.type)) {
+            if (TypeHelper.areEquals(type, d.type)) {
                 return (Discriminator<S, T>) d;
             }
         }
@@ -280,6 +284,10 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 discriminators);
     }
 
+    public DiscriminatorCase<S, ?> getDiscriminatorCase(Type type) {
+        return null;
+    }
+
     public static final class DiscriminatorCase<ROW, T> {
         public final Predicate<ROW> predicate;
         public final ClassMeta<? extends T> classMeta;
@@ -297,6 +305,15 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
         public Discriminator(Type type, DiscriminatorCase<ROW, T>[] cases) {
             this.type = type;
             this.cases = cases;
+        }
+
+        public DiscriminatorCase<ROW, T> getCase(Type type) {
+            for(DiscriminatorCase<ROW, T> c : cases) {
+                if (TypeHelper.areEquals(type, c.classMeta.getType())) {
+                    return c;
+                }
+            }
+            throw new IllegalArgumentException("Not cases for type " + type);
         }
     }
 

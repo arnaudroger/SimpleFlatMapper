@@ -14,6 +14,7 @@ import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.fieldmapper.MapperFieldMapper;
 import org.simpleflatmapper.map.getter.NullContextualGetter;
+import org.simpleflatmapper.map.impl.DiscriminatorPropertyFinder;
 import org.simpleflatmapper.map.impl.GetterMapper;
 import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.map.property.DefaultValueProperty;
@@ -116,8 +117,9 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             PropertyMapping<T, ?, K> propertyMapping = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
             if (propertyMapping != null) {
                 ColumnDefinition<K, ?> effectiveColumnDefinition = propertyMapping.getColumnDefinition();
-                if (effectiveColumnDefinition.isKey() && effectiveColumnDefinition.keyAppliesTo().test(propertyMapping.getPropertyMeta())) {
-                    Predicate<S> predicate = null;
+                Predicate<PropertyMeta<?, ?>> keyAppliesTo = effectiveColumnDefinition.keyAppliesTo();
+                if (effectiveColumnDefinition.isKey() && keyAppliesTo.test(propertyMapping.getPropertyMeta())) {
+                    Predicate<S> predicate = buildKeyPredicate(propertyMapping.getPropertyMeta(), keyAppliesTo);
                     mappingContextFactoryBuilder.addKey(new KeyAndPredicate<S, K>(mappedColumnKey, predicate));
                 }
             }
@@ -968,21 +970,21 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
         // look for keys property of the object
         for (PropertyMapping<T, ?, K> pm : properties) {
-            
+            Predicate<PropertyMeta<?, ?>> propertyMetaKeyPredicate = pm.getColumnDefinition().keyAppliesTo();
             if (pm.getPropertyMeta().isSubProperty()) {
                 SubPropertyMeta<T, ?, ?> subPropertyMeta = (SubPropertyMeta<T, ?, ?>) pm.getPropertyMeta();
                 if (!(JoinUtils.isArrayElement(subPropertyMeta.getSubProperty()))) {
                     // ignore ArrayElementPropertyMeta as it's a direct getter and will be managed in the setter
                     if (pm.getColumnDefinition().isKey()) {
-                        if (pm.getColumnDefinition().keyAppliesTo().test(subPropertyMeta.getSubProperty())) {
-                            Predicate<? super S> predicate = null;
+                        if (propertyMetaKeyPredicate.test(subPropertyMeta.getSubProperty())) {
+                            Predicate<? super S> predicate = buildKeyPredicate(subPropertyMeta.getSubProperty(), propertyMetaKeyPredicate);;
                             keys.add(new KeyAndPredicate<S, K>(pm.getColumnKey(), predicate));
                         }
                     }
                 }
             } else {
                 if (pm.getColumnDefinition().isKey()) {
-                    if (pm.getColumnDefinition().keyAppliesTo().test(pm.getPropertyMeta())) {
+                    if (propertyMetaKeyPredicate.test(pm.getPropertyMeta())) {
                         keys.add(new KeyAndPredicate<S, K>(pm.getColumnKey(), null));
                     }
                 }
@@ -990,6 +992,49 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         }
 
         return keys;
+    }
+
+    private Predicate<S> buildKeyPredicate(final PropertyMeta<?, ?> propertyMeta, final Predicate<PropertyMeta<?, ?>> propertyMetaPredicate) {
+        Predicate<S> predicate = null;
+        if (propertyMeta instanceof DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) {
+            
+            final DiscriminatorPropertyFinder.DiscriminatorPropertyMeta<?, ?> dpm = (DiscriminatorPropertyFinder.DiscriminatorPropertyMeta<?, ?>) propertyMeta;
+
+            final List<Predicate<? super S>> not =
+                dpm.forEachProperty(new BiConsumer<Type, PropertyMeta<?, ?>>() {
+                    List<Predicate<? super S>> not = new ArrayList<>();
+                    @Override
+                    public void accept(Type type, PropertyMeta<?, ?> propertyMeta) {
+                        if (!propertyMetaPredicate.test(propertyMeta)) {
+                            not.add(mapperConfig.getDiscriminator(dpm.getOwnerType()).getCase(type).predicate);
+                        } else {
+                            Predicate<? super S> p = buildKeyPredicate(propertyMeta, propertyMetaPredicate);
+                            
+                            if (p != null) {
+                                not.add(p);
+                            }
+                        }
+                    }
+                }).not;
+            
+            
+            return new Predicate<S>() {
+                @Override
+                public boolean test(S s) {
+                    for(Predicate<? super S> p : not) {
+                        if (p.test(s)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            };
+                    
+        } else if (propertyMeta.isSubProperty()) {
+            SubPropertyMeta subPropertyMeta = (SubPropertyMeta) propertyMeta;
+            predicate = buildKeyPredicate(subPropertyMeta.getSubProperty(), propertyMetaPredicate);
+        }
+        return predicate;
     }
 
     public static class TargetFromBuilderParamBiFunction implements BiFunction<Object[], Object, Object> {

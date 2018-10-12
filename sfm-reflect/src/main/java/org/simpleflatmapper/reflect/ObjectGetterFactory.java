@@ -25,6 +25,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
+
+
 /**
  *
  */
@@ -58,7 +61,12 @@ public final class ObjectGetterFactory {
             }
         }
 		if (!accessible) {
-			method.setAccessible(true);
+			try {
+				method.setAccessible(true);
+			} catch (Exception e) {
+				// cannot make field accessible
+				return null;
+			}
 		}
         return new MethodGetter<T, P>(method);
 	}
@@ -75,7 +83,7 @@ public final class ObjectGetterFactory {
 	}
 
     public <T, P> Getter<T, P> getFieldGetter(Field field) {
-
+		requireNonNull("field", field);
 		boolean accessible = Modifier.isPublic(field.getModifiers()) && Modifier.isPublic(field.getDeclaringClass().getModifiers());
 		if (asmFactory != null && accessible) {
             try {
@@ -84,7 +92,12 @@ public final class ObjectGetterFactory {
         }
 
         if (!accessible) {
-            field.setAccessible(true);
+        	try {
+				field.setAccessible(true);
+			} catch (Exception e) {
+        		// cannot make field accessible
+        		return null;
+			}
         }
         return new FieldGetter<T, P>(field);
     }

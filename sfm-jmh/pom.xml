@@ -166,7 +166,7 @@ questions.
         <profile>
             <id>jdk19</id>
             <activation>
-                <jdk>[9,11]</jdk>
+                <jdk>[9,12]</jdk>
             </activation>
             <properties>
                 <jar.classifier>jdk9</jar.classifier>

@@ -67,7 +67,12 @@ public final class ObjectSetterFactory {
 			}
 		}
 		if (!accessible) {
-			method.setAccessible(true);
+			try {
+				method.setAccessible(true);
+			} catch (Exception e) {
+				// cannot make field accessible
+				return null;
+			}
 		}
         return new MethodSetter<T, P>(method);
 	}
@@ -92,7 +97,12 @@ public final class ObjectSetterFactory {
             }
         }
         if (!accessible) {
-            field.setAccessible(true);
+        	try {
+				field.setAccessible(true);
+			} catch (Exception e) {
+				// cannot make field accessible
+				return null;
+			}
         }
         return new FieldSetter<T, P>(field);
     }

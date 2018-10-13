@@ -7,6 +7,7 @@ import java.util.ServiceLoader;
 
 public class ProducerServiceLoader {
 
+    @Deprecated
     public static <T, P extends Producer<T>> void produceFromServiceLoader(Class<P> producer, Consumer<T> consumer) {
         produceFromServiceLoader(ServiceLoader.load(producer), consumer);
     }

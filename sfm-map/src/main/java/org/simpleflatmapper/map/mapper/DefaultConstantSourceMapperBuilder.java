@@ -1002,7 +1002,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
             final List<Predicate<? super S>> not =
                 dpm.forEachProperty(new BiConsumer<Type, PropertyMeta<?, ?>>() {
-                    List<Predicate<? super S>> not = new ArrayList<>();
+                    List<Predicate<? super S>> not = new ArrayList<Predicate<? super S>>();
                     @Override
                     public void accept(Type type, PropertyMeta<?, ?> propertyMeta) {
                         if (!propertyMetaPredicate.test(propertyMeta)) {

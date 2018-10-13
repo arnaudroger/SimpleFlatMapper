@@ -46,7 +46,7 @@ public class MysqlMultiRowsBatchInsertCrudTest {
             objectCrud.create(mockConnection, Arrays.asList(DbObject.newInstance(), DbObject.newInstance()));
 
 
-            assertEquals("INSERT INTO `test_db_object`(id, name, email, creation_Time, type_ordinal, type_name) VALUES(?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)".toLowerCase(),
+            assertEquals("INSERT INTO test_db_object(id, name, email, creation_Time, type_ordinal, type_name) VALUES(?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)".toLowerCase(),
                     queryCapture.getValue().toLowerCase());
             verify(preparedStatement, never()).addBatch();
             verify(preparedStatement, never()).executeBatch();
@@ -74,7 +74,7 @@ public class MysqlMultiRowsBatchInsertCrudTest {
             objectCrud.createOrUpdate(mockConnection, Arrays.asList(DbObject.newInstance(), DbObject.newInstance()));
 
 
-            assertEquals(("INSERT INTO `test_db_object`(id, name, email, creation_Time, type_ordinal, type_name) " +
+            assertEquals(("INSERT INTO test_db_object(id, name, email, creation_Time, type_ordinal, type_name) " +
                             "VALUES(?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?) " +
                             "ON DUPLICATE KEY UPDATE name = VALUES(name), " +
                     "email = VALUES(email)," +

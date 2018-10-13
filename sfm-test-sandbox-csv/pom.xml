@@ -29,6 +29,21 @@
 					</excludes>
 
 				</configuration>
+
+				<executions>
+					<execution>
+						<id>default-testCompile</id>
+						<phase>test-compile</phase>
+						<configuration>
+							<testExcludes>
+								<exclude>**/module-info.java</exclude>
+							</testExcludes>
+						</configuration>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

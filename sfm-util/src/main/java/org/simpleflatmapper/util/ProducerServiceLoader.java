@@ -6,6 +6,10 @@ import java.util.ServiceLoader;
 
 
 public class ProducerServiceLoader {
+
+    public static <T, P extends Producer<T>> void produceFromServiceLoader(Class<P> producer, Consumer<T> consumer) {
+        produceFromServiceLoader(ServiceLoader.load(producer), consumer);
+    }
     
     public static  <T, P extends Producer<T>> void produceFromServiceLoader(ServiceLoader<P> serviceLoader, Consumer<T> consumer) {
         Iterator<P> iterator = serviceLoader.iterator();

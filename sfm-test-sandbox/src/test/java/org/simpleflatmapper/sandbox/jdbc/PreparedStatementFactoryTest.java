@@ -17,4 +17,5 @@ public class PreparedStatementFactoryTest {
     public void testCanGetJavaTimeGetterWithoutJodaTimeInClassPath() {
         assertNotNull(JdbcMapperFactory.newInstance().buildFrom(MyObject.class).addColumn("dateTime").buildIndexFieldMappers(new DefaultContextFactoryBuilder()));
     }
+    
 }

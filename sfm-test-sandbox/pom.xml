@@ -22,8 +22,12 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
+					<excludes>
+						<exclude>**/module-info.java</exclude>
+					</excludes>
+
 				</configuration>
 			</plugin>
 		</plugins>
@@ -51,4 +55,34 @@
 
 
 	</dependencies>
+	
+	<profiles>
+		<profile>
+			<id>jdk19</id>
+			<activation>
+				<jdk>[9,12]</jdk>
+			</activation>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<source>9</source>
+							<target>9</target>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>org.ow2.asm</groupId>
+								<artifactId>asm</artifactId>
+								<version>6.1.1</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+	</profiles>
 </project>

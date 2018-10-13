@@ -24,6 +24,10 @@
 				<configuration>
 					<source>8</source>
 					<target>8</target>
+					<excludes>
+						<exclude>**/module-info.java</exclude>
+					</excludes>
+
 				</configuration>
 			</plugin>
 		</plugins>
@@ -34,21 +38,6 @@
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
 			<version>6.0.2-SNAPSHOT</version>
-			
-			<exclusions>
-				<!--<exclusion>-->
-					<!--<groupId>org.simpleflatmapper</groupId>-->
-					<!--<artifactId>sfm-map</artifactId>-->
-				<!--</exclusion>-->
-				<exclusion>
-					<groupId>org.simpleflatmapper</groupId>
-					<artifactId>sfm-reflect</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.simpleflatmapper</groupId>
-					<artifactId>sfm-tuples</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -66,4 +55,35 @@
 
 
 	</dependencies>
+
+
+	<profiles>
+		<profile>
+			<id>jdk19</id>
+			<activation>
+				<jdk>[9,12]</jdk>
+			</activation>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<source>9</source>
+							<target>9</target>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>org.ow2.asm</groupId>
+								<artifactId>asm</artifactId>
+								<version>6.1.1</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
 </project>

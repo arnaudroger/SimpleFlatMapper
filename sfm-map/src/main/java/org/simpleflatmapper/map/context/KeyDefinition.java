@@ -5,12 +5,17 @@ import org.simpleflatmapper.map.context.impl.SingleValueKey;
 import org.simpleflatmapper.util.ErrorHelper;
 
 public class KeyDefinition<S, K> {
-    public static final SingleValueKey NOT_EQUALS = new SingleValueKey(new Object() {
+    public static final Key NOT_EQUALS = new Key() {
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
+
         @Override
         public boolean equals(Object obj) {
             return false;
         }
-    });
+    };
     private final KeySourceGetter<K, ? super S> keySourceGetter;
 
     private final KeyAndPredicate<S, K>[] keyAndPredicates;

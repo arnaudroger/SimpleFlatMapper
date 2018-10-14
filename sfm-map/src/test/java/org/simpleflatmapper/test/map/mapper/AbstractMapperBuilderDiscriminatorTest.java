@@ -113,9 +113,8 @@ public class AbstractMapperBuilderDiscriminatorTest {
             this.name = name;
         }
     }
-    
     @Test
-    public void test561KeyAndNoKey() throws Exception {
+    public void test561KeyAndWithKeyOnB() throws Exception {
         //fail();
 
         //
@@ -144,6 +143,61 @@ public class AbstractMapperBuilderDiscriminatorTest {
 
 
         Iterator<RootC561> iterator = mapper.iterator(new Object[][]{
+//                {"1", "a1", "", "a"},
+//                {"1", "a2", "", "a"},
+                {"1", "b1", "2", "b"},
+                {"1", "b2", "2", "b"},
+                {"1", "b3", "2", "b"},
+
+        });
+
+        RootC561 r = iterator.next();
+
+        assertEquals("1", r.id);
+        assertEquals(1, r.c561s.size());
+//        C561_A a1 = (C561_A)r.c561s.get(0);
+//        assertEquals("a1", a1.namesId);
+//        C561_A a2 = (C561_A)r.c561s.get(1);
+//        assertEquals("a2", a2.namesId);
+
+
+        C561_B b = (C561_B)r.c561s.get(0);
+
+        assertEquals(3, b.names.size());
+        assertEquals("b1", b.names.get(0).id);
+        assertEquals("b2", b.names.get(1).id);
+        assertEquals("b3", b.names.get(2).id);
+
+    }
+    @Test
+    public void test561KeyAndNoKeyOnB() throws Exception {
+        //fail();
+
+        //
+        SetRowMapper<Object[], Object[][], RootC561, Exception> mapper = AbstractMapperBuilderTest.SampleMapperFactory.newInstance()
+                .discriminator(C561.class,
+                        new Getter<Object[], String>() {
+                            @Override
+                            public String get(Object[] target) throws Exception {
+                                return (String) target[3];
+                            }
+                        },
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common>>() {
+                            @Override
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common> builder) {
+                                builder
+                                        .when("a", C561_A.class)
+                                        .when("b", C561_B.class)
+                                ;
+                            }
+                        })
+                .newBuilder(ReflectionService.disableAsm().getClassMeta(RootC561.class))
+                .addMapping("id", KeyProperty.DEFAULT)
+                .addMapping("c561s_namesId", KeyProperty.DEFAULT)
+                .mapper();
+
+
+        Iterator<RootC561> iterator = mapper.iterator(new Object[][]{
                 {"1", "a1", "", "a"},
                 {"1", "a2", "", "a"},
                 {"1", "b1", "2", "b"},
@@ -155,7 +209,7 @@ public class AbstractMapperBuilderDiscriminatorTest {
         RootC561 r = iterator.next();
         
         assertEquals("1", r.id);
-        assertEquals(3, r.c561s.size());
+        assertEquals(5, r.c561s.size());
         C561_A a1 = (C561_A)r.c561s.get(0);
         assertEquals("a1", a1.namesId);
         C561_A a2 = (C561_A)r.c561s.get(1);
@@ -163,11 +217,17 @@ public class AbstractMapperBuilderDiscriminatorTest {
 
 
         C561_B b = (C561_B)r.c561s.get(2);
-        
-        assertEquals(3, b.names.size());
-        assertEquals("b1", b.names.get(0));
-        assertEquals("b2", b.names.get(1));
-        assertEquals("b3", b.names.get(2));
+        assertEquals(1, b.names.size());
+        assertEquals("b1", b.names.get(0).id);
+
+        b = (C561_B)r.c561s.get(3);
+        assertEquals(1, b.names.size());
+        assertEquals("b2", b.names.get(0).id);
+
+
+        b = (C561_B)r.c561s.get(4);
+        assertEquals(1, b.names.size());
+        assertEquals("b3", b.names.get(0).id);
         
     }
     

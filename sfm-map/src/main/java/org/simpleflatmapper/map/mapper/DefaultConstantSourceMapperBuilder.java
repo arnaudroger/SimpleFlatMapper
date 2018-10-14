@@ -523,7 +523,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             }
         }
 
-        return new ConstructorInjections<S, T>(injections, fieldMappers.toArray(new FieldMapper[0]));
+        return new ConstructorInjections<S, T>(injections, fieldMappers.toArray(EMPTY_FIELD_MAPPERS));
     }
 	
 	@SuppressWarnings("unchecked")

@@ -27,11 +27,11 @@ public class KeyProperty {
             if (propertyMeta instanceof DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) {
                 DiscriminatorPropertyFinder.DiscriminatorPropertyMeta<?, ?> dpm = (DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) propertyMeta;
                 return dpm.forEachProperty(new BiConsumer<Type, PropertyMeta<?, ?>>() {
-                    boolean valid = true;
+                    boolean valid = false;
                     @Override
                     public void accept(Type type, PropertyMeta<?, ?> propertyMeta) {
-                        if (valid && !test(propertyMeta)) {
-                            valid = false;
+                        if (!valid && test(propertyMeta)) {
+                            valid = true;
                         }
                     }
                 }).valid;

@@ -53,7 +53,9 @@ public class BreakDetector<S>  {
         if (definition != null) {
             if (currentKey == null)
                 throw new IllegalStateException("Invalid state currentKey is null");
-            cache.put(currentKey, value);
+            if (currentKey != KeyDefinition.NOT_EQUALS) {
+                cache.put(currentKey, value);
+            }
         }
     }
 
@@ -61,6 +63,7 @@ public class BreakDetector<S>  {
         if (definition != null) {
             if (currentKey == null)
                 throw new IllegalStateException("Invalid state currentKey is null");
+            if (currentKey == KeyDefinition.NOT_EQUALS) return null;
             return cache.get(currentKey);
         }
         return null;

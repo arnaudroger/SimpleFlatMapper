@@ -20,15 +20,16 @@ public class NullChecker<S, K> implements Predicate<S> {
     @Override
     public boolean test(S s) {
         try {
-            if (keys.isEmpty()) return false;
+            boolean empty = true;
             for (KeyAndPredicate<S, K> keyAndPredicate : keys) {
                 if (keyAndPredicate.test(s)) {
+                    empty = false;
                     if (keySourceGetter.getValue(keyAndPredicate.key, s) != null) {
                         return false;
                     }
                 }
             }
-            return true;
+            return !empty;
         } catch (Exception e) {
             ErrorHelper.rethrow(e);
             throw new IllegalStateException();

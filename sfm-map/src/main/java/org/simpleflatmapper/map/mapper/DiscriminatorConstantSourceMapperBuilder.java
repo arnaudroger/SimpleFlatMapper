@@ -134,16 +134,35 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     public SourceFieldMapper<S, T> sourceFieldMapper() {
         PredicatedInstantiator<S, T>[] predicatedInstantiator = new PredicatedInstantiator[builders.length];
         
+        
+        List<FieldMapper<S, T>> fieldMappers = new ArrayList<FieldMapper<S, T>>();
         for(int i = 0; i < builders.length; i++) {
             DiscriminatedBuilder<S, T, K> builder = builders[i];
+            final Predicate<? super S> predicate = builder.discrimnatorCase.predicate;
             DefaultConstantSourceMapperBuilder.GenericBuilderMapping genericBuilderMapping = builder.builder.getGenericBuilderMapping();
-            predicatedInstantiator[i] = new PredicatedInstantiator<S, T>(builder.discrimnatorCase.predicate, genericBuilderMapping.genericBuilderInstantiator);
+            predicatedInstantiator[i] = new PredicatedInstantiator<S, T>(predicate, genericBuilderMapping.genericBuilderInstantiator);
+
+            final FieldMapper[] targetFieldMappers = genericBuilderMapping.targetFieldMappers;
+            
+            fieldMappers.add(new FieldMapper<S, T>() {
+                @Override
+                public void mapTo(S source, T target, MappingContext<? super S> context) throws Exception {
+                    if (predicate.test(source)) {
+                        for(FieldMapper fm : targetFieldMappers) {
+                            fm.mapTo(source, target, context);
+                        }
+                    }
+                }
+            });
         }
         GenericBuildBiInstantiator gbi = new GenericBuildBiInstantiator(predicatedInstantiator);
 
         DiscriminatorGenericBuilderMapper<S, T> mapper = new DiscriminatorGenericBuilderMapper<S, T>(gbi);
+
+        FieldMapper<S, T>[] targetFieldMappers = fieldMappers.toArray(new FieldMapper[0]);
+        //
         
-        return new TransformSourceFieldMapper<S, GenericBuilder<S, T>, T>(mapper, new FieldMapper[0], GenericBuilder.<S, T>buildFunction());
+        return new TransformSourceFieldMapper<S, GenericBuilder<S, T>, T>(mapper, targetFieldMappers, GenericBuilder.<S, T>buildFunction());
     }
 
     @Override

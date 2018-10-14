@@ -5,6 +5,12 @@ import org.simpleflatmapper.map.context.impl.SingleValueKey;
 import org.simpleflatmapper.util.ErrorHelper;
 
 public class KeyDefinition<S, K> {
+    public static final SingleValueKey NOT_EQUALS = new SingleValueKey(new Object() {
+        @Override
+        public boolean equals(Object obj) {
+            return false;
+        }
+    });
     private final KeySourceGetter<K, ? super S> keySourceGetter;
 
     private final KeyAndPredicate<S, K>[] keyAndPredicates;
@@ -51,23 +57,29 @@ public class KeyDefinition<S, K> {
     }
 
     private Key singleValueKeys(S source) throws Exception {
-        Object value = null;
+        Object value;
         if (singleKeyAndPredicate.test(source)) {
             value = keySourceGetter.getValue(singleKeyAndPredicate.key, source);
+        } else {
+            return NOT_EQUALS;
         }
         return new SingleValueKey(value);
     }
 
     private Key multiValueKeys(S source) throws Exception {
         Object[] values = new Object[keyAndPredicates.length];
+        
+        boolean empty = true;
         for (int i = 0; i < values.length; i++) {
             Object value = null;
             KeyAndPredicate<S, K> keyAndPredicate = keyAndPredicates[i];
             if (keyAndPredicate.test(source)) {
+                empty = false;       
                 value = keySourceGetter.getValue(keyAndPredicate.key, source);
             }
             values[i] = value;
         }
+        if (empty) return NOT_EQUALS;
         return new MultiValueKey(values);
     }
 

@@ -2,7 +2,6 @@ package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
 import org.simpleflatmapper.map.MapperBuildingException;
-import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.property.IgnoreProperty;
@@ -10,9 +9,7 @@ import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.util.Consumer;
-import org.simpleflatmapper.util.Predicate;
 
 
 import java.util.Iterator;
@@ -26,8 +23,189 @@ public class AbstractMapperBuilderDiscriminatorTest {
     
     
     @Test
-    public void test561KeyAndNoKey() {
+    public void test571() throws Exception {
+        SetRowMapper<Object[], Object[][], A571, Exception> mapper = AbstractMapperBuilderTest.SampleMapperFactory.newInstance()
+                .discriminator(A571.class,
+                        new Getter<Object[], String>() {
+                            @Override
+                            public String get(Object[] target) throws Exception {
+                                return (String) target[2];
+                            }
+                        },
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common>>() {
+                            @Override
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common> builder) {
+                                builder
+                                        .when("1", A571_1.class)
+                                        .when("2", A571_2.class)
+                                ;
+                            }
+                        })
+                .discriminator(B571.class,
+                        new Getter<Object[], String>() {
+                            @Override
+                            public String get(Object[] target) throws Exception {
+                                return (String) target[3];
+                            }
+                        },
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common>>() {
+                            @Override
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common> builder) {
+                                builder
+                                        .when("1", B571_1.class)
+                                        .when("2", B571_2.class)
+                                ;
+                            }
+                        })
+                .newBuilder(ReflectionService.disableAsm().getClassMeta(A571.class))
+                .addMapping("id")
+                .addMapping("b_name")
+                .mapper();
+
+        A571_1 next = (A571_1) mapper.iterator(new Object[][]{
+                {"id", "name", "1", "1"}
+        }).next();
+
+        B571_1 b = (B571_1) next.b;
+        
+        assertEquals("name", b.name);
+
+    }
+    
+    public static abstract class A571 {
+        public final String id;
+        public final B571 b;
+
+        protected A571(String id, B571 b) {
+            this.id = id;
+            this.b = b;
+        }
+    }
+    
+    public static class A571_1 extends A571 {
+        public A571_1(String id, B571 b) {
+            super(id, b);
+        }
+    }
+
+    public static class A571_2 extends A571 {
+        public A571_2(String id, B571 b) {
+            super(id, b);
+        }
+    }
+    
+    public static abstract class B571 {
+        
+    }
+    
+    public static class B571_1 extends B571 {
+        public final String name;
+
+        public B571_1(String name) {
+            this.name = name;
+        }
+    }
+    
+    public static class B571_2 extends B571 {
+        public final String name;
+
+        public B571_2(String name) {
+            this.name = name;
+        }
+    }
+    
+    @Test
+    public void test561KeyAndNoKey() throws Exception {
         //fail();
+
+        //
+        SetRowMapper<Object[], Object[][], RootC561, Exception> mapper = AbstractMapperBuilderTest.SampleMapperFactory.newInstance()
+                .discriminator(C561.class,
+                        new Getter<Object[], String>() {
+                            @Override
+                            public String get(Object[] target) throws Exception {
+                                return (String) target[3];
+                            }
+                        },
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common>>() {
+                            @Override
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common> builder) {
+                                builder
+                                        .when("a", C561_A.class)
+                                        .when("b", C561_B.class)
+                                ;
+                            }
+                        })
+                .newBuilder(ReflectionService.disableAsm().getClassMeta(RootC561.class))
+                .addMapping("id", KeyProperty.DEFAULT)
+                .addMapping("c561s_namesId", KeyProperty.DEFAULT)
+                .addMapping("c561s_bid", KeyProperty.DEFAULT)
+                .mapper();
+
+
+        Iterator<RootC561> iterator = mapper.iterator(new Object[][]{
+                {"1", "a1", "", "a"},
+                {"1", "a2", "", "a"},
+                {"1", "b1", "2", "b"},
+                {"1", "b2", "2", "b"},
+                {"1", "b3", "2", "b"},
+
+        });
+
+        RootC561 r = iterator.next();
+        
+        assertEquals("1", r.id);
+        assertEquals(3, r.c561s.size());
+        C561_A a1 = (C561_A)r.c561s.get(0);
+        assertEquals("a1", a1.namesId);
+        C561_A a2 = (C561_A)r.c561s.get(1);
+        assertEquals("a2", a2.namesId);
+
+
+        C561_B b = (C561_B)r.c561s.get(2);
+        
+        assertEquals(3, b.names.size());
+        assertEquals("b1", b.names.get(0));
+        assertEquals("b2", b.names.get(1));
+        assertEquals("b3", b.names.get(2));
+        
+    }
+    
+    public static class RootC561 {
+        public final String id;
+        public final List<C561> c561s;
+
+        public RootC561(String id, List<C561> c561s) {
+            this.id = id;
+            this.c561s = c561s;
+        }
+    }
+    public static class C561 {
+        
+    } 
+    
+    public static class C561_A extends C561 {
+        public final String namesId;
+
+        public C561_A(String namesId) {
+            this.namesId = namesId;
+        }
+    }
+    public static class C561_B extends C561 {
+        public final List<C561_B_ID> names;
+        public final String bid;
+
+        public C561_B(List<C561_B_ID> names, String bid) {
+            this.names = names;
+            this.bid = bid;
+        }
+    }
+    public static class C561_B_ID {
+        public final String id;
+
+        public C561_B_ID(String id) {
+            this.id = id;
+        }
     }
     
     @Test

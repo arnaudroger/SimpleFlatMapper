@@ -58,13 +58,13 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 subPropertyFinder = ((DiscriminatorPropertyFinder<T>)subPropertyFinder).getImplementationPropertyFinder(discriminatorCase.classMeta.getType());
             }
             
-            builders[i] = getDiscriminatedBuilder(mapperSource, mappingContextFactoryBuilder, keyFactory, subPropertyFinder, kMapperConfig, discriminatorCase);
+            builders[i] = getDiscriminatedBuilder(mapperSource, mappingContextFactoryBuilder, keyFactory, subPropertyFinder, kMapperConfig, discriminatorCase, classMeta);
         }
     }
 
-    private <T> DiscriminatedBuilder<S, T, K> getDiscriminatedBuilder(MapperSource<? super S, K> mapperSource, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder, KeyFactory<K> keyFactory, PropertyFinder<T> propertyFinder, MapperConfig<K, ? extends S> kMapperConfig, MapperConfig.DiscriminatorCase<? super S, ? extends T> discrimnatorCase) {
+    private <T> DiscriminatedBuilder<S, T, K> getDiscriminatedBuilder(MapperSource<? super S, K> mapperSource, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder, KeyFactory<K> keyFactory, PropertyFinder<T> propertyFinder, MapperConfig<K, ? extends S> kMapperConfig, MapperConfig.DiscriminatorCase<? super S, ? extends T> discrimnatorCase, ClassMeta<T> commonClassMeta) {
         return new DiscriminatedBuilder<S, T, K>((MapperConfig.DiscriminatorCase<? super S, T>) discrimnatorCase, 
-                new DefaultConstantSourceMapperBuilder<S, T, K>(mapperSource, (ClassMeta<T>) discrimnatorCase.classMeta, kMapperConfig, mappingContextFactoryBuilder, keyFactory, propertyFinder));
+                new DefaultConstantSourceMapperBuilder<S, T, K>(mapperSource, (ClassMeta<T>) discrimnatorCase.classMeta.withReflectionService(commonClassMeta.getReflectionService()), kMapperConfig, mappingContextFactoryBuilder, keyFactory, propertyFinder));
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.PredicatedEnumerable;
+import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Array;
@@ -80,13 +81,13 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
         if (discriminators.isEmpty()) {
             return classMeta;
         } else {
-            Map<Type, List<ClassMeta<?>>> discriminatorMap = new HashMap<Type, List<ClassMeta<?>>>();
+            Map<Class<?>, List<ClassMeta<?>>> discriminatorMap = new HashMap<Class<?>, List<ClassMeta<?>>>();
             for(MapperConfig.Discriminator<?, ?> d : discriminators) {
                 List<ClassMeta<?>> implementations = new ArrayList<ClassMeta<?>>();
                 for(MapperConfig.DiscriminatorCase<?, ?> dc : d.cases) {
                     implementations.add(dc.classMeta);
                 }
-                discriminatorMap.put(d.type, implementations);
+                discriminatorMap.put(TypeHelper.toClass(d.type), implementations);
             }
             DiscriminatorReflectionService dfs = new DiscriminatorReflectionService(classMeta.getReflectionService(), discriminatorMap);
             return classMeta.withReflectionService(dfs);

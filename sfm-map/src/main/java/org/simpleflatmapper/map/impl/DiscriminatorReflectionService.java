@@ -8,6 +8,7 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.meta.AliasProvider;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -21,9 +22,9 @@ import java.util.Map;
 public class DiscriminatorReflectionService extends ReflectionService {
     
     private final ReflectionService delegate;
-    private final Map<Type, List<ClassMeta<?>>> discriminators;
+    private final Map<Class<?>, List<ClassMeta<?>>> discriminators;
 
-    public DiscriminatorReflectionService(ReflectionService delegate, Map<Type, List<ClassMeta<?>>> discriminators) {
+    public DiscriminatorReflectionService(ReflectionService delegate, Map<Class<?>, List<ClassMeta<?>>> discriminators) {
         this.delegate = delegate;
         this.discriminators = discriminators;
     }
@@ -56,7 +57,7 @@ public class DiscriminatorReflectionService extends ReflectionService {
     @Override
     public <T> ClassMeta<T> getClassMeta(Type target) {
         
-        List<ClassMeta<?>> implementations = discriminators.get(target); 
+        List<ClassMeta<?>> implementations = discriminators.get(TypeHelper.toClass(target)); 
         if (implementations == null || implementations.isEmpty()) {
             ClassMeta<T> classMeta = delegate.getClassMeta(target);
             return classMeta.withReflectionService(this);

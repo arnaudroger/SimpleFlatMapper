@@ -97,8 +97,10 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 						.findProperty(propertyNameMatcher, columnDefinition.properties(), toTypeAffinity(key), propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher));
 
 
-		if (prop == null && ! columnDefinition.has(OptionalProperty.class)) {
-			propertyNotFound.accept(key);
+		if (prop == null) {
+			if (!columnDefinition.has(OptionalProperty.class)) {
+				propertyNotFound.accept(key);
+			}
 			properties.add(null);
 			return null;
 		} else {

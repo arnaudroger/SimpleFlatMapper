@@ -8,9 +8,11 @@ import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.annotation.Key;
+import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
+import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
@@ -294,6 +296,39 @@ public class PropertyMappingsBuilderTest {
     
     public static class ZooN {
         public InetAddress ipv4;
+    }
+    
+    @Test
+    public void test576OptionalProperty() {
+        final ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+
+
+        PropertyMappingsBuilder<DbObject, SampleFieldKey> builder =
+                PropertyMappingsBuilder.of(
+                        classMeta,
+                        MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig(),
+                        ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+
+        FieldMapperColumnDefinition<SampleFieldKey> columnDefinition = FieldMapperColumnDefinition.<SampleFieldKey>identity().add(OptionalProperty.INSTANCE);
+        PropertyMapping<DbObject, Object, SampleFieldKey> pName = builder.addProperty(new SampleFieldKey("name", 0), columnDefinition);
+        assertEquals("name", pName.getPropertyMeta().getPath());
+        PropertyMapping<DbObject, Object, SampleFieldKey> pNotThere = builder.addProperty(new SampleFieldKey("not_there", 0), columnDefinition);
+        assertNull(pNotThere);
+
+        builder =
+                PropertyMappingsBuilder.of(
+                        classMeta,
+                        MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig(),
+                        ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+
+        PropertyMapping<DbObject, Object, SampleFieldKey> pNotThere1 = builder.addProperty(new SampleFieldKey("not_there", 0), columnDefinition);
+        assertEquals("{this}", pNotThere1.getPropertyMeta().getPath());
+        
+        PropertyMapping<DbObject, Object, SampleFieldKey> pName1 = builder.addProperty(new SampleFieldKey("name", 0), columnDefinition);
+        assertEquals("name", pName1.getPropertyMeta().getPath());
+        
+        assertNull(builder.currentProperties().get(0));
+
     }
 
 }

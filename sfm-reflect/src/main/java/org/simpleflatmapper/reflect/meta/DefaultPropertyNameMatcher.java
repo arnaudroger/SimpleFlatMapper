@@ -12,6 +12,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 
 	private final boolean exactMatch;
 	private final boolean caseSensitive;
+	private final int effectiveLength;
 
 	public DefaultPropertyNameMatcher(String column, int from, boolean exactMatch, boolean caseSensitive) {
 		if (from > column.length()) {
@@ -21,11 +22,19 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		this.from = from;
 		this.exactMatch = exactMatch;
 		this.caseSensitive = caseSensitive;
+		this.effectiveLength = lastNonIgnorableChar(column) + 1;
 	}
 
 	@Override
 	public boolean matches(final CharSequence property) {
-		return property != null && _partialMatch(property) == column.length();
+		return property != null && _partialMatch(property) == effectiveLength;
+	}
+
+	private int lastNonIgnorableChar(String column) {
+		for(int i = column.length() - 1; i >= 0; i--) {
+			if (!isSeparatorChar(column.charAt(i))) return i;
+		}
+		return 0;
 	}
 
 	@Override
@@ -128,7 +137,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	}
 
 	private boolean isSeparatorChar(char charColumn) {
-		return charColumn == '_' || charColumn == ' ' || charColumn == '.';
+		return charColumn == '_' || charColumn == ' ' || charColumn == '.' || charColumn == '-';
 	}
 
 	@Override

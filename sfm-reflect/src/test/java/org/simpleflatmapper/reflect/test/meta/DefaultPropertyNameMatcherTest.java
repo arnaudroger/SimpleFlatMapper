@@ -52,5 +52,10 @@ public class DefaultPropertyNameMatcherTest {
 		
 	}
 	
+	@Test
+	public void test577() {
+		assertTrue(new DefaultPropertyNameMatcher("start_date  ", 0, false, false).matches("startDate"));
+	}
+	
 
 }

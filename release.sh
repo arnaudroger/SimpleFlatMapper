@@ -17,9 +17,9 @@ function java6 {
 #exit
 java8
 rm release.properties
-REL=6.0.4
-DEV=6.0.5-SNAPSHOT
-REPOID=orgsimpleflatmapper-1630
+REL=6.0.5
+DEV=6.0.6-SNAPSHOT
+REPOID=orgsimpleflatmapper-1631
 mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
                  -DdevelopmentVersion=$DEV

@@ -1481,7 +1481,12 @@ public class CsvParserTest {
 							}
 						})
 						.defaultDateFormat("yyyy-MM-dd")
-						.addColumnProperty(k -> k.getIndex() == 1, IgnoreRowIfNullProperty.INSTANCE)
+						.addColumnProperty(new Predicate<CsvColumnKey>() {
+							@Override
+							public boolean test(CsvColumnKey csvColumnKey) {
+								return csvColumnKey.getIndex() == 1;
+							}
+						}, IgnoreRowIfNullProperty.INSTANCE)
 						.newMapper(C578.class))
 				.forEach("Start_Date  ,foo   ,bar  , zulu   \n----------,---------,------\n2018-10-30,tech     , dooo, blah\n", new ListCollector<C578>()).getList();
 

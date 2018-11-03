@@ -36,7 +36,7 @@ public class DefaultSetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E ex
                 mapperConfig,
                 mapperSource, 
                 keyFactory, 
-                enumerableFactory,
+                mapperConfig.applyEnumerableFilter(enumerableFactory),
                 new DefaultSetRowMapperFactory<ROW, SET, T, E>(), 
                 keySourceGetter);
     }

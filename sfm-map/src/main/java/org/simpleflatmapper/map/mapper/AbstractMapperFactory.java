@@ -15,6 +15,7 @@ import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.CheckedBiFunction;
+import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.EqualsPredicate;
 import org.simpleflatmapper.util.ErrorHelper;
@@ -55,6 +56,8 @@ public abstract class AbstractMapperFactory<
     private ReflectionService reflectionService = null;
 	private int maxMethodSize = MapperConfig.MAX_METHOD_SIZE;
 	private boolean assumeInjectionModifiesValues;
+	
+	private Predicate<? super S> rowFilter = null;
 
 
 	public AbstractMapperFactory(AbstractMapperFactory<K, ?, S> config) {
@@ -74,6 +77,7 @@ public abstract class AbstractMapperFactory<
 		this.reflectionService = config.reflectionService;
 		this.maxMethodSize = config.maxMethodSize;
 		this.assumeInjectionModifiesValues = config.assumeInjectionModifiesValues;
+		this.rowFilter = config.rowFilter;
 	}
 
 
@@ -147,8 +151,12 @@ public abstract class AbstractMapperFactory<
         this.reflectionService = reflectionService;
         return (MF) this;
     }
-    
-    
+
+	public final MF rowFilter(final Predicate<? super S> rowFilter) {
+		this.rowFilter = rowFilter;
+		return (MF) this;
+	}
+	
 	public final MapperConfig<K, S> mapperConfig() {
 		return MapperConfig
 				.<K, S>config(enrichColumnDefinitions(columnDefinitions))
@@ -160,7 +168,8 @@ public abstract class AbstractMapperFactory<
 				.consumerErrorHandler(consumerErrorHandler)
 				.maxMethodSize(maxMethodSize)
 				.assumeInjectionModifiesValues(assumeInjectionModifiesValues)
-				.discriminators(discriminators);
+				.discriminators(discriminators)
+				.rowFilter(rowFilter);
 	}
 
 	public AbstractColumnDefinitionProvider<K> enrichColumnDefinitions(AbstractColumnDefinitionProvider<K> columnDefinitions) {

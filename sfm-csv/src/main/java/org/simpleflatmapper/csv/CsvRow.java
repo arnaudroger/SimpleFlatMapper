@@ -210,6 +210,17 @@ public final class CsvRow {
         return currentIndex > 0;
     }
 
+    public boolean containsOnly(char c) {
+        for(int column = 0; column < nbColumns; column ++) {
+            int start = fieldsBoundaries[column * 2];
+            int end = start + fieldsBoundaries[column * 2 + 1];
+            for(int i = start; i < end; i++) {
+                if (charBuffer.buffer[rowStartMark + i] != c) return false;
+            }
+        }
+        return true;
+    }
+
     private static class CharSequenceImpl implements CharSequence {
         private final char[] buffer;
         private final int start;

@@ -12,9 +12,9 @@ import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.lightningcsv.CloseableCsvReader;
 import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.lightningcsv.Row;
+import org.simpleflatmapper.map.property.IgnoreRowIfNullProperty;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.CheckedConsumer;
-import org.simpleflatmapper.lightningcsv.parser.BufferOverflowException;
 import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.tuple.Tuple3;
@@ -37,6 +37,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 //IFJAVA8_START
@@ -1466,6 +1467,47 @@ public class CsvParserTest {
 		validatorRows(rowIterator);
 	}
 	//IFJAVA8_END
+
+
+	@Test
+	public void test578() throws IOException {
+		List<C578> list = CsvParser.dsl().mapWith(
+				CsvMapperFactory.newInstance()
+						.rowFilter(r -> !r.containsOnly('-'))
+						.defaultDateFormat("yyyy-MM-dd")
+						.addColumnProperty(k -> k.getIndex() == 1, IgnoreRowIfNullProperty.INSTANCE)
+						.newMapper(C578.class))
+				.forEach("Start_Date  ,foo   ,bar  , zulu   \n----------,---------,------\n2018-10-30,tech     , dooo, blah\n", new ListCollector<C578>()).getList();
+
+		assertEquals(1, list.size());
+		assertEquals("tech     ", list.get(0).foo );
+		assertEquals(" dooo", list.get(0).bar );
+		assertEquals(" blah", list.get(0).zulu );
+	}
+	
+	public static class C578 {
+		public final Date startDate;
+		public final String foo;
+		public final String bar;
+		public final String zulu;
+
+		public C578(Date startDate, String foo, String bar, String zulu) {
+			this.startDate = startDate;
+			this.foo = foo;
+			this.bar = bar;
+			this.zulu = zulu;
+		}
+
+		@Override
+		public String toString() {
+			return "C578{" +
+					"startDate=" + startDate +
+					", foo='" + foo + '\'' +
+					", bar='" + bar + '\'' +
+					", zulu='" + zulu + '\'' +
+					'}';
+		}
+	}
 	
 	
 	public static class A1 {

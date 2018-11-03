@@ -8,6 +8,7 @@ import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperBuilder;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
+import org.simpleflatmapper.csv.CsvRow;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.lightningcsv.CloseableCsvReader;
 import org.simpleflatmapper.lightningcsv.CsvReader;
@@ -1473,7 +1474,12 @@ public class CsvParserTest {
 	public void test578() throws IOException {
 		List<C578> list = CsvParser.dsl().mapWith(
 				CsvMapperFactory.newInstance()
-						.rowFilter(r -> !r.containsOnly('-'))
+						.rowFilter(new Predicate<CsvRow>() {
+							@Override
+							public boolean test(CsvRow csvRow) {
+								return !csvRow.containsOnly('-');
+							}
+						})
 						.defaultDateFormat("yyyy-MM-dd")
 						.addColumnProperty(k -> k.getIndex() == 1, IgnoreRowIfNullProperty.INSTANCE)
 						.newMapper(C578.class))

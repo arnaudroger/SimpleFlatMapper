@@ -472,9 +472,9 @@ public abstract class AbstractMapperFactory<
 			return new SourcePredicate<S, V>(predicate, getter);
 		}
 
-		private static class SourcePredicate<S, V> implements Predicate<S> {
-			private final Predicate<? super V> predicate;
-			private final Getter<? super S, ? extends V> getter;
+		static class SourcePredicate<S, V> implements Predicate<S> {
+			final Predicate<? super V> predicate;
+			final Getter<? super S, ? extends V> getter;
 
 			public SourcePredicate(Predicate<? super V> predicate, Getter<? super S, ? extends V> getter) {
 				this.predicate = predicate;

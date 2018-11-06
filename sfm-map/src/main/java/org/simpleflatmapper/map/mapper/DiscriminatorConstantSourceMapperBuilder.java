@@ -12,18 +12,22 @@ import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.impl.DiscriminatorPropertyFinder;
 import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.BiInstantiator;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.BiConsumer;
+import org.simpleflatmapper.util.EqualsPredicate;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 
 public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  extends ConstantSourceMapperBuilder<S, T, K> {
@@ -155,7 +159,11 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 }
             });
         }
-        GenericBuildBiInstantiator gbi = new GenericBuildBiInstantiator(predicatedInstantiator);
+        boolean oneColumn = isOneColumn(predicatedInstantiator);
+        BiInstantiator<S, MappingContext<? super S>,  GenericBuilder<S, T>> gbi =
+                oneColumn ? 
+                        new OneColumnBuildBiInstantiator<S, T>(predicatedInstantiator) :        
+                    new GenericBuildBiInstantiator<S, T>(predicatedInstantiator);
 
         DiscriminatorGenericBuilderMapper<S, T> mapper = new DiscriminatorGenericBuilderMapper<S, T>(gbi);
 
@@ -163,6 +171,25 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         //
         
         return new TransformSourceFieldMapper<S, GenericBuilder<S, T>, T>(mapper, targetFieldMappers, GenericBuilder.<S, T>buildFunction());
+    }
+
+    private boolean isOneColumn(PredicatedInstantiator<S, T>[] predicatedInstantiator) {
+        
+        Getter getter = null;
+        for(PredicatedInstantiator<S, T> pi : predicatedInstantiator) {
+            if (!(pi.predicate instanceof AbstractMapperFactory.DiscriminatorConditionBuilder.SourcePredicate)) {
+                return false;
+            }
+            AbstractMapperFactory.DiscriminatorConditionBuilder.SourcePredicate sp = (AbstractMapperFactory.DiscriminatorConditionBuilder.SourcePredicate) pi.predicate;
+            Getter lg = sp.getter;
+            if (getter == null) {
+                getter = lg;
+            } else if (getter != lg) return false;
+            
+            
+            if (!(sp.predicate instanceof EqualsPredicate)) return false;
+        }
+        return true;
     }
 
     @Override
@@ -193,7 +220,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         }
     }
 
-    private static class GenericBuildBiInstantiator<S, T> implements BiInstantiator<S, MappingContext<S>, GenericBuilder<S, T>> {
+    private static class GenericBuildBiInstantiator<S, T> implements BiInstantiator<S, MappingContext<? super S>, GenericBuilder<S, T>> {
         private final PredicatedInstantiator<S, T>[] predicatedInstantiators;
 
         public GenericBuildBiInstantiator(PredicatedInstantiator<S, T>[] predicatedInstantiators) {
@@ -202,7 +229,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
         @SuppressWarnings("unchecked")
         @Override
-        public GenericBuilder<S, T> newInstance(S o, MappingContext<S> o2) throws Exception {
+        public GenericBuilder<S, T> newInstance(S o, MappingContext<? super S> o2) throws Exception {
             for(PredicatedInstantiator<S, T> pi : predicatedInstantiators) {
                 //noinspection unchecked
                 if (pi.predicate.test(o)) {
@@ -211,15 +238,35 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             }
             throw new IllegalArgumentException("No discrimator matched " + o); 
         }
+    }
+    
+    private static class OneColumnBuildBiInstantiator<S, T> implements BiInstantiator<S, MappingContext<? super S>, GenericBuilder<S, T>> {
+        private final Getter<S, ?> getter;
+        private final Map<Object, BiInstantiator<S, MappingContext<? super S>, GenericBuilder<S, T>>> instantiators;
 
-        private BiInstantiator<S, MappingContext<? super S>, GenericBuilder> getInstantiator(Object o) {
-            for(PredicatedInstantiator pi : predicatedInstantiators) {
-                //noinspection unchecked
-                if (pi.predicate.test(o)) {
-                    return pi.instantiator;
-                }
+        public OneColumnBuildBiInstantiator(PredicatedInstantiator<S, T>[] predicatedInstantiators) {
+            if (predicatedInstantiators == null || predicatedInstantiators.length == 0) throw new IllegalArgumentException("predicatedInstantiators is null or empty");
+            getter = ((AbstractMapperFactory.DiscriminatorConditionBuilder.SourcePredicate)predicatedInstantiators[0].predicate).getter;
+            
+            instantiators = new HashMap<Object, BiInstantiator<S, MappingContext<? super S>, GenericBuilder<S, T>>>();
+            
+            for(PredicatedInstantiator<S, T> pi : predicatedInstantiators) {
+                EqualsPredicate ep = (EqualsPredicate) ((AbstractMapperFactory.DiscriminatorConditionBuilder.SourcePredicate)pi.predicate).predicate;
+                instantiators.put(ep.expected, pi.instantiator);
             }
-            throw new IllegalArgumentException("No discrimator matched " + o);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public GenericBuilder<S, T> newInstance(S o, MappingContext<? super S> o2) throws Exception {
+            Object value = getter.get(o);
+            
+            BiInstantiator<S, MappingContext<? super S>, GenericBuilder<S, T>> instantiator = instantiators.get(value);
+            
+            if (instantiator == null)
+                throw new IllegalArgumentException("No discrimator matched " + value);
+
+            return instantiator.newInstance(o, o2);
         }
     }
 
@@ -234,7 +281,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     }
 
     private class DiscriminatorGenericBuilderMapper<S, T> extends AbstractMapper<S, GenericBuilder<S, T>> {
-        public DiscriminatorGenericBuilderMapper(GenericBuildBiInstantiator gbi) {
+        public DiscriminatorGenericBuilderMapper(BiInstantiator<? super S, MappingContext<? super S>,  GenericBuilder<S, T>> gbi) {
             super(gbi);
         }
 

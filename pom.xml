@@ -4,7 +4,7 @@
 
     <groupId>org.simpleflatmapper</groupId>
     <artifactId>sfm-parent</artifactId>
-    <version>6.0.7-SNAPSHOT</version>
+    <version>6.0.7</version>
     <packaging>pom</packaging>
 
     <name>sfm-parent</name>
@@ -34,7 +34,7 @@
         <url>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</url>
         <connection>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</connection>
         <developerConnection>scm:git:git@github.com:arnaudroger/SimpleFlatMapper.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>sfm-parent-6.0.7</tag>
     </scm>
 
     <properties>

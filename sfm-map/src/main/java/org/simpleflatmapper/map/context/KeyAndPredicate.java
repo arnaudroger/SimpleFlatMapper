@@ -16,11 +16,29 @@ public class KeyAndPredicate<S, K> implements Predicate<S> {
         return predicate == null ? true : predicate.test(s);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        KeyAndPredicate<?, ?> that = (KeyAndPredicate<?, ?>) o;
+
+        if (!key.equals(that.key)) return false;
+        return predicate != null ? predicate.equals(that.predicate) : that.predicate == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = key.hashCode();
+        result = 31 * result + (predicate != null ? predicate.hashCode() : 0);
+        return result;
+    }
+
     public KeyAndPredicate<S, K> mergeWith(KeyAndPredicate<S, K> keyAndPredicate) {
         if (!this.key.equals(keyAndPredicate.key)) throw new IllegalArgumentException();
         
         if (this.predicate == null || keyAndPredicate.predicate == null) { // null is equivalent to true
-            return new KeyAndPredicate<S, K>(key, null);
+            return this;
         }
         
         if (this.predicate.equals(keyAndPredicate.predicate)) {

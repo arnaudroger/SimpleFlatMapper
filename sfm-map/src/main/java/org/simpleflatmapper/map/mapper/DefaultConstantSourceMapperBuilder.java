@@ -1017,18 +1017,9 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                     }
                 }).not;
             
+            if (not.isEmpty()) return null;
             
-            return new Predicate<S>() {
-                @Override
-                public boolean test(S s) {
-                    for(Predicate<? super S> p : not) {
-                        if (p.test(s)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            };
+            return new DiscriminatorKeyPredicate<>(not);
                     
         } else if (propertyMeta.isSubProperty()) {
             SubPropertyMeta subPropertyMeta = (SubPropertyMeta) propertyMeta;
@@ -1390,5 +1381,23 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 + propertyMapping.getPropertyMeta().getPropertyType()
                 + " path " + currentPath
                 + ". See " + CSFM_GETTER_NOT_FOUND.toUrl();
+    }
+
+    private static class DiscriminatorKeyPredicate<S> implements Predicate<S> {
+        private final List<Predicate<? super S>> not;
+
+        public DiscriminatorKeyPredicate(List<Predicate<? super S>> not) {
+            this.not = not;
+        }
+
+        @Override
+        public boolean test(S s) {
+            for(Predicate<? super S> p : not) {
+                if (p.test(s)) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

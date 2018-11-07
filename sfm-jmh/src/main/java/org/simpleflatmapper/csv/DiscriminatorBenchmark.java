@@ -6,6 +6,7 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.infra.Blackhole;
+import org.simpleflatmapper.util.Consumer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -96,6 +97,76 @@ public class DiscriminatorBenchmark {
         });
     }
 
+    @Benchmark
+    public void testWithDiscriminatorWithKeys(Blackhole blackhole) throws IOException {
+        CsvParser.mapWith(
+                CsvMapperFactory.newInstance()
+                        .discriminator(A.class, r -> r.getString(2), b -> {
+                            for(int i = 1; i <= 40; i++) {
+                                try {
+                                    b.when("typea" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$A" + i));
+                                } catch (ClassNotFoundException e) {
+                                    throw new Error(e);
+                                }
+                            }
+                        })
+                        .discriminator(B.class, r -> r.getString(4), b -> {
+                            for(int i = 1; i <= 20; i++) {
+                                try {
+                                    b.when("typeb" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$B" + i));
+                                } catch (ClassNotFoundException e) {
+                                    throw new Error(e);
+                                }
+                            }
+                        })
+                        .addKeys("id", "b_id", "b_c_id")
+                        .newMapper(A.class)
+        ).stream(file, s -> {
+            s.forEach(blackhole::consume);
+            return null;
+        });
+    }
+
+    public void withDiscriminatorWithKeys(Consumer<A> aConsumer) throws IOException {
+        CsvParser.mapWith(
+                CsvMapperFactory.newInstance()
+                        .discriminator(A.class, r -> r.getString(2), b -> {
+                            for(int i = 1; i <= 40; i++) {
+                                try {
+                                    b.when("typea" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$A" + i));
+                                } catch (ClassNotFoundException e) {
+                                    throw new Error(e);
+                                }
+                            }
+                        })
+                        .discriminator(B.class, r -> r.getString(4), b -> {
+                            for(int i = 1; i <= 20; i++) {
+                                try {
+                                    b.when("typeb" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$B" + i));
+                                } catch (ClassNotFoundException e) {
+                                    throw new Error(e);
+                                }
+                            }
+                        })
+                        .addKeys("id", "b_id", "b_c_id")
+                        .newMapper(A.class)
+        ).stream(file, s -> {
+            s.forEach(aConsumer);
+            return null;
+        });
+    }
+
+
+    public static void main(String[] args) throws IOException {
+        DiscriminatorBenchmark db = new DiscriminatorBenchmark();
+        db.setUp();
+
+        db.withDiscriminatorWithKeys(v -> {
+            System.out.println("v = " + v);
+        });
+
+        db.tearDown();
+    }
 
     public static class A {
         public final Integer id;
@@ -313,9 +384,6 @@ public class DiscriminatorBenchmark {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println("A1.class.getName() = " + A1.class.getName());
-    }
     
 
     public static class A1 extends A
@@ -598,4 +666,6 @@ public class DiscriminatorBenchmark {
             super(id, name, type, b);
         }
     }
+
 }
+

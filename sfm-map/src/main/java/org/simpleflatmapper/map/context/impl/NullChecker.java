@@ -35,4 +35,22 @@ public class NullChecker<S, K> implements Predicate<S> {
             throw new IllegalStateException();
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NullChecker<?, ?> that = (NullChecker<?, ?>) o;
+
+        if (keys != null ? !keys.equals(that.keys) : that.keys != null) return false;
+        return keySourceGetter != null ? keySourceGetter.equals(that.keySourceGetter) : that.keySourceGetter == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = keys != null ? keys.hashCode() : 0;
+        result = 31 * result + (keySourceGetter != null ? keySourceGetter.hashCode() : 0);
+        return result;
+    }
 }

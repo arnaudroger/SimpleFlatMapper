@@ -1019,7 +1019,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             
             if (not.isEmpty()) return null;
             
-            return new DiscriminatorKeyPredicate<>(not);
+            return new DiscriminatorKeyPredicate<S>(not);
                     
         } else if (propertyMeta.isSubProperty()) {
             SubPropertyMeta subPropertyMeta = (SubPropertyMeta) propertyMeta;
@@ -1398,6 +1398,21 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 }
             }
             return true;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            DiscriminatorKeyPredicate<?> that = (DiscriminatorKeyPredicate<?>) o;
+
+            return not != null ? not.equals(that.not) : that.not == null;
+        }
+
+        @Override
+        public int hashCode() {
+            return not != null ? not.hashCode() : 0;
         }
     }
 }

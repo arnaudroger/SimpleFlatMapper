@@ -61,5 +61,23 @@ public class KeyAndPredicate<S, K> implements Predicate<S> {
         public boolean test(S s) {
             return p1.test(s) || p2.test(s);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            OrPredicate<?> that = (OrPredicate<?>) o;
+
+            if (p1 != null ? !p1.equals(that.p1) : that.p1 != null) return false;
+            return p2 != null ? p2.equals(that.p2) : that.p2 == null;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = p1 != null ? p1.hashCode() : 0;
+            result = 31 * result + (p2 != null ? p2.hashCode() : 0);
+            return result;
+        }
     }
 }

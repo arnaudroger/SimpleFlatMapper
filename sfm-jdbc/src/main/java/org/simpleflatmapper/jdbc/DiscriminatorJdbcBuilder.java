@@ -169,6 +169,25 @@ public class DiscriminatorJdbcBuilder<T> {
                 return ErrorHelper.<Boolean>rethrow(e);
             }
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ResultSetDiscriminatorPredicate that = (ResultSetDiscriminatorPredicate) o;
+
+            if (discriminatorColumn != null ? !discriminatorColumn.equals(that.discriminatorColumn) : that.discriminatorColumn != null)
+                return false;
+            return predicate != null ? predicate.equals(that.predicate) : that.predicate == null;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = discriminatorColumn != null ? discriminatorColumn.hashCode() : 0;
+            result = 31 * result + (predicate != null ? predicate.hashCode() : 0);
+            return result;
+        }
     }
 
     public class DiscriminatorJdbcSubBuilder {

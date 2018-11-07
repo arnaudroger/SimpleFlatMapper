@@ -24,4 +24,19 @@ public class ConstantPredicate<T> implements Predicate<T>{
     public boolean test(T t) {
         return b;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ConstantPredicate<?> that = (ConstantPredicate<?>) o;
+
+        return b == that.b;
+    }
+
+    @Override
+    public int hashCode() {
+        return (b ? 1 : 0);
+    }
 }

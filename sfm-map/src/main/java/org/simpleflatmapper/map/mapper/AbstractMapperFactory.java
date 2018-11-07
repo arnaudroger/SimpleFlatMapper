@@ -489,6 +489,24 @@ public abstract class AbstractMapperFactory<
 					return ErrorHelper.rethrow(e);
 				}
 			}
+
+			@Override
+			public boolean equals(Object o) {
+				if (this == o) return true;
+				if (o == null || getClass() != o.getClass()) return false;
+
+				SourcePredicate<?, ?> that = (SourcePredicate<?, ?>) o;
+
+				if (predicate != null ? !predicate.equals(that.predicate) : that.predicate != null) return false;
+				return getter != null ? getter.equals(that.getter) : that.getter == null;
+			}
+
+			@Override
+			public int hashCode() {
+				int result = predicate != null ? predicate.hashCode() : 0;
+				result = 31 * result + (getter != null ? getter.hashCode() : 0);
+				return result;
+			}
 		}
 	}
 

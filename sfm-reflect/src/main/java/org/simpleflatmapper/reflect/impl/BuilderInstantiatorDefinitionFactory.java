@@ -94,7 +94,7 @@ public class BuilderInstantiatorDefinitionFactory {
             if (!Modifier.isStatic(m.getModifiers()) && Object.class != m.getDeclaringClass()) {
                 Type returnType = m.getGenericReturnType();
                 if ((TypeHelper.areEquals(returnType, void.class)
-                    ||TypeHelper.areEquals(returnType, builderType)) && m.getParameterTypes().length == 1) {
+                    ||TypeHelper.isAssignable(returnType, builderType)) && m.getParameterTypes().length == 1) {
                     // setter
                     org.simpleflatmapper.reflect.Parameter p = new org.simpleflatmapper.reflect.Parameter(i++, SetterHelper.getPropertyNameFromBuilderMethodName(m.getName()), m.getParameterTypes()[0], m.getGenericParameterTypes()[0]);
                     setters.put(p, m);

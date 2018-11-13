@@ -290,6 +290,9 @@ public class BiInstantiatorBuilder {
                                 AsmUtils.invoke(mv, TypeHelper.toClass(builderClass), e.getValue().getName(),
                                         AsmUtils.toSignature(e.getValue()));
                                 if (!Void.TYPE.equals(e.getValue().getReturnType())) {
+                                    if(!e.getValue().getReturnType().equals(builderClass)) {
+                                        mv.visitTypeInsn(CHECKCAST, builderType);
+                                    }
                                     mv.visitVarInsn(ASTORE, 3);
                                 }
                             }

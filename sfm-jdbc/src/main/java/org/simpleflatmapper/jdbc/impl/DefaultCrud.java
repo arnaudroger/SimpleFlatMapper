@@ -109,8 +109,12 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
         try {
             keyTupleQueryPreparer.bindTo(keys, preparedStatement, 0);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                consumer.accept(selectQueryMapper.map(resultSet));
+            try {
+                while (resultSet.next()) {
+                    consumer.accept(selectQueryMapper.map(resultSet));
+                }
+            } finally {
+                resultSet.close();
             }
             return consumer;
         } catch(Exception e) {

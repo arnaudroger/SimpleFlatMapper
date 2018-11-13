@@ -2,6 +2,7 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public class PropertyMapping<T, P, K extends FieldKey<K>> {
 	private final PropertyMeta<T, P> propertyMeta;
@@ -10,9 +11,9 @@ public class PropertyMapping<T, P, K extends FieldKey<K>> {
 
 	public PropertyMapping(PropertyMeta<T, P> propertyMeta, K columnKey, ColumnDefinition<K, ?> columnDefinition) {
 		super();
-		this.propertyMeta = propertyMeta;
-		this.columnKey = columnKey;
-		this.columnDefinition = columnDefinition;
+		this.propertyMeta = requireNonNull("propertyMeta", propertyMeta);
+		this.columnKey = requireNonNull("propertyMeta", columnKey);
+		this.columnDefinition = requireNonNull("propertyMeta", columnDefinition);
 	}
 
 	public <TT, PP> PropertyMapping<TT, PP, K> propertyMeta(PropertyMeta<TT, PP> propertyMeta) {

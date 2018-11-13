@@ -84,7 +84,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
 
                 if (javaClass == null || javaClass.equals(Byte.class)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxByteGetter(key.getIndex());
-                } else if (javaClass != null && Number.class.isAssignableFrom(javaClass)) {
+                } else if (Number.class.isAssignableFrom(javaClass)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxGenericByteGetter(key.getIndex(), key.getDataType());
                 }
                 return null;
@@ -100,7 +100,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
 
                 if (javaClass == null || javaClass.equals(Short.class)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxShortGetter(key.getIndex());
-                } else if (javaClass != null && Number.class.isAssignableFrom(javaClass)) {
+                } else if (Number.class.isAssignableFrom(javaClass)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxGenericShortGetter(key.getIndex(), key.getDataType());
                 }
                 return null;

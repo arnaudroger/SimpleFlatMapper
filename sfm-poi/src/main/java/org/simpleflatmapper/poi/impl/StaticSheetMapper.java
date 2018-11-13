@@ -13,6 +13,8 @@ import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.poi.RowMapper;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Enumerable;
+import org.simpleflatmapper.util.EnumerableIterator;
+import org.simpleflatmapper.util.EnumerableSpliterator;
 
 import java.util.Iterator;
 
@@ -42,7 +44,7 @@ public class StaticSheetMapper<T> implements RowMapper<T>, SourceFieldMapper<Row
 
     @Override
     public Iterator<T> iterator(int startRow, Sheet sheet) {
-        return new SheetIterator<T>(this, startRow, sheet, newMappingContext());
+        return new EnumerableIterator<T>(new SheetEnumerable<T>(this, startRow, sheet, newMappingContext()));
     }
 
     @Override
@@ -67,11 +69,14 @@ public class StaticSheetMapper<T> implements RowMapper<T>, SourceFieldMapper<Row
         MappingContext<? super Row> mappingContext = newMappingContext();
         SourceMapper<Row, T> lMapper = this.mapper;
         for(int rowNum = startRow; rowNum <= sheet.getLastRowNum(); rowNum++) {
-            T object = lMapper.map(sheet.getRow(rowNum), mappingContext);
-            try {
-                consumer.accept(object);
-            } catch(Exception e) {
-                consumerErrorHandler.handlerError(e, object);
+            Row row = sheet.getRow(rowNum);
+            if (row != null) {
+                T object = lMapper.map(row, mappingContext);
+                try {
+                    consumer.accept(object);
+                } catch (Exception e) {
+                    consumerErrorHandler.handlerError(e, object);
+                }
             }
         }
         return consumer;
@@ -85,7 +90,7 @@ public class StaticSheetMapper<T> implements RowMapper<T>, SourceFieldMapper<Row
 
     @Override
     public Stream<T> stream(int startRow, Sheet sheet) {
-        return StreamSupport.stream(new SheetSpliterator<T>(this, startRow, sheet, newMappingContext()), false);
+        return StreamSupport.stream(new EnumerableSpliterator<T>(new SheetEnumerable<T>(this, startRow, sheet, newMappingContext())), false);
     }
     //IFJAVA8_END
 

@@ -14,11 +14,12 @@ import org.simpleflatmapper.poi.RowMapper;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.EnumerableIterator;
-import org.simpleflatmapper.util.EnumerableSpliterator;
 
 import java.util.Iterator;
 
 //IFJAVA8_START
+import org.simpleflatmapper.util.EnumerableSpliterator;
+
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END

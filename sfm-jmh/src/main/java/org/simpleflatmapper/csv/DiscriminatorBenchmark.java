@@ -127,6 +127,36 @@ public class DiscriminatorBenchmark {
         });
     }
 
+    @Benchmark
+    public void testWithDiscriminatorWithPartialKeys(Blackhole blackhole) throws IOException {
+        CsvParser.mapWith(
+                CsvMapperFactory.newInstance()
+                        .discriminator(A.class, r -> r.getString(2), b -> {
+                            for(int i = 1; i <= 40; i++) {
+                                try {
+                                    b.when("typea" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$A" + i));
+                                } catch (ClassNotFoundException e) {
+                                    throw new Error(e);
+                                }
+                            }
+                        })
+                        .discriminator(B.class, r -> r.getString(4), b -> {
+                            for(int i = 1; i <= 20; i++) {
+                                try {
+                                    b.when("typeb" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$B" + i));
+                                } catch (ClassNotFoundException e) {
+                                    throw new Error(e);
+                                }
+                            }
+                        })
+                        .addKeys("id")
+                        .newMapper(A.class)
+        ).stream(file, s -> {
+            s.forEach(blackhole::consume);
+            return null;
+        });
+    }
+
     public void withDiscriminatorWithKeys(Consumer<A> aConsumer) throws IOException {
         CsvParser.mapWith(
                 CsvMapperFactory.newInstance()
@@ -148,7 +178,7 @@ public class DiscriminatorBenchmark {
                                 }
                             }
                         })
-                        .addKeys("id", "b_id", "b_c_id")
+                        .addKeys("id")
                         .newMapper(A.class)
         ).stream(file, s -> {
             s.forEach(aConsumer);
@@ -180,6 +210,16 @@ public class DiscriminatorBenchmark {
             this.type = type;
             this.b = b;
         }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    ", type='" + type + '\'' +
+                    ", b=" + b +
+                    '}';
+        }
     }
 
     public static class C
@@ -188,6 +228,13 @@ public class DiscriminatorBenchmark {
 
         public C(Integer id) {
             this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return "C{" +
+                    "id=" + id +
+                    '}';
         }
     }
 
@@ -200,6 +247,14 @@ public class DiscriminatorBenchmark {
             this.id = id;
             this.type = type;
         }
+
+        @Override
+        public String toString() {
+            return "B{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    '}';
+        }
     }
     
     public static class B1 extends B
@@ -210,6 +265,15 @@ public class DiscriminatorBenchmark {
             super(id, type);
             this.c = c;
         }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
+        }
     }
     public static class B2 extends B
     {
@@ -219,6 +283,16 @@ public class DiscriminatorBenchmark {
             super(id, type);
             this.c = c;
         }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
+        }
+
     }
     public static class B3 extends B
     {
@@ -228,6 +302,15 @@ public class DiscriminatorBenchmark {
             super(id, type);
             this.c = c;
         }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
+        }
+
     }
     public static class B4 extends B
     {
@@ -236,6 +319,14 @@ public class DiscriminatorBenchmark {
         public B4(Integer id, String type, C c) {
             super(id, type);
             this.c = c;
+        }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
         }
     }
     public static class B5 extends B
@@ -246,6 +337,14 @@ public class DiscriminatorBenchmark {
             super(id, type);
             this.c = c;
         }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
+        }
     }
     public static class B6 extends B
     {
@@ -254,6 +353,14 @@ public class DiscriminatorBenchmark {
         public B6(Integer id, String type, C c) {
             super(id, type);
             this.c = c;
+        }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
         }
     }
     public static class B7 extends B
@@ -264,6 +371,14 @@ public class DiscriminatorBenchmark {
             super(id, type);
             this.c = c;
         }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
+        }
     }
     public static class B8 extends B
     {
@@ -272,6 +387,14 @@ public class DiscriminatorBenchmark {
         public B8(Integer id, String type, C c) {
             super(id, type);
             this.c = c;
+        }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
         }
     }
     public static class B9 extends B
@@ -282,6 +405,14 @@ public class DiscriminatorBenchmark {
             super(id, type);
             this.c = c;
         }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
+        }
     }
     public static class B10 extends B
     {
@@ -290,6 +421,14 @@ public class DiscriminatorBenchmark {
         public B10(Integer id, String type, C c) {
             super(id, type);
             this.c = c;
+        }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
         }
     }
 
@@ -301,6 +440,14 @@ public class DiscriminatorBenchmark {
             super(id, type);
             this.c = c;
         }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
+        }
     }
     public static class B12 extends B
     {
@@ -309,6 +456,14 @@ public class DiscriminatorBenchmark {
         public B12(Integer id, String type, C c) {
             super(id, type);
             this.c = c;
+        }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
         }
     }
     public static class B13 extends B
@@ -319,6 +474,14 @@ public class DiscriminatorBenchmark {
             super(id, type);
             this.c = c;
         }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
+        }
     }
     public static class B14 extends B
     {
@@ -327,6 +490,14 @@ public class DiscriminatorBenchmark {
         public B14(Integer id, String type, C c) {
             super(id, type);
             this.c = c;
+        }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
         }
     }
     public static class B15 extends B
@@ -337,6 +508,14 @@ public class DiscriminatorBenchmark {
             super(id, type);
             this.c = c;
         }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
+        }
     }
     public static class B16 extends B
     {
@@ -345,6 +524,14 @@ public class DiscriminatorBenchmark {
         public B16(Integer id, String type, C c) {
             super(id, type);
             this.c = c;
+        }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
         }
     }
     public static class B17 extends B
@@ -355,6 +542,14 @@ public class DiscriminatorBenchmark {
             super(id, type);
             this.c = c;
         }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
+        }
     }
     public static class B18 extends B
     {
@@ -363,6 +558,14 @@ public class DiscriminatorBenchmark {
         public B18(Integer id, String type, C c) {
             super(id, type);
             this.c = c;
+        }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
         }
     }
     public static class B19 extends B
@@ -373,6 +576,14 @@ public class DiscriminatorBenchmark {
             super(id, type);
             this.c = c;
         }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
+        }
     }
     public static class B20 extends B
     {
@@ -381,6 +592,14 @@ public class DiscriminatorBenchmark {
         public B20(Integer id, String type, C c) {
             super(id, type);
             this.c = c;
+        }
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    ", c=" + c +
+                    '}';
         }
     }
 

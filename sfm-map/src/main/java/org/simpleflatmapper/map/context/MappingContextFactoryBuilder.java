@@ -77,7 +77,9 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
     public MappingContextFactoryBuilder<S, K> newBuilder(List<KeyAndPredicate<S, K>> subKeys, PropertyMeta<?, ?> owner) {
         // look for duplicate 
         for(MappingContextFactoryBuilder<S, K> child : children) {
-            if (!subKeys.isEmpty() && child.keys.equals(subKeys) && owner.equals(owner)) {
+            if ((child.owner.getPath().equals(owner.getPath())
+                        && child.owner.getPropertyClassMeta().equals(owner.getPropertyClassMeta()))
+            ) {
                 return child;
             }
         }

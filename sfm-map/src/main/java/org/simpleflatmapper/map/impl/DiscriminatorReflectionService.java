@@ -18,11 +18,16 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public class DiscriminatorReflectionService extends ReflectionService {
     
     private final ReflectionService delegate;
     private final Map<Class<?>, List<ClassMeta<?>>> discriminators;
+    private final ConcurrentMap<Type, ClassMeta<?>> metaCache = new ConcurrentHashMap<Type, ClassMeta<?>>();
 
     public DiscriminatorReflectionService(ReflectionService delegate, Map<Class<?>, List<ClassMeta<?>>> discriminators) {
         this.delegate = delegate;
@@ -56,7 +61,18 @@ public class DiscriminatorReflectionService extends ReflectionService {
 
     @Override
     public <T> ClassMeta<T> getClassMeta(Type target) {
+
+        requireNonNull("target", target);
+        ClassMeta<T> meta = (ClassMeta<T>) metaCache.get(target);
+        if (meta == null) {
+            meta = newClassMeta(target);
+            requireNonNull("meta", meta);
+            metaCache.putIfAbsent(target, meta);
+        }
+        return meta;
+    }
         
+    private <T> ClassMeta<T> newClassMeta(Type target) {
         List<ClassMeta<?>> implementations = discriminators.get(TypeHelper.toClass(target)); 
         if (implementations == null || implementations.isEmpty()) {
             ClassMeta<T> classMeta = delegate.getClassMeta(target);

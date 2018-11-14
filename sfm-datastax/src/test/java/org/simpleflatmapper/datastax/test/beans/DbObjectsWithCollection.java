@@ -1,7 +1,6 @@
 package org.simpleflatmapper.datastax.test.beans;
 
 import java.util.Collection;
-import java.util.Set;
 
 public class DbObjectsWithCollection {
     private long id;

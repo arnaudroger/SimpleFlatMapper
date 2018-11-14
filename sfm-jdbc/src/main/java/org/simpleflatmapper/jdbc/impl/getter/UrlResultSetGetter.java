@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UrlResultSetGetter implements
-		Getter<java.sql.ResultSet, URL> {
+		Getter<ResultSet, URL> {
 	private final int column;
 	
 	public UrlResultSetGetter(final int column) {

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class JdbcTemplateCrudTest {
@@ -219,8 +220,8 @@ public class JdbcTemplateCrudTest {
 				JdbcTemplateMapperFactory.newInstance()
 						.<O531, Integer>crud(O531.class, Integer.class)
 						.to(template, "TEST_530");
-
-
+		
+		assertNotNull(objectCrud);
 	}
 
 	public static class O531 {

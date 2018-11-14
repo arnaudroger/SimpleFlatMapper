@@ -29,11 +29,7 @@ public class Example_One_To_Many {
         // All we need to execute a query is provide it with a connection and then
         // call fetch() on it.
         Tools.title("Selecting authorsAndBooks");
-
-        JdbcMapper<Tuple2<AuthorRecord, List<BookRecord>>> mapper = JdbcMapperFactory.newInstance()
-                .addKeys("id").newMapper(new TypeReference<Tuple2<AuthorRecord, List<BookRecord>>>() {
-                });
-
+        
          Tools.print(DSL.using(connection())
                  .select(AUTHOR.ID, AUTHOR.FIRST_NAME, AUTHOR.LAST_NAME, AUTHOR.DATE_OF_BIRTH,
                          BOOK.ID, BOOK.TITLE)

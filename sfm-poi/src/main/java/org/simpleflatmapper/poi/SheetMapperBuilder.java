@@ -6,7 +6,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.SetRowMapper;
-import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;

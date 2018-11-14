@@ -2,12 +2,9 @@ package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.UncheckedConverter;
 import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.mapper.DiscriminatorMapper;

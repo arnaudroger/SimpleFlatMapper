@@ -3,7 +3,6 @@ package org.simpleflatmapper.csv.impl.writer;
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.lightningcsv.CellWriter;
 import org.simpleflatmapper.map.setter.ContextualSetter;
-import org.simpleflatmapper.reflect.Setter;
 
 public class CellWriterSetterWrapper<P> implements ContextualSetter<Appendable, P> {
     private final ContextualSetter<Appendable, ? super P> setter;

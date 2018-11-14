@@ -38,8 +38,6 @@ public class Issue537Test {
 
         SfmRecordMapperProvider recordMapperProvider = SfmRecordMapperProviderFactory.newInstance().newProvider();
 
-        CurrencyUnit usd = Monetary.getCurrency("USD");
-
         RecordType<Record> rt = mock(RecordType.class);
 
 

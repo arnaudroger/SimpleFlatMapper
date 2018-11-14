@@ -3,16 +3,11 @@ package org.simpleflatmapper.jdbc.impl;
 import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 
-import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.setter.ContextualIndexedSetter;
 import org.simpleflatmapper.map.setter.ContextualIndexedSetterFactory;
 import org.simpleflatmapper.map.setter.ContextualSetter;
 import org.simpleflatmapper.map.setter.ContextualSetterFactory;
-import org.simpleflatmapper.reflect.IndexedSetter;
-import org.simpleflatmapper.reflect.IndexedSetterFactory;
-import org.simpleflatmapper.reflect.Setter;
-import org.simpleflatmapper.reflect.SetterFactory;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.jdbc.impl.setter.BooleanPreparedStatementSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BytePreparedStatementSetter;

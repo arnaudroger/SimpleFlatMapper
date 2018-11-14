@@ -71,6 +71,9 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
 
 
         ColumnDefinition<CsvColumnKey, ?> columnDefinition = pm.getColumnDefinition();
+        
+        if (columnDefinition == null) throw new NullPointerException("Unexpected null columnDefinition");
+        
         Type type = pm.getPropertyMeta().getPropertyType();
         if (TypeHelper.isPrimitive(type) && !columnDefinition.has(FormatProperty.class)) {
             if (getter instanceof BooleanGetter) {

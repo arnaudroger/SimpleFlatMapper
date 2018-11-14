@@ -2,7 +2,6 @@ package org.simpleflatmapper.map.setter;
 
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.Setter;
 
 public class ContextualSetterOnGetter<T, I, P> implements ContextualSetter<T, P> {
     private final Getter<P, I> getter;

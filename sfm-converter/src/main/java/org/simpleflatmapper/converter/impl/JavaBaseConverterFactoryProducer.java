@@ -2,7 +2,6 @@ package org.simpleflatmapper.converter.impl;
 
 
 import org.simpleflatmapper.converter.AbstractContextualConverterFactory;
-import org.simpleflatmapper.converter.AbstractConverterFactory;
 import org.simpleflatmapper.converter.AbstractContextualConverterFactoryProducer;
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.ContextFactoryBuilder;
@@ -19,7 +18,6 @@ import org.simpleflatmapper.util.date.DateFormatSupplier;
 import org.simpleflatmapper.util.date.DefaultDateFormatSupplier;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;

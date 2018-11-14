@@ -51,7 +51,7 @@ public class SetterHelper {
 	}
 
 	private static boolean isEquals(Method method) {
-		return method.getName() == "equals" && method.getReturnType().equals(boolean.class)
+		return "equals".equals(method.getName()) && method.getReturnType().equals(boolean.class)
 				&& method.getParameterTypes() != null &&  method.getParameterTypes().length == 1;
 	}
 

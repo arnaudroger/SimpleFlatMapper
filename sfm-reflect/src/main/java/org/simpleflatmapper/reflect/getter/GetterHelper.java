@@ -51,16 +51,16 @@ public class GetterHelper {
 				&& !isClone(method);
 	}
 	private static boolean isClone(Method method) {
-		return method.getName() == "clone"
+		return "clone".equals(method.getName()) 
 				&& (method.getReturnType().equals(Object.class) || method.getDeclaringClass().equals(method.getReturnType()))
 				&& (method.getParameterTypes() == null ||  method.getParameterTypes().length == 0);
 	}
 	private static boolean isToString(Method method) {
-		return method.getName() == "toString" && method.getReturnType().equals(String.class)
+		return "toString".equals(method.getName()) && method.getReturnType().equals(String.class)
 				&& (method.getParameterTypes() == null ||  method.getParameterTypes().length == 0);
 	}
 	private static boolean isHashcode(Method method) {
-		return method.getName() == "hashCode" && method.getReturnType().equals(int.class)
+		return "hashCode".equals(method.getName()) && method.getReturnType().equals(int.class)
 				&& (method.getParameterTypes() == null ||  method.getParameterTypes().length == 0);
 	}
 

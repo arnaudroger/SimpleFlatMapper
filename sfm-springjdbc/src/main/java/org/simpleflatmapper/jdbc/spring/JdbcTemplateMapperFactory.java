@@ -7,18 +7,12 @@ import org.simpleflatmapper.jdbc.NameBasedResultSetGetterFactory;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFactory;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.simpleflatmapper.util.TypeReference;
-import org.springframework.jdbc.core.PreparedStatementCallback;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.ParsedSql;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
-import java.util.List;
 
 public final class JdbcTemplateMapperFactory extends AbstractColumnNameDiscriminatorMapperFactory<JdbcColumnKey, JdbcTemplateMapperFactory, ResultSet> {
 

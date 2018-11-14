@@ -45,7 +45,7 @@ public final class CsvRow {
     
     public void addValue(int offset, int length) {
         int index = this.currentIndex;
-        if (index < fieldsBoundaries.length) {
+        if (index + 1 < fieldsBoundaries.length) {
             fieldsBoundaries[index] = offset;
             fieldsBoundaries[index + 1] = length;
             currentIndex = index + 2;

@@ -132,7 +132,7 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
                             pm.getPropertyMeta().getPropertyType(),
                             CharSequence.class,
                             builder,
-                            columnDefinition != null ? columnDefinition.properties() : new Object[0]);
+                            columnDefinition.properties());
 
             if (converter != null) {
                 return new ConvertingAppender<S, P>(getter, converter, cellWriter);

@@ -6,6 +6,8 @@ import org.simpleflatmapper.datastax.DatastaxMapper;
 import org.simpleflatmapper.datastax.DatastaxMapperFactory;
 import org.simpleflatmapper.datastax.test.beans.DbObjectsWithSet;
 
+import static org.junit.Assert.assertNotNull;
+
 public class DbObjectWithSetMapperTest {
 
     @Test
@@ -18,6 +20,8 @@ public class DbObjectWithSetMapperTest {
                         .addMapping("emails", 1, DataType.set(DataType.ascii()), new Object[0])
                 .mapper();
         System.out.println("mapper = " + mapper);
+        
+        assertNotNull(mapper);
 
     }
 }

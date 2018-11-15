@@ -44,6 +44,7 @@ import java.util.Map;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -112,6 +113,7 @@ public class DataTypeTest {
 
     private <N> void testNumberGetter(Class<N> numberClass, Class<?> primitiveGetter) throws Exception {
         Method[] methods = DataType.class.getMethods();
+        assertTrue(methods.length > 0);
         for(int i = 0; i < methods.length; i++) {
             Method method = methods[i];
             if (method.getReturnType().equals(DataType.class)
@@ -148,6 +150,7 @@ public class DataTypeTest {
 
     private <N> void testNumberSetter(Class<N> numberClass, Class<?> primitiveSetter) throws Exception {
         Method[] methods = DataType.class.getMethods();
+        assertTrue(methods.length > 0);
         for(int i = 0; i < methods.length; i++) {
             Method method = methods[i];
             if (method.getReturnType().equals(DataType.class)

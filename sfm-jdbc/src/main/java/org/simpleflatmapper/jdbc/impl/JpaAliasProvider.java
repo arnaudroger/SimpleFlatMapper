@@ -19,6 +19,12 @@ public class JpaAliasProvider implements AliasProvider {
 
 	@SuppressWarnings("unchecked")
 	public JpaAliasProvider() {
+		Class<? extends Annotation> columnClass = null;
+		Method columnName = null;
+		Class<? extends Annotation> tableClass = null;
+		Method tableName = null;
+		Method tableSchema = null;
+		Method tableCatalog = null;
 		try {
 			columnClass = (Class<? extends Annotation>) Class.forName("javax.persistence.Column");
 			columnName = columnClass.getDeclaredMethod("name");
@@ -28,8 +34,14 @@ public class JpaAliasProvider implements AliasProvider {
 			tableCatalog = tableClass.getDeclaredMethod("catalog");
 		} catch(Exception e) {
 			ErrorHelper.rethrow(e);
-			throw new Error();
 		}
+
+		this.columnClass = columnClass;
+		this.columnName = columnName;
+		this.tableClass = tableClass;
+		this.tableName = tableName;
+		this.tableSchema = tableSchema;
+		this.tableCatalog = tableCatalog;
 	}
 
 

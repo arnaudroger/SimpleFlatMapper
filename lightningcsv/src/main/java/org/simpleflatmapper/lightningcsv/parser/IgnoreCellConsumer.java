@@ -9,6 +9,7 @@ public class IgnoreCellConsumer implements CellConsumer {
 
     @Override
     public void newCell(char[] chars, int offset, int length) {
+        // ignore
     }
 
     @Override
@@ -18,5 +19,6 @@ public class IgnoreCellConsumer implements CellConsumer {
 
     @Override
     public void end() {
+        // ignore
     }
 }

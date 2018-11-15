@@ -1,14 +1,7 @@
 package org.simpleflatmapper.util.test;
 
 import org.junit.Test;
-import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.TupleHelper;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class JoolTupleTest {
 

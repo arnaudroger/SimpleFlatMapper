@@ -10,10 +10,6 @@ public final class T2ArraysMapperCache<K extends FieldKey<K>, M> implements IMap
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<Entries<K>> sortedEntries = new AtomicReference<Entries<K>>(new Entries<K>(0));
 
-	public T2ArraysMapperCache() {
-
-	}
-
 	@SuppressWarnings("unchecked")
 	public void add(final MapperKey<K> key, final M mapper) {
 		Entries<K> entries;
@@ -48,17 +44,17 @@ public final class T2ArraysMapperCache<K extends FieldKey<K>, M> implements IMap
 		return sortedEntries.get().keys.length;
 	}
 
-	public static class Entries<K extends FieldKey<K>> {
+	private static class Entries<K extends FieldKey<K>> {
 		private final MapperKey<K>[] keys;
 		private final Object[] values;
 
 		@SuppressWarnings("unchecked")
-		Entries(int size) {
+		private Entries(int size) {
 			this.keys = new MapperKey[size];
 			this.values = new Object[size];
 		}
 
-		Object search(MapperKey<K> key) {
+		private Object search(MapperKey<K> key) {
 			final int i = findKey(key);
 			if (i >= 0) {
 				return values[i];
@@ -66,7 +62,7 @@ public final class T2ArraysMapperCache<K extends FieldKey<K>, M> implements IMap
 			return null;
 		}
 
-		int findKey(MapperKey<K> key) {
+		private int findKey(MapperKey<K> key) {
 			for(int i = 0; i < keys.length; i++) {
 				if (key.equals(keys[i])) {
 					return i;
@@ -77,7 +73,7 @@ public final class T2ArraysMapperCache<K extends FieldKey<K>, M> implements IMap
 
 
 
-		Entries<K> insertEntry(MapperKey<K> key, Object mapper, int insertionPoint) {
+		private Entries<K> insertEntry(MapperKey<K> key, Object mapper, int insertionPoint) {
 			Entries<K> newEntries = new Entries<K>(keys.length + 1);
 
 			System.arraycopy(keys, 0, newEntries.keys, 0, insertionPoint);

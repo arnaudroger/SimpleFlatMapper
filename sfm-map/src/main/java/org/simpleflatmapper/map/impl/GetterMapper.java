@@ -24,5 +24,6 @@ public final class GetterMapper<S, P> implements SourceMapper<S, P>, FieldMapper
 
     @Override
     public void mapTo(S source, P target, MappingContext<? super S> context) throws Exception {
+        // cannot map to an object
     }
 }

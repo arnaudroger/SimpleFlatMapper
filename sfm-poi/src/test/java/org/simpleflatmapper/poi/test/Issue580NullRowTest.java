@@ -25,9 +25,9 @@ import static org.junit.Assert.assertTrue;
 public class Issue580NullRowTest {
 
 
-    Sheet staticSheet;
+    private Sheet staticSheet;
 
-    SheetMapper<DbObject> staticSheetMapper;
+    private SheetMapper<DbObject> staticSheetMapper;
     @Before
     public void setUp(){
         Workbook wb = new HSSFWorkbook();

@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 public class Issue463MandatoryFieldsTest {
     
-    static String payload = "f1,f2,f3\nv11,v12,v13\nv21,v22\nv31";
+    private static String payload = "f1,f2,f3\nv11,v12,v13\nv21,v22\nv31";
     
     @Test
     public void testNoMandatoryFields() throws IOException {

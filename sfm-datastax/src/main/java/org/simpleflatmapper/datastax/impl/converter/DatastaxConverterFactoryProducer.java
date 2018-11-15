@@ -42,14 +42,14 @@ public class DatastaxConverterFactoryProducer extends AbstractContextualConverte
                 return LocalDate.fromYearMonthDay(in.getYear(), in.getMonthValue(), in.getDayOfMonth());
             }
         });
-        this.constantConverter(consumer, java.time.LocalTime.class, Long.class, new ContextualConverter<LocalTime, Long>() {
+        this.constantConverter(consumer, LocalTime.class, Long.class, new ContextualConverter<LocalTime, Long>() {
             @Override
             public Long convert(LocalTime in, Context context) throws Exception {
                 if (in == null) return null;
                 return in.toNanoOfDay();
             }
         });
-        this.constantConverter(consumer, java.time.OffsetTime.class, Long.class, new ContextualConverter<OffsetTime, Long>() {
+        this.constantConverter(consumer, OffsetTime.class, Long.class, new ContextualConverter<OffsetTime, Long>() {
             @Override
             public Long convert(OffsetTime in, Context context) throws Exception {
                 if (in == null) return null;

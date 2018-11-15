@@ -32,7 +32,9 @@ public class Issue587Test {
     //IFJAVA8_START
     @Test
     public void testFetchResultSet() throws SQLException {
-        try (Connection conn = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL)) {
+        Connection conn = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
+        if (conn == null) return;
+        try {
 
 
             Statement statement = conn.createStatement();
@@ -76,6 +78,8 @@ public class Issue587Test {
                 assertEquals(expected, issue587s[0].t);
             }
 
+        } finally {
+            conn.close();
         }
         
 
@@ -83,7 +87,9 @@ public class Issue587Test {
 
     @Test
     public void testFetchIntoResultSet() throws SQLException {
-        try (Connection conn = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL)) {
+        Connection conn = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
+        if (conn == null) return;
+        try  {
 
 
             Statement statement = conn.createStatement();
@@ -125,6 +131,8 @@ public class Issue587Test {
                 assertEquals(expected, issue587s[0].t);
             }
 
+        } finally {
+            conn.close();
         }
 
 

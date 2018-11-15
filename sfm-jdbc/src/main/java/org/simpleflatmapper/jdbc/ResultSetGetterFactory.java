@@ -407,6 +407,11 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		}
 
 		if (getter == null) {
+			// checkout column class might match
+			if (key.getColumnClass() != null && clazz.getName().equals(key.getColumnClass())) {
+				return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
+			}
+
 			if (SQLData.class.isAssignableFrom(clazz) || key.getSqlType(properties) == Types.JAVA_OBJECT) {
 				return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
 			}

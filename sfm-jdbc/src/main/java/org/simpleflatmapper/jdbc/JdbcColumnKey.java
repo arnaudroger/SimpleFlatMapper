@@ -16,20 +16,36 @@ public final class JdbcColumnKey extends FieldKey<JdbcColumnKey> implements Type
 	public static final int UNDEFINED_TYPE = -99999;
 
 	private final int sqlType;
+	private final String columnClass;
 
 	public JdbcColumnKey(String name, int index) {
 		super(name, index);
 		this.sqlType = UNDEFINED_TYPE;
+		this.columnClass = null;
 	}
 
 	public JdbcColumnKey(String name, int index, int sqlType) {
 		super(name, index);
 		this.sqlType = sqlType;
+		this.columnClass = null;
 	}
 
 	public JdbcColumnKey(String name, int index, int sqlType, JdbcColumnKey parent) {
 		super(name, index, parent);
 		this.sqlType = sqlType;
+		this.columnClass = null;
+	}
+
+	public JdbcColumnKey(String name, int index, int sqlType, String columnClass) {
+		super(name, index);
+		this.sqlType = sqlType;
+		this.columnClass = columnClass;
+	}
+
+	public JdbcColumnKey(String name, int index, int sqlType, String columnClass, JdbcColumnKey parent) {
+		super(name, index, parent);
+		this.sqlType = sqlType;
+		this.columnClass = columnClass;
 	}
 
 	public int getSqlType(Object[] properties) { 
@@ -62,8 +78,19 @@ public final class JdbcColumnKey extends FieldKey<JdbcColumnKey> implements Type
 
 	}
 
+	public String getColumnClass() {
+		return columnClass;
+	}
+
 	@Override
 	public Type getType(Type targetType) {
+		if (columnClass != null && columnClass.length() > 0) {
+			try {
+				return Class.forName(columnClass);
+			} catch (ClassNotFoundException e) {
+				// ignore not much can be done
+			}
+		}
 		return JdbcTypeHelper.toJavaType(sqlType, targetType);
 	}
 
@@ -76,11 +103,11 @@ public final class JdbcColumnKey extends FieldKey<JdbcColumnKey> implements Type
 
 	@Override
 	public JdbcColumnKey alias(String alias) {
-		return new JdbcColumnKey(alias, index, sqlType, this);
+		return new JdbcColumnKey(alias, index, sqlType, columnClass,this);
 	}
 
 	public static JdbcColumnKey of(ResultSetMetaData metaData, int columnIndex) throws SQLException {
-		return new JdbcColumnKey(metaData.getColumnLabel(columnIndex), columnIndex, metaData.getColumnType(columnIndex));
+		return new JdbcColumnKey(metaData.getColumnLabel(columnIndex), columnIndex, metaData.getColumnType(columnIndex), metaData.getColumnClassName(columnIndex));
 	}
 
 	public static MapperKey<JdbcColumnKey> mapperKey(ResultSetMetaData metaData)  throws  SQLException {

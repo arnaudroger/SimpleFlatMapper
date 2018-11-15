@@ -136,7 +136,7 @@ public class MockDbObjectResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public String getColumnClassName(int column) throws SQLException {
-		return "";
+		return null;
 	}
 
 }

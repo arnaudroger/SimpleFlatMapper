@@ -15,24 +15,11 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 public class CsvParserRandomDataTest {
 
-	static class TestData {
-		boolean endWithCarriageReturn;
-		String[][] expectations;
 
-		char quoteChar = '"';
-		char separator = ',';
-		String carriageReturn = "\r\n";
-
-		public TestData(String[][] expectations) {
-			this.expectations = expectations;
-		}
-	}
-
-	Random random = new Random();
+	private Random random = new Random();
 	@Test
 	public void testParse() throws IOException {
 
@@ -316,5 +303,17 @@ public class CsvParserRandomDataTest {
 	}
 
 
+	private static class TestData {
+		boolean endWithCarriageReturn;
+		String[][] expectations;
+
+		char quoteChar = '"';
+		char separator = ',';
+		String carriageReturn = "\r\n";
+
+		public TestData(String[][] expectations) {
+			this.expectations = expectations;
+		}
+	}
 
 }

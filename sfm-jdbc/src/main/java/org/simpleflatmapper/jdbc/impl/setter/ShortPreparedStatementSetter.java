@@ -3,8 +3,6 @@ package org.simpleflatmapper.jdbc.impl.setter;
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.setter.ContextualSetter;
 import org.simpleflatmapper.map.setter.ShortContextualSetter;
-import org.simpleflatmapper.reflect.Setter;
-import org.simpleflatmapper.reflect.primitive.ShortSetter;
 
 import java.sql.PreparedStatement;
 

@@ -178,7 +178,6 @@ public class InstantiatorFactory {
 		List<MethodGetterPair<S>> chainedArguments = new ArrayList<MethodGetterPair<S>>();
 		List<MethodGetterPair<S>> unchainedArguments = new ArrayList<MethodGetterPair<S>>();
 
-		int i = 0;
 		for(Map.Entry<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> e : injections.entrySet()) {
 			final MethodGetterPair<S> arguments =
 				new MethodGetterPair<S>(instantiatorDefinition.getSetters().get(e.getKey()), e.getValue());

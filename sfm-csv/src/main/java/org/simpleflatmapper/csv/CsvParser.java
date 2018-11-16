@@ -14,7 +14,6 @@ import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
-import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.tuple.Tuple3;
 import org.simpleflatmapper.tuple.Tuple4;
@@ -23,7 +22,6 @@ import org.simpleflatmapper.tuple.Tuple6;
 import org.simpleflatmapper.tuple.Tuple7;
 import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
-import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.CloseableIterator;
@@ -784,10 +782,6 @@ public final class CsvParser {
 
 		builder.addDefaultHeaders();
 		return builder.mapper();
-	}
-
-	private static <T> void addDefaultHeaders(final CsvMapperBuilder<T> builder, final ClassMeta<T> classMeta, final String prefix) {
-		
 	}
 
 	private static <T> CsvMapper<T> newStaticMapper(ClassMeta<T> classMeta, List<Tuple2<String, ColumnDefinition<CsvColumnKey, ?>>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {

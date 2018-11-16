@@ -23,6 +23,28 @@ import java.util.List;
 import java.util.Map;
 
 public class ParamNameDeductor<T> {
+
+    private static final Map<Class<?>, Object> primitivesMarkValue = new HashMap<Class<?>, Object>();
+    static {
+        primitivesMarkValue.put(byte.class, (byte) 1);
+        primitivesMarkValue.put(char.class, (char) 1);
+        primitivesMarkValue.put(short.class, (short) 1);
+        primitivesMarkValue.put(int.class, (int) 1);
+        primitivesMarkValue.put(long.class, (long) 1);
+        primitivesMarkValue.put(float.class, (float) 1);
+        primitivesMarkValue.put(double.class, (double) 1);
+    }
+    private static final Map<Class<?>, Object> primitivesNeutralValue = new HashMap<Class<?>, Object>();
+    static {
+        primitivesNeutralValue.put(byte.class, (byte) 0);
+        primitivesNeutralValue.put(char.class, (char) 0);
+        primitivesNeutralValue.put(short.class, (short) 0);
+        primitivesNeutralValue.put(int.class, (int) 0);
+        primitivesNeutralValue.put(long.class, (long) 0);
+        primitivesNeutralValue.put(float.class, (float) 0);
+        primitivesNeutralValue.put(double.class, (double) 0);
+    }
+    
     private final Class<T> target;
 
     private List<Accessor<T>> accessors;
@@ -89,28 +111,6 @@ public class ParamNameDeductor<T> {
         return parameterGetterMap;
     }
 
-
-    private static final Map<Class<?>, Object> primitivesMarkValue = new HashMap<Class<?>, Object>();
-    static {
-        primitivesMarkValue.put(byte.class, (byte) 1);
-        primitivesMarkValue.put(char.class, (char) 1);
-        primitivesMarkValue.put(short.class, (short) 1);
-        primitivesMarkValue.put(int.class, (int) 1);
-        primitivesMarkValue.put(long.class, (long) 1);
-        primitivesMarkValue.put(float.class, (float) 1);
-        primitivesMarkValue.put(double.class, (double) 1);
-    }
-    private static final Map<Class<?>, Object> primitivesNeutralValue = new HashMap<Class<?>, Object>();
-    static {
-        primitivesNeutralValue.put(byte.class, (byte) 0);
-        primitivesNeutralValue.put(char.class, (char) 0);
-        primitivesNeutralValue.put(short.class, (short) 0);
-        primitivesNeutralValue.put(int.class, (int) 0);
-        primitivesNeutralValue.put(long.class, (long) 0);
-        primitivesNeutralValue.put(float.class, (float) 0);
-        primitivesNeutralValue.put(double.class, (double) 0);
-    }
-
     @SuppressWarnings("unchecked")
     private <V> V markValue(Type type, boolean builderIgnoresNullValues) throws Exception {
         if (TypeHelper.isPrimitive(type)) {
@@ -175,7 +175,6 @@ public class ParamNameDeductor<T> {
         });
         return list;
     }
-
 
     private static class Accessor<T> {
         private final Getter<T, ?> getter;

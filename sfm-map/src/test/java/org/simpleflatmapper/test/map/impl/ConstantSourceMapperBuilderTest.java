@@ -8,7 +8,6 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
-import org.simpleflatmapper.map.mapper.DefaultConstantSourceMapperBuilder;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
@@ -41,10 +40,10 @@ public class ConstantSourceMapperBuilderTest {
     public static final Date DATE = new Date();
     public static final String STRING = "hello!";
 
-    ClassMeta<MyObjectWithInner> classMeta = ReflectionService.disableAsm().getClassMeta(MyObjectWithInner.class);
+    private ClassMeta<MyObjectWithInner> classMeta = ReflectionService.disableAsm().getClassMeta(MyObjectWithInner.class);
 
 
-    GetterFactory<Object, SampleFieldKey> getterFactory = new GetterFactory<Object, SampleFieldKey>() {
+    private GetterFactory<Object, SampleFieldKey> getterFactory = new GetterFactory<Object, SampleFieldKey>() {
         @SuppressWarnings("unchecked")
         @Override
         public <P> Getter<Object, P> newGetter(Type target, SampleFieldKey key, Object... properties) {
@@ -66,7 +65,7 @@ public class ConstantSourceMapperBuilderTest {
         }
     };
 
-    MapperSource<Object, SampleFieldKey> mapperSource = new MapperSource<Object, SampleFieldKey>() {
+    private MapperSource<Object, SampleFieldKey> mapperSource = new MapperSource<Object, SampleFieldKey>() {
         @Override
         public Class<Object> source() {
             return Object.class;

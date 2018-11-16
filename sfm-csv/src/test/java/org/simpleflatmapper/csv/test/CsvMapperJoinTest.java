@@ -5,12 +5,6 @@ import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperBuilder;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
-import org.simpleflatmapper.lightningcsv.CsvReader;
-import org.simpleflatmapper.lightningcsv.parser.CharSequenceCharBuffer;
-import org.simpleflatmapper.lightningcsv.parser.ConfigurableCharConsumer;
-import org.simpleflatmapper.lightningcsv.parser.ReaderCharBuffer;
-import org.simpleflatmapper.lightningcsv.parser.TextFormat;
-import org.simpleflatmapper.lightningcsv.parser.UnescapeCellPreProcessor;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.test.beans.Person;
 import org.simpleflatmapper.test.jdbc.JoinTest;
@@ -26,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class CsvMapperJoinTest {
 

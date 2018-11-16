@@ -34,10 +34,10 @@ public class AsmUtilsTest {
 		String version = System.getProperty("java.version");
 		System.out.println("version = " + version);
 		if (version.startsWith("1.6") || version.startsWith("1.7")) {
-			assertEquals(Opcodes.ASM5, AsmUtils.API);
+			assertEquals(ASM5, AsmUtils.API);
 		} else {
 			//IFJAVA8_START
-			assertEquals(Opcodes.ASM7_EXPERIMENTAL, AsmUtils.API);
+			assertEquals(ASM7_EXPERIMENTAL, AsmUtils.API);
 			if (true) return;
 			//IFJAVA8_END
 			fail("fail " + version);
@@ -45,7 +45,7 @@ public class AsmUtilsTest {
 	}
 	@Test
 	public void testToClass() throws  Exception {
-		Assert.assertEquals(int.class, AsmUtils.toGenericType("I", null, null));
+		assertEquals(int.class, AsmUtils.toGenericType("I", null, null));
 		assertEquals(String.class, AsmUtils.toGenericType("java/lang/String", null, null));
 		assertEquals(String.class, AsmUtils.toGenericType("Ljava/lang/String;", null, null));
 	}

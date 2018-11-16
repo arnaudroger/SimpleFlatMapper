@@ -23,10 +23,8 @@ public class BreakDetector<S>  {
     }
 
     private static <S> KeyDefinition<S, ?> emptyToNull(KeyDefinition<S, ?> definition) {
-        if (definition != null) {
-            if (definition.isEmpty()) {
-                return null;
-            }
+        if (definition == null || definition.isEmpty()) {
+            return null;
         }
         return definition;
     }

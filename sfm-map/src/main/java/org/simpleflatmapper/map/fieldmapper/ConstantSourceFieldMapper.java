@@ -3,10 +3,6 @@ package org.simpleflatmapper.map.fieldmapper;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.getter.ContextualGetter;
-import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
-import org.simpleflatmapper.map.setter.ContextualSetter;
-import org.simpleflatmapper.map.setter.ContextualSetterAdapter;
-import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Setter;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;

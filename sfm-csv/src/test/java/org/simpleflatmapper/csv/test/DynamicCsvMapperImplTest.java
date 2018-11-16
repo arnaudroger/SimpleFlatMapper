@@ -33,6 +33,10 @@ import static org.junit.Assert.*;
 
 
 public class DynamicCsvMapperImplTest {
+	private static final int NBROW = 2;
+	private static final int NBFUTURE = 10000;
+
+	private int i;
 
 	public static Reader dbObjectCsvReader() throws UnsupportedEncodingException {
 		return new StringReader("id,name,email,creationTime,typeOrdinal,typeName\n"
@@ -134,10 +138,6 @@ public class DynamicCsvMapperImplTest {
 
 	}
 
-
-
-	int i;
-
 	//IFJAVA8_START
 	@Test
 	public void testDbObjectStream() throws Exception {
@@ -217,12 +217,7 @@ public class DynamicCsvMapperImplTest {
 		DbHelper.assertDbObjectMapping(list.get(0).getObjects().get(0));
 
 	}
-
-
-
-	private static final int NBROW = 2;
-	private static final int NBFUTURE = 10000;
-
+	
 	@Test
 	public void testMultipleThread() throws InterruptedException, ExecutionException {
 		final CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);

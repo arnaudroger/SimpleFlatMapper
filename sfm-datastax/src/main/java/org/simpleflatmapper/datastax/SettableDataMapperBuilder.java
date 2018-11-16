@@ -9,7 +9,6 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
 import org.simpleflatmapper.reflect.BiInstantiator;
-import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 public class SettableDataMapperBuilder<T> extends AbstractConstantTargetMapperBuilder<SettableByIndexData, T, DatastaxColumnKey, SettableDataMapperBuilder<T>> {

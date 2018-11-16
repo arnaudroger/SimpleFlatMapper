@@ -5,7 +5,6 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.getter.NullGetter;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -63,21 +62,14 @@ public class MapKeyValueElementPropertyMeta<T extends Map<K, V>, K, V> extends P
     }
 
     public static class KeyValue<K, V> {
+
+		private final K key;
+		private final V value;
+		
 		public KeyValue(K key, V value) {
 			this.key = key;
 			this.value = value;
 		}
-
-		private final K key;
-    	private final V value;
-
-//		public void setKey(K key) {
-//			this.key = key;
-//		}
-//
-//		public void setValue(V value) {
-//			this.value = value;
-//		}
 
 		public K getKey() {
 			return key;

@@ -1,7 +1,6 @@
 package org.simpleflatmapper.map.setter;
 
 import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.primitive.BooleanSetter;
 import org.simpleflatmapper.reflect.primitive.ByteSetter;

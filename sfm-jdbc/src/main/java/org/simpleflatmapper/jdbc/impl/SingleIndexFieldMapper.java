@@ -4,7 +4,6 @@ import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 import org.simpleflatmapper.map.setter.ContextualIndexedSetter;
 import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.IndexedSetter;
 
 import java.sql.PreparedStatement;
 

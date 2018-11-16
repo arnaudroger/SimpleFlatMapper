@@ -27,7 +27,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     private final Map<String, MapElementPropertyMeta<?, K, V>> keys = new HashMap<String, MapElementPropertyMeta<?, K, V>>();
     private final PropertyFinder<MapKeyValueElementPropertyMeta.KeyValue<K, V>> keyValuePropertyFinder;
     private final Type keyValueType;
-    MapKeyValueElementPropertyMeta<T, K, V> elementPropertyMeta;;
+    private final MapKeyValueElementPropertyMeta<T, K, V> elementPropertyMeta;
 
     private int keyValueMode = NONE;
 

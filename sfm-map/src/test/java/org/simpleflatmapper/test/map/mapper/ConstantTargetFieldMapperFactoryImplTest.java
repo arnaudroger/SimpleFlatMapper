@@ -7,7 +7,6 @@ import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.test.map.fieldmapper.ConstantSourceFieldMapperFactoryImplTest;
-import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
 import org.simpleflatmapper.map.mapper.PropertyMapping;

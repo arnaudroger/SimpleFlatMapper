@@ -402,7 +402,7 @@ public class ObjectClassMetaTest {
 
         public TwoStringObjectNonNull(String value, String value2) {
             this.value = Asserts.requireNonNull("value", value);
-            this.value2 = Asserts.requireNonNull("value2", value2);;
+            this.value2 = Asserts.requireNonNull("value2", value2);
         }
 
     }

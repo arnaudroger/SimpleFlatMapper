@@ -54,51 +54,6 @@ public class DefaultReflectionService extends ReflectionService {
 	private static final Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>[] predefinedBuilderProducers = 
 			getPredifinedBuilderProducers();
 
-	private static Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>[] getPredifinedBuilderProducers() {
-		final List<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>> list = new ArrayList<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>>();
-		Consumer<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>> consumer = new Consumer<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>>() {
-			@Override
-			public void accept(Consumer<BiConsumer<String, UnaryFactory<Type, Member>>> biConsumerConsumer) {
-				list.add(biConsumerConsumer);
-			}
-		};
-
-		ProducerServiceLoader.produceFromServiceLoader(
-				ServiceLoader.load(BuilderProducer.class),
-				consumer
-		);
-		
-		consumer.accept(new Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>() {
-			@Override
-			public void accept(BiConsumer<String, UnaryFactory<Type, Member>> biConsumer) {
-				biConsumer.accept("javax.money.MonetaryAmount", 
-						new DefaultBuilderSupplier("javax.money.Monetary", "getDefaultAmountFactory"));
-			}
-		});
-
-		return list.toArray(new Consumer[0]);
-	}
-
-	@SuppressWarnings("unchecked")
-	private static UnaryFactory<ReflectionService, ClassMeta<?>>[] getPredifinedClassMetaFactory() {
-		final List<UnaryFactory<ReflectionService, ClassMeta<?>>> list = new ArrayList<UnaryFactory<ReflectionService, ClassMeta<?>>>();
-		Consumer<UnaryFactory<ReflectionService, ClassMeta<?>>> consumer = new Consumer<UnaryFactory<ReflectionService, ClassMeta<?>>>() {
-			@Override
-			public void accept(UnaryFactory<ReflectionService, ClassMeta<?>> reflectionServiceClassMetaUnaryFactory) {
-				list.add(reflectionServiceClassMetaUnaryFactory);
-			}
-		};
-
-		new JavaLangClassMetaFactoryProducer().produce(consumer);
-
-		ProducerServiceLoader.produceFromServiceLoader(
-				ServiceLoader.load(ClassMetaFactoryProducer.class),
-				consumer
-		);
-
-		return list.toArray(new UnaryFactory[0]);
-	}
-
 	private final ObjectSetterFactory objectSetterFactory;
 	private final ObjectGetterFactory objectGetterFactory;
 	private final InstantiatorFactory instantiatorFactory;
@@ -439,5 +394,50 @@ public class DefaultReflectionService extends ReflectionService {
 	@Override
 	public void registerBuilder(String name, DefaultBuilderSupplier defaultBuilderSupplier) {
 		builderMethods.put(name, defaultBuilderSupplier);
+	}
+
+	private static Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>[] getPredifinedBuilderProducers() {
+		final List<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>> list = new ArrayList<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>>();
+		Consumer<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>> consumer = new Consumer<Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>>() {
+			@Override
+			public void accept(Consumer<BiConsumer<String, UnaryFactory<Type, Member>>> biConsumerConsumer) {
+				list.add(biConsumerConsumer);
+			}
+		};
+
+		ProducerServiceLoader.produceFromServiceLoader(
+				ServiceLoader.load(BuilderProducer.class),
+				consumer
+		);
+
+		consumer.accept(new Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>() {
+			@Override
+			public void accept(BiConsumer<String, UnaryFactory<Type, Member>> biConsumer) {
+				biConsumer.accept("javax.money.MonetaryAmount",
+						new DefaultBuilderSupplier("javax.money.Monetary", "getDefaultAmountFactory"));
+			}
+		});
+
+		return list.toArray(new Consumer[0]);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static UnaryFactory<ReflectionService, ClassMeta<?>>[] getPredifinedClassMetaFactory() {
+		final List<UnaryFactory<ReflectionService, ClassMeta<?>>> list = new ArrayList<UnaryFactory<ReflectionService, ClassMeta<?>>>();
+		Consumer<UnaryFactory<ReflectionService, ClassMeta<?>>> consumer = new Consumer<UnaryFactory<ReflectionService, ClassMeta<?>>>() {
+			@Override
+			public void accept(UnaryFactory<ReflectionService, ClassMeta<?>> reflectionServiceClassMetaUnaryFactory) {
+				list.add(reflectionServiceClassMetaUnaryFactory);
+			}
+		};
+
+		new JavaLangClassMetaFactoryProducer().produce(consumer);
+
+		ProducerServiceLoader.produceFromServiceLoader(
+				ServiceLoader.load(ClassMetaFactoryProducer.class),
+				consumer
+		);
+
+		return list.toArray(new UnaryFactory[0]);
 	}
 }

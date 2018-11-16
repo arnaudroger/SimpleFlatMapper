@@ -4,16 +4,16 @@ import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.map.getter.ContextualGetter;
 
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
+
 public class FieldMapperGetterWithConverter<T, I, P> implements ContextualGetter<T, P> {
 
     private final ContextualConverter<? super I, ? extends P> converter;
     private final ContextualGetter<? super T, ? extends I> getter;
 
     public FieldMapperGetterWithConverter(ContextualConverter<? super I, ? extends P > converter, ContextualGetter<? super T, ? extends I> getter) {
-        if (converter == null) throw new NullPointerException("converter");
-        if (getter == null) throw new NullPointerException("getter");
-        this.converter = converter;
-        this.getter = getter;
+        this.converter = requireNonNull("converter", converter);;
+        this.getter = requireNonNull("getter", getter);;
     }
 
     @Override

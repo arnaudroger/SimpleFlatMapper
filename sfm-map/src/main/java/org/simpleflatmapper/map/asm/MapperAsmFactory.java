@@ -4,7 +4,6 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.mapper.AbstractMapper;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.asm.AsmFactory;

@@ -160,12 +160,15 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
     }
 
     protected void postMapperProcess(List<FieldMapper<T,S>> mappers) {
+        // override
     }
 
     protected void postFieldProcess(List<FieldMapper<T,S>> mappers, PropertyMapping<T, ?, K> pm) {
+        // override
     }
 
     protected void preFieldProcess(List<FieldMapper<T,S>> mappers, PropertyMapping<T, ?, K> pm) {
+        // override
     }
 
     protected int getStartingIndex() {

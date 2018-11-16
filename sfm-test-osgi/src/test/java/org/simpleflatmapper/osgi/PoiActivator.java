@@ -36,7 +36,7 @@ public class PoiActivator implements BundleActivator {
 
     @Override
     public void stop(BundleContext context) throws Exception {
-
+        // nothing to do here
     }
 
 }

@@ -7,8 +7,7 @@ import org.junit.Test;
 import org.simpleflatmapper.map.EnumerableMapper;
 import org.simpleflatmapper.reflect.ReflectionService;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class ECCollectionMapperTest {

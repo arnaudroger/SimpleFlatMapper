@@ -12,7 +12,6 @@ import org.simpleflatmapper.datastax.impl.SettableDataSetterFactory;
 import org.simpleflatmapper.datastax.test.utils.RecorderInvocationHandler;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -50,7 +49,20 @@ import static org.mockito.Mockito.when;
 
 public class DataTypeTest {
 
-
+    private static Map<String, String> getterMethods = new HashMap<String, String>();
+    static {
+        getterMethods.put("BIGINT" , "getLong");
+        getterMethods.put("COUNTER", "getLong");
+        getterMethods.put("INT"    , "getInt");
+        getterMethods.put("TINYINT"    , "getByte");
+        getterMethods.put("TIME"    , "getTime");
+        getterMethods.put("DECIMAL"    , "getDecimal");
+        getterMethods.put("DOUBLE"  , "getDouble");
+        getterMethods.put("FLOAT"  , "getFloat");
+        getterMethods.put("VARINT"  , "getVarint");
+        getterMethods.put("SMALLINT"  , "getShort");
+    }
+    
     @Test
     public void testAllDataTypeNameHaveAnAssignedType() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         for(DataType.Name name : DataType.Name.values()) {
@@ -213,19 +225,7 @@ public class DataTypeTest {
     }
 
 
-    private static Map<String, String> getterMethods = new HashMap<String, String>();
-    static {
-        getterMethods.put("BIGINT" , "getLong");
-        getterMethods.put("COUNTER", "getLong");
-        getterMethods.put("INT"    , "getInt");
-        getterMethods.put("TINYINT"    , "getByte");
-        getterMethods.put("TIME"    , "getTime");
-        getterMethods.put("DECIMAL"    , "getDecimal");
-        getterMethods.put("DOUBLE"  , "getDouble");
-        getterMethods.put("FLOAT"  , "getFloat");
-        getterMethods.put("VARINT"  , "getVarint");
-        getterMethods.put("SMALLINT"  , "getShort");
-    }
+
     public static String getterMethodFor(DataType dataType) throws Exception {
         String value = dataType.getName().name();
 

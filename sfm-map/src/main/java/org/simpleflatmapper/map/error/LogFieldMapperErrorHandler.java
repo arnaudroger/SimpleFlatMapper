@@ -2,7 +2,6 @@ package org.simpleflatmapper.map.error;
 
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 
 import java.util.logging.Level;

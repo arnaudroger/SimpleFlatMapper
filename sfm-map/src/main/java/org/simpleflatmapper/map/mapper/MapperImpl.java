@@ -2,7 +2,6 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.reflect.BiInstantiator;
 
 import java.util.Arrays;

@@ -71,12 +71,9 @@ public class PreparedStatementIndexedSetterFactory
         {
     public static final PreparedStatementIndexedSetterFactory INSTANCE = new PreparedStatementIndexedSetterFactory();
 
-    private PreparedStatementIndexedSetterFactory() {
-    }
-
     private final Map<Class<?>, Factory> factoryPerClass = new HashMap<Class<?>, Factory>();
 
-    {
+    private PreparedStatementIndexedSetterFactory() {
         factoryPerClass.put(boolean.class,
                 new Factory() {
                     @SuppressWarnings("unchecked")

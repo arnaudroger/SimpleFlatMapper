@@ -16,20 +16,9 @@ import java.util.Random;
 import static org.junit.Assert.assertArrayEquals;
 
 public class CsvParserRandomDataTest {
+	private Random random = new Random();
 
-	static class TestData {
-		String[][] expectations;
 
-		char quoteChar = '"';
-		char separator = ',';
-		String carriageReturn = "\r\n";
-
-		public TestData(String[][] expectations) {
-			this.expectations = expectations;
-		}
-	}
-
-	Random random = new Random();
 	@Test
 	public void testParse() throws IOException {
 
@@ -295,6 +284,19 @@ public class CsvParserRandomDataTest {
 
 		public String[][] allValues() {
 			return rows.toArray(new String[0][]);
+		}
+	}
+
+
+	static class TestData {
+		String[][] expectations;
+
+		char quoteChar = '"';
+		char separator = ',';
+		String carriageReturn = "\r\n";
+
+		public TestData(String[][] expectations) {
+			this.expectations = expectations;
 		}
 	}
 

@@ -44,7 +44,7 @@ public class UncheckedConverterHelperTest {
             }
         };
 
-        Assert.assertEquals("Ok!", UncheckedConverterHelper.toUnchecked(converter).convert(null,  null));
+        assertEquals("Ok!", UncheckedConverterHelper.toUnchecked(converter).convert(null,  null));
     }
 
     private void convertUncheck(ContextualConverter<Object, Object> converter) {

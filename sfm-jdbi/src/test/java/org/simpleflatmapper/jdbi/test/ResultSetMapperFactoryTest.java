@@ -4,8 +4,6 @@ import org.junit.Test;
 import org.simpleflatmapper.jdbi.SfmResultSetMapperFactory;
 import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.ContextualSourceMapper;
-import org.simpleflatmapper.map.SourceFieldMapper;
-import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.test.beans.DbObject;

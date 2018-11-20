@@ -27,7 +27,6 @@ import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.simpleflatmapper.converter.test.ConverterServiceTestHelper.testConverter;
 

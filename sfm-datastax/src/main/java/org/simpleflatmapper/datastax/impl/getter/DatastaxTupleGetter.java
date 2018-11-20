@@ -6,7 +6,6 @@ import com.datastax.driver.core.TupleType;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 import org.simpleflatmapper.datastax.DatastaxMapperFactory;
 import org.simpleflatmapper.map.ContextualSourceMapper;
-import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.reflect.Getter;

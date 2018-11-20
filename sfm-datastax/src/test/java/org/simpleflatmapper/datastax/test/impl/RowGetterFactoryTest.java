@@ -1,7 +1,6 @@
 package org.simpleflatmapper.datastax.test.impl;
 
 import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.GettableData;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,17 +15,11 @@ import org.simpleflatmapper.reflect.primitive.LongGetter;
 import org.simpleflatmapper.reflect.primitive.ShortGetter;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.reflect.Getter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-//IFJAVA8_START
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-//IFJAVA8_END
 import java.util.Date;
 import java.util.UUID;
 

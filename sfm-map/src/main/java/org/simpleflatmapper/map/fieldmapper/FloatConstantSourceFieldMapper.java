@@ -2,11 +2,7 @@ package org.simpleflatmapper.map.fieldmapper;
 
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.getter.FloatContextualGetter;
-import org.simpleflatmapper.map.setter.ContextualSetterAdapter;
-import org.simpleflatmapper.map.setter.FloatContextualSetter;
-import org.simpleflatmapper.reflect.primitive.FloatGetter;
 import org.simpleflatmapper.reflect.primitive.FloatSetter;
 
 public final class FloatConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {

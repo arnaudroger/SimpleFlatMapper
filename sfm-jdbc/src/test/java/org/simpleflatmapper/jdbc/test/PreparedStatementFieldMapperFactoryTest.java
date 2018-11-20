@@ -53,7 +53,6 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 public class PreparedStatementFieldMapperFactoryTest {
@@ -489,7 +488,7 @@ public class PreparedStatementFieldMapperFactoryTest {
     @Test
     public void testJavaLocalDateTime() throws Exception {
         java.time.LocalDateTime value = java.time.LocalDateTime.now();
-        java.time.ZoneId zoneId = ZoneId.of("America/Los_Angeles");
+        ZoneId zoneId = ZoneId.of("America/Los_Angeles");
 
         newFieldMapperAndMapToPS(new ConstantGetter<Object, java.time.LocalDateTime>(value),  java.time.LocalDateTime.class, new JavaZoneIdProperty(zoneId));
         newFieldMapperAndMapToPS(NullGetter.<Object,  java.time.LocalDateTime>getter(), java.time.LocalDateTime.class);

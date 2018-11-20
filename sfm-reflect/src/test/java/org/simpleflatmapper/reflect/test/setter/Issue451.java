@@ -9,14 +9,13 @@ import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.reflect.setter.AppendCollectionSetter;
-import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 public class Issue451 {
     
@@ -34,6 +33,7 @@ public class Issue451 {
         });
 
         SubPropertyMeta f = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_f"), new Object[0], (TypeAffinity)null);
+        assertNotNull(f);
         SubPropertyMeta n = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_n"), new Object[0], (TypeAffinity)null);
 
         assertEquals(AppendCollectionSetter.class, n.getOwnerProperty().getSetter().getClass());

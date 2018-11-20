@@ -2,11 +2,7 @@ package org.simpleflatmapper.map.fieldmapper;
 
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.getter.LongContextualGetter;
-import org.simpleflatmapper.map.setter.ContextualSetterAdapter;
-import org.simpleflatmapper.map.setter.LongContextualSetter;
-import org.simpleflatmapper.reflect.primitive.LongGetter;
 import org.simpleflatmapper.reflect.primitive.LongSetter;
 
 public final class LongConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {

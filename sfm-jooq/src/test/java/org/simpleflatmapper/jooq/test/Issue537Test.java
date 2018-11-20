@@ -16,8 +16,6 @@ import org.simpleflatmapper.test.jdbc.DbHelper;
 
 //IFJAVA8_START
 
-import javax.money.CurrencyUnit;
-import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 //IFJAVA8_END
 import java.sql.Connection;

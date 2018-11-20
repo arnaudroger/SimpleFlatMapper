@@ -2,11 +2,7 @@ package org.simpleflatmapper.map.fieldmapper;
 
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.getter.ShortContextualGetter;
-import org.simpleflatmapper.map.setter.ContextualSetterAdapter;
-import org.simpleflatmapper.map.setter.ShortContextualSetter;
-import org.simpleflatmapper.reflect.primitive.ShortGetter;
 import org.simpleflatmapper.reflect.primitive.ShortSetter;
 
 public final class ShortConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {

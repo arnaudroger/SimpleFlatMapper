@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.csv.CsvWriter;
-import org.simpleflatmapper.csv.impl.ParsingException;
 
 import java.io.IOException;
 import java.io.StringReader;

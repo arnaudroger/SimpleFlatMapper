@@ -2,12 +2,8 @@ package org.simpleflatmapper.map.fieldmapper;
 
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
-import org.simpleflatmapper.map.getter.DoubleContextualGetter;
-import org.simpleflatmapper.map.setter.ContextualSetterAdapter;
 import org.simpleflatmapper.map.setter.DoubleContextualSetter;
 import org.simpleflatmapper.reflect.primitive.DoubleGetter;
-import org.simpleflatmapper.reflect.primitive.DoubleSetter;
 
 public final class DoubleConstantTargetFieldMapper<S, T> implements FieldMapper<S, T> {
 

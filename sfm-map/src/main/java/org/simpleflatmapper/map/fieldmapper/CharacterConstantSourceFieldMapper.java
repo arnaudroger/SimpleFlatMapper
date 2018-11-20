@@ -3,10 +3,6 @@ package org.simpleflatmapper.map.fieldmapper;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.getter.CharacterContextualGetter;
-import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
-import org.simpleflatmapper.map.setter.CharacterContextualSetter;
-import org.simpleflatmapper.map.setter.ContextualSetterAdapter;
-import org.simpleflatmapper.reflect.primitive.CharacterGetter;
 import org.simpleflatmapper.reflect.primitive.CharacterSetter;
 
 public final class CharacterConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {

@@ -1,8 +1,6 @@
 package org.simpleflatmapper.converter.test;
 
-import org.simpleflatmapper.converter.AbstractContextualConverterFactoryProducer;
 import org.simpleflatmapper.converter.AbstractConverterFactoryProducer;
-import org.simpleflatmapper.converter.ContextualConverterFactory;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
 import org.simpleflatmapper.util.Consumer;

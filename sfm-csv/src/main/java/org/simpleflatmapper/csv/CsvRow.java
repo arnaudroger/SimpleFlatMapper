@@ -341,7 +341,7 @@ public final class CsvRow implements CellConsumer {
             multmin = limit / RADIX;
             while (i < to) {
                 // Accumulating negatively avoids surprises near MAX_VALUE
-                digit = Character.digit(chars[i++],RADIX);
+                digit = digit(chars[i++]);
                 if (digit < 0) {
                     numberFormatException(chars, from, to);
                 }
@@ -358,6 +358,13 @@ public final class CsvRow implements CellConsumer {
             return 0;
         }
         return negative ? result : -result;
+    }
+    private static int digit(char c) {
+        if (c >= '0' && c <= '9') {
+            return c - '0';
+        } else {
+            return Character.digit(c, RADIX);
+        }
     }
 
     public static int numberFormatException(char[] chars, int from, int to) {

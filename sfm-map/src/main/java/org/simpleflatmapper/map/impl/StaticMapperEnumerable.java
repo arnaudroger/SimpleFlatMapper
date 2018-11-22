@@ -11,6 +11,7 @@ public class StaticMapperEnumerable<S, T> implements Enumerable<T> {
 
 
     private final Enumerable<S> sourceEnumerable;
+    private T currentValue;
 
     public StaticMapperEnumerable(SourceMapper<S, T> mapper,
                                   MappingContext<? super S> mappingContext,
@@ -22,12 +23,15 @@ public class StaticMapperEnumerable<S, T> implements Enumerable<T> {
 
     @Override
     public boolean next() {
-        return sourceEnumerable.next();
+        if (sourceEnumerable.next()) {
+            currentValue = mapper.map(sourceEnumerable.currentValue(), mappingContext);
+            return true;
+        } else return false;
     }
 
     @Override
     public T currentValue() {
-        return mapper.map(sourceEnumerable.currentValue(), mappingContext);
+        return currentValue;
     }
 
     @Override

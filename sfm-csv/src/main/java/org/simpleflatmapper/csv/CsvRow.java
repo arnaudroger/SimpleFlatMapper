@@ -1,5 +1,6 @@
 package org.simpleflatmapper.csv;
 
+import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
 import org.simpleflatmapper.lightningcsv.parser.CharBuffer;
 
 import java.math.BigDecimal;
@@ -7,15 +8,15 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.UUID;
 
-public final class CsvRow {
+public final class CsvRow implements CellConsumer {
 
     private final CsvColumnKey[] keys;
     private final int nbColumns;
     
     private final CharBuffer charBuffer;
-    
-    private int[] fieldsBoundaries;
-    private int currentIndex;
+
+    protected int[] fieldsBoundaries;
+    protected int currentIndex;
     protected int rowStartMark;
 
     public CsvRow(CsvColumnKey[] keys, int maxIndex, CharBuffer charBuffer) {
@@ -39,12 +40,15 @@ public final class CsvRow {
     }
 
     public void reset() {
-        Arrays.fill(fieldsBoundaries,  0);
+        int[] fieldsBoundaries = this.fieldsBoundaries;
+        for(int i = 0; i < fieldsBoundaries.length; i++)
+            fieldsBoundaries[i] = 0;
         currentIndex = 0;
     }
     
     public void addValue(int offset, int length) {
         int index = this.currentIndex;
+        int[] fieldsBoundaries = this.fieldsBoundaries;
         if (index + 1 < fieldsBoundaries.length) {
             fieldsBoundaries[index] = offset;
             fieldsBoundaries[index + 1] = length;
@@ -60,8 +64,9 @@ public final class CsvRow {
     
        
     public CharSequence getCharSequence(int i) {
-        int rowOffset = fieldsBoundaries[i * 2];
         int length = fieldsBoundaries[i * 2 + 1];
+        if (length == 0) return null;
+        int rowOffset = fieldsBoundaries[i * 2];
         return new CharSequenceImpl(charBuffer.buffer, rowStartMark + rowOffset, rowStartMark + rowOffset + length);
     }
 
@@ -70,7 +75,7 @@ public final class CsvRow {
         if (length == 0) return null;
 
         int rowOffset = fieldsBoundaries[i * 2];
-        return String.valueOf(charBuffer.buffer, rowStartMark + rowOffset, length);
+        return new String(charBuffer.buffer, rowStartMark + rowOffset, length);
     }
     
     public int length(int i) {
@@ -94,8 +99,9 @@ public final class CsvRow {
         return Short.parseShort(getString(i));
     }
     public int getInt(int i) {
-        if (isEmpty(i)) return 0;
-        return Integer.parseInt(getString(i));
+        int rowOffset = fieldsBoundaries[i * 2];
+        int length = fieldsBoundaries[i * 2 + 1];
+        return parseInt(charBuffer.buffer, rowStartMark + rowOffset, length);
     }
     public long getLong(int i) {
         if (isEmpty(i)) return 0;
@@ -221,6 +227,28 @@ public final class CsvRow {
         return true;
     }
 
+    @Override
+    public void newCell(char[] chars, int offset, int length) {
+        int index = currentIndex;
+        int[] fieldsBoundaries = this.fieldsBoundaries;
+        if (index + 1 < fieldsBoundaries.length) {
+            fieldsBoundaries[index] = offset - charBuffer.rowStartMark;
+            fieldsBoundaries[index + 1] = length;
+            currentIndex = index + 2;
+        }
+    }
+
+    @Override
+    public boolean endOfRow() {
+        rowStartMark = charBuffer.rowStartMark;
+        return true;
+    }
+
+    @Override
+    public void end() {
+        rowStartMark = charBuffer.rowStartMark;
+    }
+
     private static class CharSequenceImpl implements CharSequence {
         private final char[] buffer;
         private final int start;
@@ -279,5 +307,60 @@ public final class CsvRow {
         public String toString() {
             return String.valueOf(buffer, start, end - start);
         }
+    }
+
+
+    private static final int RADIX = 10;
+
+    public static int parseInt(char[] chars, int from, int len)
+            throws NumberFormatException
+    {
+
+        int result = 0;
+        boolean negative = false;
+        int i = from;
+        int to = from + len;
+        int limit = -Integer.MAX_VALUE;
+        int multmin;
+        int digit;
+
+        if (len > 0) {
+            char firstChar = chars[i];
+            if (firstChar < '0') { // Possible leading "+" or "-"
+                if (firstChar == '-') {
+                    negative = true;
+                    limit = Integer.MIN_VALUE;
+                } else if (firstChar != '+') {
+                    return numberFormatException(chars, from, to);
+                }
+
+                if (len == 1) // Cannot have lone "+" or "-"
+                    numberFormatException(chars, from, to);
+                i++;
+            }
+            multmin = limit / RADIX;
+            while (i < to) {
+                // Accumulating negatively avoids surprises near MAX_VALUE
+                digit = Character.digit(chars[i++],RADIX);
+                if (digit < 0) {
+                    numberFormatException(chars, from, to);
+                }
+                if (result < multmin) {
+                    numberFormatException(chars, from, to);
+                }
+                result *= RADIX;
+                if (result < limit + digit) {
+                    numberFormatException(chars, from, to);
+                }
+                result -= digit;
+            }
+        } else {
+            return 0;
+        }
+        return negative ? result : -result;
+    }
+
+    public static int numberFormatException(char[] chars, int from, int to) {
+        throw new NumberFormatException("For input string: \"" + new String(chars, from, to - from) + "\"");
     }
 }

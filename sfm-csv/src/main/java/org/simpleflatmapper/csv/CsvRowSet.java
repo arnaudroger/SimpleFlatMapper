@@ -3,6 +3,7 @@ package org.simpleflatmapper.csv;
 import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
 import org.simpleflatmapper.lightningcsv.parser.CharBuffer;
+import org.simpleflatmapper.util.Asserts;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
 
@@ -15,37 +16,32 @@ public final class CsvRowSet implements Enumerable<CsvRow> {
     private final CsvReader csvReader;
     private final CharBuffer charBuffer;
     private CsvRow currentRow;
+    private CellConsumer cellConsumer;
     private int limit;
     private CsvColumnKey[] keys;
     private boolean finished;
     
-    private final CellConsumer cellConsumer;
 
     public CsvRowSet(CsvReader csvReader, int limit) {
         this.csvReader = csvReader;
         this.charBuffer = csvReader.charBuffer();
         this.limit = limit;
-        this.cellConsumer = cellConsumer(csvReader);
     }
 
     public CsvRowSet(CsvReader csvReader, int limit, CsvColumnKey[] keys) {
         this.csvReader = csvReader;
         this.charBuffer = csvReader.charBuffer();
         this.currentRow = new CsvRow(keys, maxIndex(keys), charBuffer);
+        this.cellConsumer = csvReader.wrapConsumer(currentRow);
         this.limit = limit;
         this.keys = keys;
-        this.cellConsumer = cellConsumer(csvReader);
     }
-
-    private CellConsumer cellConsumer(CsvReader csvReader) {
-        return csvReader.wrapConsumer(new CsvRowCellConsumer());
-    }
-
 
     public CsvColumnKey[] getKeys() throws IOException {
         if (keys == null) {
             this.keys = fetchKeys();
             currentRow = new CsvRow(keys, maxIndex(keys), charBuffer);
+            cellConsumer = csvReader.wrapConsumer(currentRow);
         }
         return keys;
     }
@@ -119,21 +115,5 @@ public final class CsvRowSet implements Enumerable<CsvRow> {
         }
     }
 
-    private class CsvRowCellConsumer implements CellConsumer {
-        @Override
-        public void newCell(char[] chars, int offset, int length) {
-            currentRow.addValue(offset - charBuffer.rowStartMark, length);
-        }
-
-        @Override
-        public boolean endOfRow() {
-            currentRow.rowStartMark = charBuffer.rowStartMark;
-            return true;
-        }
-
-        @Override
-        public void end() {
-            currentRow.rowStartMark = charBuffer.rowStartMark;
-        }
-    }
+  
 }

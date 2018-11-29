@@ -6,6 +6,7 @@ import org.simpleflatmapper.lightningcsv.parser.CharBuffer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
 
 public final class CsvRow implements CellConsumer {
@@ -101,11 +102,12 @@ public final class CsvRow implements CellConsumer {
     public int getInt(int i) {
         int rowOffset = fieldsBoundaries[i * 2];
         int length = fieldsBoundaries[i * 2 + 1];
-        return parseInt(charBuffer.buffer, rowStartMark + rowOffset, length);
+        return parseInt(charBuffer.buffer, rowStartMark + rowOffset, rowStartMark + rowOffset + length);
     }
     public long getLong(int i) {
-        if (isEmpty(i)) return 0;
-        return Long.parseLong(getString(i));
+        int rowOffset = fieldsBoundaries[i * 2];
+        int length = fieldsBoundaries[i * 2 + 1];
+        return parseLong(charBuffer.buffer, rowStartMark + rowOffset, rowStartMark + rowOffset + length);
     }
     public float getFloat(int i) {
         if (isEmpty(i)) return 0;
@@ -310,64 +312,131 @@ public final class CsvRow implements CellConsumer {
     }
 
 
-    private static final int RADIX = 10;
+    private static final int radix = 10;
+    
 
-    public static int parseInt(char[] chars, int from, int len)
-            throws NumberFormatException
-    {
+    // copy of Integer.parseInt
+    public static int parseInt(char[] s, int beginIndex, int endIndex)
+            throws NumberFormatException {
+        s = Objects.requireNonNull(s);
 
-        int result = 0;
+        if (beginIndex < 0 || beginIndex > endIndex || endIndex > s.length) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (radix < Character.MIN_RADIX) {
+            throw new NumberFormatException("radix " + radix +
+                    " less than Character.MIN_RADIX");
+        }
+        if (radix > Character.MAX_RADIX) {
+            throw new NumberFormatException("radix " + radix +
+                    " greater than Character.MAX_RADIX");
+        }
+
         boolean negative = false;
-        int i = from;
-        int to = from + len;
+        int i = beginIndex;
         int limit = -Integer.MAX_VALUE;
-        int multmin;
-        int digit;
 
-        if (len > 0) {
-            char firstChar = chars[i];
+        if (i < endIndex) {
+            char firstChar = s[i];
             if (firstChar < '0') { // Possible leading "+" or "-"
                 if (firstChar == '-') {
                     negative = true;
                     limit = Integer.MIN_VALUE;
                 } else if (firstChar != '+') {
-                    return numberFormatException(chars, from, to);
+                    throw numberFormatExceptionforCharSequence(s, beginIndex,
+                            endIndex, i);
                 }
-
-                if (len == 1) // Cannot have lone "+" or "-"
-                    numberFormatException(chars, from, to);
                 i++;
+                if (i == endIndex) { // Cannot have lone "+" or "-"
+                    throw numberFormatExceptionforCharSequence(s, beginIndex,
+                            endIndex, i);
+                }
             }
-            multmin = limit / RADIX;
-            while (i < to) {
+            int multmin = limit / radix;
+            int result = 0;
+            while (i < endIndex) {
                 // Accumulating negatively avoids surprises near MAX_VALUE
-                digit = digit(chars[i++]);
-                if (digit < 0) {
-                    numberFormatException(chars, from, to);
+                int digit = Character.digit(s[i], radix);
+                if (digit < 0 || result < multmin) {
+                    throw numberFormatExceptionforCharSequence(s, beginIndex,
+                            endIndex, i);
                 }
-                if (result < multmin) {
-                    numberFormatException(chars, from, to);
-                }
-                result *= RADIX;
+                result *= radix;
                 if (result < limit + digit) {
-                    numberFormatException(chars, from, to);
+                    throw numberFormatExceptionforCharSequence(s, beginIndex,
+                            endIndex, i);
                 }
+                i++;
                 result -= digit;
             }
+            return negative ? result : -result;
         } else {
             return 0;
         }
-        return negative ? result : -result;
     }
-    private static int digit(char c) {
-        if (c >= '0' && c <= '9') {
-            return c - '0';
+
+    public static long parseLong(char[] s, int beginIndex, int endIndex)
+            throws NumberFormatException {
+        s = Objects.requireNonNull(s);
+
+        if (beginIndex < 0 || beginIndex > endIndex || endIndex > s.length) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (radix < Character.MIN_RADIX) {
+            throw new NumberFormatException("radix " + radix +
+                    " less than Character.MIN_RADIX");
+        }
+        if (radix > Character.MAX_RADIX) {
+            throw new NumberFormatException("radix " + radix +
+                    " greater than Character.MAX_RADIX");
+        }
+
+        boolean negative = false;
+        int i = beginIndex;
+        long limit = -Long.MAX_VALUE;
+
+        if (i < endIndex) {
+            char firstChar = s[i];
+            if (firstChar < '0') { // Possible leading "+" or "-"
+                if (firstChar == '-') {
+                    negative = true;
+                    limit = Long.MIN_VALUE;
+                } else if (firstChar != '+') {
+                    throw numberFormatExceptionforCharSequence(s, beginIndex,
+                            endIndex, i);
+                }
+                i++;
+            }
+            if (i >= endIndex) { // Cannot have lone "+", "-" or ""
+                throw numberFormatExceptionforCharSequence(s, beginIndex,
+                        endIndex, i);
+            }
+            long multmin = limit / radix;
+            long result = 0;
+            while (i < endIndex) {
+                // Accumulating negatively avoids surprises near MAX_VALUE
+                int digit = Character.digit(s[i], radix);
+                if (digit < 0 || result < multmin) {
+                    throw numberFormatExceptionforCharSequence(s, beginIndex,
+                            endIndex, i);
+                }
+                result *= radix;
+                if (result < limit + digit) {
+                    throw numberFormatExceptionforCharSequence(s, beginIndex,
+                            endIndex, i);
+                }
+                i++;
+                result -= digit;
+            }
+            return negative ? result : -result;
         } else {
-            return Character.digit(c, RADIX);
+            return 0;
         }
     }
 
-    public static int numberFormatException(char[] chars, int from, int to) {
-        throw new NumberFormatException("For input string: \"" + new String(chars, from, to - from) + "\"");
+    private static NumberFormatException numberFormatExceptionforCharSequence(char[] chars, int beginIndex, int endIndex, int errorIndex) {
+        return new NumberFormatException("Error at index "
+                + (errorIndex - beginIndex) + " in: \""
+                + new String(chars, beginIndex, endIndex - beginIndex) + "\"");
     }
 }

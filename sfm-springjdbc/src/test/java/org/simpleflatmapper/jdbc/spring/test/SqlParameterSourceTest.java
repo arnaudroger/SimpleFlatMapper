@@ -8,12 +8,14 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.sql.Types;
 
 //IFJAVA8_START
 import java.time.Instant;
 //IFJAVA8_END
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -58,6 +60,31 @@ public class SqlParameterSourceTest {
         assertEquals(Types.TIMESTAMP, parameterSource.getSqlType("instant"));
         assertEquals(new Timestamp(((Instant)data.instant).toEpochMilli()), parameterSource.getValue("instant"));
 
+    }
+    
+    @Test
+    public void testIssue589() {
+        SqlParameterSourceFactory<Issue589> parameterSourceFactory = JdbcTemplateMapperFactory.newInstance()
+                .ignorePropertyNotFound()
+                .addAlias("timestamp_", "timestamp")
+                .addColumnProperty("timestamp_", SqlTypeColumnProperty.of(Types.TIMESTAMP))
+                .newSqlParameterSourceFactory(Issue589.class);
+        
+        ZonedDateTime now = ZonedDateTime.now();
+        Issue589 issue589 = new Issue589(now);
+
+        SqlParameterSource sqlParameterSource = parameterSourceFactory.newSqlParameterSource(issue589);
+        
+        assertEquals(Types.TIMESTAMP, sqlParameterSource.getSqlType("timestamp_"));
+        assertEquals(new Timestamp(Date.from(now.toInstant()).getTime()), sqlParameterSource.getValue("timestamp_"));
+    }
+    
+    public static class Issue589 {
+        public final ZonedDateTime timestamp;
+
+        public Issue589(ZonedDateTime timestamp) {
+            this.timestamp = timestamp;
+        }
     }
     
     public class ObjectWithInstant {

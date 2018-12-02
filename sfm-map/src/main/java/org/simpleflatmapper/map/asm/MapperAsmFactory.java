@@ -21,7 +21,7 @@ public class MapperAsmFactory {
 	}
 
 
-    private final ConcurrentMap<MapperKey, Class<? extends SourceMapper<?, ?>>> fieldMapperCache = new ConcurrentHashMap<MapperKey, Class<? extends SourceMapper<?, ?>>>();
+    private final ConcurrentMap<MapperKey, Constructor<? extends SourceMapper<?, ?>>> fieldMapperCache = new ConcurrentHashMap<MapperKey, Constructor<? extends SourceMapper<?, ?>>>();
 
     private <S, T> String generateClassNameForFieldMapper(final FieldMapper<S, T>[] mappers, final FieldMapper<S, T>[] constructorMappers, final Class<? super S> source, final Class<T> target) {
         StringBuilder sb = new StringBuilder();
@@ -53,16 +53,16 @@ public class MapperAsmFactory {
                                                     final Class<T> target) throws Exception {
 
         MapperKey key = new MapperKey(keys, mappers, constructorMappers, instantiator, target, source);
-        Class<SourceMapper<S, T>> type = (Class<SourceMapper<S, T>>) fieldMapperCache.get(key);
-        if (type == null) {
+        Constructor<SourceMapper<S, T>> constructor = (Constructor<SourceMapper<S, T>>) fieldMapperCache.get(key);
+        if (constructor == null) {
 
             final String className = generateClassNameForFieldMapper(mappers, constructorMappers, source, target);
             final byte[] bytes = MapperAsmBuilder.dump(className, mappers, constructorMappers, source, target);
 
-            type = (Class<SourceMapper<S, T>>) asmFactory.createClass(className, bytes, target.getClass().getClassLoader());
-            fieldMapperCache.put(key, type);
+            Class<SourceMapper<S, T>> type = (Class<SourceMapper<S, T>>) asmFactory.createClass(className, bytes, target.getClass().getClassLoader());
+            constructor = (Constructor<SourceMapper<S, T>>) type.getDeclaredConstructors()[0];
+            fieldMapperCache.put(key, constructor);
         }
-        final Constructor<?> constructor = type.getDeclaredConstructors()[0];
         return (AbstractMapper<S, T>) constructor.newInstance(mappers, constructorMappers, instantiator);
     }
 }

@@ -1,5 +1,8 @@
 package org.simpleflatmapper.map.asm;
 
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapper;
+import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.ow2asm.ClassWriter;
 import org.simpleflatmapper.ow2asm.FieldVisitor;
 import org.simpleflatmapper.ow2asm.MethodVisitor;
@@ -7,7 +10,7 @@ import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.AbstractMapper;
 import org.simpleflatmapper.reflect.BiInstantiator;
-import org.simpleflatmapper.reflect.Instantiator;
+import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.asm.AsmUtils;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -29,6 +32,7 @@ import static org.simpleflatmapper.ow2asm.Opcodes.ASTORE;
 import static org.simpleflatmapper.ow2asm.Opcodes.CHECKCAST;
 import static org.simpleflatmapper.ow2asm.Opcodes.DUP;
 import static org.simpleflatmapper.ow2asm.Opcodes.GETFIELD;
+import static org.simpleflatmapper.ow2asm.Opcodes.INVOKEINTERFACE;
 import static org.simpleflatmapper.ow2asm.Opcodes.INVOKESPECIAL;
 import static org.simpleflatmapper.ow2asm.Opcodes.INVOKEVIRTUAL;
 import static org.simpleflatmapper.ow2asm.Opcodes.NEW;
@@ -40,16 +44,18 @@ import static org.simpleflatmapper.reflect.asm.AsmUtils.toTargetTypeDeclaration;
 
 public class MapperAsmBuilder {
 
-	private static final String ABSTRACT_MAPPER_TYPE = AsmUtils.toAsmType(AbstractMapper.class);
-	private static final String FIELD_MAPPER_TYPE = AsmUtils.toAsmType(FieldMapper.class);
-	private static final String INSTANTIATOR_TYPE = AsmUtils.toAsmType(BiInstantiator.class);
+    private static final String ABSTRACT_MAPPER_TYPE = AsmUtils.toAsmType(AbstractMapper.class);
+    private static final String FIELD_MAPPER_TYPE = AsmUtils.toAsmType(FieldMapper.class);
+    private static final String INSTANTIATOR_TYPE = AsmUtils.toAsmType(BiInstantiator.class);
 
     private static final String mappingContextType = AsmUtils.toAsmType(MappingContext.class);
+    public static final String FIELD_MAPPER_PREFIX = "fieldMapper";
+    public static final String CONSTRUCTOR_MAPPER_PREFIX = "constructorMapper";
 
-    public static <S,T> byte[] dump (
+    public static <S, T> byte[] dump(
             final String className,
-            final FieldMapper<? super S, ? super T>[] mappers,
-            final FieldMapper<? super S, ? super T>[] constructorMappers,
+            final FieldMapper<? super S, ? super T>[] _mappers,
+            final FieldMapper<? super S, ? super T>[] _constructorMappers,
             final Class<? super S> sourceClass,
             final Class<T> target
     ) throws Exception {
@@ -57,87 +63,100 @@ public class MapperAsmBuilder {
         MethodVisitor mv;
 
         final String targetType = AsmUtils.toAsmType(target);
-        final String classType = AsmUtils.toAsmType(className);
-		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType, "L" + ABSTRACT_MAPPER_TYPE + "<" + toTargetTypeDeclaration(targetType) + ">;", ABSTRACT_MAPPER_TYPE, null);
+        final String mapperClassType = AsmUtils.toAsmType(className);
+        cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, mapperClassType, "L" + ABSTRACT_MAPPER_TYPE + "<" + toTargetTypeDeclaration(targetType) + ">;", ABSTRACT_MAPPER_TYPE, null);
 
-		for(int i = 0; i < mappers.length; i++) {
-			declareMapperFields(cw, mappers[i], i);
-		}
-
-        for(int i = 0; i < constructorMappers.length; i++) {
-            declareConstructorMapperFields(cw, constructorMappers[i], i);
+        
+        MapperBuilder[] mappers = new MapperBuilder[_mappers.length];
+        for(int i = 0; i < mappers.length; i++) {
+            mappers[i] = newMapperBuilder(_mappers[i], FIELD_MAPPER_PREFIX, i);
+        }
+        
+        MapperBuilder[] constructorMappers = new MapperBuilder[_constructorMappers.length];
+        for(int i = 0; i < _constructorMappers.length; i++) {
+            constructorMappers[i] = newMapperBuilder(_constructorMappers[i], CONSTRUCTOR_MAPPER_PREFIX, i);
+        }
+        
+        
+        
+        for (int i = 0; i < mappers.length; i++) {
+            mappers[i].addDeclaration(cw);
         }
 
-		{
-			mv = cw.visitMethod(ACC_PUBLIC, "<init>",
-                            "([L" + FIELD_MAPPER_TYPE + ";"
-                            + "[L" + FIELD_MAPPER_TYPE + ";L"
-                            + INSTANTIATOR_TYPE + ";)V",
-                            "(" +
-                                    "[L" + FIELD_MAPPER_TYPE + "<" + toTargetTypeDeclaration(sourceClass)  + toTargetTypeDeclaration(targetType) + ">;" +
-                                    "[L" + FIELD_MAPPER_TYPE + "<" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + ">;" +
-                                    "L" + INSTANTIATOR_TYPE + "<" + toTargetTypeDeclaration(targetType) + ">;)V", null);
-
-			mv.visitCode();
-			mv.visitVarInsn(ALOAD, 0);
-			mv.visitVarInsn(ALOAD, 3);
-			mv.visitMethodInsn(INVOKESPECIAL, ABSTRACT_MAPPER_TYPE, "<init>",
-                    "(L" + INSTANTIATOR_TYPE + ";)V", false);
-			
-			
-			for(int i = 0; i < mappers.length; i++) {
-				addFieldMapperInit(mv,  mappers[i], i, classType);
-			}
-
-
-            for(int i = 0; i < constructorMappers.length; i++) {
-                addGConstructorFieldMapperInit(mv, constructorMappers[i], i, classType);
-            }
-			
-			mv.visitInsn(RETURN);
-			mv.visitMaxs(3, 3);
-			mv.visitEnd();
-		}
-		
-		{
-			mv = cw.visitMethod(ACC_PUBLIC + ACC_FINAL, "mapFields", "(" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType) +")V", null, new String[] { "java/lang/Exception" });
-			mv.visitCode();
-
-			for(int i = 0; i < mappers.length; i++) {
-				generateMappingCall(mv, mappers[i], i, classType, AsmUtils.toAsmType(sourceClass), targetType);
-			}
-			
-			mv.visitInsn(RETURN);
-			mv.visitMaxs(3, 3);
-		}
-		{
-			mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "mapFields", "(Ljava/lang/Object;Ljava/lang/Object;" + toTargetTypeDeclaration(mappingContextType) + ")V", null, new String[] { "java/lang/Exception" });
-			mv.visitCode();
-			mv.visitVarInsn(ALOAD, 0);
-			mv.visitVarInsn(ALOAD, 1);
-			mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(sourceClass));
-			mv.visitVarInsn(ALOAD, 2);
-			mv.visitTypeInsn(CHECKCAST, targetType);
-            mv.visitVarInsn(ALOAD, 3);
-			mv.visitMethodInsn(INVOKEVIRTUAL, classType, "mapFields", "(" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType)+ ")V", false);
-			mv.visitInsn(RETURN);
-			mv.visitMaxs(3, 3);
-			mv.visitEnd();
-		}
+        for (int i = 0; i < constructorMappers.length; i++) {
+            constructorMappers[i].addDeclaration(cw);
+        }
 
         {
-            mv = cw.visitMethod(ACC_PROTECTED + ACC_FINAL, "mapToFields", "(" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType)+  ")V", null, new String[]{"java/lang/Exception"});
+            mv = cw.visitMethod(ACC_PUBLIC, "<init>",
+                    "([L" + FIELD_MAPPER_TYPE + ";"
+                            + "[L" + FIELD_MAPPER_TYPE + ";L"
+                            + INSTANTIATOR_TYPE + ";)V",
+                    "(" +
+                            "[L" + FIELD_MAPPER_TYPE + "<" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + ">;" +
+                            "[L" + FIELD_MAPPER_TYPE + "<" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + ">;" +
+                            "L" + INSTANTIATOR_TYPE + "<" + toTargetTypeDeclaration(targetType) + ">;)V", null);
+
+            mv.visitCode();
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitVarInsn(ALOAD, 3);
+            mv.visitMethodInsn(INVOKESPECIAL, ABSTRACT_MAPPER_TYPE, "<init>",
+                    "(L" + INSTANTIATOR_TYPE + ";)V", false);
+
+
+            for (int i = 0; i < mappers.length; i++) {
+                mappers[i].addInit(mv, mapperClassType);
+            }
+
+
+            for (int i = 0; i < constructorMappers.length; i++) {
+                constructorMappers[i].addInit(mv, mapperClassType);
+            }
+
+            mv.visitInsn(RETURN);
+            mv.visitMaxs(3, 3);
+            mv.visitEnd();
+        }
+
+        {
+            mv = cw.visitMethod(ACC_PUBLIC + ACC_FINAL, "mapFields", "(" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType) + ")V", null, new String[]{"java/lang/Exception"});
             mv.visitCode();
 
-            for(int i = 0; i < constructorMappers.length; i++) {
-                generateConstructorMappingCall(mv, constructorMappers[i], i, classType, AsmUtils.toAsmType(sourceClass), targetType);
+            for (int i = 0; i < mappers.length; i++) {
+                mappers[i].addMappingCall(mv, mapperClassType);
+            }
+
+            mv.visitInsn(RETURN);
+            mv.visitMaxs(3, 3);
+        }
+        {
+            mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "mapFields", "(Ljava/lang/Object;Ljava/lang/Object;" + toTargetTypeDeclaration(mappingContextType) + ")V", null, new String[]{"java/lang/Exception"});
+            mv.visitCode();
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitVarInsn(ALOAD, 1);
+            mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(sourceClass));
+            mv.visitVarInsn(ALOAD, 2);
+            mv.visitTypeInsn(CHECKCAST, targetType);
+            mv.visitVarInsn(ALOAD, 3);
+            mv.visitMethodInsn(INVOKEVIRTUAL, mapperClassType, "mapFields", "(" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType) + ")V", false);
+            mv.visitInsn(RETURN);
+            mv.visitMaxs(3, 3);
+            mv.visitEnd();
+        }
+
+        {
+            mv = cw.visitMethod(ACC_PROTECTED + ACC_FINAL, "mapToFields", "(" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType) + ")V", null, new String[]{"java/lang/Exception"});
+            mv.visitCode();
+
+            for (int i = 0; i < constructorMappers.length; i++) {
+                constructorMappers[i].addMappingCall(mv, mapperClassType);
             }
 
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(ALOAD, 2);
             mv.visitVarInsn(ALOAD, 3);
-            mv.visitMethodInsn(INVOKEVIRTUAL, classType, "mapFields", "(" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType)+  ")V", false);
+            mv.visitMethodInsn(INVOKEVIRTUAL, mapperClassType, "mapFields", "(" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType) + ")V", false);
             mv.visitInsn(RETURN);
             mv.visitMaxs(3, 3);
             mv.visitEnd();
@@ -151,7 +170,7 @@ public class MapperAsmBuilder {
             mv.visitVarInsn(ALOAD, 2);
             mv.visitTypeInsn(CHECKCAST, targetType);
             mv.visitVarInsn(ALOAD, 3);
-            mv.visitMethodInsn(INVOKEVIRTUAL, classType, "mapToFields", "(" +toTargetTypeDeclaration(sourceClass) +  toTargetTypeDeclaration(targetType)+ toTargetTypeDeclaration(mappingContextType) + ")V", false);
+            mv.visitMethodInsn(INVOKEVIRTUAL, mapperClassType, "mapToFields", "(" + toTargetTypeDeclaration(sourceClass) + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType) + ")V", false);
             mv.visitInsn(RETURN);
             mv.visitMaxs(3, 3);
             mv.visitEnd();
@@ -177,8 +196,8 @@ public class MapperAsmBuilder {
 
             mv.visitVarInsn(ALOAD, 1);
 
-            for(int i = 0; i < mappers.length; i++) {
-                String mapperName =  ", fieldMapper" + i + "=";
+            for (int i = 0; i < mappers.length; i++) {
+                String mapperName = ", " + FIELD_MAPPER_PREFIX + i + "=";
                 String mapper = String.valueOf(mappers[i]);
 
                 mv.visitLdcInsn(mapperName);
@@ -190,8 +209,8 @@ public class MapperAsmBuilder {
 
             }
 
-            for(int i = 0; i < constructorMappers.length; i++) {
-                String mapperName = ", constructorMapper" + i + "=";
+            for (int i = 0; i < constructorMappers.length; i++) {
+                String mapperName = ", " + CONSTRUCTOR_MAPPER_PREFIX + i + "=";
                 String mapper = String.valueOf(constructorMappers[i]);
 
                 mv.visitLdcInsn(mapperName);
@@ -200,7 +219,6 @@ public class MapperAsmBuilder {
                 mv.visitLdcInsn(mapper);
                 mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
             }
-
 
 
             mv.visitLdcInsn("}");
@@ -216,34 +234,22 @@ public class MapperAsmBuilder {
 
         cw.visitEnd();
 
-		return AsmUtils.writeClassToFile(className, cw.toByteArray());
-	}
-
-    private static <S, T> void generateMappingCall(MethodVisitor mv,
-			FieldMapper<S, T> mapper, int index, String classType, String sourceType, String targetType) {
-        generateMappingCall(mv, mapper, index, classType, sourceType, targetType, "fieldMapper");
-	}
-    private static <S, T> void generateConstructorMappingCall(MethodVisitor mv,
-                                                              FieldMapper<S, T> mapper, int index, String classType, String sourceType, String targetType) {
-        generateMappingCall(mv, mapper, index, classType, sourceType, targetType, "constructorMapper");
+        return AsmUtils.writeClassToFile(className, cw.toByteArray());
     }
 
-    private static <S, T> void generateMappingCall(MethodVisitor mv, FieldMapper<S, T> mapper, int index, String classType, String sourceType, String targetType, String variablePrefix) {
-        if (mapper ==null) return;
-        Type mapperClass = AsmUtils.findClosestPublicTypeExposing(mapper.getClass(), FieldMapper.class);
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD, classType, variablePrefix + index, "L" + AsmUtils.toAsmType(mapperClass) + ";");
-        mv.visitVarInsn(ALOAD, 1);
-        mv.visitVarInsn(ALOAD, 2);
-        mv.visitVarInsn(ALOAD, 3);
-
-        Method m = getMapToMethod(TypeHelper.toClass(mapperClass));
-        AsmUtils.invoke(mv, mapperClass, m);
+    private static <S, T> MapperBuilder newMapperBuilder(FieldMapper<? super S, ? super T> mapper, String fieldMapperPrefix, int i) {
+        if (mapper == null) return EmptyMapperBuilder.INSTANCE;
+        
+        if (mapper instanceof ConstantSourceFieldMapper) {
+            return new ConstantSourceFieldMapperBuilder<S, T>(mapper, i, fieldMapperPrefix);
+        }
+        return new DefaultMapperBuilder<S, T>(mapper, i, fieldMapperPrefix);
     }
+
 
     private static Method getMapToMethod(Class<?> aClass) {
         Method m = null;
-        for(Method p : aClass.getDeclaredMethods()) {
+        for (Method p : aClass.getDeclaredMethods()) {
             if (!Modifier.isStatic(p.getModifiers())
                     && p.getName().equals("mapTo")
                     && (p.getParameterTypes() != null && p.getParameterTypes().length == 3)) {
@@ -257,60 +263,138 @@ public class MapperAsmBuilder {
     }
 
 
-    private static <S, T> void addFieldMapperInit(MethodVisitor mv,
-                                                  FieldMapper<S, T> mapper, int index, String classType) {
-		if (mapper == null) return;
-		Type mapperClass = AsmUtils.findClosestPublicTypeExposing(mapper.getClass(), FieldMapper.class);
-		
-		mv.visitVarInsn(ALOAD, 0);
-		mv.visitVarInsn(ALOAD, 1);
-		AsmUtils.addIndex(mv, index);
-		mv.visitInsn(AALOAD);
-		mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(mapperClass));
-		mv.visitFieldInsn(PUTFIELD, classType, "fieldMapper" + index, toTargetTypeDeclaration(AsmUtils.toAsmType(mapperClass)));
+    
+    private interface MapperBuilder {
+        void addInit(MethodVisitor mv, String mapperClassType);
+        void addMappingCall(MethodVisitor mv, String mapperClassType) throws NoSuchMethodException;
+        void addDeclaration(ClassWriter cw);
+    }
+    
+    private static final class EmptyMapperBuilder implements MapperBuilder {
+        private static final EmptyMapperBuilder INSTANCE = new EmptyMapperBuilder();
+        @Override
+        public void addInit(MethodVisitor mv, String mapperClassType) {
+            
+        }
 
-	}
+        @Override
+        public void addMappingCall(MethodVisitor mv, String mapperClassType) {
 
-    private static <S, T> void addGConstructorFieldMapperInit(MethodVisitor mv,
-                                                              FieldMapper<S, T> mapper, int index, String classType) {
-        if (mapper == null) return;
-        Type mapperClass = AsmUtils.findClosestPublicTypeExposing(mapper.getClass(), FieldMapper.class);
+        }
 
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitVarInsn(ALOAD, 2);
-        AsmUtils.addIndex(mv, index);
-        mv.visitInsn(AALOAD);
-        mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(mapperClass));
-        mv.visitFieldInsn(PUTFIELD, classType, "constructorMapper" + index, toTargetTypeDeclaration(AsmUtils.toAsmType(mapperClass)));
+        @Override
+        public void addDeclaration(ClassWriter cw) {
 
+        }
+    }
+    
+    private static final class DefaultMapperBuilder<S, T> implements MapperBuilder {
+        private final FieldMapper<? super S, ? super T> mapper;
+        private final int index;
+        private final String prefix;
+
+        private DefaultMapperBuilder(FieldMapper<? super S, ? super T> mapper, int index, String prefix) {
+            this.mapper = mapper;
+            this.index = index;
+            this.prefix = prefix;
+        }
+
+        @Override
+        public void addInit(MethodVisitor mv, String mapperClassType) {
+            Type mapperClass = AsmUtils.findClosestPublicTypeExposing(mapper.getClass(), FieldMapper.class);
+
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitVarInsn(ALOAD, prefix == CONSTRUCTOR_MAPPER_PREFIX ? 2 : 1);
+            AsmUtils.addIndex(mv, index);
+            mv.visitInsn(AALOAD);
+            mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(mapperClass));
+            mv.visitFieldInsn(PUTFIELD, mapperClassType, prefix + index, toTargetTypeDeclaration(AsmUtils.toAsmType(mapperClass)));
+            
+        }
+
+        @Override
+        public void addMappingCall(MethodVisitor mv, String mapperClassType) {
+            Type mapperClass = AsmUtils.findClosestPublicTypeExposing(mapper.getClass(), FieldMapper.class);
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitFieldInsn(GETFIELD, mapperClassType, prefix + index, "L" + AsmUtils.toAsmType(mapperClass) + ";");
+            mv.visitVarInsn(ALOAD, 1);
+            mv.visitVarInsn(ALOAD, 2);
+            mv.visitVarInsn(ALOAD, 3);
+
+            Method m = getMapToMethod(TypeHelper.toClass(mapperClass));
+            AsmUtils.invoke(mv, mapperClass, m);
+        }
+
+        @Override
+        public void addDeclaration(ClassWriter cw) {
+            Type mapperClass = AsmUtils.findClosestPublicTypeExposing(mapper.getClass(), FieldMapper.class);
+            FieldVisitor fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, prefix + index, toTargetTypeDeclaration(AsmUtils.toAsmType(mapperClass)), toTargetTypeDeclaration(AsmUtils.toGenericAsmType(mapperClass)), null);
+            fv.visitEnd();
+        }
     }
 
-	private static <S, T> void declareMapperFields(ClassWriter cw,
-			FieldMapper<S, T> mapper, int index) {
-		if (mapper == null) 
-			return;
-		
-		FieldVisitor fv;
 
-        Type mapperClass = AsmUtils.findClosestPublicTypeExposing(mapper.getClass(), FieldMapper.class);
-        fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "fieldMapper" + index, toTargetTypeDeclaration(AsmUtils.toAsmType(mapperClass)), toTargetTypeDeclaration(AsmUtils.toGenericAsmType(mapperClass)), null);
-		fv.visitEnd();
+    private static final class ConstantSourceFieldMapperBuilder<S, T> implements MapperBuilder {
+        private final FieldMapper<? super S, ? super T> mapper;
+        
+        private final int index;
+        private final String prefix;
 
-	}
+        private ConstantSourceFieldMapperBuilder(FieldMapper<? super S, ? super T> mapper, int index, String prefix) {
+            this.mapper = mapper;
+            this.index = index;
+            this.prefix = prefix;
+        }
 
-    private static <S, T> void declareConstructorMapperFields(ClassWriter cw,
-                                                   FieldMapper<S, T> mapper, int index) {
-        if (mapper == null)
-            return;
+        @Override
+        public void addInit(MethodVisitor mv, String mapperClassType) {
+            String fieldMapperType = AsmUtils.toAsmType(ConstantSourceFieldMapper.class);
 
-        FieldVisitor fv;
-        Type mapperClass = AsmUtils.findClosestPublicTypeExposing(mapper.getClass(), FieldMapper.class);
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitVarInsn(ALOAD, prefix == CONSTRUCTOR_MAPPER_PREFIX ? 2 : 1);
+            AsmUtils.addIndex(mv, index);
+            mv.visitInsn(AALOAD);
+            mv.visitTypeInsn(CHECKCAST, fieldMapperType);
+            mv.visitFieldInsn(GETFIELD, fieldMapperType, "getter", toTargetTypeDeclaration(AsmUtils.toAsmType(ContextualGetter.class)));
+            mv.visitFieldInsn(PUTFIELD, mapperClassType, prefix + index + "Getter", toTargetTypeDeclaration(AsmUtils.toAsmType(ContextualGetter.class)));
+            
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitVarInsn(ALOAD, prefix == CONSTRUCTOR_MAPPER_PREFIX ? 2 : 1);
+            AsmUtils.addIndex(mv, index);
+            mv.visitInsn(AALOAD);
+            mv.visitTypeInsn(CHECKCAST, fieldMapperType);
+            mv.visitFieldInsn(GETFIELD, fieldMapperType, "setter", toTargetTypeDeclaration(AsmUtils.toAsmType(Setter.class)));
+            mv.visitFieldInsn(PUTFIELD, mapperClassType, prefix + index + "Setter", toTargetTypeDeclaration(AsmUtils.toAsmType(Setter.class)));
+        }
 
-        fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "constructorMapper" + index, toTargetTypeDeclaration(AsmUtils.toAsmType(mapperClass)), toTargetTypeDeclaration(AsmUtils.toGenericAsmType(mapperClass)), null);
-        fv.visitEnd();
+        @Override
+        public void addMappingCall(MethodVisitor mv, String mapperClassType) throws NoSuchMethodException {
 
+
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitFieldInsn(GETFIELD, mapperClassType, prefix + index + "Setter", toTargetTypeDeclaration(AsmUtils.toAsmType(Setter.class)));
+            mv.visitVarInsn(ALOAD, 2);
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitFieldInsn(GETFIELD, mapperClassType, prefix + index + "Getter", toTargetTypeDeclaration(AsmUtils.toAsmType(ContextualGetter.class)));
+            mv.visitVarInsn(ALOAD, 1);
+            mv.visitVarInsn(ALOAD, 3);
+            
+            
+            AsmUtils.invoke(mv, ContextualGetter.class, ContextualGetter.class.getMethod("get", Object.class, Context.class));
+            AsmUtils.invoke(mv, Setter.class, Setter.class.getMethod("set", Object.class, Object.class));
+        }
+
+        @Override
+        public void addDeclaration(ClassWriter cw) {
+            {
+                FieldVisitor fvGetter = cw.visitField(ACC_PRIVATE + ACC_FINAL, prefix + index + "Getter", toTargetTypeDeclaration(AsmUtils.toAsmType(ContextualGetter.class)), toTargetTypeDeclaration(AsmUtils.toGenericAsmType(ContextualGetter.class)), null);
+                fvGetter.visitEnd();
+            }
+            {
+                FieldVisitor fvSetter = cw.visitField(ACC_PRIVATE + ACC_FINAL, prefix + index+ "Setter", toTargetTypeDeclaration(AsmUtils.toAsmType(Setter.class)), toTargetTypeDeclaration(AsmUtils.toGenericAsmType(Setter.class)), null);
+                fvSetter.visitEnd();
+            }
+        }
     }
-
-
-
 }
+

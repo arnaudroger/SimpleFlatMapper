@@ -10,8 +10,8 @@ import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public final class ConstantSourceFieldMapper<S, T, P> implements FieldMapper<S, T> {
 	
-	private final ContextualGetter<? super S, ? extends P> getter;
-	private final Setter<? super T, ? super P> setter;
+	public final ContextualGetter<? super S, ? extends P> getter;
+	public final Setter<? super T, ? super P> setter;
 
 
 	public ConstantSourceFieldMapper(final ContextualGetter<? super S, ? extends P> getter, final Setter<? super T, ? super P> setter) {

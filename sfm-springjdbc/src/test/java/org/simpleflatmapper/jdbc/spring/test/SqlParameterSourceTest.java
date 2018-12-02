@@ -14,8 +14,8 @@ import java.sql.Types;
 
 //IFJAVA8_START
 import java.time.Instant;
-//IFJAVA8_END
 import java.time.ZonedDateTime;
+//IFJAVA8_END
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;

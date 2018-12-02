@@ -356,7 +356,7 @@ public final class CsvRow implements CellConsumer {
             int result = 0;
             while (i < endIndex) {
                 // Accumulating negatively avoids surprises near MAX_VALUE
-                int digit = Character.digit(s[i], radix);
+                int digit = digit(s[i]);
                 if (digit < 0 || result < multmin) {
                     throw numberFormatExceptionforCharSequence(s, beginIndex,
                             endIndex, i);
@@ -373,6 +373,13 @@ public final class CsvRow implements CellConsumer {
         } else {
             return 0;
         }
+    }
+
+    private static int digit(char c) {
+        if (c >= '0' && c <= '9') {
+            return c - '0';
+        }
+        return Character.digit(c, radix);
     }
 
     public static long parseLong(char[] s, int beginIndex, int endIndex)
@@ -415,7 +422,7 @@ public final class CsvRow implements CellConsumer {
             long result = 0;
             while (i < endIndex) {
                 // Accumulating negatively avoids surprises near MAX_VALUE
-                int digit = Character.digit(s[i], radix);
+                int digit = digit(s[i]);
                 if (digit < 0 || result < multmin) {
                     throw numberFormatExceptionforCharSequence(s, beginIndex,
                             endIndex, i);

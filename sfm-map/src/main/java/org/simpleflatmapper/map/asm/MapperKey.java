@@ -42,7 +42,7 @@ public class MapperKey<K extends  FieldKey<K>> {
     }
 
     private static Class<?>[] getClassArray(Object[] objects) {
-        List<Class<?>> classes = new ArrayList<>();
+        List<Class<?>> classes = new ArrayList<Class<?>>();
 
         if(objects != null) {
             int i = 0;

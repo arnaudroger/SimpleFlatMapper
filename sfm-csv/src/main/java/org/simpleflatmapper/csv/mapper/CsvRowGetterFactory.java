@@ -228,8 +228,8 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
         return null;
     }
 
-    private static class CsvCharSequenceGetter implements ContextualGetter<CsvRow, CharSequence> {
-        private final int index;
+    public static class CsvCharSequenceGetter implements ContextualGetter<CsvRow, CharSequence>, OptimizableIndexedContextualGetter {
+        public final int index;
 
         public CsvCharSequenceGetter(int index) {
             this.index = index;
@@ -237,12 +237,16 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public CharSequence get(CsvRow target, Context context)  {
+            return get(target, context, index);
+        }
+        
+        public static CharSequence get(CsvRow target, Context context, int index) {
             return target.getCharSequence(index);
         }
     }
 
-    private static class CsvBigIntegerGetter implements ContextualGetter<CsvRow, BigInteger> {
-        private final int index;
+    public static class CsvBigIntegerGetter implements ContextualGetter<CsvRow, BigInteger>, OptimizableIndexedContextualGetter {
+        public final int index;
 
         public CsvBigIntegerGetter(int index) {
             this.index = index;
@@ -250,12 +254,16 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public BigInteger get(CsvRow target, Context context)  {
+            return get(target, context, index);
+        }
+
+        public static BigInteger get(CsvRow target, Context context, int index) {
             return target.getBigInteger(index);
         }
     }
-    
-    private static class CsvBigDecimalGetter implements ContextualGetter<CsvRow, BigDecimal> {
-        private final int index;
+
+    public static class CsvBigDecimalGetter implements ContextualGetter<CsvRow, BigDecimal>, OptimizableIndexedContextualGetter {
+        public final int index;
 
         public CsvBigDecimalGetter(int index) {
             this.index = index;
@@ -263,12 +271,16 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public BigDecimal get(CsvRow target, Context context)  {
+            return get(target, context, index);
+        }
+
+        public static BigDecimal get(CsvRow target, Context context, int index) {
             return target.getBigDecimal(index);
         }
     }
-    
-    private static class CsvStringGetter implements ContextualGetter<CsvRow, String> {
-        private final int index;
+
+    public static class CsvStringGetter implements ContextualGetter<CsvRow, String>, OptimizableIndexedContextualGetter {
+        public final int index;
 
         public CsvStringGetter(int index) {
             this.index = index;
@@ -276,11 +288,15 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public String get(CsvRow target, Context context)  {
+            return get(target, context, index);
+        }
+
+        public static String get(CsvRow target, Context context, int index) {
             return target.getString(index);
         }
     }
-    private static class CsvByteGetter implements ContextualGetter<CsvRow, Byte>, ByteContextualGetter<CsvRow> {
-        private final int index;
+    public static class CsvByteGetter implements ContextualGetter<CsvRow, Byte>, ByteContextualGetter<CsvRow>, OptimizableIndexedContextualGetter {
+        public final int index;
 
         public CsvByteGetter(int index) {
             this.index = index;
@@ -288,17 +304,25 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public Byte get(CsvRow target, Context context)  {
+            return get(target, context, index);
+        }
+
+        public static Byte get(CsvRow target, Context context, int index) {
             return target.getByte(index);
         }
 
         @Override
         public byte getByte(CsvRow target, Context context)  {
+            return getByte(target, context, index);
+        }
+
+        public static byte getByte(CsvRow target, Context context, int index) {
             return target.getByte(index);
         }
     }
 
-    private static class CsvCharGetter implements ContextualGetter<CsvRow, Character>, CharacterContextualGetter<CsvRow> {
-        private final int index;
+    public static class CsvCharGetter implements ContextualGetter<CsvRow, Character>, CharacterContextualGetter<CsvRow>, OptimizableIndexedContextualGetter {
+        public final int index;
 
         public CsvCharGetter(int index) {
             this.index = index;
@@ -306,17 +330,25 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public Character get(CsvRow target, Context context)  {
+            return get(target, context, index);
+        }
+
+        public static Character get(CsvRow target, Context context, int index) {
             return target.getChar(index);
         }
 
         @Override
         public char getCharacter(CsvRow target, Context context)  {
+            return getCharacter(target, context, index);
+        }
+
+        public static char getCharacter(CsvRow target, Context context, int index) {
             return target.getChar(index);
         }
     }
 
-    private static class CsvShortGetter implements ContextualGetter<CsvRow, Short>, ShortContextualGetter<CsvRow> {
-        private final int index;
+    public static class CsvShortGetter implements ContextualGetter<CsvRow, Short>, ShortContextualGetter<CsvRow>, OptimizableIndexedContextualGetter {
+        public final int index;
 
         public CsvShortGetter(int index) {
             this.index = index;
@@ -324,17 +356,25 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public Short get(CsvRow target, Context context)  {
+            return get(target, context, index);
+        }
+
+        public static Short get(CsvRow target, Context context, int index) {
             return target.getShort(index);
         }
 
         @Override
         public short getShort(CsvRow target, Context context)  {
+            return getShort(target, context, index);
+        }
+
+        public static short getShort(CsvRow target, Context context, int index) {
             return target.getShort(index);
         }
     }
 
-    private static class CsvIntegerGetter implements ContextualGetter<CsvRow, Integer>, IntContextualGetter<CsvRow> {
-        private final int index;
+    public static class CsvIntegerGetter implements ContextualGetter<CsvRow, Integer>, IntContextualGetter<CsvRow>, OptimizableIndexedContextualGetter {
+        public final int index;
 
         public CsvIntegerGetter(int index) {
             this.index = index;
@@ -342,17 +382,25 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public Integer get(CsvRow target, Context context)  {
+            return get(target, context, index);
+        }
+
+        public static Integer get(CsvRow target, Context context, int index) {
             return target.getInt(index);
         }
 
         @Override
         public int getInt(CsvRow target, Context context)  {
+            return getInt(target, context, index);
+        }
+
+        public static int getInt(CsvRow target, Context context, int index) {
             return target.getInt(index);
         }
     }
 
-    private static class CsvLongGetter implements ContextualGetter<CsvRow, Long>, LongContextualGetter<CsvRow> {
-        private final int index;
+    public static class CsvLongGetter implements ContextualGetter<CsvRow, Long>, LongContextualGetter<CsvRow>, OptimizableIndexedContextualGetter {
+        public final int index;
 
         public CsvLongGetter(int index) {
             this.index = index;
@@ -360,17 +408,25 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public Long get(CsvRow target, Context context)  {
+            return CsvLongGetter.this.get(target, context, index);
+        }
+
+        public static Long get(CsvRow target, Context context, int index) {
             return target.getLong(index);
         }
 
         @Override
         public long getLong(CsvRow target, Context context)  {
+            return getLong(target, context, index);
+        }
+
+        public static long getLong(CsvRow target, Context context, int index) {
             return target.getLong(index);
         }
     }
 
-    private static class CsvFloatGetter implements ContextualGetter<CsvRow, Float>, FloatContextualGetter<CsvRow> {
-        private final int index;
+    public static class CsvFloatGetter implements ContextualGetter<CsvRow, Float>, FloatContextualGetter<CsvRow>, OptimizableIndexedContextualGetter {
+        public final int index;
 
         public CsvFloatGetter(int index) {
             this.index = index;
@@ -378,17 +434,25 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public Float get(CsvRow target, Context context)  {
+            return CsvFloatGetter.this.get(target, context, index);
+        }
+
+        public static Float get(CsvRow target, Context context, int index) {
             return target.getFloat(index);
         }
 
         @Override
         public float getFloat(CsvRow target, Context context)  {
+            return getFloat(target, context, index);
+        }
+
+        public static float getFloat(CsvRow target, Context context, int index) {
             return target.getFloat(index);
         }
     }
 
-    private static class CsvDoubleGetter implements ContextualGetter<CsvRow, Double>, DoubleContextualGetter<CsvRow> {
-        private final int index;
+    public static class CsvDoubleGetter implements ContextualGetter<CsvRow, Double>, DoubleContextualGetter<CsvRow>, OptimizableIndexedContextualGetter {
+        public final int index;
 
         public CsvDoubleGetter(int index) {
             this.index = index;
@@ -396,17 +460,25 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public Double get(CsvRow target, Context context)  {
+            return get(target, context, index);
+        }
+
+        public static double get(CsvRow target, Context context, int index) {
             return target.getDouble(index);
         }
 
         @Override
         public double getDouble(CsvRow target, Context context)  {
+            return getDouble(target, context, index);
+        }
+
+        public static double getDouble(CsvRow target, Context context, int index) {
             return target.getDouble(index);
         }
     }
 
-    private static class CsvBooleanGetter implements ContextualGetter<CsvRow, Boolean>, BooleanContextualGetter<CsvRow> {
-        private final int index;
+    public static class CsvBooleanGetter implements ContextualGetter<CsvRow, Boolean>, BooleanContextualGetter<CsvRow>, OptimizableIndexedContextualGetter{
+        public final int index;
 
         public CsvBooleanGetter(int index) {
             this.index = index;
@@ -414,17 +486,25 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
         @Override
         public Boolean get(CsvRow target, Context context)  {
+            return get(target, context, index);
+        }
+
+        public static boolean get(CsvRow target, Context context, int index) {
             return target.getBoolean(index);
         }
 
         @Override
         public boolean getBoolean(CsvRow target, Context context)  {
+            return getBoolean(target, context, index);
+        }
+
+        public static boolean getBoolean(CsvRow target, Context context, int index) {
             return target.getBoolean(index);
         }
     }
 
-    private static class CsvBoxedByteGetter implements ContextualGetter<CsvRow, Byte> {
-        private final int index;
+    public static class CsvBoxedByteGetter implements ContextualGetter<CsvRow, Byte> {
+        public final int index;
 
         public CsvBoxedByteGetter(int index) {
             this.index = index;
@@ -436,8 +516,8 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
         }
     }
 
-    private static class CsvBoxedCharGetter implements ContextualGetter<CsvRow, Character> {
-        private final int index;
+    public static class CsvBoxedCharGetter implements ContextualGetter<CsvRow, Character> {
+        public final int index;
 
         public CsvBoxedCharGetter(int index) {
             this.index = index;
@@ -450,8 +530,8 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
     }
 
-    private static class CsvBoxedShortGetter implements ContextualGetter<CsvRow, Short> {
-        private final int index;
+    public static class CsvBoxedShortGetter implements ContextualGetter<CsvRow, Short> {
+        public final int index;
 
         public CsvBoxedShortGetter(int index) {
             this.index = index;
@@ -464,8 +544,8 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
 
     }
 
-    private static class CsvBoxedIntegerGetter implements ContextualGetter<CsvRow, Integer> {
-        private final int index;
+    public static class CsvBoxedIntegerGetter implements ContextualGetter<CsvRow, Integer> {
+        public final int index;
 
         public CsvBoxedIntegerGetter(int index) {
             this.index = index;
@@ -477,8 +557,8 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
         }
     }
 
-    private static class CsvBoxedLongGetter implements ContextualGetter<CsvRow, Long> {
-        private final int index;
+    public static class CsvBoxedLongGetter implements ContextualGetter<CsvRow, Long> {
+        public final int index;
 
         public CsvBoxedLongGetter(int index) {
             this.index = index;
@@ -490,8 +570,8 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
         }
     }
 
-    private static class CsvBoxedFloatGetter implements ContextualGetter<CsvRow, Float> {
-        private final int index;
+    public static class CsvBoxedFloatGetter implements ContextualGetter<CsvRow, Float> {
+        public final int index;
 
         public CsvBoxedFloatGetter(int index) {
             this.index = index;
@@ -502,9 +582,9 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
             return target.getBoxedFloat(index);
         }
     }
-    
-    private static class CsvBoxedDoubleGetter implements ContextualGetter<CsvRow, Double> {
-        private final int index;
+
+    public static class CsvBoxedDoubleGetter implements ContextualGetter<CsvRow, Double> {
+        public final int index;
 
         public CsvBoxedDoubleGetter(int index) {
             this.index = index;
@@ -516,8 +596,8 @@ public class CsvRowGetterFactory implements ContextualGetterFactory<CsvRow, CsvC
         }
     }
 
-    private static class CsvBoxedBooleanGetter implements ContextualGetter<CsvRow, Boolean> {
-        private final int index;
+    public static class CsvBoxedBooleanGetter implements ContextualGetter<CsvRow, Boolean> {
+        public final int index;
 
         public CsvBoxedBooleanGetter(int index) {
             this.index = index;

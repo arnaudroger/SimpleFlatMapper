@@ -344,7 +344,11 @@ public class AsmUtils {
 	}
 
 	public static void invoke(MethodVisitor mv, Type target, Method method) {
-		invoke(mv, target, method.getName(), toSignature(method));
+		if (Modifier.isStatic(method.getModifiers())) {
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, toAsmType(method.getDeclaringClass()), method.getName(), toSignature(method), false);
+		} else {
+			invoke(mv, target, method.getName(), toSignature(method));
+		}
 	}
     public static void invoke(MethodVisitor mv, Type target,
 			String method, String sig) {

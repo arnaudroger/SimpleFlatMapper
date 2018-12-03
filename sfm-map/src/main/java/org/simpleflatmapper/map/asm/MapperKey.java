@@ -6,7 +6,11 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MapperKey<K extends  FieldKey<K>> {
 
@@ -19,35 +23,59 @@ public class MapperKey<K extends  FieldKey<K>> {
 
 
     public MapperKey(K[] keys,
-                     FieldMapper<?, ?>[] fieldMappers,
-                     FieldMapper<?, ?>[] constructorFieldMappers,
+                     Class<?>[] fieldMappers,
+                     Class<?>[] constructorFieldMappers,
                      BiInstantiator<?, ?, ?> instantiator,
                      Class<?> target, Class<?> source) {
         this.keys = keys;
         this.source = source;
-        this.fieldMappers = getClassArray(fieldMappers);
-        this.constructorFieldMappers = getClassArray(constructorFieldMappers);
-        this.instantiator = getClass(instantiator);
+        this.fieldMappers = fieldMappers;
+        this.constructorFieldMappers = constructorFieldMappers;
+        this.instantiator = instantiator != null ? instantiator.getClass() : null;
         this.target = target;
     }
 
-    private Class<?>[] getClassArray(Object[] objects) {
-        Class<?>[] classes = new Class[objects != null ? objects.length : 0];
+    public static <T, S> MapperKey of(FieldKey<?>[] keys, FieldMapper<S, T>[] mappers, FieldMapper<S, T>[] constructorMappers, BiInstantiator<S, MappingContext<? super S>, T> instantiator, Class<T> target, Class<? super S> source) {
+        Class<?>[] mappersClass = getClassArray(mappers);
+        Class<?>[] constructorClass = getClassArray(constructorMappers);
+        return new MapperKey(keys, mappersClass, constructorClass, instantiator, target, source);
+    }
+
+    private static Class<?>[] getClassArray(Object[] objects) {
+        List<Class<?>> classes = new ArrayList<>();
 
         if(objects != null) {
             int i = 0;
             for(Object o : objects) {
-                classes[i] = getClass(o);
+                addClass(o, classes);
                 i++;
             }
         }
 
-        return classes;
+        return classes.toArray(new Class[0]);
     }
 
-    private Class<?> getClass(Object o) {
-        if (o != null) return o.getClass();
-        return null;
+    private static void addClass(Object o, List<Class<?>> classes) {
+        if (o == null) return;
+        
+        classes.add(o.getClass());
+        // add visible getter and setter
+        try {
+            for(String fieldName : new String[] {"getter", "setter"}) {
+                Field field = o.getClass().getDeclaredField(fieldName);
+                if (Modifier.isPublic(field.getModifiers())) {
+                    Object g = field.get(o);
+                    if (g != null) {
+                        classes.add(g.getClass());
+                    }
+                }
+
+            }
+        } catch(Exception e) {
+//            System.out.println("e = " + e);
+            //
+        }
+        
     }
 
 

@@ -52,7 +52,7 @@ public class MapperAsmFactory {
                                                     final Class<? super S> source,
                                                     final Class<T> target) throws Exception {
 
-        MapperKey key = new MapperKey(keys, mappers, constructorMappers, instantiator, target, source);
+        MapperKey key = MapperKey.of(keys, mappers, constructorMappers, instantiator, target, source);
         Constructor<SourceMapper<S, T>> constructor = (Constructor<SourceMapper<S, T>>) fieldMapperCache.get(key);
         if (constructor == null) {
 

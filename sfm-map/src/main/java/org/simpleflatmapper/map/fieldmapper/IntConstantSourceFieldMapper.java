@@ -9,8 +9,8 @@ import static java.util.Objects.requireNonNull;
 
 public final class IntConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final IntContextualGetter<? super S> getter;
-	private final IntSetter<? super T> setter;
+	public final IntContextualGetter<? super S> getter;
+	public final IntSetter<? super T> setter;
 	
  	public IntConstantSourceFieldMapper(final IntContextualGetter<? super S> getter, final IntSetter<? super T> setter) {
 		this.getter = requireNonNull(getter);

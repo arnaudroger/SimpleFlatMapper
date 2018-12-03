@@ -7,8 +7,8 @@ import org.simpleflatmapper.reflect.primitive.FloatSetter;
 
 public final class FloatConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final FloatContextualGetter<? super S> getter;
-	private final FloatSetter<? super T> setter;
+	public final FloatContextualGetter<? super S> getter;
+	public final FloatSetter<? super T> setter;
 	
  	public FloatConstantSourceFieldMapper(final FloatContextualGetter<? super S> getter, final FloatSetter<? super T> setter) {
 		this.getter = getter;

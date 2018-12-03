@@ -7,8 +7,8 @@ import org.simpleflatmapper.reflect.primitive.ShortSetter;
 
 public final class ShortConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final ShortContextualGetter<? super S> getter;
-	private final ShortSetter<? super T> setter;
+	public final ShortContextualGetter<? super S> getter;
+	public final ShortSetter<? super T> setter;
 	
  	public ShortConstantSourceFieldMapper(final ShortContextualGetter<? super S> getter, final ShortSetter<? super T> setter) {
 		this.getter = getter;

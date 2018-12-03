@@ -72,32 +72,35 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 						final int cellEnd = currentIndex;
 
 						currentIndex++;
-
-						if (character == separatorChar) { // separator
-							cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
-							csvBuffer.cellStartMark = currentIndex;
-							currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
-							continue;
-						} else if (character == LF) { // \n
-							if ((currentState & LAST_CHAR_WAS_CR) == 0) {
+						if ((character & separatorFingerPrintMask) == separatorFingerPrint) {
+							if (character == separatorChar) { // separator
+								cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
+								csvBuffer.cellStartMark = currentIndex;
+								currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
+								continue;
+							} else if (character == LF) { // \n
+								if ((currentState & LAST_CHAR_WAS_CR) == 0) {
+									cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
+									cellConsumer.endOfRow();
+								}
+								markEndOfRow(currentIndex);
+								currentState = NONE;
+								continue;
+							} else if (character == CR) { // \r
 								cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
 								cellConsumer.endOfRow();
+								markEndOfRow(currentIndex);
+								currentState = LAST_CHAR_WAS_CR;
+								continue;
 							}
-							markEndOfRow(currentIndex);
-							currentState = NONE;
-							continue;
-						} else if (character == CR) { // \r
-							cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
-							cellConsumer.endOfRow();
-							markEndOfRow(currentIndex);
-							currentState = LAST_CHAR_WAS_CR;
-							continue;
-						} else if ((currentState & (QUOTED|CELL_DATA)) == (CELL_DATA)) {
+						} 
+						
+						if ((currentState & (QUOTED|CELL_DATA)) == (CELL_DATA)) {
 							while(currentIndex < bufferSize) {
 								final char c = chars[currentIndex];
 								final int ce = currentIndex;
 								currentIndex++;
-								if (((c & separatorFingerPrintMask) == separatorFingerPrint) && c == separatorChar || c == LF || c == CR) { // separator
+								if (((c & separatorFingerPrintMask) == separatorFingerPrint) && (c == separatorChar || c == LF || c == CR)) { // separator
 									cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, ce, cellConsumer, currentState);
 									if (c == separatorChar) {
 										currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
@@ -111,13 +114,17 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 								}
 							}
 							continue;
-						} else if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { // no cell data | quoted
+						} 
+						
+						if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { // no cell data | quoted
 							currentState =
 									  QUOTED_AREA
 									| QUOTED
 									| ((currentState & QUOTED) << 5); // if already quoted it's a double quot need to escape QUOTED << 5 is  CONTAINS_ESCAPED_CHAR
 							break;
-						} else if (yamlComment && (currentState & (CELL_DATA | ROW_DATA)) == 0 && character == COMMENT) {
+						} 
+						
+						if (yamlComment && (currentState & (CELL_DATA | ROW_DATA)) == 0 && character == COMMENT) {
 							currentState |= COMMENTED;
 							break;
 						}
@@ -192,33 +199,37 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 
 							currentIndex++;
 
-							if (character == separatorChar) { // separator
-								cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
-								csvBuffer.cellStartMark = currentIndex;
-								currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
-								continue;
-							} else if (character == LF) { // \n
-								if ((currentState & LAST_CHAR_WAS_CR) == 0) {
+							if ((character & separatorFingerPrintMask) == separatorFingerPrint) {
+								if (character == separatorChar) { // separator
 									cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
+									csvBuffer.cellStartMark = currentIndex;
+									currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
+									continue;
+								} else if (character == LF) { // \n
+									if ((currentState & LAST_CHAR_WAS_CR) == 0) {
+										cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
+										if (cellConsumer.endOfRow()) {
+											markEndOfRow(currentIndex);
+											currentState = NONE;
+											return true;
+										}
+									}
+									markEndOfRow(currentIndex);
+									currentState = NONE;
+									continue;
+								} else if (character == CR) { // \r
+									cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
+									currentState = LAST_CHAR_WAS_CR;
 									if (cellConsumer.endOfRow()) {
 										markEndOfRow(currentIndex);
-										currentState = NONE;
 										return true;
 									}
-								}
-								markEndOfRow(currentIndex);
-								currentState = NONE;
-								continue;
-							} else if (character == CR) { // \r
-								cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
-								currentState = LAST_CHAR_WAS_CR;
-								if (cellConsumer.endOfRow()) {
 									markEndOfRow(currentIndex);
-									return true;
+									continue;
 								}
-								markEndOfRow(currentIndex);
-								continue;
-							} else if ((currentState & (QUOTED | CELL_DATA)) == (CELL_DATA)) {
+							}
+								
+							if ((currentState & (QUOTED | CELL_DATA)) == (CELL_DATA)) {
 								// unquoted cell looks for separator
 								while (currentIndex < bufferSize) {
 									final char c = chars[currentIndex];
@@ -242,14 +253,18 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 									}
 								}
 								continue;
-							} else if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { 
+							}
+							
+							if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { 
 								// no cell data | quoted  quote is first character
 								currentState =
 										QUOTED_AREA
 												| QUOTED
 												| ((currentState & QUOTED) << 5); // if already quoted it's a double quot need to escape QUOTED << 5 is  CONTAINS_ESCAPED_CHAR
 								break;
-							} else if ((currentState & (CELL_DATA | ROW_DATA)) == 0 && yamlComment && character == COMMENT) { 
+							} 
+							
+							if ((currentState & (CELL_DATA | ROW_DATA)) == 0 && yamlComment && character == COMMENT) { 
 								// no cell data or row data comment is first character
 								currentState |= COMMENTED;
 								break;

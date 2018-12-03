@@ -11,8 +11,8 @@ import org.simpleflatmapper.reflect.primitive.ByteSetter;
 
 public final class ByteConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final ByteContextualGetter<? super S> getter;
-	private final ByteSetter<? super T> setter;
+	public final ByteContextualGetter<? super S> getter;
+	public final ByteSetter<? super T> setter;
 	
  	public ByteConstantSourceFieldMapper(final ByteContextualGetter<? super S> getter, final ByteSetter<? super T> setter) {
 		this.getter = getter;

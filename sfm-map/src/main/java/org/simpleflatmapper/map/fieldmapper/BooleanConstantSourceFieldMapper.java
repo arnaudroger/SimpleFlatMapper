@@ -11,8 +11,8 @@ import org.simpleflatmapper.reflect.primitive.BooleanSetter;
 
 public final class BooleanConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final BooleanContextualGetter<? super S> getter;
-	private final BooleanSetter<? super T> setter;
+	public final BooleanContextualGetter<? super S> getter;
+	public final BooleanSetter<? super T> setter;
 	
  	public BooleanConstantSourceFieldMapper(final BooleanContextualGetter<? super S> getter, final BooleanSetter<? super T> setter) {
 		this.getter = getter;

@@ -7,8 +7,8 @@ import org.simpleflatmapper.reflect.primitive.CharacterSetter;
 
 public final class CharacterConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final CharacterContextualGetter<? super S> getter;
-	private final CharacterSetter<? super T> setter;
+	public final CharacterContextualGetter<? super S> getter;
+	public final CharacterSetter<? super T> setter;
 	
  	public CharacterConstantSourceFieldMapper(final CharacterContextualGetter<? super S> getter, final CharacterSetter<? super T> setter) {
 		this.getter = getter;

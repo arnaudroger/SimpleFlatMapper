@@ -11,8 +11,8 @@ import org.simpleflatmapper.reflect.primitive.DoubleSetter;
 
 public final class DoubleConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final DoubleContextualGetter<? super S> getter;
-	private final DoubleSetter<? super T> setter;
+	public final DoubleContextualGetter<? super S> getter;
+	public final DoubleSetter<? super T> setter;
 	
  	public DoubleConstantSourceFieldMapper(final DoubleContextualGetter<? super S> getter, final DoubleSetter<? super T> setter) {
 		this.getter = getter;

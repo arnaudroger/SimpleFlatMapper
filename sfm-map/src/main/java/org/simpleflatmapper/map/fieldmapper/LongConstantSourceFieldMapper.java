@@ -7,8 +7,8 @@ import org.simpleflatmapper.reflect.primitive.LongSetter;
 
 public final class LongConstantSourceFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final LongContextualGetter<? super S> getter;
-	private final LongSetter<? super T> setter;
+	public final LongContextualGetter<? super S> getter;
+	public final LongSetter<? super T> setter;
 	
  	public LongConstantSourceFieldMapper(final LongContextualGetter<? super S> getter, final LongSetter<? super T> setter) {
 		this.getter = getter;

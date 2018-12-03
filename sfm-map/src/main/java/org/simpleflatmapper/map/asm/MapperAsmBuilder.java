@@ -1,8 +1,24 @@
 package org.simpleflatmapper.map.asm;
 
 import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.map.fieldmapper.BooleanConstantSourceFieldMapper;
+import org.simpleflatmapper.map.fieldmapper.ByteConstantSourceFieldMapper;
+import org.simpleflatmapper.map.fieldmapper.CharacterConstantSourceFieldMapper;
 import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapper;
+import org.simpleflatmapper.map.fieldmapper.DoubleConstantSourceFieldMapper;
+import org.simpleflatmapper.map.fieldmapper.FloatConstantSourceFieldMapper;
+import org.simpleflatmapper.map.fieldmapper.IntConstantSourceFieldMapper;
+import org.simpleflatmapper.map.fieldmapper.LongConstantSourceFieldMapper;
+import org.simpleflatmapper.map.fieldmapper.ShortConstantSourceFieldMapper;
+import org.simpleflatmapper.map.getter.BooleanContextualGetter;
+import org.simpleflatmapper.map.getter.ByteContextualGetter;
+import org.simpleflatmapper.map.getter.CharacterContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.DoubleContextualGetter;
+import org.simpleflatmapper.map.getter.FloatContextualGetter;
+import org.simpleflatmapper.map.getter.IntContextualGetter;
+import org.simpleflatmapper.map.getter.LongContextualGetter;
+import org.simpleflatmapper.map.getter.ShortContextualGetter;
 import org.simpleflatmapper.ow2asm.ClassWriter;
 import org.simpleflatmapper.ow2asm.FieldVisitor;
 import org.simpleflatmapper.ow2asm.MethodVisitor;
@@ -12,6 +28,14 @@ import org.simpleflatmapper.map.mapper.AbstractMapper;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.asm.AsmUtils;
+import org.simpleflatmapper.reflect.primitive.BooleanSetter;
+import org.simpleflatmapper.reflect.primitive.ByteSetter;
+import org.simpleflatmapper.reflect.primitive.CharacterSetter;
+import org.simpleflatmapper.reflect.primitive.DoubleSetter;
+import org.simpleflatmapper.reflect.primitive.FloatSetter;
+import org.simpleflatmapper.reflect.primitive.IntSetter;
+import org.simpleflatmapper.reflect.primitive.LongSetter;
+import org.simpleflatmapper.reflect.primitive.ShortSetter;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Modifier;
@@ -237,11 +261,108 @@ public class MapperAsmBuilder {
         return AsmUtils.writeClassToFile(className, cw.toByteArray());
     }
 
-    private static <S, T> MapperBuilder newMapperBuilder(FieldMapper<? super S, ? super T> mapper, String fieldMapperPrefix, int i) {
+    private static <S, T> MapperBuilder newMapperBuilder(FieldMapper<? super S, ? super T> mapper, String fieldMapperPrefix, int i) throws NoSuchMethodException {
         if (mapper == null) return EmptyMapperBuilder.INSTANCE;
         
         if (mapper instanceof ConstantSourceFieldMapper) {
-            return new ConstantSourceFieldMapperBuilder<S, T>(mapper, i, fieldMapperPrefix);
+            return new ConstantSourceFieldMapperBuilder<S, T>(
+                    mapper,
+                    i,
+                    fieldMapperPrefix, 
+                    ContextualGetter.class, 
+                    ContextualGetter.class.getMethod("get", Object.class, Context.class), 
+                    Setter.class, 
+                    Setter.class.getMethod("set", Object.class, Object.class));
+        }
+        if (mapper instanceof BooleanConstantSourceFieldMapper) {
+            return new ConstantSourceFieldMapperBuilder<S, T>(
+                    mapper,
+                    i,
+                    fieldMapperPrefix,
+                    BooleanContextualGetter.class,
+                    BooleanContextualGetter.class.getMethod("getBoolean", Object.class, Context.class),
+                    BooleanSetter.class,
+                    BooleanSetter.class.getMethod("setBoolean", Object.class, boolean.class)
+            );
+        }
+        if (mapper instanceof ByteConstantSourceFieldMapper) {
+            return new ConstantSourceFieldMapperBuilder<S, T>(
+                    mapper,
+                    i,
+                    fieldMapperPrefix,
+                    ByteContextualGetter.class,
+                    ByteContextualGetter.class.getMethod("getByte", Object.class, Context.class),
+                    ByteSetter.class,
+                    ByteSetter.class.getMethod("setByte", Object.class, byte.class)
+            );
+        }
+        if (mapper instanceof CharacterConstantSourceFieldMapper) {
+            return new ConstantSourceFieldMapperBuilder<S, T>(
+                    mapper,
+                    i,
+                    fieldMapperPrefix,
+                    CharacterContextualGetter.class,
+                    CharacterContextualGetter.class.getMethod("getCharacter", Object.class, Context.class),
+                    CharacterSetter.class,
+                    CharacterSetter.class.getMethod("setCharacter", Object.class, char.class)
+            );
+        }
+
+        if (mapper instanceof ShortConstantSourceFieldMapper) {
+            return new ConstantSourceFieldMapperBuilder<S, T>(
+                    mapper,
+                    i,
+                    fieldMapperPrefix,
+                    ShortContextualGetter.class,
+                    ShortContextualGetter.class.getMethod("getShort", Object.class, Context.class),
+                    ShortSetter.class,
+                    ShortSetter.class.getMethod("setShort", Object.class, short.class)
+            );
+        }
+        
+        if (mapper instanceof IntConstantSourceFieldMapper) {
+            return new ConstantSourceFieldMapperBuilder<S, T>(
+                    mapper, 
+                    i, 
+                    fieldMapperPrefix, 
+                    IntContextualGetter.class, 
+                    IntContextualGetter.class.getMethod("getInt", Object.class, Context.class), 
+                    IntSetter.class, 
+                    IntSetter.class.getMethod("setInt", Object.class, int.class) 
+                    );
+        }
+        if (mapper instanceof LongConstantSourceFieldMapper) {
+            return new ConstantSourceFieldMapperBuilder<S, T>(
+                    mapper,
+                    i,
+                    fieldMapperPrefix,
+                    LongContextualGetter.class,
+                    LongContextualGetter.class.getMethod("getLong", Object.class, Context.class),
+                    LongSetter.class,
+                    LongSetter.class.getMethod("setLong", Object.class, long.class)
+            );
+        }
+        if (mapper instanceof FloatConstantSourceFieldMapper) {
+            return new ConstantSourceFieldMapperBuilder<S, T>(
+                    mapper,
+                    i,
+                    fieldMapperPrefix,
+                    FloatContextualGetter.class,
+                    FloatContextualGetter.class.getMethod("getFloat", Object.class, Context.class),
+                    FloatSetter.class,
+                    FloatSetter.class.getMethod("setFloat", Object.class, float.class)
+            );
+        }
+        if (mapper instanceof DoubleConstantSourceFieldMapper) {
+            return new ConstantSourceFieldMapperBuilder<S, T>(
+                    mapper,
+                    i,
+                    fieldMapperPrefix,
+                    DoubleContextualGetter.class,
+                    DoubleContextualGetter.class.getMethod("getDouble", Object.class, Context.class),
+                    DoubleSetter.class,
+                    DoubleSetter.class.getMethod("setDouble", Object.class, double.class)
+            );
         }
         return new DefaultMapperBuilder<S, T>(mapper, i, fieldMapperPrefix);
     }
@@ -339,32 +460,42 @@ public class MapperAsmBuilder {
         
         private final int index;
         private final String prefix;
+        private final Class<?> getterClass;
+        private final Method getMethod;
+        private final Class<?> setterClass;
+        private final Method setMethod;
 
-        private ConstantSourceFieldMapperBuilder(FieldMapper<? super S, ? super T> mapper, int index, String prefix) {
+        private ConstantSourceFieldMapperBuilder(FieldMapper<? super S, ? super T> mapper, int index, String prefix, Class<?> getterClass, Method getMethod, Class<?> setterClass, Method setMethod) throws NoSuchMethodException {
             this.mapper = mapper;
             this.index = index;
             this.prefix = prefix;
+
+            this.getterClass = getterClass;
+            this.setterClass = setterClass;
+
+            this.getMethod = getMethod;
+            this.setMethod = setMethod;
         }
 
         @Override
         public void addInit(MethodVisitor mv, String mapperClassType) {
-            String fieldMapperType = AsmUtils.toAsmType(ConstantSourceFieldMapper.class);
+            String fieldMapperType = AsmUtils.toAsmType(mapper.getClass());
 
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, prefix == CONSTRUCTOR_MAPPER_PREFIX ? 2 : 1);
             AsmUtils.addIndex(mv, index);
             mv.visitInsn(AALOAD);
             mv.visitTypeInsn(CHECKCAST, fieldMapperType);
-            mv.visitFieldInsn(GETFIELD, fieldMapperType, "getter", toTargetTypeDeclaration(AsmUtils.toAsmType(ContextualGetter.class)));
-            mv.visitFieldInsn(PUTFIELD, mapperClassType, prefix + index + "Getter", toTargetTypeDeclaration(AsmUtils.toAsmType(ContextualGetter.class)));
+            mv.visitFieldInsn(GETFIELD, fieldMapperType, "getter", toTargetTypeDeclaration(AsmUtils.toAsmType(getterClass)));
+            mv.visitFieldInsn(PUTFIELD, mapperClassType, prefix + index + "Getter", toTargetTypeDeclaration(AsmUtils.toAsmType(getterClass)));
             
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, prefix == CONSTRUCTOR_MAPPER_PREFIX ? 2 : 1);
             AsmUtils.addIndex(mv, index);
             mv.visitInsn(AALOAD);
             mv.visitTypeInsn(CHECKCAST, fieldMapperType);
-            mv.visitFieldInsn(GETFIELD, fieldMapperType, "setter", toTargetTypeDeclaration(AsmUtils.toAsmType(Setter.class)));
-            mv.visitFieldInsn(PUTFIELD, mapperClassType, prefix + index + "Setter", toTargetTypeDeclaration(AsmUtils.toAsmType(Setter.class)));
+            mv.visitFieldInsn(GETFIELD, fieldMapperType, "setter", toTargetTypeDeclaration(AsmUtils.toAsmType(setterClass)));
+            mv.visitFieldInsn(PUTFIELD, mapperClassType, prefix + index + "Setter", toTargetTypeDeclaration(AsmUtils.toAsmType(setterClass)));
         }
 
         @Override
@@ -372,26 +503,26 @@ public class MapperAsmBuilder {
 
 
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, mapperClassType, prefix + index + "Setter", toTargetTypeDeclaration(AsmUtils.toAsmType(Setter.class)));
+            mv.visitFieldInsn(GETFIELD, mapperClassType, prefix + index + "Setter", toTargetTypeDeclaration(AsmUtils.toAsmType(setterClass)));
             mv.visitVarInsn(ALOAD, 2);
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, mapperClassType, prefix + index + "Getter", toTargetTypeDeclaration(AsmUtils.toAsmType(ContextualGetter.class)));
+            mv.visitFieldInsn(GETFIELD, mapperClassType, prefix + index + "Getter", toTargetTypeDeclaration(AsmUtils.toAsmType(getterClass)));
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(ALOAD, 3);
             
             
-            AsmUtils.invoke(mv, ContextualGetter.class, ContextualGetter.class.getMethod("get", Object.class, Context.class));
-            AsmUtils.invoke(mv, Setter.class, Setter.class.getMethod("set", Object.class, Object.class));
+            AsmUtils.invoke(mv, getterClass, getMethod);
+            AsmUtils.invoke(mv, setterClass, setMethod);
         }
 
         @Override
         public void addDeclaration(ClassWriter cw) {
             {
-                FieldVisitor fvGetter = cw.visitField(ACC_PRIVATE + ACC_FINAL, prefix + index + "Getter", toTargetTypeDeclaration(AsmUtils.toAsmType(ContextualGetter.class)), toTargetTypeDeclaration(AsmUtils.toGenericAsmType(ContextualGetter.class)), null);
+                FieldVisitor fvGetter = cw.visitField(ACC_PRIVATE + ACC_FINAL, prefix + index + "Getter", toTargetTypeDeclaration(AsmUtils.toAsmType(getterClass)), toTargetTypeDeclaration(AsmUtils.toGenericAsmType(getterClass)), null);
                 fvGetter.visitEnd();
             }
             {
-                FieldVisitor fvSetter = cw.visitField(ACC_PRIVATE + ACC_FINAL, prefix + index+ "Setter", toTargetTypeDeclaration(AsmUtils.toAsmType(Setter.class)), toTargetTypeDeclaration(AsmUtils.toGenericAsmType(Setter.class)), null);
+                FieldVisitor fvSetter = cw.visitField(ACC_PRIVATE + ACC_FINAL, prefix + index+ "Setter", toTargetTypeDeclaration(AsmUtils.toAsmType(setterClass)), toTargetTypeDeclaration(AsmUtils.toGenericAsmType(setterClass)), null);
                 fvSetter.visitEnd();
             }
         }

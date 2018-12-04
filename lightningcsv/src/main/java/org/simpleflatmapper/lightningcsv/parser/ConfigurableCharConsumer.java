@@ -201,6 +201,7 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 			while (currentIndex < bufferSize) {
 				// unescaped loop
 				if ((currentState & QUOTED_AREA) == 0) {
+					CellPreProcessor cellPreProcessor = this.cellPreProcessor;
 					if ((currentState & COMMENTED) == 0) {
 						nonquotesloop:
 						while (currentIndex < bufferSize) {

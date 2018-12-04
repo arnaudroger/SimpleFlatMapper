@@ -77,27 +77,25 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 							final int cellEnd = currentIndex;
 
 							currentIndex++;
-							if ((character & separatorFingerPrintMask) == separatorFingerPrint) {
-								if (character == separatorChar) { // separator
-									cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
-									csvBuffer.cellStartMark = currentIndex;
-									currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
-									continue;
-								} else if (character == LF) { // \n
-									if ((currentState & LAST_CHAR_WAS_CR) == 0) {
-										cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
-										cellConsumer.endOfRow();
-									}
-									markEndOfRow(currentIndex);
-									currentState = NONE;
-									continue;
-								} else if (character == CR) { // \r
+							if (character == separatorChar) { // separator
+								cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
+								csvBuffer.cellStartMark = currentIndex;
+								currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
+								continue;
+							} else if (character == LF) { // \n
+								if ((currentState & LAST_CHAR_WAS_CR) == 0) {
 									cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
 									cellConsumer.endOfRow();
-									markEndOfRow(currentIndex);
-									currentState = LAST_CHAR_WAS_CR;
-									continue;
 								}
+								markEndOfRow(currentIndex);
+								currentState = NONE;
+								continue;
+							} else if (character == CR) { // \r
+								cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
+								cellConsumer.endOfRow();
+								markEndOfRow(currentIndex);
+								currentState = LAST_CHAR_WAS_CR;
+								continue;
 							}
 
 							if ((currentState & (QUOTED | CELL_DATA)) == (CELL_DATA)) {
@@ -210,34 +208,32 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 
 							currentIndex++;
 
-							if ((character & separatorFingerPrintMask) == separatorFingerPrint) {
-								if (character == separatorChar) { // separator
+							if (character == separatorChar) { // separator
+								cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
+								csvBuffer.cellStartMark = currentIndex;
+								currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
+								continue;
+							} else if (character == LF) { // \n
+								if ((currentState & LAST_CHAR_WAS_CR) == 0) {
 									cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
-									csvBuffer.cellStartMark = currentIndex;
-									currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
-									continue;
-								} else if (character == LF) { // \n
-									if ((currentState & LAST_CHAR_WAS_CR) == 0) {
-										cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
-										if (cellConsumer.endOfRow()) {
-											markEndOfRow(currentIndex);
-											currentState = NONE;
-											return true;
-										}
-									}
-									markEndOfRow(currentIndex);
-									currentState = NONE;
-									continue;
-								} else if (character == CR) { // \r
-									cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
-									currentState = LAST_CHAR_WAS_CR;
 									if (cellConsumer.endOfRow()) {
 										markEndOfRow(currentIndex);
+										currentState = NONE;
 										return true;
 									}
-									markEndOfRow(currentIndex);
-									continue;
 								}
+								markEndOfRow(currentIndex);
+								currentState = NONE;
+								continue;
+							} else if (character == CR) { // \r
+								cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, cellEnd, cellConsumer, currentState);
+								currentState = LAST_CHAR_WAS_CR;
+								if (cellConsumer.endOfRow()) {
+									markEndOfRow(currentIndex);
+									return true;
+								}
+								markEndOfRow(currentIndex);
+								continue;
 							}
 								
 							if ((currentState & (QUOTED | CELL_DATA)) == (CELL_DATA)) {

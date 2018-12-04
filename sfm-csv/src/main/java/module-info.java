@@ -4,5 +4,5 @@ module org.simpleflatmapper.csv {
         requires transitive org.simpleflatmapper.lightningcsv;
         exports org.simpleflatmapper.csv;
         exports org.simpleflatmapper.csv.property;
-        exports org.simpleflatmapper.csv.mapper;
+        exports org.simpleflatmapper.csv.getter;
 }

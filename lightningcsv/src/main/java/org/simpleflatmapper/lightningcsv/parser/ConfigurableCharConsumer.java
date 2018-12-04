@@ -63,11 +63,15 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 		try {
 			final char[] chars = csvBuffer.buffer;
 			final int bufferSize = csvBuffer.bufferSize;
-
+			
+			if (bufferSize > chars.length) throw new IllegalStateException();
+			
+			mainloop:
 			while (currentIndex < bufferSize) {
 				// unescaped loop
 				if ((currentState & QUOTED_AREA) == 0) {
 					if ((currentState & COMMENTED) == 0) {
+						nonquotedloop:
 						while (currentIndex < bufferSize) {
 							final char character = chars[currentIndex];
 							final int cellEnd = currentIndex;
@@ -111,10 +115,10 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 											csvBuffer.rowStartMark = currentIndex;
 										}
 										csvBuffer.cellStartMark = currentIndex;
-										break;
+										continue  nonquotedloop;
 									}
 								}
-								continue;
+								return;
 							}
 
 							if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { // no cell data | quoted
@@ -156,7 +160,7 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 							if (c == quoteChar) {
 								currentIndex++;
 								currentState &= TURN_OFF_QUOTED_AREA;
-								break;
+								continue mainloop;
 							} else if (c == escapeChar) {
 								currentState |= ESCAPED | CONTAINS_ESCAPED_CHAR;
 							}
@@ -165,6 +169,7 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 						}
 						currentIndex++;
 					}
+					return;
 				}
 			}
 		} finally {
@@ -190,11 +195,14 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 		try {
 			final char[] chars = csvBuffer.buffer;
 			final int bufferSize = csvBuffer.bufferSize;
-
+			if (bufferSize > chars.length) throw new IllegalStateException();
+			
+			mainloop:
 			while (currentIndex < bufferSize) {
 				// unescaped loop
 				if ((currentState & QUOTED_AREA) == 0) {
 					if ((currentState & COMMENTED) == 0) {
+						nonquotesloop:
 						while (currentIndex < bufferSize) {
 							final char character = chars[currentIndex];
 							final int cellEnd = currentIndex;
@@ -251,10 +259,10 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 											csvBuffer.rowStartMark = currentIndex;
 										}
 										csvBuffer.cellStartMark = currentIndex;
-										break;
+										continue nonquotesloop;
 									}
 								}
-								continue;
+								return false;
 							}
 							
 							if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { 
@@ -301,7 +309,7 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 							if (c == quoteChar) {
 								currentIndex++;
 								currentState &= TURN_OFF_QUOTED_AREA;
-								break;
+								continue mainloop;
 							} else if (c == escapeChar) {
 								currentState |= ESCAPED | CONTAINS_ESCAPED_CHAR;
 							}
@@ -310,6 +318,7 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 						}
 						currentIndex++;
 					}
+					return false;
 				}
 			}
 			return false;

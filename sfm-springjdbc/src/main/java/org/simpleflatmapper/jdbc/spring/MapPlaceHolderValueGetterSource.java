@@ -11,7 +11,9 @@ public final class MapPlaceHolderValueGetterSource<T> implements PlaceHolderValu
         this.parameters = new HashMap<String, PlaceHolderValueGetter<T>>();
 
         for(PlaceHolderValueGetter<T> getter : parameters) {
-            this.parameters.put(getter.getColumn(), getter);
+            if (getter != null) {
+                this.parameters.put(getter.getColumn(), getter);
+            }
         }
     }
 

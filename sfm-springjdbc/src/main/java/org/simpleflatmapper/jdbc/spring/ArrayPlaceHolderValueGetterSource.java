@@ -1,7 +1,5 @@
 package org.simpleflatmapper.jdbc.spring;
 
-import org.simpleflatmapper.converter.ContextFactory;
-
 import java.util.Arrays;
 
 public final class ArrayPlaceHolderValueGetterSource<T> implements PlaceHolderValueGetterSource<T> {
@@ -15,7 +13,7 @@ public final class ArrayPlaceHolderValueGetterSource<T> implements PlaceHolderVa
     @Override
     public PlaceHolderValueGetter<T> getPlaceHolderValueGetter(String column) {
         for(PlaceHolderValueGetter<T> parameter : parameters) {
-            if (parameter.isColumn(column)) {
+            if (parameter != null && parameter.isColumn(column)) {
                 return parameter;
             }
         }

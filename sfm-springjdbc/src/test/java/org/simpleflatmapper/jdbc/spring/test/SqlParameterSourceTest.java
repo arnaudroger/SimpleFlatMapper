@@ -19,6 +19,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class SqlParameterSourceTest {
 
@@ -195,5 +196,54 @@ public class SqlParameterSourceTest {
 
         assertEquals(-3l, parameterSource.getValue("id"));
 
+    }
+
+
+    @Test
+    public void test591_MapStrategy() {
+        String sql = "INSERT INTO table VALUES(:id, :1, :2, :3, :4, :5, :6, :7, :8, :9, :unknown)";
+
+        SqlParameterSourceFactory<DbObject> sqlParameters =
+                JdbcTemplateMapperFactory
+                        .newInstance()
+                        .ignorePropertyNotFound()
+                        .newSqlParameterSourceFactory(DbObject.class, sql);
+
+
+        DbObject dbObject = DbObject.newInstance();
+
+        SqlParameterSource parameterSource = sqlParameters.newSqlParameterSource(dbObject);
+
+        assertEquals(dbObject.getId(), parameterSource.getValue("id"));
+        assertFalse(parameterSource.hasValue("unknown"));
+        
+    }
+
+    @Test
+    public void test591_ArrayStrategy() {
+        String sql = "INSERT INTO table VALUES(:id, :unknown)";
+
+        SqlParameterSourceFactory<DbObject> sqlParameters =
+                JdbcTemplateMapperFactory
+                        .newInstance()
+                        .ignorePropertyNotFound()
+                        .newSqlParameterSourceFactory(DbObject.class, sql);
+
+
+        DbObject dbObject = DbObject.newInstance();
+
+        SqlParameterSource parameterSource = sqlParameters.newSqlParameterSource(dbObject);
+
+        assertEquals(dbObject.getId(), parameterSource.getValue("id"));
+        assertFalse(parameterSource.hasValue("unknown"));
+
+    }
+    
+    public static class I591 {
+        private final long id;
+
+        public I591(long id) {
+            this.id = id;
+        }
     }
 }

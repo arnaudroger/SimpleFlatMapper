@@ -118,7 +118,7 @@ public final class SqlParameterSourceBuilder<T> {
                     }
                 });
 
-        return parameters.length > 10
+        return parameters.length < 10
                 ? new ArrayPlaceHolderValueGetterSource<T>(parameters)
                 : new MapPlaceHolderValueGetterSource<T>(parameters)
                 ;

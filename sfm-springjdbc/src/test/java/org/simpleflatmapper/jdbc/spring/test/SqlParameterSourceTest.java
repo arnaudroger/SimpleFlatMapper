@@ -239,6 +239,23 @@ public class SqlParameterSourceTest {
 
     }
     
+    @Test
+    public void test595() {
+        SqlParameterSourceFactory<DbObject> sqlParameters =
+                JdbcTemplateMapperFactory
+                        .newInstance()
+                        .ignorePropertyNotFound()
+                        .newSqlParameterSourceFactory(DbObject.class);
+
+        DbObject dbObject = DbObject.newInstance();
+
+        SqlParameterSource parameterSource = sqlParameters.newSqlParameterSource(dbObject);
+
+        assertEquals(dbObject.getId(), parameterSource.getValue("id"));
+        assertFalse(parameterSource.hasValue("unknown"));
+        assertFalse(parameterSource.hasValue("foo"));
+    }
+    
     public static class I591 {
         private final long id;
 

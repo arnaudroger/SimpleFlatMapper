@@ -13,7 +13,8 @@ public final class SqlParameterSourceImpl<T> implements SqlParameterSource {
 
     @Override
     public boolean hasValue(String column) {
-        return parameters.getPlaceHolderValueGetter(column) != null;
+        PlaceHolderValueGetter<T> placeHolderValueGetter = parameters.getPlaceHolderValueGetter(column);
+        return placeHolderValueGetter != null && placeHolderValueGetter.hasGetter();
     }
 
     @Override

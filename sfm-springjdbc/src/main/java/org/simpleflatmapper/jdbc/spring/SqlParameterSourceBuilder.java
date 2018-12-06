@@ -3,6 +3,7 @@ package org.simpleflatmapper.jdbc.spring;
 import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
+import org.simpleflatmapper.converter.EmptyContextFactory;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.SqlTypeColumnProperty;
 import org.simpleflatmapper.jdbc.JdbcTypeHelper;
@@ -12,6 +13,7 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.PropertyWithGetter;
 import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
+import org.simpleflatmapper.map.getter.NullContextualGetter;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
@@ -33,6 +35,8 @@ import java.sql.Types;
 
 //IFJAVA8_START
 import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
 //IFJAVA8_END
 
 public final class SqlParameterSourceBuilder<T> {
@@ -42,6 +46,8 @@ public final class SqlParameterSourceBuilder<T> {
     private final MapperConfig<JdbcColumnKey, ?> mapperConfig;
     private final ReflectionService reflectionService;
     private int index = 1;
+    
+    private final List<PlaceHolderValueGetter> parameters = new ArrayList<>();
 
 
     public SqlParameterSourceBuilder(
@@ -62,16 +68,49 @@ public final class SqlParameterSourceBuilder<T> {
                 columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
         final JdbcColumnKey mappedColumnKey = composedDefinition.rename(key);
 
-
+        PropertyMapping<T, Object, JdbcColumnKey> propertyMapping;
         if (composedDefinition.has(ConstantValueProperty.class)) {
             ConstantValueProperty staticValueProperty = composedDefinition.lookFor(ConstantValueProperty.class);
             PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(key.getName(), builder.getClassMeta().getType(), reflectionService, staticValueProperty.getType(), ScoredGetter.of(new ConstantGetter<T, Object>(staticValueProperty.getValue()), 1), null, null);
-            builder.addProperty(key, columnDefinition, meta);
+            propertyMapping = builder.addProperty(key, columnDefinition, meta);
         } else {
-            builder.addProperty(mappedColumnKey, composedDefinition);
+            propertyMapping = builder.addProperty(mappedColumnKey, composedDefinition);
         }
 
+        parameters.add(build(key, propertyMapping));
+        
         return this;
+    }
+
+    private <P> PlaceHolderValueGetter<T> build(JdbcColumnKey key, PropertyMapping<T, P, JdbcColumnKey> pm) {
+        if (pm != null) {
+            int parameterType =
+                    getParameterType(pm);
+            ContextualGetter<T, ? extends P> getter = ContextualGetterAdapter.of(pm.getPropertyMeta().getGetter());
+
+            // need conversion ?
+            final DefaultContextFactoryBuilder contextFactoryBuilder = new DefaultContextFactoryBuilder();
+            Type propertyType = pm.getPropertyMeta().getPropertyType();
+            Class<?> sqlType = JdbcTypeHelper.toJavaType(parameterType, propertyType);
+            if (!TypeHelper.isAssignable(sqlType, propertyType)) {
+                ContextualConverter<? super Object, ?> converter = ConverterService.getInstance().findConverter(propertyType, sqlType, contextFactoryBuilder);
+
+                if (converter != null) {
+                    getter = new FieldMapperGetterWithConverter(converter, getter);
+                }
+            }
+
+            return 
+                    new PlaceHolderValueGetter<T>(pm.getColumnKey().getOrginalName(),
+                            parameterType,
+                            null, getter, contextFactoryBuilder.build());
+        } else {
+            return
+                    new PlaceHolderValueGetter<T>(key.getOrginalName(),
+                            key.getSqlType(null),
+                            null, NullContextualGetter.getter(), 
+                            EmptyContextFactory.INSTANCE);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -86,38 +125,8 @@ public final class SqlParameterSourceBuilder<T> {
 
     @SuppressWarnings("unchecked")
     public PlaceHolderValueGetterSource<T> buildSource() {
-        final PlaceHolderValueGetter<T>[] parameters = new PlaceHolderValueGetter[builder.size()];
-        builder.forEachProperties(
-                new ForEachCallBack<PropertyMapping<T,?,JdbcColumnKey>>(){
-                    int i = 0;
-                    @Override
-                    public void handle(PropertyMapping<T, ?, JdbcColumnKey> pm) {
-                        int parameterType =
-                                getParameterType(pm);
-                        ContextualGetter<? super T, ?> getter = ContextualGetterAdapter.of(pm.getPropertyMeta().getGetter());
-
-
-                        // need conversion ?
-                        final DefaultContextFactoryBuilder contextFactoryBuilder = new DefaultContextFactoryBuilder();
-                        Type propertyType = pm.getPropertyMeta().getPropertyType();
-                        Class<?> sqlType = JdbcTypeHelper.toJavaType(parameterType, propertyType);
-                        if (!TypeHelper.isAssignable(sqlType, propertyType)) {
-                            ContextualConverter<? super Object, ?> converter = ConverterService.getInstance().findConverter(propertyType, sqlType, contextFactoryBuilder);
-                            
-                            if (converter != null) {
-                                getter = new FieldMapperGetterWithConverter(converter, getter);
-                            }
-                        }
-                        
-                        PlaceHolderValueGetter parameter =
-                                new PlaceHolderValueGetter(pm.getColumnKey().getOrginalName(),
-                                        parameterType,
-                                        null, getter, contextFactoryBuilder.build());
-                        parameters[i] = parameter;
-                        i++;
-                    }
-                });
-
+        final PlaceHolderValueGetter<T>[] parameters = this.parameters.toArray(new PlaceHolderValueGetter[0]);
+        
         return parameters.length < 10
                 ? new ArrayPlaceHolderValueGetterSource<T>(parameters)
                 : new MapPlaceHolderValueGetterSource<T>(parameters)

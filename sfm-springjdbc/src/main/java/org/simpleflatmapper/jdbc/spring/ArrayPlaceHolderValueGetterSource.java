@@ -13,7 +13,7 @@ public final class ArrayPlaceHolderValueGetterSource<T> implements PlaceHolderVa
     @Override
     public PlaceHolderValueGetter<T> getPlaceHolderValueGetter(String column) {
         for(PlaceHolderValueGetter<T> parameter : parameters) {
-            if (parameter != null && parameter.isColumn(column)) {
+            if (parameter.isColumn(column)) {
                 return parameter;
             }
         }

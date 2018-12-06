@@ -3,6 +3,8 @@ package org.simpleflatmapper.jdbc.spring;
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.ContextFactory;
 import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.NullContextualGetter;
+import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.util.ErrorHelper;
 
 public final class PlaceHolderValueGetter<T> {
@@ -46,5 +48,9 @@ public final class PlaceHolderValueGetter<T> {
 
     public String getColumn() {
         return column;
+    }
+
+    public boolean hasGetter() {
+        return !NullContextualGetter.isNull(getter);
     }
 }

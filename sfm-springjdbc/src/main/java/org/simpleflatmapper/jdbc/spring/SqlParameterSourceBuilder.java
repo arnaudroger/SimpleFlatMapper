@@ -108,7 +108,7 @@ public final class SqlParameterSourceBuilder<T> {
             return
                     new PlaceHolderValueGetter<T>(key.getOrginalName(),
                             key.getSqlType(null),
-                            null, NullContextualGetter.getter(), 
+                            null, NullContextualGetter.<T, P>getter(), 
                             EmptyContextFactory.INSTANCE);
         }
     }

@@ -47,7 +47,7 @@ public final class SqlParameterSourceBuilder<T> {
     private final ReflectionService reflectionService;
     private int index = 1;
     
-    private final List<PlaceHolderValueGetter> parameters = new ArrayList<>();
+    private final List<PlaceHolderValueGetter> parameters = new ArrayList<PlaceHolderValueGetter>();
 
 
     public SqlParameterSourceBuilder(

@@ -12,8 +12,6 @@ public abstract class CharConsumerFactory {
         try {
             return new AsmCharConsumerFactory();
         } catch (Throwable t) {
-            System.err.println(t.getMessage());
-            t.printStackTrace();
             // ignore
         }
         return new ConfigurableCharConsumerFactory();

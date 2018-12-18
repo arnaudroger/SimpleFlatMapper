@@ -30,6 +30,7 @@ import org.simpleflatmapper.util.CloseableIterator;
 import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
 
+import javax.persistence.Column;
 import java.io.CharArrayReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -1554,4 +1555,40 @@ public class CsvParserTest {
 	}
 
 
+	
+	@Test
+	public void test598() throws IOException {
+		String value = "Geändert;name\nM;Ans";
+
+		List<C598> list = CsvParser.separator(';')
+				.mapTo(C598.class).alias("Geändert", "geaendert")
+				.forEach(value, new ListCollector<C598>()).getList();
+		
+		assertEquals(1, list.size());
+		assertEquals("M", list.get(0).geaendert);
+		assertEquals("Ans", list.get(0).name);
+
+	}
+	
+	public static class C598 {
+		private String geaendert;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		private String name;
+
+		public String getGeaendert() {
+			return geaendert;
+		}
+
+		public void setGeaendert(String geaendert) {
+			this.geaendert = geaendert;
+		}
+	}
 }

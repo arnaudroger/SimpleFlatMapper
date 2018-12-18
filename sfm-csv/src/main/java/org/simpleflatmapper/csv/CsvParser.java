@@ -13,6 +13,7 @@ import org.simpleflatmapper.lightningcsv.parser.YamlCellPreProcessor;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.KeyProperty;
+import org.simpleflatmapper.map.property.RenameProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.tuple.Tuple3;
@@ -538,10 +539,22 @@ public final class CsvParser {
 			return new StaticMapToDSL<T>(csvDsl, classMeta, mapToClass, getColumnDefinitions(headers), columnDefinitionProvider);
 		}
 
+		/**
+		 * the name can be misleading. What it will do is assume the headers from the property of the mapped object.
+		 * As there is no guarantee on the order those will be found it's an unstable way of doing things and should not be used.
+		 * You should specify the headers manually using headers(...).
+		 */
+		@Deprecated
 		public StaticMapToDSL<T> defaultHeaders() {
 			return defaultHeaders(getDsl());
 		}
 
+		/**
+		 * the name can be misleading. What it will do is assume the headers from the property of the mapped object.
+		 * As there is no guarantee on the order those will be found it's an unstable way of doing things and should not be used.
+		 * You should specify the headers manually using overrideHeaders(...).
+		 */
+		@Deprecated
 		public StaticMapToDSL<T> overrideWithDefaultHeaders() {
 			return defaultHeaders(getDsl().skip(1));
 		}
@@ -572,8 +585,20 @@ public final class CsvParser {
 		public MapToDSL<T> columnDefinition(Predicate<? super CsvColumnKey> predicate, ColumnDefinition<CsvColumnKey, ?> columnDefinition) {
 			return new MapToDSL<T>(getDsl(), classMeta, mapToClass, newColumnDefinitionProvider(predicate, columnDefinition));
 		}
+		
+		public MapToDSL<T> columnProperty(String column, Object property) {
+			return new MapToDSL<T>(getDsl(), classMeta, mapToClass, newColumnDefinitionProviderWithProperty(column, property));
+		}
 
-        public MapWithDSL<T> addKeys(String... keys) {
+		public MapToDSL<T> columnProperty(Predicate<? super CsvColumnKey> predicate, Object property) {
+			return new MapToDSL<T>(getDsl(), classMeta, mapToClass, newColumnDefinitionProviderWithProperty(predicate, property));
+		}
+		
+		public MapToDSL<T> alias(String column, String property) {
+			return columnProperty(column, new RenameProperty(property));
+		}
+
+		public MapWithDSL<T> addKeys(String... keys) {
 			CsvColumnDefinitionProviderImpl newProvider = (CsvColumnDefinitionProviderImpl) columnDefinitionProvider.copy();
 
 			for(String key : keys) {
@@ -586,6 +611,18 @@ public final class CsvParser {
 		private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(String name, ColumnDefinition<CsvColumnKey, ?> columnDefinition) {
 			CsvColumnDefinitionProviderImpl newProvider = (CsvColumnDefinitionProviderImpl) columnDefinitionProvider.copy();
 			newProvider.addColumnDefinition(name, columnDefinition);
+			return newProvider;
+		}
+
+		private CsvColumnDefinitionProviderImpl newColumnDefinitionProviderWithProperty(String name, Object property) {
+			CsvColumnDefinitionProviderImpl newProvider = (CsvColumnDefinitionProviderImpl) columnDefinitionProvider.copy();
+			newProvider.addColumnProperty(name, property);
+			return newProvider;
+		}
+
+		private CsvColumnDefinitionProviderImpl newColumnDefinitionProviderWithProperty(Predicate<? super CsvColumnKey> predicate, Object property) {
+			CsvColumnDefinitionProviderImpl newProvider = (CsvColumnDefinitionProviderImpl) columnDefinitionProvider.copy();
+			newProvider.addColumnProperty(predicate, property);
 			return newProvider;
 		}
 

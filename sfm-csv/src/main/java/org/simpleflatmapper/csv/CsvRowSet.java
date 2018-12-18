@@ -111,7 +111,30 @@ public final class CsvRowSet implements Enumerable<CsvRow> {
         }
 
         public CsvColumnKey[] getKeys() {
-            return keyList.toArray(EMPTY_KEYS);
+            int end = lastEmptyKey();
+            
+            CsvColumnKey[] keys = new CsvColumnKey[end];
+            
+            for(int i = 0; i < end; i++) {
+                keys[i] = keyList.get(i);
+            }
+            
+            return keys;
+        }
+
+        private int lastEmptyKey() {
+            for(int i = keyList.size() - 1; i >= 0; i--) {
+                if (!isEmpty(keyList.get(i))) return i + 1;
+            }
+            return 0;
+        }
+
+        private boolean isEmpty(CsvColumnKey csvColumnKey) {
+            String name = csvColumnKey.getName();
+            for(int i = 0; i < name.length(); i++) {
+                if (name.charAt(i) != ' ') return false;
+            }
+            return true;
         }
     }
 

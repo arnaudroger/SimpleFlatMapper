@@ -13,6 +13,7 @@ import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.lightningcsv.CloseableCsvReader;
 import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.lightningcsv.Row;
+import org.simpleflatmapper.map.property.IgnoreProperty;
 import org.simpleflatmapper.map.property.IgnoreRowIfNullProperty;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.CheckedConsumer;
@@ -1561,13 +1562,29 @@ public class CsvParserTest {
 		String value = "Geändert;name\nM;Ans";
 
 		List<C598> list = CsvParser.separator(';')
-				.mapTo(C598.class).alias("Geändert", "geaendert")
+				.mapTo(C598.class)
+				.alias("Geändert", "geaendert")
 				.forEach(value, new ListCollector<C598>()).getList();
 		
 		assertEquals(1, list.size());
 		assertEquals("M", list.get(0).geaendert);
 		assertEquals("Ans", list.get(0).name);
 
+	}
+	
+	@Test
+	public void test599() throws IOException {
+		String value = "Geändert;name;\nM;Ans";
+
+		List<C598> list = CsvParser.separator(';')
+				.mapTo(C598.class)
+				.alias("Geändert", "geaendert")
+				.forEach(value, new ListCollector<C598>()).getList();
+
+		assertEquals(1, list.size());
+		assertEquals("M", list.get(0).geaendert);
+		assertEquals("Ans", list.get(0).name);
+		
 	}
 	
 	public static class C598 {

@@ -302,7 +302,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 			final PropertyFinder<T> propertyFinder) {
 		final List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties = new ArrayList<ExtendPropertyFinder.CustomProperty<?, ?>>();
 
-		Predicate<PropertyMeta<?, ?>> propertyPredicate = propertyPredicateFactory.apply(null, null);
+		final Predicate<PropertyMeta<?, ?>> propertyPredicate = propertyPredicateFactory.apply(null, null);
 		// setter
 		mapperConfig.columnDefinitions().forEach(SetterProperty.class, new BiConsumer<Predicate<? super K>, SetterProperty>() {
 			@Override

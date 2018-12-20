@@ -20,8 +20,10 @@ import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.tuple.Tuple2;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.ForEachCallBack;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.TypeReference;
 
@@ -44,6 +46,13 @@ import static org.mockito.Mockito.verify;
 public class PropertyMappingsBuilderTest {
 
 
+    public static final BiFunction<SampleFieldKey, Object[], Predicate<PropertyMeta<?, ?>>> CONSTANT_PREDICATE = new BiFunction<SampleFieldKey, Object[], Predicate<PropertyMeta<?, ?>>>() {
+        @Override
+        public Predicate<PropertyMeta<?, ?>> apply(SampleFieldKey sampleFieldKey, Object[] objects) {
+            return ConstantPredicate.<PropertyMeta<?, ?>>truePredicate();
+        }
+    };
+
     public static class AnonymousElement {
         public List<String> phones;
     }
@@ -63,7 +72,7 @@ public class PropertyMappingsBuilderTest {
     }
 
     private <T> PropertyMappingsBuilder<T, SampleFieldKey> defaultPropertyMappingBuilder(ClassMeta<T> classMeta) {
-        return PropertyMappingsBuilder.<T, SampleFieldKey, Object[]>of(classMeta, MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig(), (k, v) -> ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+        return PropertyMappingsBuilder.<T, SampleFieldKey, Object[]>of(classMeta, MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig(), CONSTANT_PREDICATE);
     }
 
 
@@ -127,7 +136,7 @@ public class PropertyMappingsBuilderTest {
 
         final ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
         PropertyMappingsBuilder<DbObject, SampleFieldKey> builder2 =
-                PropertyMappingsBuilder.of(classMeta, MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().mapperBuilderErrorHandler(IgnoreMapperBuilderErrorHandler.INSTANCE), (k, v) -> ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+                PropertyMappingsBuilder.of(classMeta, MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().mapperBuilderErrorHandler(IgnoreMapperBuilderErrorHandler.INSTANCE), CONSTANT_PREDICATE);
 
         builder2.addProperty(new SampleFieldKey("id", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity().addGetter(new Getter<Object, String>() {
             @Override
@@ -178,7 +187,7 @@ public class PropertyMappingsBuilderTest {
     public void testAddFailedPropertyIgnoreError() {
         final ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
         PropertyMappingsBuilder<DbObject, SampleFieldKey> builder2 =
-                PropertyMappingsBuilder.of(classMeta, MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().mapperBuilderErrorHandler(IgnoreMapperBuilderErrorHandler.INSTANCE), (k, v) -> ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+                PropertyMappingsBuilder.of(classMeta, MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().mapperBuilderErrorHandler(IgnoreMapperBuilderErrorHandler.INSTANCE), CONSTANT_PREDICATE);
 
         builder2.addProperty(new SampleFieldKey("id", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
         builder2.addProperty(new SampleFieldKey("not_id", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
@@ -212,7 +221,7 @@ public class PropertyMappingsBuilderTest {
                 PropertyMappingsBuilder.of(
                         classMeta,
                         MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().mapperBuilderErrorHandler(errorHandler),
-                        (k, v) -> ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+                        CONSTANT_PREDICATE);
 
         builder.addProperty(new SampleFieldKey("self", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
 
@@ -306,7 +315,7 @@ public class PropertyMappingsBuilderTest {
                 PropertyMappingsBuilder.of(
                         classMeta,
                         MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig(),
-                        (k, v) -> ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+                        CONSTANT_PREDICATE);
 
         FieldMapperColumnDefinition<SampleFieldKey> columnDefinition = FieldMapperColumnDefinition.<SampleFieldKey>identity().add(OptionalProperty.INSTANCE);
         PropertyMapping<DbObject, Object, SampleFieldKey> pName = builder.addProperty(new SampleFieldKey("name", 0), columnDefinition);
@@ -318,7 +327,7 @@ public class PropertyMappingsBuilderTest {
                 PropertyMappingsBuilder.of(
                         classMeta,
                         MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig(),
-                        (k, v) -> ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+                        CONSTANT_PREDICATE);
 
         PropertyMapping<DbObject, Object, SampleFieldKey> pNotThere1 = builder.addProperty(new SampleFieldKey("not_there", 0), columnDefinition);
         assertEquals("{this}", pNotThere1.getPropertyMeta().getPath());

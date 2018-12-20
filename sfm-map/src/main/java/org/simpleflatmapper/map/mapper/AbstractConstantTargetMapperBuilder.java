@@ -19,8 +19,10 @@ import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ForEachCallBack;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
 
@@ -56,7 +58,12 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
         this.reflectionService = classMeta.getReflectionService();
         this.mapperConfig = mapperConfig;
         this.propertyMappingsBuilder =
-                PropertyMappingsBuilder.of(classMeta, mapperConfig, (k, v) -> PropertyWithGetter.INSTANCE);
+                PropertyMappingsBuilder.of(classMeta, mapperConfig, new BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>>() {
+                    @Override
+                    public Predicate<PropertyMeta<?, ?>> apply(K k, Object[] objects) {
+                        return PropertyWithGetter.INSTANCE;
+                    }
+                });
         this.classMeta = classMeta;
     }
 

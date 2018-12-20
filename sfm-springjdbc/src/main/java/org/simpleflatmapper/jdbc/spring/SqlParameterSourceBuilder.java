@@ -25,7 +25,9 @@ import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterWithConverter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ForEachCallBack;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 import org.springframework.jdbc.core.SqlTypeValue;
 import org.springframework.jdbc.core.StatementCreatorUtils;
@@ -56,7 +58,12 @@ public final class SqlParameterSourceBuilder<T> {
         this.mapperConfig = mapperConfig;
         this.reflectionService = classMeta.getReflectionService();
         this.builder =
-                PropertyMappingsBuilder.of(classMeta, mapperConfig, (k, v) -> PropertyWithGetter.INSTANCE);
+                PropertyMappingsBuilder.of(classMeta, mapperConfig, new BiFunction<JdbcColumnKey, Object[], Predicate<PropertyMeta<?, ?>>>() {
+                    @Override
+                    public Predicate<PropertyMeta<?, ?>> apply(JdbcColumnKey jdbcColumnKey, Object[] objects) {
+                        return PropertyWithGetter.INSTANCE;
+                    }
+                });
     }
 
     public SqlParameterSourceBuilder<T> add(String column) {

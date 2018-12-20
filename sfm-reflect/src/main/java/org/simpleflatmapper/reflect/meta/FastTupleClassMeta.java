@@ -119,8 +119,8 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
     }
 
     @Override
-    public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
-        return delegate.newPropertyFinder(propertyFilter);
+    public PropertyFinder<T> newPropertyFinder() {
+        return delegate.newPropertyFinder();
     }
 
     @Override

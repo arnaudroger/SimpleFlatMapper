@@ -13,28 +13,26 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class PropertyFinder<T> {
-	protected final Predicate<PropertyMeta<?, ?>> propertyFilter;
 	private final boolean selfScoreFullName;
 
-	protected PropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
-		this.propertyFilter = propertyFilter;
+	protected PropertyFinder(boolean selfScoreFullName) {
 		this.selfScoreFullName = selfScoreFullName;
 	}
 
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity) {
-		return findProperty(propertyNameMatcher, properties, toTypeAffinityScorer(typeAffinity));
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+		return findProperty(propertyNameMatcher, properties, toTypeAffinityScorer(typeAffinity), propertyFilter);
 	}
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity) {
-		return findProperty(propertyNameMatcher, properties, typeAffinity, new DefaultPropertyFinderProbe(propertyNameMatcher));
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+		return findProperty(propertyNameMatcher, properties, typeAffinity, new DefaultPropertyFinderProbe(propertyNameMatcher), propertyFilter);
 	}
 
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity, PropertyFinderProbe propertyFinderProbe) {
-		return findProperty(propertyNameMatcher, properties, toTypeAffinityScorer(typeAffinity), propertyFinderProbe);
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity, PropertyFinderProbe propertyFinderProbe, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+		return findProperty(propertyNameMatcher, properties, toTypeAffinityScorer(typeAffinity), propertyFinderProbe, propertyFilter);
 	}
 		@SuppressWarnings("unchecked")
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity, PropertyFinderProbe propertyFinderProbe) {
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity, PropertyFinderProbe propertyFinderProbe, Predicate<PropertyMeta<?, ?>> propertyFilter) {
 		MatchingProperties matchingProperties = new MatchingProperties(propertyFinderProbe);
-		lookForProperties(propertyNameMatcher, properties, matchingProperties, PropertyMatchingScore.newInstance(selfScoreFullName), true, IDENTITY_TRANSFORMER,  typeAffinity);
+		lookForProperties(propertyNameMatcher, properties, matchingProperties, PropertyMatchingScore.newInstance(selfScoreFullName), true, IDENTITY_TRANSFORMER,  typeAffinity, propertyFilter);
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
 	}
 
@@ -43,23 +41,20 @@ public abstract class PropertyFinder<T> {
 	}
 
 	public abstract void lookForProperties(
-			PropertyNameMatcher propertyNameMatcher,
-			Object[] properties,
-			FoundProperty<T> matchingProperties,
-			PropertyMatchingScore score,
-			boolean allowSelfReference,
-			PropertyFinderTransformer propertyFinderTransformer, 
-			TypeAffinityScorer typeAffinityScorer);
+            PropertyNameMatcher propertyNameMatcher,
+            Object[] properties,
+            FoundProperty<T> matchingProperties,
+            PropertyMatchingScore score,
+            boolean allowSelfReference,
+            PropertyFinderTransformer propertyFinderTransformer,
+            TypeAffinityScorer typeAffinityScorer, 
+			Predicate<PropertyMeta<?, ?>> propertyFilter);
 
 
 	public abstract List<InstantiatorDefinition> getEligibleInstantiatorDefinitions();
 
     public abstract PropertyFinder<?> getSubPropertyFinder(PropertyMeta<?, ?> owner);
 	public abstract PropertyFinder<?> getOrCreateSubPropertyFinder(SubPropertyMeta<?, ?, ?> subPropertyMeta);
-
-	public Predicate<PropertyMeta<?, ?>> getPropertyFilter() {
-		return propertyFilter;
-	}
 
 	public abstract Type getOwnerType();
 

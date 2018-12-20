@@ -23,19 +23,19 @@ public class ConstructorPropertyMetaTest {
 
     @Test
     public void testSetterIsNullSetter() throws Exception {
-        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0], (TypeAffinity)null);
+        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertTrue(property.getSetter() instanceof NullSetter);
     }
 
     @Test
     public void testGetValueIfGetterAvailable() throws Exception {
-        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0], (TypeAffinity)null);
+        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertEquals("v1", property.getGetter().get(cObject));
     }
 
     @Test
     public void testToString() {
-        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0], (TypeAffinity)null);
+        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
 
         assertTrue(property.toString().startsWith("ConstructorPropertyMeta"));
     }

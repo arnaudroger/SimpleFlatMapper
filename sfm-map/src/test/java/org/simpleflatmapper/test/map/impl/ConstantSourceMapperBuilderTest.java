@@ -188,9 +188,9 @@ public class ConstantSourceMapperBuilderTest {
                 return true;
             }
         };
-        PropertyFinder<Tuple2<TableA, List<Tuple3<TableB, List<TableC>, List<Tuple2<TableD, List<TableE>>>>>>> propertyFinder = classMeta.newPropertyFinder(propertyFilter);
-        PropertyMeta<Tuple2<TableA, List<Tuple3<TableB, List<TableC>, List<Tuple2<TableD, List<TableE>>>>>>, Object> p1 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("variableName", 0, false, false), new Object[0], (TypeAffinity)null);
-        PropertyMeta<Tuple2<TableA, List<Tuple3<TableB, List<TableC>, List<Tuple2<TableD, List<TableE>>>>>>, Object> p2 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("variableName", 0, false, false), new Object[0], (TypeAffinity)null);
+        PropertyFinder<Tuple2<TableA, List<Tuple3<TableB, List<TableC>, List<Tuple2<TableD, List<TableE>>>>>>> propertyFinder = classMeta.newPropertyFinder();
+        PropertyMeta<Tuple2<TableA, List<Tuple3<TableB, List<TableC>, List<Tuple2<TableD, List<TableE>>>>>>, Object> p1 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("variableName", 0, false, false), new Object[0], (TypeAffinity)null, propertyFilter);
+        PropertyMeta<Tuple2<TableA, List<Tuple3<TableB, List<TableC>, List<Tuple2<TableD, List<TableE>>>>>>, Object> p2 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("variableName", 0, false, false), new Object[0], (TypeAffinity)null, propertyFilter);
 
         System.out.println("p1.getPath() = " + p1.getPath());
         System.out.println("p2.getPath() = " + p2.getPath());
@@ -211,16 +211,16 @@ public class ConstantSourceMapperBuilderTest {
                 return true;
             }
         };
-        PropertyFinder<?> propertyFinder = classMeta.newPropertyFinder(propertyFilter);
-        PropertyMeta<?, ?> p1 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bar", 0, false, false), new Object[0], (TypeAffinity)null);
-        PropertyMeta<?, ?> p2 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bar", 0, false, false), new Object[0], (TypeAffinity)null);
+        PropertyFinder<?> propertyFinder = classMeta.newPropertyFinder();
+        PropertyMeta<?, ?> p1 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bar", 0, false, false), new Object[0], (TypeAffinity)null, propertyFilter);
+        PropertyMeta<?, ?> p2 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bar", 0, false, false), new Object[0], (TypeAffinity)null, propertyFilter);
 
         assertEquals("[0].element0.bar", p1.getPath());
         assertEquals("[0].element1.bar", p2.getPath());
 
-        propertyFinder = classMeta.newPropertyFinder(propertyFilter);
-        p1 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt0_elt0_bar", 0, false, false), new Object[0], (TypeAffinity)null);
-        p2 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt1_elt0_bar", 0, false, false), new Object[0], (TypeAffinity)null);
+        propertyFinder = classMeta.newPropertyFinder();
+        p1 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt0_elt0_bar", 0, false, false), new Object[0], (TypeAffinity)null, propertyFilter);
+        p2 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt1_elt0_bar", 0, false, false), new Object[0], (TypeAffinity)null, propertyFilter);
 
         assertEquals("[0].element0.bar", p1.getPath());
         assertEquals("[1].element0.bar", p2.getPath());

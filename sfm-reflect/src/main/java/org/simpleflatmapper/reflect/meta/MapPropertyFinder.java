@@ -31,15 +31,15 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
 
     private int keyValueMode = NONE;
 
-    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, ContextualConverter<? super CharSequence, ? extends K> keyConverter, ContextFactory keyContextFactory, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
-        super(propertyFilter, selfScoreFullName);
+    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, ContextualConverter<? super CharSequence, ? extends K> keyConverter, ContextFactory keyContextFactory, boolean selfScoreFullName) {
+        super(selfScoreFullName);
         this.mapMeta = mapMeta;
         this.valueMetaData = valueMetaData;
         this.keyConverter = keyConverter;
         this.keyValueType = getKeyValueType(mapMeta);
         this.keyValueClassMeta = mapMeta.getReflectionService().getClassMeta(keyValueType);
         this.keyContextFactory = keyContextFactory;
-        this.keyValuePropertyFinder = keyValueClassMeta.newPropertyFinder(propertyFilter);
+        this.keyValuePropertyFinder = keyValueClassMeta.newPropertyFinder();
         this.elementPropertyMeta = 
             new MapKeyValueElementPropertyMeta<T, K, V>(mapMeta.getType(), valueMetaData.getReflectionService(), keyValueType);
     }
@@ -71,8 +71,8 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     @Override
     public void lookForProperties(
             final PropertyNameMatcher propertyNameMatcher,
-            Object[] properties, final FoundProperty matchingProperties,
-            final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+            Object[] properties, final FoundProperty<T> matchingProperties,
+            final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
 
 
         if (isKeyValueEnabled(properties)) {
@@ -94,7 +94,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                         }
                     },
                     score,
-                    false, propertyFinderTransformer, typeAffinityScorer);
+                    false, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
         }
         if (isColunnKeyEnabled(properties)) {
             // classic keys set
@@ -130,7 +130,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                             }
                         },
                         score,
-                        true, propertyFinderTransformer, typeAffinityScorer);
+                        true, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
             }
         }
 
@@ -147,7 +147,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     private PropertyFinder<V> getPropertyFinder(PropertyNameMatcher keyMatcher) {
         PropertyFinder<V> propertyFinder = finders.get(keyMatcher);
         if (propertyFinder == null) {
-            propertyFinder = valueMetaData.newPropertyFinder(propertyFilter);
+            propertyFinder = valueMetaData.newPropertyFinder();
         }
         return propertyFinder;
     }

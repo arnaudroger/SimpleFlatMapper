@@ -64,23 +64,23 @@ public class ObjectClassMetaTest {
 
         ClassMeta<DbObject> classMeta = reflectionService.getClassMeta(DbObject.class);
 
-        PropertyFinder<DbObject> propertyFinder1 = classMeta.newPropertyFinder(propertyFilter);
-        propertyFinder1.findProperty(DefaultPropertyNameMatcher.of("email"), new Object[0], (TypeAffinity)null); // force non direct mode
-        assertNotNull(propertyFinder1.findProperty(DefaultPropertyNameMatcher.of("myid"), new Object[0], (TypeAffinity)null));
-        assertNotNull(propertyFinder1.findProperty(DefaultPropertyNameMatcher.of("myname"), new Object[0], (TypeAffinity)null));
+        PropertyFinder<DbObject> propertyFinder1 = classMeta.newPropertyFinder();
+        propertyFinder1.findProperty(DefaultPropertyNameMatcher.of("email"), new Object[0], (TypeAffinity)null, propertyFilter); // force non direct mode
+        assertNotNull(propertyFinder1.findProperty(DefaultPropertyNameMatcher.of("myid"), new Object[0], (TypeAffinity)null, propertyFilter));
+        assertNotNull(propertyFinder1.findProperty(DefaultPropertyNameMatcher.of("myname"), new Object[0], (TypeAffinity)null, propertyFilter));
 
         classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
-        PropertyFinder<DbObject> propertyFinder2 = classMeta.newPropertyFinder(propertyFilter);
-        propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("email"), new Object[0], (TypeAffinity)null); // force non direct mode
-        assertNull(propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("myid"), new Object[0], (TypeAffinity)null));
-        assertNull(propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("myname"), new Object[0], (TypeAffinity)null));
+        PropertyFinder<DbObject> propertyFinder2 = classMeta.newPropertyFinder();
+        propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("email"), new Object[0], (TypeAffinity)null, propertyFilter); // force non direct mode
+        assertNull(propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("myid"), new Object[0], (TypeAffinity)null, propertyFilter));
+        assertNull(propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("myname"), new Object[0], (TypeAffinity)null, propertyFilter));
 
     }
 
     @Test
     public void testTypeVariable() {
         ClassMeta<TVObject<Date>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<TVObject<Date>>() {} .getType());
-        assertEquals(Date.class, classMeta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("t"), new Object[0], (TypeAffinity)null).getPropertyType());
+        assertEquals(Date.class, classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("t"), new Object[0], (TypeAffinity)null, propertyFilter).getPropertyType());
     }
 
     public static class TVObject<T> {
@@ -115,7 +115,7 @@ public class ObjectClassMetaTest {
     public void testGetterOnly() {
         ClassMeta<GetterOnly> classMeta = ReflectionService.newInstance().getClassMeta(GetterOnly.class);
 
-        assertNotNull(classMeta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("string"), new Object[0], (TypeAffinity)null));
+        assertNotNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("string"), new Object[0], (TypeAffinity)null, propertyFilter));
 
     }
 
@@ -126,7 +126,7 @@ public class ObjectClassMetaTest {
 
         ClassMeta<IncompatibleGetter> meta = ReflectionService.newInstance().getClassMeta(IncompatibleGetter.class);
 
-        PropertyMeta<IncompatibleGetter, Object> pm = meta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<IncompatibleGetter, Object> pm = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null, propertyFilter);
 
         assertEquals("aa", pm.getGetter().get(target));
     }
@@ -138,7 +138,7 @@ public class ObjectClassMetaTest {
 
         ClassMeta<GetterBetterThanName> meta = ReflectionService.newInstance().getClassMeta(GetterBetterThanName.class);
 
-        PropertyMeta<GetterBetterThanName, Object> pm = meta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<GetterBetterThanName, Object> pm = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null, propertyFilter);
 
         assertEquals("getValue", pm.getGetter().get(target));
     }
@@ -151,8 +151,8 @@ public class ObjectClassMetaTest {
                         .getClassMeta(UnprefixedBean.class);
 
         PropertyMeta<UnprefixedBean, Object> pm = meta
-                .newPropertyFinder(propertyFilter)
-                .findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null);
+                .newPropertyFinder()
+                .findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null, propertyFilter);
 
         assertNotNull(pm);
         pm.getSetter().set(target, "aa");
@@ -165,11 +165,11 @@ public class ObjectClassMetaTest {
 
         ClassMeta<CompatibleGetter> meta = ReflectionService.newInstance().getClassMeta(CompatibleGetter.class);
 
-        PropertyMeta<CompatibleGetter, Object> pm = meta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<CompatibleGetter, Object> pm = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null, propertyFilter);
 
         assertEquals(Arrays.asList("aa"), pm.getGetter().get(target));
 
-        PropertyMeta<CompatibleGetter, Object> pm2 = meta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value2"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<CompatibleGetter, Object> pm2 = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value2"), new Object[0], (TypeAffinity)null, propertyFilter);
 
         assertEquals(2, pm2.getGetter().get(target));
 
@@ -181,14 +181,14 @@ public class ObjectClassMetaTest {
 
         ClassMeta<CompatibleGetter> meta = ReflectionService.newInstance().getClassMeta(CompatibleGetter.class);
 
-        PropertyMeta<CompatibleGetter, Object> pm = meta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<CompatibleGetter, Object> pm = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null, propertyFilter);
 
 
         pm.getSetter().set(target, null);
 
         assertEquals(Arrays.asList("bb"), target.value);
 
-        PropertyMeta<CompatibleGetter, Object> pm2 = meta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value2"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<CompatibleGetter, Object> pm2 = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value2"), new Object[0], (TypeAffinity)null, propertyFilter);
 
         pm2.getSetter().set(target, 2);
         assertEquals(3, target.value2);
@@ -198,16 +198,16 @@ public class ObjectClassMetaTest {
     @Test
     public void testSelfRefInvalidation() {
         ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
-        PropertyFinder<DbObject> propertyFinder = classMeta.newPropertyFinder(propertyFilter);
-        PropertyMeta<DbObject, ?> property = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd"), new Object[0], (TypeAffinity)null);
+        PropertyFinder<DbObject> propertyFinder = classMeta.newPropertyFinder();
+        PropertyMeta<DbObject, ?> property = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd"), new Object[0], (TypeAffinity)null, propertyFilter);
         assertNotNull(property);
         assertTrue(property.isSelf());
         assertTrue(property.isValid());
 
-        assertNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("cccc"), new Object[0], (TypeAffinity)null));
-        assertNotNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd"), new Object[0], (TypeAffinity)null));
+        assertNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("cccc"), new Object[0], (TypeAffinity)null, propertyFilter));
+        assertNotNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd"), new Object[0], (TypeAffinity)null, propertyFilter));
 
-        PropertyMeta<DbObject, ?> idProperty = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<DbObject, ?> idProperty = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity)null, propertyFilter);
         assertNotNull(idProperty);
         assertFalse(idProperty.isSelf());
         assertTrue(idProperty.isValid());
@@ -221,15 +221,15 @@ public class ObjectClassMetaTest {
     public void testSelfRefInvalidationOnOptional() {
         ClassMeta<Optional<DbObject>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Optional<DbObject>>() {
         }.getType());
-        PropertyFinder<Optional<DbObject>> propertyFinder = classMeta.newPropertyFinder(propertyFilter);
-        PropertyMeta<Optional<DbObject>, ?> property = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd"), new Object[0], (TypeAffinity)null);
+        PropertyFinder<Optional<DbObject>> propertyFinder = classMeta.newPropertyFinder();
+        PropertyMeta<Optional<DbObject>, ?> property = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd"), new Object[0], (TypeAffinity)null, propertyFilter);
         assertNotNull(property);
         assertTrue(property.isValid());
 
-        assertNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("cccc"), new Object[0], (TypeAffinity)null));
-        assertNotNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd"), new Object[0], (TypeAffinity)null));
+        assertNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("cccc"), new Object[0], (TypeAffinity)null, propertyFilter));
+        assertNotNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd"), new Object[0], (TypeAffinity)null, propertyFilter));
 
-        PropertyMeta<Optional<DbObject>, ?> idProperty = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<Optional<DbObject>, ?> idProperty = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity)null, propertyFilter);
         assertNotNull(idProperty);
         assertTrue(idProperty.isValid());
 
@@ -345,7 +345,7 @@ public class ObjectClassMetaTest {
     public void testResolveConstructorParamWithDeductor() {
         ClassMeta<StringObject> classMeta = ReflectionService.disableAsm().getClassMeta(StringObject.class);
 
-        assertTrue(classMeta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null).isConstructorProperty());
+        assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null, propertyFilter).isConstructorProperty());
 
     }
 
@@ -353,8 +353,8 @@ public class ObjectClassMetaTest {
     public void testResolveConstructorParamWithDeductorNoNull() {
         ClassMeta<NonNullContainer> classMeta = ReflectionService.disableAsm().getClassMeta(NonNullContainer.class);
 
-        assertTrue(classMeta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null).isConstructorProperty());
-        assertTrue(classMeta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value2"), new Object[0], (TypeAffinity)null).isConstructorProperty());
+        assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null, propertyFilter).isConstructorProperty());
+        assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value2"), new Object[0], (TypeAffinity)null, propertyFilter).isConstructorProperty());
 
     }
 
@@ -362,8 +362,8 @@ public class ObjectClassMetaTest {
     public void testResolveConstructorParamWithDeductorNoNullInParam() {
         ClassMeta<TwoStringObjectNonNull> classMeta = ReflectionService.disableAsm().getClassMeta(TwoStringObjectNonNull.class);
 
-        assertTrue(classMeta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null).isConstructorProperty());
-        assertTrue(classMeta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value2"), new Object[0], (TypeAffinity)null).isConstructorProperty());
+        assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null, propertyFilter).isConstructorProperty());
+        assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value2"), new Object[0], (TypeAffinity)null, propertyFilter).isConstructorProperty());
 
     }
 
@@ -371,12 +371,13 @@ public class ObjectClassMetaTest {
     public void testAnnotationsToProperty() {
         final ClassMeta<ObjectWithAnnotation> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithAnnotation.class);
 
-        Object[] definedProperties = classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
             @Override
             public boolean test(PropertyMeta<?, ?> propertyMeta) {
                 return true;
             }
-        }).findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity)null).getDefinedProperties();
+        };
+        Object[] definedProperties = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity)null, predicate).getDefinedProperties();
 
         assertEquals(1, definedProperties.length);
         assertTrue(definedProperties[0] instanceof KeyTestProperty);
@@ -424,12 +425,13 @@ public class ObjectClassMetaTest {
     public void test501ZoneId() {
         final ClassMeta<C501> classMeta = ReflectionService.newInstance().getClassMeta(C501.class);
 
-        PropertyMeta<C501, Object> zoneId = classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
             @Override
             public boolean test(PropertyMeta<?, ?> propertyMeta) {
                 return true;
             }
-        }).findProperty(DefaultPropertyNameMatcher.of("zoneId"), new Object[0], (TypeAffinity)null);
+        };
+        PropertyMeta<C501, Object> zoneId = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("zoneId"), new Object[0], (TypeAffinity)null, predicate);
 
         System.out.println("zoneId = " + zoneId);
 

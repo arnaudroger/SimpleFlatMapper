@@ -8,8 +8,8 @@ import org.simpleflatmapper.util.Predicate;
 public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
 
 
-    public TuplePropertyFinder(final TupleClassMeta<T> tupleClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
-        super(tupleClassMeta, propertyFilter, selfScoreFullName);
+    public TuplePropertyFinder(final TupleClassMeta<T> tupleClassMeta, boolean selfScoreFullName) {
+        super(tupleClassMeta, selfScoreFullName);
 
         tupleClassMeta.forEachProperties(new Consumer<PropertyMeta<T, ?>>() {
             @Override
@@ -21,7 +21,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
 
     private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta, PropertyMeta<T, E> prop) {
         ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(prop.getPropertyType());
-        return new IndexedElement<T, E>(prop, classMeta, propertyFilter);
+        return new IndexedElement<T, E>(prop, classMeta);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
     }
 
     @Override
-    protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+    protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
         for (int i = 0; i < elements.size(); i++) {
             final IndexedElement element = elements.get(i);
 
@@ -63,7 +63,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
                             }, score, typeAffinityScorer);
                         }
                     }
-                }, score.tupleIndex(i), true, propertyFinderTransformer, typeAffinityScorer);
+                }, score.tupleIndex(i), true, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
 
             }
         }

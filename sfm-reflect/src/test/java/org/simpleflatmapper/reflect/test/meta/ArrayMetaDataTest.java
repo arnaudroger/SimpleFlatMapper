@@ -30,8 +30,8 @@ public class ArrayMetaDataTest {
         assertTrue(classMeta instanceof ArrayClassMeta);
 
         // indexed
-        PropertyFinder<Object> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
-        PropertyMeta<Object, Object> _0 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("0", 0, false, false), new Object[0], (TypeAffinity)null);
+        PropertyFinder<Object> propertyFinder = classMeta.newPropertyFinder();
+        PropertyMeta<Object, Object> _0 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("0", 0, false, false), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         ArrayElementPropertyMeta<Object, Object> meta0 = (ArrayElementPropertyMeta<Object, Object>) _0;
         assertEquals(0, meta0.getIndex());
 
@@ -42,7 +42,7 @@ public class ArrayMetaDataTest {
         assertEquals("aa", meta0.getGetter().get(list));
 
         // index discovery
-        PropertyMeta<Object, Object> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false), new Object[0], (TypeAffinity)null);
+        PropertyMeta<Object, Object> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
 
         assertTrue(bb instanceof ArrayElementPropertyMeta);
         ArrayElementPropertyMeta<Object, Object> meta = (ArrayElementPropertyMeta<Object, Object>) bb;
@@ -71,8 +71,8 @@ public class ArrayMetaDataTest {
         assertTrue(classMeta instanceof ArrayClassMeta);
 
         // indexed
-        PropertyFinder<Object> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
-        PropertyMeta<Object, Object> _0 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("0", 0, false, false), new Object[0], (TypeAffinity)null);
+        PropertyFinder<Object> propertyFinder = classMeta.newPropertyFinder();
+        PropertyMeta<Object, Object> _0 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("0", 0, false, false), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         ArrayElementPropertyMeta<Object, Object> meta0 = (ArrayElementPropertyMeta<Object, Object>) _0;
         assertEquals(0, meta0.getIndex());
 
@@ -95,8 +95,8 @@ public class ArrayMetaDataTest {
 
         assertTrue(classMeta instanceof ArrayClassMeta);
 
-        PropertyFinder<String[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
-        PropertyMeta<String[], String> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false), new Object[0], (TypeAffinity)null);
+        PropertyFinder<String[]> propertyFinder = classMeta.newPropertyFinder();
+        PropertyMeta<String[], String> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
 
         assertTrue("expect ArrayElementPropertyMeta " + bb, bb instanceof ArrayElementPropertyMeta);
         ArrayElementPropertyMeta<String[], String> meta = (ArrayElementPropertyMeta<String[], String>) bb;

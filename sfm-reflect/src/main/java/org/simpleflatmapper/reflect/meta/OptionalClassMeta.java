@@ -69,8 +69,8 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 	}
 
 	@Override
-	public PropertyFinder<Optional<T>> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
-		return new OptionalPropertyFinder<T>(this, propertyFilter, reflectionService.selfScoreFullName());
+	public PropertyFinder<Optional<T>> newPropertyFinder() {
+		return new OptionalPropertyFinder<T>(this, reflectionService.selfScoreFullName());
 	}
 
 	public Type getType() {

@@ -529,7 +529,7 @@ public class AbstractMapperBuilderTest {
             String str = headers[i];
             builder.addMapping(str);
             builderIndexed.addMapping(str, i);
-            row[i] = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str), new Object[0], (TypeAffinity)null).getGetter().get(instance1);
+            row[i] = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(str), new Object[0], (TypeAffinity)null, ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).getGetter().get(instance1);
 
         }
         EnumerableMapper<Object[][], T, ?> mapper = builder.mapper();

@@ -86,8 +86,8 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 	}
 
 	@Override
-	public PropertyFinder<M> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
-		return new                                 MapPropertyFinder<M, K, V>(this, valueClassMeta, keyConverter, keyContextFactory, propertyFilter, reflectionService.selfScoreFullName());
+	public PropertyFinder<M> newPropertyFinder() {
+		return new MapPropertyFinder<M, K, V>(this, valueClassMeta, keyConverter, keyContextFactory, reflectionService.selfScoreFullName());
 	}
 
 	@Override

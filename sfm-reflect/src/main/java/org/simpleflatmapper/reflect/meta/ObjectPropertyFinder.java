@@ -22,8 +22,8 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 
 
 
-    ObjectPropertyFinder(ObjectClassMeta<T> classMeta, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
-        super(propertyFilter, selfScoreFullName);
+    ObjectPropertyFinder(ObjectClassMeta<T> classMeta, boolean selfScoreFullName) {
+        super(selfScoreFullName);
         this.classMeta = classMeta;
 		this.eligibleInstantiatorDefinitions = classMeta.getInstantiatorDefinitions() != null ? new ArrayList<InstantiatorDefinition>(classMeta.getInstantiatorDefinitions()) : null;
 	}
@@ -34,9 +34,10 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 								  Object[] properties, FoundProperty<T> matchingProperties,
 								  PropertyMatchingScore score,
 								  boolean allowSelfReference,
-								  PropertyFinderTransformer propertyFinderTransform, TypeAffinityScorer typeAffinityScorer) {
-		lookForConstructor(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer);
-		lookForProperty(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer);
+								  PropertyFinderTransformer propertyFinderTransform,
+								  TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+		lookForConstructor(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter);
+		lookForProperty(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter);
 
 		final String propName = propertyNameMatcher.toString();
 		if (allowSelfReference 
@@ -63,7 +64,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		return false;
 	}
 
-	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (final ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				final String columnName = getColumnName(prop);
@@ -84,14 +85,14 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 									new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
 									propertiesDelegateAndRemoveNonMatchingCallBack(selectionCallback, prop), score, typeAffinityScorer);
 						}
-					}, score.matches(partialMatch.getProperty()), propertyFinderTransformer, typeAffinityScorer);
+					}, score.matches(partialMatch.getProperty()), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
 				}
 			}
 		}
 	}
 
 
-	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
 		for (final PropertyMeta<T, ?> prop : classMeta.getProperties()) {
 			
 			final String columnName =
@@ -113,7 +114,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 								propertiesDelegateCallBack(selectionCallback), score, typeAffinityScorer);
 					}
 				}, score.matches(subPropMatch.getProperty()),
-				propertyFinderTransformer, typeAffinityScorer);
+				propertyFinderTransformer, typeAffinityScorer, propertyFilter);
 			}
 		}
 	}
@@ -131,14 +132,14 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			Object[] properties, final PropertyMeta<T, ?> prop,
 			final FoundProperty foundProperty,
 			final PropertyMatchingScore score,
-			final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+			final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
 
     	PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(prop);
 
     	final PropertyFinder<?> newPropertyFinder;
 
 		if (subPropertyFinder == null) {
-			subPropertyFinder = prop.getPropertyClassMeta().newPropertyFinder(propertyFilter);
+			subPropertyFinder = prop.getPropertyClassMeta().newPropertyFinder();
 			newPropertyFinder = subPropertyFinder;
 		} else {
 			newPropertyFinder = null;
@@ -154,7 +155,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 						}
 						foundProperty.found(propertyMeta, selectionCallback, score, typeAffinityScorer);
 					}
-				}, score, false, propertyFinderTransformer, typeAffinityScorer);
+				}, score, false, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
 	}
 
     private String getColumnName(PropertyMeta<T, ?> prop) {
@@ -247,7 +248,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		PropertyFinder<?> propertyFinder = subPropertyFinders.get(subPropertyMeta.getOwnerProperty());
 		
 		if (propertyFinder == null) {
-			propertyFinder = subPropertyMeta.getSubProperty().getPropertyClassMeta().newPropertyFinder(propertyFilter);
+			propertyFinder = subPropertyMeta.getSubProperty().getPropertyClassMeta().newPropertyFinder();
 			subPropertyFinders.put(subPropertyMeta.getOwnerProperty(), propertyFinder);
 		}
 		

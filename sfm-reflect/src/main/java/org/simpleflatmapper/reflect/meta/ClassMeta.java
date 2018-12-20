@@ -13,7 +13,7 @@ public interface ClassMeta<T> {
 
 	ReflectionService getReflectionService();
 
-	PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter);
+	PropertyFinder<T> newPropertyFinder();
 
 	Type getType();
 

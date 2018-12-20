@@ -25,16 +25,17 @@ public class Issue451 {
         ClassMeta<List<Foo>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<List<Foo>>() {
         }.getType());
 
-        PropertyFinder<List<Foo>> finder = classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
             @Override
             public boolean test(PropertyMeta<?, ?> propertyMeta) {
                 return true;
             }
-        });
+        };
+        PropertyFinder<List<Foo>> finder = classMeta.newPropertyFinder();
 
-        SubPropertyMeta f = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_f"), new Object[0], (TypeAffinity)null);
+        SubPropertyMeta f = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_f"), new Object[0], (TypeAffinity)null, predicate);
         assertNotNull(f);
-        SubPropertyMeta n = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_n"), new Object[0], (TypeAffinity)null);
+        SubPropertyMeta n = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_n"), new Object[0], (TypeAffinity)null, predicate);
 
         assertEquals(AppendCollectionSetter.class, n.getOwnerProperty().getSetter().getClass());
 

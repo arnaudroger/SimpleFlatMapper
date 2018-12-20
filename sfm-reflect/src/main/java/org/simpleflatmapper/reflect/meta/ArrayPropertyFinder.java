@@ -7,16 +7,15 @@ import org.simpleflatmapper.util.Predicate;
 public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 
 
-    public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
-        super(arrayClassMeta, propertyFilter, selfScoreFullName);
+    public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta, boolean selfScoreFullName) {
+        super(arrayClassMeta, selfScoreFullName);
     }
 
     @Override
     protected IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {
         while (elements.size() <= indexedColumn.getIndexValue()) {
             elements.add(new IndexedElement<T, E>(
-                    newElementPropertyMeta(elements.size(), "element" + elements.size()), ((ArrayClassMeta<T, E>)classMeta).getElementClassMeta(),
-                    propertyFilter));
+                    newElementPropertyMeta(elements.size(), "element" + elements.size()), ((ArrayClassMeta<T, E>)classMeta).getElementClassMeta()));
         }
 
         return (IndexedElement<T, E>) elements.get(indexedColumn.getIndexValue());
@@ -41,25 +40,25 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
     }
 
     @Override
-    protected void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+    protected void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
         final ClassMeta<E> elementClassMeta = ((ArrayClassMeta)classMeta).getElementClassMeta();
 
         // all element has same type so check if can find any property matching
         PropertyMeta<E, ?> property =
-                elementClassMeta.newPropertyFinder(propertyFilter).findProperty(propertyNameMatcher, properties, typeAffinityScorer);
+                elementClassMeta.newPropertyFinder().findProperty(propertyNameMatcher, properties, typeAffinityScorer, propertyFilter);
 
         if (property != null) {
             for (int i = 0; i < elements.size(); i++) {
                 IndexedElement element = elements.get(i);
                 ExtrapolateFoundProperty<T> matchingProperties = new ExtrapolateFoundProperty<T>(element, foundProperty);
-                lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), properties, matchingProperties, score.speculativeArrayIndex(i), propertyFinderTransformer, typeAffinityScorer);
+                lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), properties, matchingProperties, score.speculativeArrayIndex(i), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
                 if (matchingProperties.hasFound()) {
                     return;
                 }
             }
 
             int index = elements.size();
-            lookForAgainstColumn(new IndexedColumn(index,  propertyNameMatcher), properties, foundProperty, score.speculativeArrayIndex(index), propertyFinderTransformer, typeAffinityScorer);
+            lookForAgainstColumn(new IndexedColumn(index,  propertyNameMatcher), properties, foundProperty, score.speculativeArrayIndex(index), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
         }
 	}
 

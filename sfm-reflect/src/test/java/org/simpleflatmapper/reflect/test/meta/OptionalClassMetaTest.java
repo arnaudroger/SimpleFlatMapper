@@ -35,7 +35,7 @@ public class OptionalClassMetaTest {
     private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
     @Test
     public void testFindProperty() throws Exception {
-        PropertyMeta<Optional<DbObject>, String> email = objectClassMeta.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("email"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<Optional<DbObject>, String> email = objectClassMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("email"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
 
         DbObject dbObject = new DbObject();
         dbObject.setEmail("houlala 2 la mission!");
@@ -52,7 +52,7 @@ public class OptionalClassMetaTest {
 
 
 
-        PropertyMeta<Optional<String>, String> strValue = stringClassMeta.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<Optional<String>, String> strValue = stringClassMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
 
         assertEquals("str", strValue.getGetter().get(Optional.of("str")));
         assertTrue(NullSetter.isNull(strValue.getSetter()));

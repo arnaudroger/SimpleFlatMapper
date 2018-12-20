@@ -86,8 +86,8 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
-		return new ArrayPropertyFinder<T, E>(this, propertyFilter, reflectionService.selfScoreFullName());
+	public PropertyFinder<T> newPropertyFinder() {
+		return new ArrayPropertyFinder<T, E>(this, reflectionService.selfScoreFullName());
 	}
 
 	public Type getType() {

@@ -4,16 +4,13 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
-import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMatchingScore;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
-import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BiConsumer;
-import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -30,18 +27,18 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
     private final List<PropertyFinder<? extends T>> implementationPropertyFinders;
     private final ReflectionService reflectionService;
 
-    protected DiscriminatorPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName, Type ownerType, List<ClassMeta<?>> implemetations, ReflectionService reflectionService) {
-        super(propertyFilter, selfScoreFullName);
+    protected DiscriminatorPropertyFinder(boolean selfScoreFullName, Type ownerType, List<ClassMeta<?>> implemetations, ReflectionService reflectionService) {
+        super( selfScoreFullName);
         this.ownerType = ownerType;
         this.reflectionService = reflectionService;
         implementationPropertyFinders = new ArrayList<PropertyFinder<? extends T>>();
         for(ClassMeta<?> cm : implemetations) {
-            implementationPropertyFinders.add((PropertyFinder<? extends T>) cm.newPropertyFinder(propertyFilter));
+            implementationPropertyFinders.add((PropertyFinder<? extends T>) cm.newPropertyFinder());
         }
     }
 
     @Override
-    public void lookForProperties(PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+    public void lookForProperties(PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
         
         final List<DiscriminatorMatch> matches = new ArrayList<DiscriminatorMatch>();
 
@@ -56,7 +53,7 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
                             matchedProperties.add(new MatchedProperty(propertyMeta, selectionCallback, score, typeAffinityScorer.score(propertyMeta.getPropertyType())));  
                         }
                     }
-                    , score, false, propertyFinderTransformer, typeAffinityScorer);
+                    , score, false, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
             
             if (!matchedProperties.isEmpty()) {
                 Collections.sort(matchedProperties);
@@ -120,7 +117,7 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
         PropertyFinder<?> propertyFinder = subPropertyFinders.get(subPropertyMeta.getOwnerProperty());
 
         if (propertyFinder == null) {
-            propertyFinder = subPropertyMeta.getSubProperty().getPropertyClassMeta().newPropertyFinder(propertyFilter);
+            propertyFinder = subPropertyMeta.getSubProperty().getPropertyClassMeta().newPropertyFinder();
             subPropertyFinders.put(subPropertyMeta.getOwnerProperty(), propertyFinder);
         }
 

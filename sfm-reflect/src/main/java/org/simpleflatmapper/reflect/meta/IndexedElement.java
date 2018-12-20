@@ -12,11 +12,11 @@ public class IndexedElement<T, E> {
     private final PropertyFinder<E> propertyFinder;
     private final List<String> assignedPath = new ArrayList<String>();
 
-    public IndexedElement(PropertyMeta<T, E> propertyMeta, ClassMeta<E> elementClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+    public IndexedElement(PropertyMeta<T, E> propertyMeta, ClassMeta<E> elementClassMeta) {
         this.propertyMeta = propertyMeta;
         this.elementClassMeta = elementClassMeta;
         if (elementClassMeta != null) {
-            propertyFinder = elementClassMeta.newPropertyFinder(propertyFilter);
+            propertyFinder = elementClassMeta.newPropertyFinder();
         } else {
             propertyFinder = null;
         }

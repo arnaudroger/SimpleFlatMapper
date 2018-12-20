@@ -18,6 +18,12 @@ import static org.junit.Assert.assertEquals;
 
 public class Issue450 {
 
+    public static final Predicate<PropertyMeta<?, ?>> TRUE_PREDICATE = new Predicate<PropertyMeta<?, ?>>() {
+        @Override
+        public boolean test(PropertyMeta<?, ?> propertyMeta) {
+            return true;
+        }
+    };
     private PropertyFinder.PropertyFinderProbe prob = new PropertyFinder.PropertyFinderProbe() {
         @Override
         public void found(PropertyMeta propertyMeta, PropertyMatchingScore score) {
@@ -131,7 +137,7 @@ public class Issue450 {
 
 
     private String getPathFor(PropertyFinder<?> finder, String prop) {
-        return finder.findProperty(DefaultPropertyNameMatcher.of(prop), new Object[0], (TypeAffinity)null, prob).getPath();
+        return finder.findProperty(DefaultPropertyNameMatcher.of(prop), new Object[0], (TypeAffinity)null, prob, TRUE_PREDICATE).getPath();
     }
 
     private PropertyFinder<?> getTuple2IntegerFooPropertyFinder() {
@@ -142,12 +148,7 @@ public class Issue450 {
     private PropertyFinder<?> getPropertyFinder(TypeReference<?> typeReference) {
         ClassMeta<Tuple2<Integer, Foo>> classMeta = ReflectionService.newInstance().withSelfScoreFullName(true).getClassMeta(typeReference.getType());
 
-        return classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
-            @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                return true;
-            }
-        });
+        return classMeta.newPropertyFinder();
     }
 
     private PropertyFinder<?> getTuple2IntegerListFooPropertyFinder() {

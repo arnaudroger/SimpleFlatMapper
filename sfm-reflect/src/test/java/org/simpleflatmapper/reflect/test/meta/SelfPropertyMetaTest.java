@@ -22,7 +22,7 @@ public class SelfPropertyMetaTest {
         ClassMeta<String> direct = ReflectionService.newInstance().getClassMeta(String.class);
 
 
-        PropertyMeta<String, Object> property = direct.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("bbb", 0, true, true), new Object[0], (TypeAffinity)null);
+        PropertyMeta<String, Object> property = direct.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("bbb", 0, true, true), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
 
 
         assertTrue("Expect SelfPropertyMeta " + property, property instanceof SelfPropertyMeta);

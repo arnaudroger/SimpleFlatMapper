@@ -23,33 +23,33 @@ public class PropertyFinderTest {
 
         ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getClassMeta(DbObject[].class);
 
-        PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
+        PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder();
 
-        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("elt0_id"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("elt0_id"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("2_id"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("2_id"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
         Assert.assertEquals(1, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?, ?>) propEltId).getOwnerProperty()).getIndex());
 
 
-        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
         assertEquals(3, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?, ?>) propEltId).getOwnerProperty()).getIndex());
 
 
-        propEltId = propertyFinder.findProperty(matcher("name"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("name"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
         assertEquals(0, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?, ?>) propEltId).getOwnerProperty()).getIndex());
 
-        propEltId = propertyFinder.findProperty(matcher("2_notid"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("2_notid"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNull(propEltId);
 
 
-        propEltId = propertyFinder.findProperty(matcher("notid"), new Object[0], (TypeAffinity)null); // will safe match
+        propEltId = propertyFinder.findProperty(matcher("notid"), new Object[0], (TypeAffinity)null, isValidPropertyMeta); // will safe match
         assertTrue(propEltId instanceof  ArrayElementPropertyMeta);
         assertEquals(4, ((ArrayElementPropertyMeta)propEltId).getIndex());
 
@@ -64,35 +64,35 @@ public class PropertyFinderTest {
     public void testFindElementOnTuple() {
         ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getClassMeta(Tuples.typeDef(String.class, DbObject.class, DbObject.class));
 
-        PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
+        PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder();
 
-        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("element2_id"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("element2_id"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("element1"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("element1"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("elt1"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("elt1"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("1"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("1"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
 
 
-        propEltId = propertyFinder.findProperty(matcher("4_id"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("4_id"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("2_notid"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("2_notid"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNull(propEltId);
 
 
-        propEltId = propertyFinder.findProperty(matcher("elt0"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("elt0"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("notid"), new Object[0], (TypeAffinity)null);
+        propEltId = propertyFinder.findProperty(matcher("notid"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNull(propEltId);
 
     }
@@ -103,23 +103,23 @@ public class PropertyFinderTest {
     public void testArrayElementConstructorInjectionWithIncompatibleConstructorUseCompatibleOutlay() {
         ClassMeta<ObjectWithIncompatibleConstructor[]> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithIncompatibleConstructor[].class);
 
-        PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
+        PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder();
 
-        assertNotNull(propertyFinder.findProperty(matcher("1_arg1"), new Object[0], (TypeAffinity)null));
-        assertNotNull(propertyFinder.findProperty(matcher("1_arg3"), new Object[0], (TypeAffinity)null));
-        assertNotNull(propertyFinder.findProperty(matcher("2_arg1"), new Object[0], (TypeAffinity)null));
-        assertNotNull(propertyFinder.findProperty(matcher("2_arg2"), new Object[0], (TypeAffinity)null));
+        assertNotNull(propertyFinder.findProperty(matcher("1_arg1"), new Object[0], (TypeAffinity)null, isValidPropertyMeta));
+        assertNotNull(propertyFinder.findProperty(matcher("1_arg3"), new Object[0], (TypeAffinity)null, isValidPropertyMeta));
+        assertNotNull(propertyFinder.findProperty(matcher("2_arg1"), new Object[0], (TypeAffinity)null, isValidPropertyMeta));
+        assertNotNull(propertyFinder.findProperty(matcher("2_arg2"), new Object[0], (TypeAffinity)null, isValidPropertyMeta));
     }
 
     @Test
     public void testArrayElementConstructorInjectionWithIncompatibleConstructorUseIncompatibleOutlay() {
         ClassMeta<ObjectWithIncompatibleConstructor[]> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithIncompatibleConstructor[].class);
 
-        PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
+        PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder();
 
-        assertNotNull(propertyFinder.findProperty(matcher("1_arg1"), new Object[0], (TypeAffinity)null));
-        assertNotNull(propertyFinder.findProperty(matcher("1_arg3"), new Object[0], (TypeAffinity)null));
-        assertNull(propertyFinder.findProperty(matcher("1_arg2"), new Object[0], (TypeAffinity)null));
+        assertNotNull(propertyFinder.findProperty(matcher("1_arg1"), new Object[0], (TypeAffinity)null, isValidPropertyMeta));
+        assertNotNull(propertyFinder.findProperty(matcher("1_arg3"), new Object[0], (TypeAffinity)null, isValidPropertyMeta));
+        assertNull(propertyFinder.findProperty(matcher("1_arg2"), new Object[0], (TypeAffinity)null, isValidPropertyMeta));
     }
 
     static class ObjectWithIncompatibleConstructor {
@@ -143,14 +143,15 @@ public class PropertyFinderTest {
     public void testIsEnabled531() {
         ClassMeta<O531> classMeta = ReflectionService.newInstance().getClassMeta(O531.class);
 
-        PropertyFinder<O531> propertyFinder = classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
             @Override
             public boolean test(PropertyMeta<?, ?> propertyMeta) {
                 return !NullGetter.isNull(propertyMeta.getGetter());
             }
-        });
-        propertyFinder.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity) null);
-        PropertyMeta<O531, Object> property = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("is_enabled"), new Object[0], (TypeAffinity) null);
+        };
+        PropertyFinder<O531> propertyFinder = classMeta.newPropertyFinder();
+        propertyFinder.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity) null, predicate);
+        PropertyMeta<O531, Object> property = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("is_enabled"), new Object[0], (TypeAffinity) null, predicate);
 
         assertNotNull(property);
 

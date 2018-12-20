@@ -24,14 +24,15 @@ public class SubPropertyMetaTest {
     public void testSubProperty() throws Exception {
         ClassMeta<Db1DeepObject> classMeta = ReflectionService.newInstance().getClassMeta(Db1DeepObject.class);
 
+        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
+            @Override
+            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                return true;
+            }
+        };
         PropertyMeta<Db1DeepObject, String> property = classMeta
-                .newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
-                    @Override
-                    public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                        return true;
-                    }
-                })
-                .findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false), new Object[0], (TypeAffinity)null);
+                .newPropertyFinder()
+                .findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false), new Object[0], (TypeAffinity)null, predicate);
 
         assertTrue(property instanceof SubPropertyMeta);
         assertTrue(property.isSubProperty());

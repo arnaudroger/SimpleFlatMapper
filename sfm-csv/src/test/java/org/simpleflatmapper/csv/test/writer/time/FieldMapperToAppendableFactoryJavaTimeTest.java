@@ -139,7 +139,7 @@ public class FieldMapperToAppendableFactoryJavaTimeTest {
     }
 
     private <T> PropertyMapping<T, String, CsvColumnKey> newPropertyMapping(String col, ClassMeta<T> classMeta, FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
-        PropertyMeta<T, String> propertyMeta = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(col), new Object[0], (TypeAffinity)null);
+        PropertyMeta<T, String> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(col), new Object[0], (TypeAffinity)null, ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
         if (propertyMeta == null) throw new IllegalArgumentException("cannot find prop " + col);
         return new PropertyMapping<T, String, CsvColumnKey>(
                 propertyMeta,

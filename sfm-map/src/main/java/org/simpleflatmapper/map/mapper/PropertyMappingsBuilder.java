@@ -42,6 +42,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private final ClassMeta<T> classMeta;
 	private final PropertyMappingsBuilderProbe propertyMappingsBuilderProbe;
+	private final Predicate<PropertyMeta<?, ?>> isValidPropertyMeta;
 
 	protected boolean modifiable = true;
 
@@ -55,10 +56,11 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 									final PropertyFinder<T> propertyFinder,
 									List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties, 
 									PropertyMappingsBuilderProbe propertyMappingsBuilderProbe)  throws MapperBuildingException {
+		this.isValidPropertyMeta = isValidPropertyMeta;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.customProperties = customProperties;
 		this.propertyMappingsBuilderProbe = propertyMappingsBuilderProbe;
-		this.propertyFinder = propertyFinder != null ? propertyFinder : classMeta.newPropertyFinder(isValidPropertyMeta);
+		this.propertyFinder = propertyFinder != null ? propertyFinder : classMeta.newPropertyFinder();
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.classMeta = classMeta;
 		this.propertyNotFoundConsumer = new Consumer<K>() {
@@ -94,7 +96,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		PropertyNameMatcher propertyNameMatcher = propertyNameMatcherFactory.newInstance(key);
 		final PropertyMeta<T, P> prop =
 				(PropertyMeta<T, P>) effectivePropertyFinder
-						.findProperty(propertyNameMatcher, columnDefinition.properties(), toTypeAffinity(key), propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher));
+						.findProperty(propertyNameMatcher, columnDefinition.properties(), toTypeAffinity(key), propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher), isValidPropertyMeta);
 
 
 		if (prop == null) {
@@ -370,5 +372,9 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		public PropertyFinder.PropertyFinderProbe propertyFinderProbe(PropertyNameMatcher matcher) {
 			return new PropertyFinder.DefaultPropertyFinderProbe(matcher);
 		}
+	}
+
+	public interface TargetPredicate<K extends FieldKey<K>> {
+		boolean test(PropertyMeta<?, ?> propertyMeta, K key, Object[] properties);
 	}
 }

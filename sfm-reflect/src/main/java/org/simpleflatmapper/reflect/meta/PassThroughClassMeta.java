@@ -32,8 +32,8 @@ public class PassThroughClassMeta<T, V> implements ClassMeta<T> {
 			this.instantiatorDefinition = objectClassMeta.getInstantiatorDefinitions().get(0);
 			Predicate<PropertyMeta<?, ?>> predicate = ConstantPredicate.truePredicate();
 			this.propertyMeta = objectClassMeta
-					.newPropertyFinder(predicate)
-					.findProperty(DefaultPropertyNameMatcher.of(value), new Object[0], (TypeAffinity) null);;
+					.newPropertyFinder()
+					.findProperty(DefaultPropertyNameMatcher.of(value), new Object[0], (TypeAffinity) null, predicate);
 			this.innerMeta = propertyMeta.getPropertyClassMeta();
 		} catch(Exception e) {
             ErrorHelper.rethrow(e);
@@ -61,8 +61,8 @@ public class PassThroughClassMeta<T, V> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
-		return new PassThroughPropertyFinder<T, V>(this, propertyFilter, reflectionService.selfScoreFullName());
+	public PropertyFinder<T> newPropertyFinder() {
+		return new PassThroughPropertyFinder<T, V>(this, reflectionService.selfScoreFullName());
 	}
 
 	public Type getType() {

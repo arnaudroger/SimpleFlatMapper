@@ -14,11 +14,11 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
     private final PropertyFinder<T> propertyFinder;
     private final ClassMeta<T> innerMeta;
 
-    public OptionalPropertyFinder(OptionalClassMeta<T> optionalClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
-        super(propertyFilter, selfScoreFullName);
+    public OptionalPropertyFinder(OptionalClassMeta<T> optionalClassMeta, boolean selfScoreFullName) {
+        super(selfScoreFullName);
         this.optionalClassMeta = optionalClassMeta;
         innerMeta = optionalClassMeta.getInnerMeta();
-        this.propertyFinder = innerMeta != null ? innerMeta.newPropertyFinder(propertyFilter) : null;
+        this.propertyFinder = innerMeta != null ? innerMeta.newPropertyFinder() : null;
 	}
 
 
@@ -26,14 +26,18 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
     @Override
     public void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
-            Object[] properties, FoundProperty matchingProperties,
-            PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer){
+            Object[] properties, 
+            FoundProperty<Optional<T>> matchingProperties,
+            PropertyMatchingScore score, boolean allowSelfReference, 
+            PropertyFinderTransformer propertyFinderTransformer, 
+            TypeAffinityScorer typeAffinityScorer, 
+            Predicate<PropertyMeta<?, ?>> propertyFilter){
         propertyFinderTransformer.apply(propertyFinder).lookForProperties(propertyNameMatcher, properties, new FoundProperty<T>() {
             @Override
             public <P extends PropertyMeta<T, ?>> void found(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
                 matchingProperties.found(getSubPropertyMeta(propertyMeta), selectionCallback, score, typeAffinityScorer);
             }
-        }, score, allowSelfReference, propertyFinderTransformer, typeAffinityScorer);
+        }, score, allowSelfReference, propertyFinderTransformer, typeAffinityScorer,  propertyFilter);
     }
 
     @SuppressWarnings("unchecked")

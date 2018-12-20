@@ -6,7 +6,6 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Consumer;
-import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -28,8 +27,8 @@ public class DiscriminatorClassMeta<T> implements ClassMeta<T> {
     }
 
     @Override
-    public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
-        return new DiscriminatorPropertyFinder<T>(propertyFilter, reflectionService.selfScoreFullName(), commonType, discriminator, reflectionService);
+    public PropertyFinder<T> newPropertyFinder() {
+        return new DiscriminatorPropertyFinder<T>(reflectionService.selfScoreFullName(), commonType, discriminator, reflectionService);
     }
 
     @Override

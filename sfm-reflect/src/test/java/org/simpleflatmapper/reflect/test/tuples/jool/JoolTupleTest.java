@@ -37,9 +37,9 @@ public class JoolTupleTest {
         ClassMeta<List<? extends DbObject>> cm3 =
                 ReflectionService.newInstance().getClassMeta(new TypeReference<List<? extends DbObject>>(){}.getType());
 
-        PropertyFinder<List<? extends DbObject>> propertyFinder3 = cm3.newPropertyFinder(t -> true);
+        PropertyFinder<List<? extends DbObject>> propertyFinder3 = cm3.newPropertyFinder();
 
-        PropertyMeta<List<? extends DbObject>, Object> prop3 = propertyFinder3.findProperty(DefaultPropertyNameMatcher.of("elt0_id"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<List<? extends DbObject>, Object> prop3 = propertyFinder3.findProperty(DefaultPropertyNameMatcher.of("elt0_id"), new Object[0], (TypeAffinity)null, t -> true);
 
         System.out.println("prop3 = " + prop3.getPath());
 
@@ -51,9 +51,9 @@ public class JoolTupleTest {
         ClassMeta<List<? extends Tuple2<DbObject, Long>>> cm2 =
                 ReflectionService.newInstance().getClassMeta(new TypeReference<List<? extends Tuple2<DbObject, Long>>>(){}.getType());
 
-        PropertyFinder<List<? extends Tuple2<DbObject, Long>>> propertyFinder2 = cm2.newPropertyFinder(t -> true);
+        PropertyFinder<List<? extends Tuple2<DbObject, Long>>> propertyFinder2 = cm2.newPropertyFinder();
 
-        PropertyMeta<List<? extends Tuple2<DbObject, Long>>, Object> prop2 = propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("elt0_elt0_id"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<List<? extends Tuple2<DbObject, Long>>, Object> prop2 = propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("elt0_elt0_id"), new Object[0], (TypeAffinity)null, t -> true);
 
         System.out.println("prop2 = " + prop2.getPath());
 
@@ -64,9 +64,9 @@ public class JoolTupleTest {
         ClassMeta<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>> cm =
                 ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>>(){}.getType());
 
-        PropertyFinder<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>> propertyFinder = cm.newPropertyFinder(t -> true);
+        PropertyFinder<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>> propertyFinder = cm.newPropertyFinder();
 
-        PropertyMeta<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>, Object> prop = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("elt1_elt0_elt0_id"), new Object[0], (TypeAffinity)null);
+        PropertyMeta<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>, Object> prop = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("elt1_elt0_elt0_id"), new Object[0], (TypeAffinity)null, t -> true);
 
         System.out.println("prop = " + prop.getPath());
         assertEquals("element1[0].element0.id", prop.getPath());
@@ -90,12 +90,12 @@ public class JoolTupleTest {
         ClassMeta<Tuple3<Long, Integer, Short>> cm =
                 ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple3<Long, Integer, Short>>(){}.getType());
 
-        final PropertyFinder<Tuple3<Long, Integer, Short>> propertyFinder = cm.newPropertyFinder(isValidPropertyMeta);
+        final PropertyFinder<Tuple3<Long, Integer, Short>> propertyFinder = cm.newPropertyFinder();
 
-        final PropertyMeta<Tuple3<Long, Integer, Short>, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt0", 0, true, true), new Object[0], (TypeAffinity)null);
-        final PropertyMeta<Tuple3<Long, Integer, Short>, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt1", 0, true, true), new Object[0], (TypeAffinity)null);
-        final PropertyMeta<Tuple3<Long, Integer, Short>, Short> fieldC = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt2", 0, true, true), new Object[0], (TypeAffinity)null);
-        final PropertyMeta<Tuple3<Long, Integer, Short>, ?> fieldD = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt3", 0, true, true), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<Tuple3<Long, Integer, Short>, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt0", 0, true, true), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
+        final PropertyMeta<Tuple3<Long, Integer, Short>, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt1", 0, true, true), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
+        final PropertyMeta<Tuple3<Long, Integer, Short>, Short> fieldC = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt2", 0, true, true), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
+        final PropertyMeta<Tuple3<Long, Integer, Short>, ?> fieldD = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt3", 0, true, true), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
 
         assertNotNull(fieldA);
         assertNotNull(fieldB);

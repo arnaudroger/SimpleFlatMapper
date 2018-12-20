@@ -11,8 +11,8 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     protected final ClassMeta<T> classMeta;
     protected final List<IndexedElement<T, ?>> elements;
 
-    public AbstractIndexPropertyFinder(ClassMeta<T> classMeta, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
-        super(propertyFilter, selfScoreFullName);
+    public AbstractIndexPropertyFinder(ClassMeta<T> classMeta, boolean selfScoreFullName) {
+        super(selfScoreFullName);
         this.elements = new ArrayList<IndexedElement<T, ?>>();
         this.classMeta = classMeta;
     }
@@ -24,21 +24,21 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
             Object[] properties, FoundProperty<T> matchingProperties,
             PropertyMatchingScore score,
             boolean allowSelfReference,
-            PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+            PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
 
 
         IndexedColumn indexedColumn = propertyNameMatcher.matchIndex();
         if (indexedColumn != null) {
-            lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.arrayIndex(indexedColumn.getIndexValue()), propertyFinderTransformer, typeAffinityScorer);
+            lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.arrayIndex(indexedColumn.getIndexValue()), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
         } else {
-            extrapolateIndex(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer, typeAffinityScorer);
-            speculativeMatching(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer, typeAffinityScorer);
+            extrapolateIndex(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+            speculativeMatching(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
         }
     }
 
     @SuppressWarnings("unchecked")
     protected void lookForAgainstColumn(IndexedColumn indexedColumn, Object[] properties, final FoundProperty<T> matchingProperties, PropertyMatchingScore score,
-                                        PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+                                        PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
 
         if (indexedColumn == null || !isValidIndex(indexedColumn)) {
             // no index found
@@ -85,16 +85,16 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                             }
                         }, score, typeAffinityScorer);
                     }
-                }, score.matches(indexedColumn.getIndexProperty()), true, propertyFinderTransformer, typeAffinityScorer);
+                }, score.matches(indexedColumn.getIndexProperty()), true, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
     }
 
 
-    private void speculativeMatching(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+    private void speculativeMatching(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
         // try to match against prefix
         PropertyNameMatch speculativeMatch = propertyNameMatcher.speculativeMatch();
 
         if (speculativeMatch != null) {
-                extrapolateIndex(speculativeMatch.getLeftOverMatcher(), properties, foundProperty, score.speculative(), propertyFinderTransformer, typeAffinityScorer);
+                extrapolateIndex(speculativeMatch.getLeftOverMatcher(), properties, foundProperty, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
         }
     }
 
@@ -102,7 +102,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
     protected abstract <E> IndexedElement<T,?> getIndexedElement(IndexedColumn indexedColumn);
 
-    protected abstract void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer);
+    protected abstract void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter);
 
     @Override
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {

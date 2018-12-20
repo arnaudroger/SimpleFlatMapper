@@ -144,7 +144,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
             Class<T> target, String property) {
         ClassMeta<T> classMeta = REFLECTION_SERVICE.getClassMeta(target);
 
-        PropertyMeta<T, P> propertyMeta = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(property), new Object[0], (TypeAffinity)null);
+        PropertyMeta<T, P> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(property), new Object[0], (TypeAffinity)null, ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
 
         PropertyMapping<T, P , SampleFieldKey> pm =
                 new PropertyMapping<T, P, SampleFieldKey>(

@@ -10,6 +10,7 @@ import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.util.Function;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -37,14 +38,14 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
                                 List<CustomProperty<?, ?>> customProperties,
                                 Function<PropertyFinderTransformer, 
                                 PropertyFinderTransformer> transformerFunction) {
-        super(delegate.getPropertyFilter(), delegate.selfScoreFullName());
+        super(delegate.selfScoreFullName());
         this.delegate = delegate;
         this.customProperties = customProperties;
         this.transformerFunction = transformerFunction;
     }
 
     @Override
-    public void lookForProperties(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final boolean allowSelfReference, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
+    public void lookForProperties(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final boolean allowSelfReference, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
         for (CustomProperty<?, ?> property : customProperties) {
             if (property.isApplicable(delegate.getOwnerType()) && propertyNameMatcher.matches(property.getName())) {
                 matchingProperties.found((CustomProperty<T, ?>) property, EMPTY_CALLBACK, score.matches(propertyNameMatcher), typeAffinityScorer);
@@ -59,7 +60,7 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
                         properties, matchingProperties,
                         score.tupleIndex(1),
                         allowSelfReference,
-                        newTransformer, typeAffinityScorer);
+                        newTransformer, typeAffinityScorer, propertyFilter);
     }
 
     @Override

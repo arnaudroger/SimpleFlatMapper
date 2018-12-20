@@ -9,6 +9,7 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
 import org.simpleflatmapper.map.context.KeyAndPredicate;
+import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
@@ -93,15 +94,37 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder,
             KeyFactory<K> keyFactory, 
             PropertyFinder<T> propertyFinder) throws MapperBuildingException {
+        final ContextualGetterFactory<? super S, K> getterFactory = mapperSource.getterFactory();
+        
         this.mapperSource = requireNonNull("fieldMapperSource", mapperSource);
         this.mapperConfig = requireNonNull("mapperConfig", mapperConfig);
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
-		this.fieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<S, K>(mapperSource.getterFactory(), ConverterService.getInstance(), mapperSource.source());
+        this.fieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<S, K>(getterFactory, ConverterService.getInstance(), mapperSource.source());
         this.keyFactory = keyFactory;
         this.propertyMappingsBuilder =
                 PropertyMappingsBuilder.of(classMeta, mapperConfig, new BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>>() {
                     @Override
-                    public Predicate<PropertyMeta<?, ?>> apply(K k, Object[] objects) {
+                    public Predicate<PropertyMeta<?, ?>> apply(final K k, final Object[] properties) {
+                        if (k != null) {
+                            final MappingContextFactoryBuilder<Object, K> mappingContextFactoryBuilder1 = new MappingContextFactoryBuilder<>(new KeySourceGetter<K, Object>() {
+                                @Override
+                                public Object getValue(K key, Object source) throws Exception {
+                                    return null;
+                                }
+                            });
+                            return new Predicate<PropertyMeta<?, ?>>() {
+                                @Override
+                                public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                    return PropertyWithSetterOrConstructor.INSTANCE.test(propertyMeta)
+                                            && !NullContextualGetter.isNull(fieldMapperFactory.getGetterFromSource(
+                                            k,
+                                            propertyMeta.getPropertyType(),
+                                            FieldMapperColumnDefinition.of(properties),
+                                            propertyMeta.getPropertyClassMetaSupplier(),
+                                            mappingContextFactoryBuilder1));
+                                }
+                            };
+                        }
                         return PropertyWithSetterOrConstructor.INSTANCE;
                     }
                 }, propertyFinder);

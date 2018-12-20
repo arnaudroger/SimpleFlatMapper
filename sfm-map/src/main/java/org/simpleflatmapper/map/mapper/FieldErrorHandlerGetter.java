@@ -23,6 +23,9 @@ public class FieldErrorHandlerGetter<S, T, K> implements ContextualGetter<S, T> 
 	public FieldErrorHandlerGetter(K key, ContextualGetter<? super S, ? extends T> delegate,
                                    FieldMapperErrorHandler<? super K> errorHandler) {
 		super();
+		if (key == null) throw new IllegalArgumentException("key is null");
+		if (delegate == null) throw new IllegalArgumentException("delegate is null");
+		if (errorHandler == null) throw new IllegalArgumentException("errorHandler is null");
 		this.key = key;
 		this.delegate = delegate;
 		this.errorHandler = errorHandler;

@@ -99,7 +99,12 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 		this.fieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<S, K>(mapperSource.getterFactory(), ConverterService.getInstance(), mapperSource.source());
         this.keyFactory = keyFactory;
         this.propertyMappingsBuilder =
-                PropertyMappingsBuilder.of(classMeta, mapperConfig, (k, p) -> PropertyWithSetterOrConstructor.INSTANCE, propertyFinder);
+                PropertyMappingsBuilder.of(classMeta, mapperConfig, new BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>>() {
+                    @Override
+                    public Predicate<PropertyMeta<?, ?>> apply(K k, Object[] objects) {
+                        return PropertyWithSetterOrConstructor.INSTANCE;
+                    }
+                }, propertyFinder);
 		this.target = requireNonNull("classMeta", classMeta).getType();
 		this.reflectionService = requireNonNull("classMeta", classMeta).getReflectionService();
 	}

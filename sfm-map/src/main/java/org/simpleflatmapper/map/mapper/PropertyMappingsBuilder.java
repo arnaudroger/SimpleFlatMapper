@@ -19,6 +19,7 @@ import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BiConsumer;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Function;
@@ -42,7 +43,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private final ClassMeta<T> classMeta;
 	private final PropertyMappingsBuilderProbe propertyMappingsBuilderProbe;
-	private final Predicate<PropertyMeta<?, ?>> isValidPropertyMeta;
+	private final BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>> isValidPropertyMeta;
 
 	protected boolean modifiable = true;
 
@@ -52,11 +53,11 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 	private PropertyMappingsBuilder(final ClassMeta<T> classMeta,
 									final PropertyNameMatcherFactory propertyNameMatcherFactory,
 									final MapperBuilderErrorHandler mapperBuilderErrorHandler,
-									final Predicate<PropertyMeta<?, ?>> isValidPropertyMeta,
+									final BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>> isValidPropertyMetaFactory,
 									final PropertyFinder<T> propertyFinder,
-									List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties, 
+									List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties,
 									PropertyMappingsBuilderProbe propertyMappingsBuilderProbe)  throws MapperBuildingException {
-		this.isValidPropertyMeta = isValidPropertyMeta;
+		this.isValidPropertyMeta = isValidPropertyMetaFactory;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.customProperties = customProperties;
 		this.propertyMappingsBuilderProbe = propertyMappingsBuilderProbe;
@@ -96,7 +97,8 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		PropertyNameMatcher propertyNameMatcher = propertyNameMatcherFactory.newInstance(key);
 		final PropertyMeta<T, P> prop =
 				(PropertyMeta<T, P>) effectivePropertyFinder
-						.findProperty(propertyNameMatcher, columnDefinition.properties(), toTypeAffinity(key), propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher), isValidPropertyMeta);
+						.findProperty(propertyNameMatcher, columnDefinition.properties(), toTypeAffinity(key), propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher), 
+								isValidPropertyMeta.apply(key, columnDefinition.properties()));
 
 
 		if (prop == null) {
@@ -289,17 +291,18 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 	public static <T, K extends FieldKey<K>, S> PropertyMappingsBuilder<T, K> of(
 			ClassMeta<T> classMeta,
 			MapperConfig<K, S> mapperConfig,
-			Predicate<PropertyMeta<?, ?>> propertyPredicate) {
-		return of(classMeta, mapperConfig, propertyPredicate, null);
+			BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>> propertyPredicateFactory) {
+		return of(classMeta, mapperConfig, propertyPredicateFactory, null);
 	}
 
 	public static <T, K extends FieldKey<K>, S> PropertyMappingsBuilder<T, K> of(
 			final ClassMeta<T> classMeta,
 			final MapperConfig<K, S> mapperConfig,
-			final Predicate<PropertyMeta<?, ?>> propertyPredicate,
+			final BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>> propertyPredicateFactory,
 			final PropertyFinder<T> propertyFinder) {
 		final List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties = new ArrayList<ExtendPropertyFinder.CustomProperty<?, ?>>();
 
+		Predicate<PropertyMeta<?, ?>> propertyPredicate = propertyPredicateFactory.apply(null, null);
 		// setter
 		mapperConfig.columnDefinitions().forEach(SetterProperty.class, new BiConsumer<Predicate<? super K>, SetterProperty>() {
 			@Override
@@ -333,7 +336,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 						classMeta,
 						mapperConfig.propertyNameMatcherFactory(),
 						mapperConfig.mapperBuilderErrorHandler(),
-						propertyPredicate,
+						propertyPredicateFactory,
 						propertyFinder,
 						customProperties, 
 						DefaultPropertyMappingsBuilderProbe.INSTANCE);

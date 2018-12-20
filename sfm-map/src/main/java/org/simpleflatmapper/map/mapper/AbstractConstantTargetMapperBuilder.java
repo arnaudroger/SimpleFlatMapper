@@ -56,7 +56,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
         this.reflectionService = classMeta.getReflectionService();
         this.mapperConfig = mapperConfig;
         this.propertyMappingsBuilder =
-                PropertyMappingsBuilder.of(classMeta, mapperConfig, PropertyWithGetter.INSTANCE);
+                PropertyMappingsBuilder.of(classMeta, mapperConfig, (k, v) -> PropertyWithGetter.INSTANCE);
         this.classMeta = classMeta;
     }
 

@@ -99,7 +99,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 		this.fieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<S, K>(mapperSource.getterFactory(), ConverterService.getInstance(), mapperSource.source());
         this.keyFactory = keyFactory;
         this.propertyMappingsBuilder =
-                PropertyMappingsBuilder.of(classMeta, mapperConfig, PropertyWithSetterOrConstructor.INSTANCE, propertyFinder);
+                PropertyMappingsBuilder.of(classMeta, mapperConfig, (k, p) -> PropertyWithSetterOrConstructor.INSTANCE, propertyFinder);
 		this.target = requireNonNull("classMeta", classMeta).getType();
 		this.reflectionService = requireNonNull("classMeta", classMeta).getReflectionService();
 	}

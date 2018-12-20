@@ -56,7 +56,7 @@ public final class SqlParameterSourceBuilder<T> {
         this.mapperConfig = mapperConfig;
         this.reflectionService = classMeta.getReflectionService();
         this.builder =
-                PropertyMappingsBuilder.of(classMeta, mapperConfig, PropertyWithGetter.INSTANCE);
+                PropertyMappingsBuilder.of(classMeta, mapperConfig, (k, v) -> PropertyWithGetter.INSTANCE);
     }
 
     public SqlParameterSourceBuilder<T> add(String column) {

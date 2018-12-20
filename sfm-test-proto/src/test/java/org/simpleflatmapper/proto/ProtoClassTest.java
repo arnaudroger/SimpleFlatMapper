@@ -145,12 +145,13 @@ message AddressBook {
                 .newInstance()
                 .getClassMeta(AddressBookProtos.Person.class);
 
-        PropertyMeta<AddressBookProtos.Person, Object> ts = classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
             @Override
             public boolean test(PropertyMeta<?, ?> propertyMeta) {
                 return true;
             }
-        }).findProperty(DefaultPropertyNameMatcher.of("ts"), new Object[0], (TypeAffinity)null);
+        };
+        PropertyMeta<AddressBookProtos.Person, Object> ts = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("ts"), new Object[0], (TypeAffinity)null, predicate);
         
         assertEquals(Timestamp.class, ts.getPropertyType());
 

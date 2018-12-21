@@ -15,25 +15,23 @@ public class SelfPropertyMeta<T, E> extends PropertyMeta<T, E> {
     public static final String PROPERTY_PATH = "{this}";
 
     private final BooleanProvider isValid;
+    private final ClassMeta<E> classMeta;
 
-    public SelfPropertyMeta(ReflectionService reflectService, Type type, BooleanProvider isValid) {
+    public SelfPropertyMeta(ReflectionService reflectService, Type type, BooleanProvider isValid, ClassMeta<E> classMeta) {
         super("self", type, reflectService);
         this.isValid = isValid;
+        this.classMeta = classMeta;
     }
 
     @Override
     protected ClassMeta<E> newPropertyClassMeta() {
-        throw new UnsupportedOperationException();
+        return classMeta;
     }
 
-    @Override
-    public Supplier<ClassMeta<E>> getPropertyClassMetaSupplier() {
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public PropertyMeta<T, E> withReflectionService(ReflectionService reflectionService) {
-        return new SelfPropertyMeta<T, E>(reflectionService, getOwnerType(), isValid);
+        return new SelfPropertyMeta<T, E>(reflectionService, getOwnerType(), isValid, classMeta);
     }
 
     @Override

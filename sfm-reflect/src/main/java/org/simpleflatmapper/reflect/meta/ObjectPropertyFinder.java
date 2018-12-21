@@ -43,14 +43,17 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		if (allowSelfReference 
 				&& !disallowSelfReference(properties) 
 				&& (state == State.NONE || (state == State.SELF && propName.equals(selfName)))) {
-			matchingProperties.found(new SelfPropertyMeta(classMeta.getReflectionService(), classMeta.getType(), new BooleanProvider() {
-						@Override
-						public boolean getBoolean() {
-							return state != State.PROPERTIES;
-						}
-					}),
-					selfPropertySelectionCallback(propName),
-					score.self(classMeta.getNumberOfProperties(), propName), typeAffinityScorer);
+			SelfPropertyMeta propertyMeta = new SelfPropertyMeta(classMeta.getReflectionService(), classMeta.getType(), new BooleanProvider() {
+				@Override
+				public boolean getBoolean() {
+					return state != State.PROPERTIES;
+				}
+			}, classMeta);
+			if (propertyFilter.test(propertyMeta)) {
+				matchingProperties.found(propertyMeta,
+						selfPropertySelectionCallback(propName),
+						score.self(classMeta.getNumberOfProperties(), propName), typeAffinityScorer);
+			}
 		}
 	}
 

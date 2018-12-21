@@ -2,10 +2,17 @@ package org.simpleflatmapper.csv.test.samples;
 
 import org.junit.Test;
 import org.simpleflatmapper.csv.CellValueReader;
+import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.property.CustomReaderProperty;
 import org.simpleflatmapper.map.MapperBuildingException;
+import org.simpleflatmapper.util.ListCollector;
+
+import java.io.StringReader;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class FmmbGetterNotFoundTest {
@@ -73,12 +80,14 @@ public class FmmbGetterNotFoundTest {
     }
 
     @Test
-    public void csvMapperGetterNotFound() {
+    public void csvMapperGetterNotFound() throws Exception {
         try {
-            CsvMapperFactory.newInstance().newBuilder(Foo2.class).addMapping("bar").mapper();
+            CsvMapper<Foo2> bar = CsvMapperFactory.newInstance().newBuilder(Foo2.class).addMapping("bar").mapper();
+
             fail();
         } catch(MapperBuildingException e) {
             // expected
+            System.out.println("e = " + e);
         }
     }
 

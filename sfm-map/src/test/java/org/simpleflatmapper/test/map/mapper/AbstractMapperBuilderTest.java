@@ -47,16 +47,7 @@ import org.simpleflatmapper.test.beans.FinalObjectWith1ParamConstructionWithLoop
 import org.simpleflatmapper.test.beans.ObjectWith1ParamConstruction;
 import org.simpleflatmapper.test.beans.ObjectWith1ParamConstructionWithLoop;
 import org.simpleflatmapper.tuple.Tuple2;
-import org.simpleflatmapper.util.BiConsumer;
-import org.simpleflatmapper.util.BiFunction;
-import org.simpleflatmapper.util.ConstantPredicate;
-import org.simpleflatmapper.util.Enumerable;
-import org.simpleflatmapper.util.Function;
-import org.simpleflatmapper.util.Predicate;
-import org.simpleflatmapper.util.Supplier;
-import org.simpleflatmapper.util.TypeHelper;
-import org.simpleflatmapper.util.TypeReference;
-import org.simpleflatmapper.util.UnaryFactory;
+import org.simpleflatmapper.util.*;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -1275,30 +1266,26 @@ public class AbstractMapperBuilderTest {
 
 
     @Test
-    public void test543() {
+    public void test543() throws Exception {
         final String VALUES = "values";
 
         SampleFieldKey valuesKeys = new SampleFieldKey(VALUES, 1);
-        try {
-            new SampleMapperBuilder<C543>(ReflectionService.newInstance().getClassMeta(C543.class)).addMapping(valuesKeys).mapper();
-            fail();
-        } catch (MapperBuildingException e) {
-            assertTrue(e.getMessage().contains("If you meant to map to the element of the List you will need to rename the column to 'values_val' or call addAlias(\"values\", \"values_val\") on the Factory"));
-        }
+        SetRowMapper<Object[], Object[][], C543, Exception> mapper = new SampleMapperBuilder<C543>(ReflectionService.newInstance().getClassMeta(C543.class)).addMapping(valuesKeys).mapper();
+        List<C543> list = mapper.forEach(new Object[][]{{"", "v1"}}, new ListCollector<C543>()).getList();
+        assertEquals(1, list.size());
+        assertEquals("v1", list.get(0).values.get(0));
     }
 
     @Test
-    public void test543_NamedParam() {
+    public void test543_NamedParam() throws Exception {
         final String VALUES = "values";
 
         SampleFieldKey valuesKeys = new SampleFieldKey(VALUES, 1);
 
-        try {
-            new SampleMapperBuilder<C543_NamedParam>(ReflectionService.newInstance().getClassMeta(C543_NamedParam.class)).addMapping(valuesKeys).mapper();
-            fail();
-        } catch (MapperBuildingException e) {
-            assertTrue(e.getMessage().contains("If you meant to map to the element of the List you will need to rename the column to 'values_name' or call addAlias(\"values\", \"values_name\") on the Factory"));
-        }
+        SetRowMapper<Object[], Object[][], C543_NamedParam, Exception> mapper = new SampleMapperBuilder<C543_NamedParam>(ReflectionService.newInstance().getClassMeta(C543_NamedParam.class)).addMapping(valuesKeys).mapper();
+        List<C543_NamedParam> list = mapper.forEach(new Object[][]{{"", "v1"}}, new ListCollector<C543_NamedParam>()).getList();
+        assertEquals(1, list.size());
+        assertEquals("v1", list.get(0).values.get(0).name);
     }
 
     @Test

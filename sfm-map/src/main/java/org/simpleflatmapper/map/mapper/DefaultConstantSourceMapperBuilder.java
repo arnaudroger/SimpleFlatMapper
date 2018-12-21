@@ -1384,27 +1384,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         }
     }
     public static String getterNotFoundErrorMessage(PropertyMapping propertyMapping) {
-        ClassMeta propertyClassMeta = propertyMapping.getPropertyMeta().getPropertyClassMeta();
         String currentPath = propertyMapping.getPropertyMeta().getPath();
-        if (propertyClassMeta instanceof ArrayClassMeta) {
-
-            ArrayClassMeta arrayClassMeta = (ArrayClassMeta) propertyClassMeta;
-
-            ClassMeta elementClassMeta = arrayClassMeta.getElementClassMeta();
-            if (elementClassMeta.getNumberOfProperties() <= 1) {
-                String actualProp = "val";
-                if (elementClassMeta.getNumberOfProperties() == 1 && elementClassMeta instanceof ObjectClassMeta) {
-                    ObjectClassMeta objectClassMeta = (ObjectClassMeta) elementClassMeta;
-                    actualProp = objectClassMeta.getFirstProperty().getPath();
-                }
-                String expectedName = currentPath + "_" + actualProp;
-                return "Could not find getter for " + propertyMapping.getColumnKey() + " type "
-                        + propertyMapping.getPropertyMeta().getPropertyType()
-                        + ". If you meant to map to the element of the List you will need to rename the column to '" + expectedName + "' or call addAlias(\"" + currentPath + "\", \"" + expectedName + "\") on the Factory."
-                        + " See " + CSFM_GETTER_NOT_FOUND.toUrl();
-            }
-
-        }
         return "Could not find getter for " + propertyMapping.getColumnKey() + " type "
                 + propertyMapping.getPropertyMeta().getPropertyType()
                 + " path " + currentPath

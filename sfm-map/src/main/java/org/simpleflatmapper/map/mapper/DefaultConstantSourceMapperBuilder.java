@@ -120,17 +120,21 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                                         return false;
                                     
                                     try {
-                                        ContextualGetter<? super S, ?> getterFromSource = fieldMapperFactory.getGetterFromSource(
-                                                k,
-                                                propertyMeta.getPropertyType(),
-                                                FieldMapperColumnDefinition.of(properties),
-                                                (Supplier)propertyMeta.getPropertyClassMetaSupplier(),
-                                                mappingContextFactoryBuilder1);
+                                        ContextualGetter<? super S, ?> getterFromSource = getContextualGetter(propertyMeta);
                                         return
                                                 !NullContextualGetter.isNull(getterFromSource);
                                     } catch (Exception e) {
                                         return false;
                                     }
+                                }
+
+                                public <O, P> ContextualGetter<? super S, ? extends P> getContextualGetter(PropertyMeta<O, P> propertyMeta) {
+                                    return fieldMapperFactory.getGetterFromSource(
+                                                                                k,
+                                                                                propertyMeta.getPropertyType(),
+                                                                                FieldMapperColumnDefinition.of(properties),
+                                                                                propertyMeta.getPropertyClassMetaSupplier(),
+                                                                                mappingContextFactoryBuilder1);
                                 }
                             };
                         }

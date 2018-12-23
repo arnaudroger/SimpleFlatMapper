@@ -129,7 +129,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                                 }
 
                                 public <O, P> ContextualGetter<? super S, ? extends P> getContextualGetter(PropertyMeta<O, P> propertyMeta) {
-                                    return fieldMapperFactory.getGetterFromSource(
+                                    return fieldMapperFactory.<P>getGetterFromSource(
                                                                                 k,
                                                                                 propertyMeta.getPropertyType(),
                                                                                 FieldMapperColumnDefinition.of(properties),

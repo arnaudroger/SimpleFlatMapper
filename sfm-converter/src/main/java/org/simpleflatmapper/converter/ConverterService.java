@@ -12,8 +12,10 @@ import org.simpleflatmapper.util.TypeHelper;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 public class ConverterService {
 
@@ -96,6 +98,9 @@ public class ConverterService {
 
     @SuppressWarnings("unchecked")
     public  List<ScoredConverterFactory> findConverterFactories(Type inType, Type outType, Object... params) {
+        return findConverterFactories(inType, outType, params, new HashSet<Type>());
+    }
+    private  List<ScoredConverterFactory> findConverterFactories(Type inType, Type outType, Object[] params, Set<Type> loopDetector) {
         List<ScoredConverterFactory> potentials = new ArrayList<ScoredConverterFactory>();
 
         List<ScoredConverterFactory> tails = new ArrayList<ScoredConverterFactory>();
@@ -131,10 +136,13 @@ public class ConverterService {
                     }
 
                     Type tailFactoryInType = sfactory.converterFactory.getFromType();
-                    if (outType != tailFactoryInType) { // ignore when no progress
-                        List<ScoredConverterFactory> headConverters  = findConverterFactories(inType, tailFactoryInType, params);
+                    
+                    if (outType != tailFactoryInType && ! loopDetector.contains(tailFactoryInType)) { // ignore when no progress
+                        Set<Type> subLoopDetectors = new HashSet<Type>(loopDetector);
+                        subLoopDetectors.add(tailFactoryInType);
+                        List<ScoredConverterFactory> headConverters  = findConverterFactories(inType, tailFactoryInType, params, subLoopDetectors);
                         if (!headConverters.isEmpty()) {
-                            List<ScoredConverterFactory> tailConverters = findConverterFactories(tailFactoryInType, outType, params);
+                            List<ScoredConverterFactory> tailConverters = findConverterFactories(tailFactoryInType, outType, params, subLoopDetectors);
                             if (!tailConverters.isEmpty()) {
                                 for(ScoredConverterFactory hf : headConverters) {
                                     if (hf.converterFactory.newConverter(new ConvertingTypes(inType, tailFactoryInType), new DefaultContextFactoryBuilder(), params) != null) {

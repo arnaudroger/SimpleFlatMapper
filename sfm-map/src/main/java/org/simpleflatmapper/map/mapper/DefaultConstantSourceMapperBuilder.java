@@ -106,7 +106,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                     @Override
                     public Predicate<PropertyMeta<?, ?>> apply(final K k, final Object[] properties) {
                         if (k != null) {
-                            final MappingContextFactoryBuilder<Object, K> mappingContextFactoryBuilder1 = new MappingContextFactoryBuilder<>(new KeySourceGetter<K, Object>() {
+                            final MappingContextFactoryBuilder<Object, K> mappingContextFactoryBuilder1 = new MappingContextFactoryBuilder<Object, K>(new KeySourceGetter<K, Object>() {
                                 @Override
                                 public Object getValue(K key, Object source) throws Exception {
                                     return null;

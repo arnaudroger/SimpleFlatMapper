@@ -132,7 +132,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                                     return fieldMapperFactory.<P>getGetterFromSource(
                                                                                 k,
                                                                                 propertyMeta.getPropertyType(),
-                                                                                FieldMapperColumnDefinition.of(properties),
+                                                                                FieldMapperColumnDefinition.<K>of(properties),
                                                                                 propertyMeta.getPropertyClassMetaSupplier(),
                                                                                 mappingContextFactoryBuilder1);
                                 }

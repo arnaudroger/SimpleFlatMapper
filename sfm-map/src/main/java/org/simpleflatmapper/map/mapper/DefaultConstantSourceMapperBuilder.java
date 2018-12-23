@@ -115,13 +115,21 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                             return new Predicate<PropertyMeta<?, ?>>() {
                                 @Override
                                 public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                                    return PropertyWithSetterOrConstructor.INSTANCE.test(propertyMeta)
-                                            && !NullContextualGetter.isNull(fieldMapperFactory.getGetterFromSource(
-                                            k,
-                                            propertyMeta.getPropertyType(),
-                                            FieldMapperColumnDefinition.of(properties),
-                                            propertyMeta.getPropertyClassMetaSupplier(),
-                                            mappingContextFactoryBuilder1));
+                                    
+                                    if (!PropertyWithSetterOrConstructor.INSTANCE.test(propertyMeta))
+                                        return false;
+                                    
+                                    try {
+                                        return
+                                                !NullContextualGetter.isNull(fieldMapperFactory.getGetterFromSource(
+                                                        k,
+                                                        propertyMeta.getPropertyType(),
+                                                        FieldMapperColumnDefinition.of(properties),
+                                                        propertyMeta.getPropertyClassMetaSupplier(),
+                                                        mappingContextFactoryBuilder1));
+                                    } catch (Exception e) {
+                                        return false;
+                                    }
                                 }
                             };
                         }

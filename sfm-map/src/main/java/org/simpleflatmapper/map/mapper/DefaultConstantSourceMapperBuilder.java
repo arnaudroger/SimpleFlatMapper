@@ -120,13 +120,14 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                                         return false;
                                     
                                     try {
+                                        ContextualGetter getterFromSource = fieldMapperFactory.getGetterFromSource(
+                                                k,
+                                                propertyMeta.getPropertyType(),
+                                                FieldMapperColumnDefinition.of(properties),
+                                                propertyMeta.getPropertyClassMetaSupplier(),
+                                                mappingContextFactoryBuilder1);
                                         return
-                                                !NullContextualGetter.isNull(fieldMapperFactory.getGetterFromSource(
-                                                        k,
-                                                        propertyMeta.getPropertyType(),
-                                                        FieldMapperColumnDefinition.of(properties),
-                                                        propertyMeta.getPropertyClassMetaSupplier(),
-                                                        mappingContextFactoryBuilder1));
+                                                !NullContextualGetter.isNull(getterFromSource);
                                     } catch (Exception e) {
                                         return false;
                                     }

@@ -35,7 +35,6 @@ import org.simpleflatmapper.util.TypeReference;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -409,10 +408,10 @@ public class PropertyMappingsBuilderTest {
 
     @Test
     public void testInstantiatorError() {
-        MapperImpl<ResultSet, DbObject> mapper = new MapperImpl<ResultSet, DbObject>(null, null,
-                new BiInstantiator<ResultSet, MappingContext<? super ResultSet>, DbObject>() {
+        MapperImpl<Object, DbObject> mapper = new MapperImpl<Object, DbObject>(null, null,
+                new BiInstantiator<Object, MappingContext<? super Object>, DbObject>() {
                     @Override
-                    public DbObject newInstance(ResultSet s, MappingContext<? super ResultSet> context) throws Exception {
+                    public DbObject newInstance(Object s, MappingContext<? super Object> context) throws Exception {
                         throw new IOException();
                     }
                 });

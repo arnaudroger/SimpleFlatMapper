@@ -103,7 +103,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         this.propertyMappingsBuilder =
                 PropertyMappingsBuilder.of(classMeta, mapperConfig, new PropertyMappingsBuilder.PropertyPredicateFactory<K>() {
                     @Override
-                    public Predicate<PropertyMeta<?, ?>> predicate(final K k, final Object[] properties, List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
+                    public Predicate<PropertyMeta<?, ?>> predicate(final K k, final Object[] properties, final List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
                         if (k != null) {
                             final MappingContextFactoryBuilder<Object, K> mappingContextFactoryBuilder1 = new MappingContextFactoryBuilder<Object, K>(new KeySourceGetter<K, Object>() {
                                 @Override

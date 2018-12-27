@@ -58,9 +58,9 @@ public final class SqlParameterSourceBuilder<T> {
         this.mapperConfig = mapperConfig;
         this.reflectionService = classMeta.getReflectionService();
         this.builder =
-                PropertyMappingsBuilder.of(classMeta, mapperConfig, new BiFunction<JdbcColumnKey, Object[], Predicate<PropertyMeta<?, ?>>>() {
+                PropertyMappingsBuilder.of(classMeta, mapperConfig, new PropertyMappingsBuilder.PropertyPredicateFactory<JdbcColumnKey>() {
                     @Override
-                    public Predicate<PropertyMeta<?, ?>> apply(JdbcColumnKey jdbcColumnKey, Object[] objects) {
+                    public Predicate<PropertyMeta<?, ?>> predicate(JdbcColumnKey jdbcColumnKey, Object[] objects) {
                         return PropertyWithGetter.INSTANCE;
                     }
                 });

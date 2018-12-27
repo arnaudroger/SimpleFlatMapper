@@ -58,9 +58,9 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
         this.reflectionService = classMeta.getReflectionService();
         this.mapperConfig = mapperConfig;
         this.propertyMappingsBuilder =
-                PropertyMappingsBuilder.of(classMeta, mapperConfig, new BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>>() {
+                PropertyMappingsBuilder.of(classMeta, mapperConfig, new PropertyMappingsBuilder.PropertyPredicateFactory<K>() {
                     @Override
-                    public Predicate<PropertyMeta<?, ?>> apply(K k, Object[] objects) {
+                    public Predicate<PropertyMeta<?, ?>> predicate(K k, Object[] objects) {
                         return PropertyWithGetter.INSTANCE;
                     }
                 });

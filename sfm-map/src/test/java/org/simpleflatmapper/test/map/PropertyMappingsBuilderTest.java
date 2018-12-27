@@ -7,11 +7,15 @@ import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.annotation.Key;
+import org.simpleflatmapper.map.error.LogFieldMapperErrorHandler;
+import org.simpleflatmapper.map.mapper.MapperImpl;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
 import org.simpleflatmapper.map.property.OptionalProperty;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
@@ -19,6 +23,7 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.test.beans.Foo;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ConstantPredicate;
@@ -28,8 +33,10 @@ import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.TypeReference;
 
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,9 +53,9 @@ import static org.mockito.Mockito.verify;
 public class PropertyMappingsBuilderTest {
 
 
-    public static final BiFunction<SampleFieldKey, Object[], Predicate<PropertyMeta<?, ?>>> CONSTANT_PREDICATE = new BiFunction<SampleFieldKey, Object[], Predicate<PropertyMeta<?, ?>>>() {
+    public static final PropertyMappingsBuilder.PropertyPredicateFactory<SampleFieldKey> CONSTANT_PREDICATE = new PropertyMappingsBuilder.PropertyPredicateFactory<SampleFieldKey>() {
         @Override
-        public Predicate<PropertyMeta<?, ?>> apply(SampleFieldKey sampleFieldKey, Object[] objects) {
+        public Predicate<PropertyMeta<?, ?>> predicate(SampleFieldKey sampleFieldKey, Object[] objects) {
             return ConstantPredicate.<PropertyMeta<?, ?>>truePredicate();
         }
     };
@@ -337,6 +344,75 @@ public class PropertyMappingsBuilderTest {
         
         assertNull(builder.currentProperties().get(0));
 
+    }
+
+
+    @Test
+    public void testHandleMapperErrorSetterNotFound() throws NoSuchMethodException, SecurityException, IOException {
+        final ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+
+        MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
+
+        PropertyMappingsBuilder<DbObject, SampleFieldKey> builder =
+                PropertyMappingsBuilder.of(
+                        classMeta,
+                        MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().mapperBuilderErrorHandler(errorHandler),
+                        CONSTANT_PREDICATE);
+
+        FieldMapperColumnDefinition<SampleFieldKey> columnDefinition = FieldMapperColumnDefinition.<SampleFieldKey>identity();
+
+        builder.addProperty(new SampleFieldKey("id", 1), columnDefinition);
+        builder.addProperty(new SampleFieldKey("notthere1", 2), columnDefinition);
+
+        verify(errorHandler).propertyNotFound(DbObject.class, "notthere1");
+
+
+        builder.addProperty(new SampleFieldKey("notthere3", 3), columnDefinition);
+
+        verify(errorHandler).propertyNotFound(DbObject.class, "notthere3");
+
+    }
+
+    public static class MyClass {
+        public Foo prop;
+    }
+    @Test
+    public void testHandleMapperErrorGetterNotFound() throws NoSuchMethodException, SecurityException, IOException {
+        final ClassMeta<MyClass> classMeta = ReflectionService.newInstance().getClassMeta(MyClass.class);
+        FieldMapperColumnDefinition<SampleFieldKey> columnDefinition = FieldMapperColumnDefinition.<SampleFieldKey>identity();
+
+        MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
+
+        PropertyMappingsBuilder<MyClass, SampleFieldKey> builder =
+                PropertyMappingsBuilder.of(
+                        classMeta,
+                        MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().mapperBuilderErrorHandler(errorHandler),
+                        CONSTANT_PREDICATE);
+
+
+        builder.addProperty(new SampleFieldKey("prop", 1), columnDefinition);
+
+
+//		verify(errorHandler).accessorNotFound("Could not find getter for ColumnKey [columnName=prop, columnIndex=1, sqlType=-99999] type class org.simpleflatmapper.test.beans.Foo path prop. See https://github.com/arnaudroger/SimpleFlatMapper/wiki/Errors_CSFM_GETTER_NOT_FOUND");
+        verify(errorHandler).propertyNotFound(MyClass.class, "prop");
+    }
+
+    @Test
+    public void testInstantiatorError() {
+        MapperImpl<ResultSet, DbObject> mapper = new MapperImpl<ResultSet, DbObject>(null, null,
+                new BiInstantiator<ResultSet, MappingContext<? super ResultSet>, DbObject>() {
+                    @Override
+                    public DbObject newInstance(ResultSet s, MappingContext<? super ResultSet> context) throws Exception {
+                        throw new IOException();
+                    }
+                });
+
+        try {
+            mapper.map(null, null);
+            fail("Expected error");
+        } catch(Exception e) {
+            assertTrue(e instanceof IOException);
+        }
     }
 
 }

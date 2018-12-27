@@ -43,7 +43,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private final ClassMeta<T> classMeta;
 	private final PropertyMappingsBuilderProbe propertyMappingsBuilderProbe;
-	private final BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>> isValidPropertyMeta;
+	private final PropertyPredicateFactory<K> isValidPropertyMeta;
 
 	protected boolean modifiable = true;
 
@@ -53,7 +53,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 	private PropertyMappingsBuilder(final ClassMeta<T> classMeta,
 									final PropertyNameMatcherFactory propertyNameMatcherFactory,
 									final MapperBuilderErrorHandler mapperBuilderErrorHandler,
-									final BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>> isValidPropertyMetaFactory,
+									final PropertyPredicateFactory<K> isValidPropertyMetaFactory,
 									final PropertyFinder<T> propertyFinder,
 									List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties,
 									PropertyMappingsBuilderProbe propertyMappingsBuilderProbe)  throws MapperBuildingException {
@@ -95,10 +95,13 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		PropertyFinder<T> effectivePropertyFinder = wrapPropertyFinder(this.propertyFinder);
 
 		PropertyNameMatcher propertyNameMatcher = propertyNameMatcherFactory.newInstance(key);
+		Predicate<PropertyMeta<?, ?>> propertyFilter = isValidPropertyMeta.predicate(key, columnDefinition.properties());
+		
 		final PropertyMeta<T, P> prop =
 				(PropertyMeta<T, P>) effectivePropertyFinder
-						.findProperty(propertyNameMatcher, columnDefinition.properties(), toTypeAffinity(key), propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher), 
-								isValidPropertyMeta.apply(key, columnDefinition.properties()));
+						.findProperty(propertyNameMatcher, columnDefinition.properties(), toTypeAffinity(key), 
+								propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher),
+								propertyFilter);
 
 
 		if (prop == null) {
@@ -291,18 +294,18 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 	public static <T, K extends FieldKey<K>, S> PropertyMappingsBuilder<T, K> of(
 			ClassMeta<T> classMeta,
 			MapperConfig<K, S> mapperConfig,
-			BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>> propertyPredicateFactory) {
+			PropertyPredicateFactory<K> propertyPredicateFactory) {
 		return of(classMeta, mapperConfig, propertyPredicateFactory, null);
 	}
 
 	public static <T, K extends FieldKey<K>, S> PropertyMappingsBuilder<T, K> of(
 			final ClassMeta<T> classMeta,
 			final MapperConfig<K, S> mapperConfig,
-			final BiFunction<K, Object[], Predicate<PropertyMeta<?, ?>>> propertyPredicateFactory,
+			final PropertyPredicateFactory<K> propertyPredicateFactory,
 			final PropertyFinder<T> propertyFinder) {
 		final List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties = new ArrayList<ExtendPropertyFinder.CustomProperty<?, ?>>();
 
-		final Predicate<PropertyMeta<?, ?>> propertyPredicate = propertyPredicateFactory.apply(null, null);
+		final Predicate<PropertyMeta<?, ?>> propertyPredicate = propertyPredicateFactory.predicate(null, null);
 		// setter
 		mapperConfig.columnDefinitions().forEach(SetterProperty.class, new BiConsumer<Predicate<? super K>, SetterProperty>() {
 			@Override
@@ -377,7 +380,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		}
 	}
 
-	public interface TargetPredicate<K extends FieldKey<K>> {
-		boolean test(PropertyMeta<?, ?> propertyMeta, K key, Object[] properties);
+	public interface PropertyPredicateFactory<K extends FieldKey<K>> {
+		Predicate<PropertyMeta<?, ?>> predicate(K key, Object[] properties);
 	}
 }

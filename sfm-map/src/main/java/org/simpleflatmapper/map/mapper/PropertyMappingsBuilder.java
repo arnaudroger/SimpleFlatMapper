@@ -19,11 +19,9 @@ import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BiConsumer;
-import org.simpleflatmapper.util.BiFunction;
-import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Function;
-import org.simpleflatmapper.util.NullConsumer;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -40,14 +38,13 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 
 	protected final PropertyNameMatcherFactory propertyNameMatcherFactory;
 
-	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
+	private final MapperBuilderErrorHandler _mapperBuilderErrorHandler;
 	private final ClassMeta<T> classMeta;
 	private final PropertyMappingsBuilderProbe propertyMappingsBuilderProbe;
 	private final PropertyPredicateFactory<K> isValidPropertyMeta;
 
 	protected boolean modifiable = true;
 
-	private Consumer<K> propertyNotFoundConsumer;
 	private List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties;
 
 	private PropertyMappingsBuilder(final ClassMeta<T> classMeta,
@@ -58,32 +55,26 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 									List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties,
 									PropertyMappingsBuilderProbe propertyMappingsBuilderProbe)  throws MapperBuildingException {
 		this.isValidPropertyMeta = isValidPropertyMetaFactory;
-		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
+		this._mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.customProperties = customProperties;
 		this.propertyMappingsBuilderProbe = propertyMappingsBuilderProbe;
 		this.propertyFinder = propertyFinder != null ? propertyFinder : classMeta.newPropertyFinder();
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.classMeta = classMeta;
-		this.propertyNotFoundConsumer = new Consumer<K>() {
-			@Override
-			public void accept(K k) {
-				mapperBuilderErrorHandler.propertyNotFound(classMeta.getType(), k.getName());
-			}
-		};
 	}
 
 
 	public <P> PropertyMapping<T, P, K> addProperty(final K key, final ColumnDefinition<K, ?> columnDefinition) {
 		return
-				_addProperty(key, columnDefinition, propertyNotFoundConsumer);
+				_addProperty(key, columnDefinition, _mapperBuilderErrorHandler);
 	}
 
 	public <P> PropertyMapping<T, P, K> addPropertyIfPresent(final K key, final ColumnDefinition<K, ?> columnDefinition) {
-		return _addProperty(key, columnDefinition, NullConsumer.INSTANCE);
+		return _addProperty(key, columnDefinition, MapperBuilderErrorHandler.NULL);
 	}
 
 	@SuppressWarnings("unchecked")
-	private <P> PropertyMapping<T, P, K> _addProperty(final K key, final ColumnDefinition<K, ?> columnDefinition, Consumer<? super K> propertyNotFound) {
+	private <P> PropertyMapping<T, P, K> _addProperty(final K key, final ColumnDefinition<K, ?> columnDefinition, MapperBuilderErrorHandler mapperBuilderErrorHandler) {
 		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
 
 		if (columnDefinition.ignore()) {
@@ -95,7 +86,10 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		PropertyFinder<T> effectivePropertyFinder = wrapPropertyFinder(this.propertyFinder);
 
 		PropertyNameMatcher propertyNameMatcher = propertyNameMatcherFactory.newInstance(key);
-		Predicate<PropertyMeta<?, ?>> propertyFilter = isValidPropertyMeta.predicate(key, columnDefinition.properties());
+		
+		List<AccessorNotFound> accessorNotFounds = new ArrayList<AccessorNotFound>();
+		
+		Predicate<PropertyMeta<?, ?>> propertyFilter = isValidPropertyMeta.predicate(key, columnDefinition.properties(), accessorNotFounds);
 		
 		final PropertyMeta<T, P> prop =
 				(PropertyMeta<T, P>) effectivePropertyFinder
@@ -106,7 +100,11 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 
 		if (prop == null) {
 			if (!columnDefinition.has(OptionalProperty.class)) {
-				propertyNotFound.accept(key);
+				if (accessorNotFounds.isEmpty()) {
+					mapperBuilderErrorHandler.propertyNotFound(classMeta.getType(), key.getName());
+				} else {
+					mapperBuilderErrorHandler.accessorNotFound(accessorNotFounds.iterator().next().toString());
+				}
 			}
 			properties.add(null);
 			return null;
@@ -114,7 +112,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 			PropertyMapping<T, P, K> propertyMapping = addProperty(key, columnDefinition, prop);
 			propertyMappingsBuilderProbe.map(key, columnDefinition, prop);
 
-			handleSelfPropertyMetaInvalidation(propertyNotFound);
+			handleSelfPropertyMetaInvalidation(mapperBuilderErrorHandler);
 
 			return propertyMapping;
 		}
@@ -141,7 +139,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		return propertyFinder;
 	}
 
-	private void handleSelfPropertyMetaInvalidation(Consumer<? super K> propertyNotFound) {
+	private void handleSelfPropertyMetaInvalidation(MapperBuilderErrorHandler errorHandler) {
 		List<K> invalidateKeys = new ArrayList<K>();
 
 		for(ListIterator<PropertyMapping<T, ?, K>> iterator = properties.listIterator(); iterator.hasNext();) {
@@ -155,7 +153,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		}
 
 		for(K k : invalidateKeys) {
-			propertyNotFound.accept(k);
+			errorHandler.propertyNotFound(classMeta.getType(), k.getName());
 		}
 	}
 
@@ -186,7 +184,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 			// cannot determine type
 			return true;
 		} else if(!areCompatible(propertyMetaType, customSourceReturnType)) {
-			mapperBuilderErrorHandler.customFieldError(key, "Incompatible customReader on '" + key.getName()+ "' type " + customSourceReturnType +  " expected " + propertyMetaType );
+			_mapperBuilderErrorHandler.customFieldError(key, "Incompatible customReader on '" + key.getName()+ "' type " + customSourceReturnType +  " expected " + propertyMetaType );
 			return false;
 		}
 		return true;
@@ -305,7 +303,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 			final PropertyFinder<T> propertyFinder) {
 		final List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties = new ArrayList<ExtendPropertyFinder.CustomProperty<?, ?>>();
 
-		final Predicate<PropertyMeta<?, ?>> propertyPredicate = propertyPredicateFactory.predicate(null, null);
+		final Predicate<PropertyMeta<?, ?>> propertyPredicate = propertyPredicateFactory.predicate(null, null, new ArrayList<AccessorNotFound>());
 		// setter
 		mapperConfig.columnDefinitions().forEach(SetterProperty.class, new BiConsumer<Predicate<? super K>, SetterProperty>() {
 			@Override
@@ -381,6 +379,39 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 	}
 
 	public interface PropertyPredicateFactory<K extends FieldKey<K>> {
-		Predicate<PropertyMeta<?, ?>> predicate(K key, Object[] properties);
+		Predicate<PropertyMeta<?, ?>> predicate(K key, Object[] properties, List<AccessorNotFound> accessorNotFounds);
+	}
+	
+	
+	public static final class AccessorNotFound {
+		
+		public final FieldKey<?> key;
+		public final String path;
+		public final Type to;
+		public final ErrorDoc errorDoc;
+
+		public AccessorNotFound(FieldKey<?> key, String path, Type to, ErrorDoc errorDoc) {
+			this.key = key;
+			this.path = path;
+			this.to = to;
+			this.errorDoc = errorDoc;
+		}
+
+
+		public String toString() {
+			String accessor = "NA";
+			
+			switch (errorDoc) {
+				case CSFM_GETTER_NOT_FOUND: accessor = "Getter"; break;
+				case PROPERTY_NOT_FOUND: accessor = "property"; break;
+				case CTFM_SETTER_NOT_FOUND: accessor = "Setter"; break;
+				case CTFM_GETTER_NOT_FOUND: accessor = "Getter"; break;
+			}
+			
+			return "Could not find " + accessor + " for " + key + " returning type "
+					+ to 
+					+ " path " + path
+					+ ". See " + errorDoc.toUrl();
+		}
 	}
 }

@@ -9,7 +9,6 @@ import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.annotation.Key;
-import org.simpleflatmapper.map.error.LogFieldMapperErrorHandler;
 import org.simpleflatmapper.map.mapper.MapperImpl;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
@@ -25,8 +24,8 @@ import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.Foo;
 import org.simpleflatmapper.tuple.Tuple2;
-import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ConstantPredicate;
+import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
@@ -55,7 +54,7 @@ public class PropertyMappingsBuilderTest {
 
     public static final PropertyMappingsBuilder.PropertyPredicateFactory<SampleFieldKey> CONSTANT_PREDICATE = new PropertyMappingsBuilder.PropertyPredicateFactory<SampleFieldKey>() {
         @Override
-        public Predicate<PropertyMeta<?, ?>> predicate(SampleFieldKey sampleFieldKey, Object[] objects) {
+        public Predicate<PropertyMeta<?, ?>> predicate(SampleFieldKey sampleFieldKey, Object[] objects, List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
             return ConstantPredicate.<PropertyMeta<?, ?>>truePredicate();
         }
     };
@@ -387,14 +386,25 @@ public class PropertyMappingsBuilderTest {
                 PropertyMappingsBuilder.of(
                         classMeta,
                         MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().mapperBuilderErrorHandler(errorHandler),
-                        CONSTANT_PREDICATE);
+                        new PropertyMappingsBuilder.PropertyPredicateFactory<SampleFieldKey>() {
+                            @Override
+                            public Predicate<PropertyMeta<?, ?>> predicate( final SampleFieldKey key, Object[] properties, final List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
+                                return new Predicate<PropertyMeta<?, ?>>() {
+
+                                    @Override
+                                    public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                        accessorNotFounds.add(new PropertyMappingsBuilder.AccessorNotFound(key, propertyMeta.getPath(), propertyMeta.getPropertyType(), ErrorDoc.CSFM_GETTER_NOT_FOUND ));
+                                        return false;
+                                    }
+                                };
+                            }
+                        });
 
 
         builder.addProperty(new SampleFieldKey("prop", 1), columnDefinition);
 
 
-//		verify(errorHandler).accessorNotFound("Could not find getter for ColumnKey [columnName=prop, columnIndex=1, sqlType=-99999] type class org.simpleflatmapper.test.beans.Foo path prop. See https://github.com/arnaudroger/SimpleFlatMapper/wiki/Errors_CSFM_GETTER_NOT_FOUND");
-        verify(errorHandler).propertyNotFound(MyClass.class, "prop");
+        verify(errorHandler).accessorNotFound("Could not find Getter for SampleFieldKey{name=prop, affinities=[], type=class java.lang.Object} returning type class org.simpleflatmapper.test.beans.Foo path prop. See https://github.com/arnaudroger/SimpleFlatMapper/wiki/Errors_CSFM_GETTER_NOT_FOUND");
     }
 
     @Test

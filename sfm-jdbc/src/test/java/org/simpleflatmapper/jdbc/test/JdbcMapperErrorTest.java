@@ -52,8 +52,7 @@ public class JdbcMapperErrorTest {
 		
 		builder.mapper();
 		
-//		verify(errorHandler).accessorNotFound("Could not find getter for ColumnKey [columnName=prop, columnIndex=1, sqlType=-99999] type class org.simpleflatmapper.test.beans.Foo path prop. See https://github.com/arnaudroger/SimpleFlatMapper/wiki/Errors_CSFM_GETTER_NOT_FOUND");
-		verify(errorHandler).propertyNotFound(MyClass.class, "prop");
+		verify(errorHandler).accessorNotFound("Could not find Getter for ColumnKey [columnName=prop, columnIndex=1, sqlType=-99999] returning type class org.simpleflatmapper.test.beans.Foo path prop. See https://github.com/arnaudroger/SimpleFlatMapper/wiki/Errors_CSFM_GETTER_NOT_FOUND");
 	}
 	
 	@Test

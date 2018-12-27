@@ -19,7 +19,18 @@ public interface MapperBuilderErrorHandler {
 		}
 	};
 
+	/**
+	 * called when sfm could not find a accessor
+	 * @param msg the message describing the issue
+	 */
 	void accessorNotFound(String msg);
+
+	/**
+	 * called when the property could not be found on the target type.
+	 * @param target the target type
+	 * @param property the property name
+	 */
 	void propertyNotFound(Type target, String property);
+	
 	void customFieldError(FieldKey<?> key, String message);
 }

@@ -36,10 +36,8 @@ import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.reflect.BuilderBiInstantiator;
-import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
-import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
@@ -50,6 +48,7 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.BiFunction;
+import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Function;
@@ -104,7 +103,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         this.propertyMappingsBuilder =
                 PropertyMappingsBuilder.of(classMeta, mapperConfig, new PropertyMappingsBuilder.PropertyPredicateFactory<K>() {
                     @Override
-                    public Predicate<PropertyMeta<?, ?>> predicate(final K k, final Object[] properties) {
+                    public Predicate<PropertyMeta<?, ?>> predicate(final K k, final Object[] properties, List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
                         if (k != null) {
                             final MappingContextFactoryBuilder<Object, K> mappingContextFactoryBuilder1 = new MappingContextFactoryBuilder<Object, K>(new KeySourceGetter<K, Object>() {
                                 @Override
@@ -121,8 +120,11 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                                     
                                     try {
                                         ContextualGetter<? super S, ?> getterFromSource = getContextualGetter(propertyMeta);
-                                        return
-                                                !NullContextualGetter.isNull(getterFromSource);
+                                        if (NullContextualGetter.isNull(getterFromSource)) {
+                                            accessorNotFounds.add(new PropertyMappingsBuilder.AccessorNotFound(k, propertyMeta.getPath(), propertyMeta.getPropertyType(), CSFM_GETTER_NOT_FOUND));
+                                            return false;
+                                        } 
+                                        return true;
                                     } catch (Exception e) {
                                         return false;
                                     }

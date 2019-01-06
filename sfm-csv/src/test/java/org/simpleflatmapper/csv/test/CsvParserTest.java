@@ -15,6 +15,7 @@ import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.lightningcsv.Row;
 import org.simpleflatmapper.map.property.IgnoreProperty;
 import org.simpleflatmapper.map.property.IgnoreRowIfNullProperty;
+import org.simpleflatmapper.map.property.RenameProperty;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.lightningcsv.parser.CellConsumer;
@@ -26,6 +27,7 @@ import org.simpleflatmapper.tuple.Tuple6;
 import org.simpleflatmapper.tuple.Tuple7;
 import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
+import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.CloseableIterator;
 import org.simpleflatmapper.util.ListCollector;
@@ -1586,6 +1588,23 @@ public class CsvParserTest {
 		assertEquals("Ans", list.get(0).name);
 		
 	}
+
+	@Test
+	public void testRenameIssue601() throws Exception {
+		C598 c598 = CsvParser.mapTo(C598.class)
+				.columnProperty(
+					ConstantPredicate.truePredicate(), 
+					new RenameProperty(
+							str -> str.replaceAll("ä", "ae")
+									.replaceAll("ü", "ue")
+									.replaceAll("ß", "ss")
+					)
+				)
+				.iterator("geändert\nm").next();
+		
+		assertEquals("m", c598.geaendert);
+	}
+	
 	
 	public static class C598 {
 		private String geaendert;

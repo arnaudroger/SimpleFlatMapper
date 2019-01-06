@@ -1589,6 +1589,8 @@ public class CsvParserTest {
 		
 	}
 
+	
+	//IFJAVA8_START
 	@Test
 	public void testRenameIssue601() throws Exception {
 		C598 c598 = CsvParser.mapTo(C598.class)
@@ -1604,6 +1606,7 @@ public class CsvParserTest {
 		
 		assertEquals("m", c598.geaendert);
 	}
+    //IFJAVA8_END
 	
 	
 	public static class C598 {

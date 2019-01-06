@@ -115,9 +115,6 @@ public class AbstractMapperFactoryTest {
         assertEquals(consumerErrorHandler, mapperConfig.consumerErrorHandler());
         Assert.assertEquals(consumerErrorHandler, mapperFactory.consumerErrorHandler());
 
-        mapperFactory = new MapperFactory();
-
-        assertTrue(mapperFactory.ignorePropertyNotFound().mapperConfig().mapperBuilderErrorHandler() instanceof IgnoreMapperBuilderErrorHandler);
     }
 
     @Test

@@ -392,7 +392,7 @@ public class PropertyMappingsBuilderTest {
 
                                     @Override
                                     public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                                        accessorNotFounds.add(new PropertyMappingsBuilder.AccessorNotFound(key, propertyMeta.getPath(), propertyMeta.getPropertyType(), ErrorDoc.CSFM_GETTER_NOT_FOUND ));
+                                        accessorNotFounds.add(new PropertyMappingsBuilder.AccessorNotFound(key, propertyMeta.getPath(), propertyMeta.getPropertyType(), ErrorDoc.CSFM_GETTER_NOT_FOUND, propertyMeta));
                                         return false;
                                     }
                                 };
@@ -405,6 +405,52 @@ public class PropertyMappingsBuilderTest {
 
         verify(errorHandler).accessorNotFound("Could not find Getter for SampleFieldKey{name=prop, affinities=[], type=class java.lang.Object} returning type class org.simpleflatmapper.test.beans.Foo path prop. See https://github.com/arnaudroger/SimpleFlatMapper/wiki/Errors_CSFM_GETTER_NOT_FOUND");
     }
+    
+    @Test
+    public void testSelfPropertyWithNoAccessorCallsPropertyNotFound602() {
+        final ClassMeta<C602> classMeta = ReflectionService.newInstance().getClassMeta(C602.class);
+        FieldMapperColumnDefinition<SampleFieldKey> columnDefinition = FieldMapperColumnDefinition.<SampleFieldKey>identity();
+
+        MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
+
+        PropertyMappingsBuilder<C602, SampleFieldKey> builder =
+                PropertyMappingsBuilder.of(
+                        classMeta,
+                        MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().mapperBuilderErrorHandler(errorHandler),
+                        new PropertyMappingsBuilder.PropertyPredicateFactory<SampleFieldKey>() {
+                            @Override
+                            public Predicate<PropertyMeta<?, ?>> predicate( final SampleFieldKey key, Object[] properties, final List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
+                                return new Predicate<PropertyMeta<?, ?>>() {
+
+                                    @Override
+                                    public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                        if (propertyMeta.isSelf()) {
+                                            accessorNotFounds.add(new PropertyMappingsBuilder.AccessorNotFound(key, propertyMeta.getPath(), propertyMeta.getPropertyType(), ErrorDoc.CSFM_GETTER_NOT_FOUND, propertyMeta));
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+                                };
+                            }
+                        });
+
+
+        builder.addProperty(new SampleFieldKey("id", 1), columnDefinition);
+
+
+        verify(errorHandler).propertyNotFound(C602.class, "id");
+        
+    }
+    
+    public static class C602 {
+        public final String name;
+
+        public C602(String name) {
+            this.name = name;
+        }
+    }
+    
+    
 
     @Test
     public void testInstantiatorError() {

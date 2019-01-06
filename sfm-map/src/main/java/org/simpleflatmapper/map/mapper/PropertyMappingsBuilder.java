@@ -100,7 +100,8 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 
 		if (prop == null) {
 			if (!columnDefinition.has(OptionalProperty.class)) {
-				if (accessorNotFounds.isEmpty()) {
+				AccessorNotFound accessorNotFound = selectAccessotNotFound(accessorNotFounds);
+				if (accessorNotFound == null) {
 					mapperBuilderErrorHandler.propertyNotFound(classMeta.getType(), key.getName());
 				} else {
 					mapperBuilderErrorHandler.accessorNotFound(accessorNotFounds.iterator().next().toString());
@@ -116,6 +117,13 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 
 			return propertyMapping;
 		}
+	}
+
+	private AccessorNotFound selectAccessotNotFound(List<AccessorNotFound> accessorNotFounds) {
+		for(AccessorNotFound accessorNotFound : accessorNotFounds) {
+			if (!accessorNotFound.propertyMeta.isSelf()) return accessorNotFound;
+		}
+		return null;
 	}
 
 	private TypeAffinity toTypeAffinity(K key) {
@@ -389,12 +397,14 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		public final String path;
 		public final Type to;
 		public final ErrorDoc errorDoc;
+		public final PropertyMeta<?, ?> propertyMeta;
 
-		public AccessorNotFound(FieldKey<?> key, String path, Type to, ErrorDoc errorDoc) {
+		public AccessorNotFound(FieldKey<?> key, String path, Type to, ErrorDoc errorDoc, PropertyMeta<?, ?> propertyMeta) {
 			this.key = key;
 			this.path = path;
 			this.to = to;
 			this.errorDoc = errorDoc;
+			this.propertyMeta = propertyMeta;
 		}
 
 

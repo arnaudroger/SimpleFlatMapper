@@ -48,7 +48,6 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.BiFunction;
-import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Function;
@@ -121,7 +120,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                                     try {
                                         ContextualGetter<? super S, ?> getterFromSource = getContextualGetter(propertyMeta);
                                         if (NullContextualGetter.isNull(getterFromSource)) {
-                                            accessorNotFounds.add(new PropertyMappingsBuilder.AccessorNotFound(k, propertyMeta.getPath(), propertyMeta.getPropertyType(), CSFM_GETTER_NOT_FOUND));
+                                            accessorNotFounds.add(new PropertyMappingsBuilder.AccessorNotFound(k, propertyMeta.getPath(), propertyMeta.getPropertyType(), CSFM_GETTER_NOT_FOUND, propertyMeta));
                                             return false;
                                         } 
                                         return true;

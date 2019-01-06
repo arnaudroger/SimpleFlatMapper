@@ -14,6 +14,7 @@ import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.util.CheckedBiFunction;
+import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.EqualsPredicate;
 import org.simpleflatmapper.util.ErrorHelper;
@@ -100,7 +101,7 @@ public abstract class AbstractMapperFactory<
      * @return the current factory
      */
     public final MF ignorePropertyNotFound() {
-        return mapperBuilderErrorHandler(IgnoreMapperBuilderErrorHandler.INSTANCE);
+    	return addColumnProperty(ConstantPredicate.truePredicate(), OptionalProperty.INSTANCE);
     }
 
     /**

@@ -19,10 +19,18 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 	private final MapperConfig<JooqFieldKey, Record> mapperConfig;
 	private final ReflectionService reflectionService;
 
+	@Deprecated
+	/**
+	 * please use SfmRecorMapperProviderFactory.
+	 */
 	public SfmRecordMapperProvider() {
 		this(MapperConfig.<JooqFieldKey, Record>fieldMapperConfig(), ReflectionService.newInstance());
 	}
 
+	@Deprecated
+	/**
+	 * please use SfmRecorMapperProviderFactory.
+	 */
 	public SfmRecordMapperProvider(
 			MapperConfig<JooqFieldKey, Record> mapperConfig, ReflectionService reflectionService) {
 		this.mapperConfig = mapperConfig;

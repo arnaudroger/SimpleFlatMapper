@@ -28,17 +28,19 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
     private final List<MappingContextFactoryBuilder<S, K>> children = new ArrayList<MappingContextFactoryBuilder<S, K>>();
     private final List<Supplier<?>> suppliers = new ArrayList<Supplier<?>>();
     private final PropertyMeta<?, ?> owner;
+    private final boolean ignoreRootKey;
 
-    public MappingContextFactoryBuilder(KeySourceGetter<K, ? super S> keySourceGetter) {
-        this(new Counter(), new ArrayList<KeyAndPredicate<S, K>>(), keySourceGetter, null, null);
+    public MappingContextFactoryBuilder(KeySourceGetter<K, ? super S> keySourceGetter, boolean ignoreRootKey) {
+        this(new Counter(), new ArrayList<KeyAndPredicate<S, K>>(), keySourceGetter, null, null, ignoreRootKey);
     }
 
-    protected MappingContextFactoryBuilder(Counter counter, List<KeyAndPredicate<S, K>> keys, KeySourceGetter<K, ? super S> keySourceGetter, MappingContextFactoryBuilder<S, K> parent, PropertyMeta<?, ?> owner) {
+    protected MappingContextFactoryBuilder(Counter counter, List<KeyAndPredicate<S, K>> keys, KeySourceGetter<K, ? super S> keySourceGetter, MappingContextFactoryBuilder<S, K> parent, PropertyMeta<?, ?> owner, boolean ignoreRootKey) {
         this.counter = counter;
         this.currentIndex = counter.value;
         this.keys = keys;
         this.keySourceGetter = keySourceGetter;
         this.parent = parent;
+        this.ignoreRootKey = ignoreRootKey;
         this.counter.value++;
         this.owner = owner;
     }
@@ -84,7 +86,7 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
             }
         }
         
-        MappingContextFactoryBuilder<S, K> subBuilder = new MappingContextFactoryBuilder<S, K>(counter, subKeys, keySourceGetter, this, owner);
+        MappingContextFactoryBuilder<S, K> subBuilder = new MappingContextFactoryBuilder<S, K>(counter, subKeys, keySourceGetter, this, owner, ignoreRootKey);
         children.add(subBuilder);
         return subBuilder;
     }
@@ -163,7 +165,7 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
             List<KeyAndPredicate<S, K>> keys = new ArrayList<KeyAndPredicate<S, K>>(builder.effectiveKeys());
 
             // ignore root parent
-            if (parent != null && parentIndex >0) {
+            if (parent != null && (parentIndex >0 || !ignoreRootKey)) {
                 appendParentKeys(parent, keys);
             }
             

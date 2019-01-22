@@ -83,6 +83,9 @@ public class JoinMapperTest {
         checkJoins(joinMapper);
     }
     
+    
+    
+    
 
 
     private void checkJoins(JoinMapper<Object[], Object[][], DbListObject, RuntimeException> joinMapper) {

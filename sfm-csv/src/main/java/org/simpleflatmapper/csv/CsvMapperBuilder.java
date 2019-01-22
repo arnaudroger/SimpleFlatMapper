@@ -67,7 +67,7 @@ public class CsvMapperBuilder<T> extends MapperBuilder<CsvRow, CsvRowSet, T, Csv
 				classMeta, 
 				MapperConfig.<CsvColumnKey, CsvRow>config(columnDefinitionProvider),
 				CsvRowGetterFactory.INSTANCE,
-				new CsvMappingContextFactoryBuilder()
+				new CsvMappingContextFactoryBuilder(!MapperConfig.<CsvColumnKey, CsvRow>config(columnDefinitionProvider).unorderedJoin())
 				);
 	}
 

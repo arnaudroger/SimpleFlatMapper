@@ -153,7 +153,7 @@ public class FieldMapperToAppendableFactoryJavaTimeTest {
             public Object getValue(CsvColumnKey key, T source) throws Exception {
                 return null;
             }
-        });
+        }, true);
     }
 
 }

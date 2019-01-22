@@ -10,6 +10,7 @@ import org.simpleflatmapper.csv.property.CustomReaderProperty;
 import org.simpleflatmapper.lightningcsv.CsvReader;
 import org.simpleflatmapper.lightningcsv.StringReader;
 import org.simpleflatmapper.map.MapperBuildingException;
+import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.Result;
 import org.simpleflatmapper.map.ResultFieldMapperErrorHandler;
@@ -17,14 +18,12 @@ import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFactory;
-import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.DynamicSetRowMapper;
 import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.map.mapper.TransformSetRowMapper;
 import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ParameterizedTypeImpl;
-import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Function;
@@ -216,8 +215,9 @@ public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMappe
 	}
 
 	public <T> CsvMapperBuilder<T> newBuilder(final ClassMeta<T> classMeta) {
-		CsvMappingContextFactoryBuilder parentBuilder = new CsvMappingContextFactoryBuilder();
-		if (mapperConfig().fieldMapperErrorHandler() instanceof ResultFieldMapperErrorHandler) {
+		MapperConfig<CsvColumnKey, CsvRow> mapperConfig = mapperConfig();
+		CsvMappingContextFactoryBuilder parentBuilder = new CsvMappingContextFactoryBuilder(!mapperConfig.unorderedJoin());
+		if (mapperConfig.fieldMapperErrorHandler() instanceof ResultFieldMapperErrorHandler) {
 			parentBuilder.addSupplier(new Supplier<Object>() {
 				@Override
 				public Object get() {
@@ -226,7 +226,7 @@ public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMappe
 			});
 		}
 		CsvMapperBuilder<T> builder =
-				new CsvMapperBuilder<T>(classMeta, mapperConfig(), getterFactory, parentBuilder);
+				new CsvMapperBuilder<T>(classMeta, mapperConfig, getterFactory, parentBuilder);
 		return builder;
 	}
 

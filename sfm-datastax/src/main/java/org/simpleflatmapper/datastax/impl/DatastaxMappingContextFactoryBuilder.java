@@ -5,8 +5,8 @@ import org.simpleflatmapper.datastax.DatastaxColumnKey;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 
 public class DatastaxMappingContextFactoryBuilder<S extends GettableByIndexData> extends MappingContextFactoryBuilder<S, DatastaxColumnKey> {
-    public DatastaxMappingContextFactoryBuilder() {
-        super(DatastaxKeySourceGetter.INSTANCE);
+    public DatastaxMappingContextFactoryBuilder(boolean ignoreRootKey) {
+        super(DatastaxKeySourceGetter.INSTANCE, ignoreRootKey);
     }
 
 }

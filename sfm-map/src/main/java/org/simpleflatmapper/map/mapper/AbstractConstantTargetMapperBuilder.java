@@ -105,7 +105,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
         final List<FieldMapper<T, S>> mappers = new ArrayList<FieldMapper<T, S>>();
 
 
-        final MappingContextFactoryBuilder<T, K> mappingContextFactoryBuilder = new MappingContextFactoryBuilder<T, K>(keySourceGetter());
+        final MappingContextFactoryBuilder<T, K> mappingContextFactoryBuilder = new MappingContextFactoryBuilder<T, K>(keySourceGetter(), !mapperConfig.unorderedJoin());
 
         propertyMappingsBuilder.forEachProperties(
                 new ForEachCallBack<PropertyMapping<T, ?, K>>() {

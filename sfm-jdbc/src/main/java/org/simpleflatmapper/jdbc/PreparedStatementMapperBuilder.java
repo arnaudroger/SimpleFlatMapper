@@ -43,7 +43,6 @@ import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,7 +128,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
 
 
         if (hasMultiIndex) {
-            MappingContextFactoryBuilder<T, JdbcColumnKey> mappingContextFactoryBuilder = new MappingContextFactoryBuilder<T, JdbcColumnKey>(keySourceGetter());
+            MappingContextFactoryBuilder<T, JdbcColumnKey> mappingContextFactoryBuilder = new MappingContextFactoryBuilder<T, JdbcColumnKey>(keySourceGetter(), !mapperConfig.unorderedJoin());
             return new MultiIndexQueryPreparer<T>(query, buildIndexFieldMappers(mappingContextFactoryBuilder), generatedKeys, mappingContextFactoryBuilder.build());
         } else {
             return new MapperQueryPreparer<T>(query, mapper(), generatedKeys);

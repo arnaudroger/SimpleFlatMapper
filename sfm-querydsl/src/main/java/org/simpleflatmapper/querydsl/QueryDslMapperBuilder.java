@@ -37,7 +37,7 @@ public final class QueryDslMapperBuilder<T> {
 	
 	@SuppressWarnings("unchecked")
 	public QueryDslMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
-		this(reflectService.<T>getClassMeta(target), new QueryDslMappingContextFactoryBuilder());
+		this(reflectService.<T>getClassMeta(target), new QueryDslMappingContextFactoryBuilder(true));
 	}
 	
 	public QueryDslMapperBuilder(final ClassMeta<T> classMeta, MappingContextFactoryBuilder<Tuple, TupleElementKey> parentBuilder) throws MapperBuildingException {

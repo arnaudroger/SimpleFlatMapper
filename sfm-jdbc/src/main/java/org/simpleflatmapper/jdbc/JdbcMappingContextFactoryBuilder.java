@@ -6,8 +6,8 @@ import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import java.sql.ResultSet;
 
 public class JdbcMappingContextFactoryBuilder extends MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> {
-    public JdbcMappingContextFactoryBuilder() {
-        super(JdbcKeySourceGetter.INSTANCE);
+    public JdbcMappingContextFactoryBuilder(boolean ignoreRootKey) {
+        super(JdbcKeySourceGetter.INSTANCE, ignoreRootKey);
     }
 
 }

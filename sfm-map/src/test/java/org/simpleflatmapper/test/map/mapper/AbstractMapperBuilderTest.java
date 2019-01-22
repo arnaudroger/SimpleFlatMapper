@@ -847,7 +847,7 @@ public class AbstractMapperBuilderTest {
 
         SampleMapperBuilder<Prof> builderA = 
                 new SampleMapperBuilder<Prof>(
-                        ReflectionService.newInstance(false).getClassMeta(Prof.class),
+                        ReflectionService.newInstance().getClassMeta(Prof.class),
                         MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().unorderedJoin(true));
 
         builderA.addKey("id");
@@ -861,14 +861,47 @@ public class AbstractMapperBuilderTest {
                 {1l, "prof1", 1l, "S1"},
                 {2l, "prof2", 3l, "S3"},
                 {1l, "prof1", 2l, "S2"},
+                {2l, "prof2", 4l, "S4"},
+                {3l, "prof3", 4l, "S4"},
+                {3l, "prof3", 4l, "S4"},
         }, new ListCollector<Prof>()).getList();
 
         
-        assertEquals(profs, Arrays.asList(
+        assertEquals(Arrays.asList(
                 new Prof(1l, "prof1", Arrays.asList(new Student(1l, "S1"), new Student(2l, "S2"))),
-                new Prof(2l, "prof2", Arrays.asList(new Student(3l, "S3")))
-        ));
+                new Prof(2l, "prof2", Arrays.asList(new Student(3l, "S3"), new Student(4l, "S4"))),
+                new Prof(3l, "prof3", Arrays.asList(new Student(4l, "S4")))
+        ), profs);
         
+
+    }
+
+    @Test
+    public void testJoinUnordere604_2() throws Exception {
+
+        SampleMapperBuilder<Prof> builderA =
+                new SampleMapperBuilder<Prof>(
+                        ReflectionService.newInstance().getClassMeta(Prof.class),
+                        MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().unorderedJoin(true));
+
+        builderA.addKey("id");
+        builderA.addMapping("name");
+        builderA.addKey("students_id");
+        builderA.addMapping("students_name");
+
+        SetRowMapper<Object[], Object[][], Prof, Exception> mapper = builderA.mapper();
+
+        List<Prof> profs = mapper.forEach(new Object[][]{
+                {1l, "prof1", 1l, "S1"},
+                {2l, "prof2", 1l, "S1"},
+        }, new ListCollector<Prof>()).getList();
+
+
+        assertEquals(Arrays.asList(
+                new Prof(1l, "prof1", Arrays.asList(new Student(1l, "S1"))),
+                new Prof(2l, "prof2", Arrays.asList(new Student(1l, "S1")))
+        ), profs);
+
 
     }
     
@@ -1093,7 +1126,7 @@ public class AbstractMapperBuilderTest {
             super(KEY_FACTORY, 
                     new DefaultSetRowMapperBuilder<Object[], Object[][], T, SampleFieldKey, Exception>(
                             classMeta,
-                            new MappingContextFactoryBuilder<Object[], SampleFieldKey>(KEY_SOURCE_GETTER), 
+                            new MappingContextFactoryBuilder<Object[], SampleFieldKey>(KEY_SOURCE_GETTER, !mapperConfig.unorderedJoin()), 
                             mapperConfig,
                             new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, new ContextualGetterFactoryAdapter<Object[], SampleFieldKey>(GETTER_FACTORY)),
                             KEY_FACTORY,

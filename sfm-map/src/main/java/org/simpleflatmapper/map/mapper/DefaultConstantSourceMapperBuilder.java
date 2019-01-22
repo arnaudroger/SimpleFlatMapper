@@ -109,7 +109,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                                 public Object getValue(K key, Object source) throws Exception {
                                     return null;
                                 }
-                            });
+                            }, !mapperConfig.unorderedJoin());
                             return new Predicate<PropertyMeta<?, ?>>() {
                                 @Override
                                 public boolean test(PropertyMeta<?, ?> propertyMeta) {

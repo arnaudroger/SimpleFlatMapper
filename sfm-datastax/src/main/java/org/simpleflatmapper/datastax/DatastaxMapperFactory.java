@@ -61,10 +61,11 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
     }
 
     public <T> DatastaxMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
+        MapperConfig<DatastaxColumnKey, Row> mapperConfig = mapperConfig();
         return new DatastaxMapperBuilder<T>(classMeta,
-                mapperConfig(),
+                mapperConfig,
                 getterFactory,
-                new DatastaxMappingContextFactoryBuilder<Row>());
+                new DatastaxMappingContextFactoryBuilder<Row>(!mapperConfig.unorderedJoin()));
     }
 
     public <T> SettableDataMapperBuilder<T> newBuilderFrom(TypeReference<T> type) {

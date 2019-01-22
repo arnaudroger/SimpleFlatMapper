@@ -8,8 +8,8 @@ import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 
 
 public class CsvMappingContextFactoryBuilder extends MappingContextFactoryBuilder<CsvRow, CsvColumnKey> {
-    public CsvMappingContextFactoryBuilder() {
-        super(CsvRowKeySourceGetter.INSTANCE);
+    public CsvMappingContextFactoryBuilder(boolean ignoreRootKey) {
+        super(CsvRowKeySourceGetter.INSTANCE, ignoreRootKey);
     }
 
 }

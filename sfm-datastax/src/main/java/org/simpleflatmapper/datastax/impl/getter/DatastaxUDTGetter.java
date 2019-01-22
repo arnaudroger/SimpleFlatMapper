@@ -11,7 +11,6 @@ import org.simpleflatmapper.datastax.impl.RowGetterFactory;
 import org.simpleflatmapper.map.ContextualSourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
-import org.simpleflatmapper.map.mapper.DefaultConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
@@ -65,7 +64,7 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
                 mapperSource,
                 classMeta,
                 config,
-                new DatastaxMappingContextFactoryBuilder<GettableByIndexData>(),
+                new DatastaxMappingContextFactoryBuilder<GettableByIndexData>(!config.unorderedJoin()),
                 DatastaxMapperBuilder.KEY_FACTORY);
     }
 }

@@ -50,7 +50,7 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
         super(KEY_FACTORY, 
                 new SetRowMapperBuilderImpl<RowMapper<T> , Row, Sheet, T, CsvColumnKey, RuntimeException>(
                         classMeta,
-                        new MappingContextFactoryBuilder<Row, CsvColumnKey>(CsvColumnKeyRowKeySourceGetter.INSTANCE),
+                        new MappingContextFactoryBuilder<Row, CsvColumnKey>(CsvColumnKeyRowKeySourceGetter.INSTANCE, !mapperConfig.unorderedJoin()),
                         mapperConfig,
                         FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
                         KEY_FACTORY,

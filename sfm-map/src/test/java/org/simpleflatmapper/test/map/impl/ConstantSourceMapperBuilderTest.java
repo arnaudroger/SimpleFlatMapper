@@ -84,7 +84,7 @@ public class ConstantSourceMapperBuilderTest {
                         mapperSource,
                         classMeta,
                         MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()),
-                        new MappingContextFactoryBuilder<Object, SampleFieldKey>(null),
+                        new MappingContextFactoryBuilder<Object, SampleFieldKey>(null, true),
                         SampleFieldKey.KEY_FACTORY
                 );
 
@@ -110,7 +110,7 @@ public class ConstantSourceMapperBuilderTest {
                         mapperSource,
                         classMeta,
                         MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()),
-                                new MappingContextFactoryBuilder<Object, SampleFieldKey>(null),
+                                new MappingContextFactoryBuilder<Object, SampleFieldKey>(null, true),
                                 SampleFieldKey.KEY_FACTORY
                                 );
 
@@ -136,7 +136,7 @@ public class ConstantSourceMapperBuilderTest {
                             public void errorMappingField(SampleFieldKey key, Object source, Object target, Exception error, Context mappingContext) throws MappingException {
                             }
                         }),
-                        new MappingContextFactoryBuilder<Object, SampleFieldKey>(null),
+                        new MappingContextFactoryBuilder<Object, SampleFieldKey>(null, true),
                         SampleFieldKey.KEY_FACTORY
                 );
 

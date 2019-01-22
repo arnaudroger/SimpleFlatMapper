@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.map.ContextualSourceFieldMapper;
+import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFactory;
 import org.simpleflatmapper.map.mapper.ContextualSourceFieldMapperImpl;
@@ -159,11 +160,12 @@ public final class JdbcMapperFactory
 	}
 
 	public <T> JdbcMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
+		MapperConfig<JdbcColumnKey, ResultSet> mapperConfig = mapperConfig();
 		return new JdbcMapperBuilder<T>(
 						classMeta,
-						mapperConfig(),
+						mapperConfig,
 						getterFactory,
-                        new JdbcMappingContextFactoryBuilder());
+                        new JdbcMappingContextFactoryBuilder(!mapperConfig.unorderedJoin()));
 	}
 
 	/**

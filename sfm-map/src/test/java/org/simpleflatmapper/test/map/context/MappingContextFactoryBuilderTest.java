@@ -23,7 +23,7 @@ public class MappingContextFactoryBuilderTest {
 
     @Before
     public void setUp() {
-        builder = new MappingContextFactoryBuilder<Object[], SampleFieldKey>(getKeySourceGetter());
+        builder = new MappingContextFactoryBuilder<Object[], SampleFieldKey>(getKeySourceGetter(), true);
     }
     @Test
     public void testEmpty() {

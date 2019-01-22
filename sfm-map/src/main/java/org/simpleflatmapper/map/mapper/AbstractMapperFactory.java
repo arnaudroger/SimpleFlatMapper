@@ -100,9 +100,10 @@ public abstract class AbstractMapperFactory<
 
 	/**
 	 * Enabled support for unordered join at the root level.
-	 * To support that the mapper will need to load the data on the first call and keep a map of id -> object.
+	 * To support that the mapper will need to load the data on the first call and keep a map of id to object.
 	 * It is more costly to enable that use with caution.
-	 * @return
+	 * 
+	 * @return the current factory
 	 */
 	public final MF unorderedJoin() {
 		this.unorderedJoin = true;

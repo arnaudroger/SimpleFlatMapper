@@ -39,6 +39,14 @@ public class BreakDetector<S>  {
 
         return oldKey == null || !oldKey.equals(currentKey);
     }
+    
+    public Key getKey(S source) {
+        return definition.getValues(source);
+    }
+    
+    public Key getCurrentKey() {
+        return currentKey;
+    }
 
     public void handleSource(S source) throws MappingException {
         if (definition == null) {
@@ -49,22 +57,30 @@ public class BreakDetector<S>  {
 
     public void setValue(Object value) {
         if (definition != null) {
-            if (currentKey == null)
-                throw new IllegalStateException("Invalid state currentKey is null");
-            if (currentKey != KeyDefinition.NOT_EQUALS) {
-                cache.put(currentKey, value);
-            }
+            setValue(value, this.currentKey);
+        }
+    }
+
+    public void setValue(Object value, Key key) {
+        if (key == null)
+            throw new IllegalStateException("Invalid state currentKey is null");
+        if (key != KeyDefinition.NOT_EQUALS) {
+            cache.put(key, value);
         }
     }
 
     public Object getValue() {
         if (definition != null) {
-            if (currentKey == null)
-                throw new IllegalStateException("Invalid state currentKey is null");
-            if (currentKey == KeyDefinition.NOT_EQUALS) return null;
-            return cache.get(currentKey);
+            return getValue(currentKey);
         }
         return null;
+    }
+    
+    public Object getValue(Key key) {
+        if (key == null)
+            throw new IllegalStateException("Invalid state currentKey is null");
+        if (key == KeyDefinition.NOT_EQUALS) return null;
+        return cache.get(key);
     }
 
     public void markRootAsBroken() {
@@ -72,5 +88,9 @@ public class BreakDetector<S>  {
             currentKey = null;
             cache.clear();
         }
+    }
+
+    public boolean hasKeyDefinition() {
+        return definition != null;
     }
 }

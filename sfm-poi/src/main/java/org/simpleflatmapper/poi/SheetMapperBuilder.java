@@ -78,6 +78,11 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
         }
 
         @Override
+        public RowMapper<T> newUnorderedJoinMapper(ContextualSourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory, UnaryFactory<Sheet, Enumerable<Row>> enumerableFactory) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public RowMapper<T> newStaticMapper(ContextualSourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory, UnaryFactory<Sheet, Enumerable<Row>> enumerableFactory) {
             return new StaticSheetMapper<T>(mapper, consumerErrorHandler, mappingContextFactory);
         }

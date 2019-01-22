@@ -50,6 +50,11 @@ public class DefaultSetRowMapperBuilder<ROW, SET, T, K extends FieldKey<K>, E ex
         }
 
         @Override
+        public SetRowMapper<ROW, SET, T, E> newUnorderedJoinMapper(ContextualSourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
+            return  new UnorderedJoinMapper<ROW, SET, T, E>(mapper, consumerErrorHandler,mappingContextFactory, enumerableFactory);
+        }
+
+        @Override
         public SetRowMapper<ROW, SET, T, E> newStaticMapper(ContextualSourceFieldMapper<ROW, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<SET, Enumerable<ROW>> enumerableFactory) {
             return  new StaticSetRowMapper<ROW, SET, T, E>(mapper, consumerErrorHandler,mappingContextFactory, enumerableFactory);
         }

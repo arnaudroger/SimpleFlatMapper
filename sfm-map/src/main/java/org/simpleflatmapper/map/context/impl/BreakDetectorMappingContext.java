@@ -40,13 +40,20 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
             }
         }
 
-        for(BreakDetector breakDetector : breakDetectors) {
+        for(BreakDetector<S> breakDetector : breakDetectors) {
             if (breakDetector != rootDetector) {
                 breakDetector.handleSource(source);
             }
         }
 
         return b;
+    }
+
+    @Override
+    public void handleSource(S source) {
+        for(BreakDetector<S> breakDetector : breakDetectors) {
+            breakDetector.handleSource(source);
+        }
     }
 
     @Override
@@ -69,5 +76,9 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
     @Override
     public Object getCurrentValue(int i) {
         return breakDetectors[i].getValue();
+    }
+
+    public BreakDetector<S> getRootDetector() {
+        return rootDetector;
     }
 }

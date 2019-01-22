@@ -57,6 +57,7 @@ public abstract class AbstractMapperFactory<
 	private boolean assumeInjectionModifiesValues;
 	
 	private Predicate<? super S> rowFilter = null;
+	private boolean unorderedJoin;
 
 
 	public AbstractMapperFactory(AbstractMapperFactory<K, ?, S> config) {
@@ -77,6 +78,7 @@ public abstract class AbstractMapperFactory<
 		this.maxMethodSize = config.maxMethodSize;
 		this.assumeInjectionModifiesValues = config.assumeInjectionModifiesValues;
 		this.rowFilter = config.rowFilter;
+		this.unorderedJoin = config.unorderedJoin;
 	}
 
 
@@ -93,6 +95,17 @@ public abstract class AbstractMapperFactory<
      */
 	public final MF fieldMapperErrorHandler(final FieldMapperErrorHandler<K> fieldMapperErrorHandler) {
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
+		return (MF) this;
+	}
+
+	/**
+	 * Enabled support for unordered join at the root level.
+	 * To support that the mapper will need to load the data on the first call and keep a map of id -> object.
+	 * It is more costly to enable that use with caution.
+	 * @return
+	 */
+	public final MF unorderedJoin() {
+		this.unorderedJoin = true;
 		return (MF) this;
 	}
 
@@ -168,7 +181,8 @@ public abstract class AbstractMapperFactory<
 				.maxMethodSize(maxMethodSize)
 				.assumeInjectionModifiesValues(assumeInjectionModifiesValues)
 				.discriminators(discriminators)
-				.rowFilter(rowFilter);
+				.rowFilter(rowFilter)
+				.unorderedJoin(unorderedJoin);
 	}
 
 	public AbstractColumnDefinitionProvider<K> enrichColumnDefinitions(AbstractColumnDefinitionProvider<K> columnDefinitions) {

@@ -34,7 +34,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 NO_ASM_MAPPER_THRESHOLD,
                 RethrowFieldMapperErrorHandler.INSTANCE,
                 RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, 
-                false, Collections.<Discriminator<S, ?>>emptyList(), null);
+                false, Collections.<Discriminator<S, ?>>emptyList(), null, false);
     }
 
     public static <K extends FieldKey<K>, S> MapperConfig<K, S> config(ColumnDefinitionProvider<K> columnDefinitionProvider) {
@@ -45,7 +45,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 false,
                 NO_ASM_MAPPER_THRESHOLD,
                 RethrowFieldMapperErrorHandler.INSTANCE,
-                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false, Collections.<Discriminator<S, ?>>emptyList(), null);
+                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false, Collections.<Discriminator<S, ?>>emptyList(), null, false);
     }
 
     private final ColumnDefinitionProvider<K> columnDefinitions;
@@ -59,6 +59,8 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
     private final boolean assumeInjectionModifiesValues;
     private final List<Discriminator<S, ?>> discriminators;
     private final Predicate<? super S> rowFilter;
+    
+    private final boolean unorderedJoin;
 
     private MapperConfig(
             ColumnDefinitionProvider<K> columnDefinitions,
@@ -69,7 +71,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
             FieldMapperErrorHandler<? super K> fieldMapperErrorHandler,
             ConsumerErrorHandler consumerErrorHandler,
             int maxMethodSize, boolean assumeInjectionModifiesValues,
-            List<Discriminator<S, ?>> discriminators, Predicate<? super S> rowFilter) {
+            List<Discriminator<S, ?>> discriminators, Predicate<? super S> rowFilter, boolean unorderedJoin) {
         this.columnDefinitions = columnDefinitions;
         this.propertyNameMatcherFactory = propertyNameMatcherFactory;
         this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
@@ -81,6 +83,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
         this.assumeInjectionModifiesValues = assumeInjectionModifiesValues;
         this.discriminators = discriminators;
         this.rowFilter = rowFilter;
+        this.unorderedJoin = unorderedJoin;
     }
 
     public ColumnDefinitionProvider<K> columnDefinitions() {
@@ -117,7 +120,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                    consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter);
+                    consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
     public MapperConfig<K, S> propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
@@ -128,7 +131,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter);
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
     public MapperConfig<K, S> mapperBuilderErrorHandler(MapperBuilderErrorHandler mapperBuilderErrorHandler) {
@@ -139,7 +142,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter);
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
     public MapperConfig<K, S> failOnAsm(boolean failOnAsm) {
@@ -150,7 +153,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter);
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
 
@@ -163,7 +166,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter);
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
     public MapperConfig<K, S> asmMapperNbFieldsLimit(int asmMapperNbFieldsLimit) {
@@ -174,7 +177,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter);
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
     public MapperConfig<K, S> fieldMapperErrorHandler(FieldMapperErrorHandler<? super K> fieldMapperErrorHandler) {
@@ -185,7 +188,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter);
+                consumerErrorHandler, maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
     public MapperConfig<K, S> consumerErrorHandler(ConsumerErrorHandler consumerErrorHandler) {
@@ -197,7 +200,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
                 consumerErrorHandler,
-                maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter);
+                maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
     public MapperConfig<K, S> rowFilter(Predicate<? super S> rowFilter) {
@@ -209,7 +212,23 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
                 consumerErrorHandler,
-                maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter);
+                maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
+    }
+    
+    public MapperConfig<K, S> unorderedJoin(boolean unorderedJoin) {
+        return new MapperConfig<K, S>(
+                columnDefinitions,
+                propertyNameMatcherFactory,
+                mapperBuilderErrorHandler,
+                failOnAsm,
+                asmMapperNbFieldsLimit,
+                fieldMapperErrorHandler,
+                consumerErrorHandler,
+                maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
+    }
+    
+    public boolean unorderedJoin() {
+        return unorderedJoin;
     }
 
     public ConsumerErrorHandler consumerErrorHandler() {
@@ -247,7 +266,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
                 consumerErrorHandler,
-                maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter);
+                maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
     public <T> MapperConfig<K, S> discriminator(Class<T> rootClass, DiscriminatorCase<S, T>... cases) {
@@ -266,7 +285,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 consumerErrorHandler,
                 maxMethodSize,
                 assumeInjectionModifiesValues,
-                discriminators, rowFilter);
+                discriminators, rowFilter, unorderedJoin);
     }
 
     public <S, T> Discriminator<S, T> getDiscriminator(ClassMeta<T> classMeta) {
@@ -298,7 +317,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 maxMethodSize,
                 assumeInjectionModifiesValues,
                 discriminators, 
-                rowFilter);
+                rowFilter, unorderedJoin);
     }
 
     public DiscriminatorCase<S, ?> getDiscriminatorCase(Type type) {
@@ -316,6 +335,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
             }
         };
     }
+
 
     public static final class DiscriminatorCase<ROW, T> {
         public final Predicate<ROW> predicate;

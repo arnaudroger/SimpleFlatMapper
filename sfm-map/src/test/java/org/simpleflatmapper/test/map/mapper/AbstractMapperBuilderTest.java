@@ -842,6 +842,112 @@ public class AbstractMapperBuilderTest {
     }
 
 
+    @Test
+    public void testJoinUnordere604() throws Exception {
+
+        SampleMapperBuilder<Prof> builderA = 
+                new SampleMapperBuilder<Prof>(
+                        ReflectionService.newInstance(false).getClassMeta(Prof.class),
+                        MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().unorderedJoin(true));
+
+        builderA.addKey("id");
+        builderA.addMapping("name");
+        builderA.addKey("students_id");
+        builderA.addMapping("students_name");
+
+        SetRowMapper<Object[], Object[][], Prof, Exception> mapper = builderA.mapper();
+
+        List<Prof> profs = mapper.forEach(new Object[][]{
+                {1l, "prof1", 1l, "S1"},
+                {2l, "prof2", 3l, "S3"},
+                {1l, "prof1", 2l, "S2"},
+        }, new ListCollector<Prof>()).getList();
+
+        
+        assertEquals(profs, Arrays.asList(
+                new Prof(1l, "prof1", Arrays.asList(new Student(1l, "S1"), new Student(2l, "S2"))),
+                new Prof(2l, "prof2", Arrays.asList(new Student(3l, "S3")))
+        ));
+        
+
+    }
+    
+    public static class Prof {
+        public final long id;
+        public final String name;
+        public final List<Student> students;
+
+        public Prof(long id, String name, List<Student> students) {
+            this.id = id;
+            this.name = name;
+            this.students = students;
+        }
+
+        @Override
+        public String toString() {
+            return "Prof{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    ", students=" + students +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Prof prof = (Prof) o;
+
+            if (id != prof.id) return false;
+            if (name != null ? !name.equals(prof.name) : prof.name != null) return false;
+            return students != null ? students.equals(prof.students) : prof.students == null;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) (id ^ (id >>> 32));
+            result = 31 * result + (name != null ? name.hashCode() : 0);
+            result = 31 * result + (students != null ? students.hashCode() : 0);
+            return result;
+        }
+    }
+    
+    public static class Student {
+        public final long id;
+        public final String name;
+
+        public Student(long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "Student{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Student student = (Student) o;
+
+            if (id != student.id) return false;
+            return name != null ? name.equals(student.name) : student.name == null;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) (id ^ (id >>> 32));
+            result = 31 * result + (name != null ? name.hashCode() : 0);
+            return result;
+        }
+    }
 
     @Test
     // https://github.com/arnaudroger/SimpleFlatMapper/issues/416

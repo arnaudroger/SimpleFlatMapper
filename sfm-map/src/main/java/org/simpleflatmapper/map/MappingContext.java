@@ -18,6 +18,9 @@ public class MappingContext<S> implements Context {
         return true;
     }
 
+    public void handleSource(S source) {
+    }
+    
     public void markAsBroken() {
     }
 

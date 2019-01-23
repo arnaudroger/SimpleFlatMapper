@@ -31,12 +31,7 @@ public class UnorderedJoinMapper<ROW, ROWS, T, EX extends Exception> extends Abs
 
     @Override
     public final Enumerable<T> enumerate(ROWS source) throws EX {
-        BreakDetectorMappingContext<? super ROW> mappingContext = (BreakDetectorMappingContext<? super ROW>) mappingContextFactory.newContext();
-        BreakDetector<? super ROW> rootDetector = mappingContext.getRootDetector();
-        if (!rootDetector.hasKeyDefinition()) {
-            throw new IllegalStateException("No key definitions");
-        }
-        return new UnorderedJoinMapperEnumerable<ROW, T>(mapper, mappingContext, enumerateRows(source), rootDetector);
+        return new UnorderedJoinMapperEnumerable<ROW, T>(mapper, mappingContextFactory.newContext(), enumerateRows(source));
     }
 
     private Enumerable<ROW> enumerateRows(ROWS source) {

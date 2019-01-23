@@ -2,8 +2,8 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.SourceFieldMapper;
-import org.simpleflatmapper.map.context.Key;
 import org.simpleflatmapper.map.context.impl.BreakDetector;
+import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContext;
 import org.simpleflatmapper.util.ArrayListEnumerable;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
@@ -20,15 +20,23 @@ public class UnorderedJoinMapperEnumerable<S, T> implements Enumerable<T> {
     private final BreakDetector<? super S> breakDetector;
 
     private Enumerable<T> objectsEnumerable;
-
+    
     public UnorderedJoinMapperEnumerable(SourceFieldMapper<S, T> mapper,
                                          MappingContext<? super S> mappingContext,
-                                         Enumerable<S> sourceEnumerable,
-                                         BreakDetector<? super S> breakDetector) {
+                                         Enumerable<S> sourceEnumerable) {
         this.mapper = mapper;
         this.mappingContext = mappingContext;
         this.sourceEnumerable = sourceEnumerable;
-        this.breakDetector = breakDetector;
+        this.breakDetector = getRootDetector(mappingContext);
+    }
+
+    private BreakDetector<? super S> getRootDetector(MappingContext<? super S> mappingContext) {
+        BreakDetectorMappingContext<? super S> mp = (BreakDetectorMappingContext<? super S>) mappingContext;
+        BreakDetector<? super S> rootDetector = mp.getRootDetector();
+        if (!rootDetector.hasKeyDefinition()) {
+            throw new IllegalStateException("No key definitions");
+        }
+        return rootDetector;
     }
 
     @Override

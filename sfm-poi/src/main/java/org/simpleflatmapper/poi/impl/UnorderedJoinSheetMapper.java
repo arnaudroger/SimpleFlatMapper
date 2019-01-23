@@ -59,12 +59,7 @@ public class UnorderedJoinSheetMapper<T> implements RowMapper<T> {
     }
 
     private Enumerable<T> enumerable(int startRow, Sheet sheet, MappingContext<? super Row> mappingContext) {
-        BreakDetectorMappingContext<? super Row> mp = (BreakDetectorMappingContext<? super Row>) mappingContext;
-        BreakDetector<? super Row> rootDetector = mp.getRootDetector();
-        if (!rootDetector.hasKeyDefinition()) {
-            throw new IllegalStateException("No key definitions");
-        }
-        return new UnorderedJoinMapperEnumerable<Row, T>(mapper, mappingContext, new RowEnumerable(startRow, sheet), rootDetector);
+        return new UnorderedJoinMapperEnumerable<Row, T>(mapper, mappingContext, new RowEnumerable(startRow, sheet));
     }
 
     @Override

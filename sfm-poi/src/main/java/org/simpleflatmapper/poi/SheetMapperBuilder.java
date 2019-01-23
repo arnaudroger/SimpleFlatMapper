@@ -7,8 +7,6 @@ import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
-import org.simpleflatmapper.map.context.impl.BreakDetector;
-import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContext;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.MapperBuilder;

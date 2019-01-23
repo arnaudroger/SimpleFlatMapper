@@ -7,6 +7,8 @@ import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
+import org.simpleflatmapper.map.context.impl.BreakDetector;
+import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContext;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
@@ -15,6 +17,7 @@ import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.poi.impl.JoinSheetMapper;
 import org.simpleflatmapper.poi.impl.StaticSheetMapper;
 import org.simpleflatmapper.poi.impl.TransformRowMapper;
+import org.simpleflatmapper.poi.impl.UnorderedJoinSheetMapper;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.map.MapperConfig;
@@ -79,7 +82,7 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
 
         @Override
         public RowMapper<T> newUnorderedJoinMapper(ContextualSourceFieldMapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory, UnaryFactory<Sheet, Enumerable<Row>> enumerableFactory) {
-            throw new UnsupportedOperationException();
+            return new UnorderedJoinSheetMapper<T>(mapper, consumerErrorHandler, mappingContextFactory);
         }
 
         @Override

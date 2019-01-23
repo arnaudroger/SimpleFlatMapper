@@ -434,7 +434,7 @@ public class MapperAsmBuilder {
             mv.visitVarInsn(ALOAD, 3);
 
             Method m = getMapToMethod(TypeHelper.toClass(mapperClass));
-            AsmUtils.invoke(mv, mapperClass, m);
+            AsmUtils.invoke(mv, m);
         }
 
         @Override
@@ -508,8 +508,8 @@ public class MapperAsmBuilder {
             mv.visitVarInsn(ALOAD, 3);
             
             
-            AsmUtils.invoke(mv, getterClass, getMethod);
-            AsmUtils.invoke(mv, setterClass, setMethod);
+            AsmUtils.invoke(mv, getMethod);
+            AsmUtils.invoke(mv, setMethod);
         }
 
         @Override
@@ -581,8 +581,8 @@ public class MapperAsmBuilder {
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(ALOAD, 3);
             AsmUtils.addIndex(mv, getterIndex);
-            AsmUtils.invoke(mv, getMethod.getDeclaringClass(), getMethod);
-            AsmUtils.invoke(mv, setterClass, setMethod);
+            AsmUtils.invoke(mv, getMethod);
+            AsmUtils.invoke(mv, setMethod);
         }
 
 

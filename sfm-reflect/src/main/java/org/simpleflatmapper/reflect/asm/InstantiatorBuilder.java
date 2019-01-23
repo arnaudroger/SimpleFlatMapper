@@ -238,7 +238,7 @@ public class InstantiatorBuilder {
             Method getterMethod = BiInstantiatorBuilder.getMethod(TypeHelper.toClass(getterCall.getterType), "get", 1);
 
             
-            AsmUtils.invoke(mv, getterCall.getterType, getterMethod);
+            AsmUtils.invoke(mv, getterMethod);
             if (!wrapperClass.isAssignableFrom(getterMethod.getReturnType())) {
                 mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(wrapperClass));
             }

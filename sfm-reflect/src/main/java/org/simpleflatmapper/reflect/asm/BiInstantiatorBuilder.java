@@ -349,7 +349,7 @@ public class BiInstantiatorBuilder {
 
         Method getterMethod = injectionPoint.getMethod();
 
-        AsmUtils.invoke(mv, injectionPoint.functionType, getterMethod);
+        AsmUtils.invoke(mv, getterMethod);
 
         if (!injectionPoint.isPrimitive) {
             

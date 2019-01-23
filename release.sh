@@ -19,7 +19,7 @@ java8
 rm release.properties
 REL=6.2.1
 DEV=6.2.2-SNAPSHOT
-REPOID=orgsimpleflatmapper-1643
+REPOID=orgsimpleflatmapper-1644
 mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
                  -DdevelopmentVersion=$DEV

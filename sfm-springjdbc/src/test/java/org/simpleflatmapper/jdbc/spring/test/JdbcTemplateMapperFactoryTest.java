@@ -84,6 +84,8 @@ public class JdbcTemplateMapperFactoryTest {
 	@Test
 	public void testIssue606() throws SQLException {
 		Connection dbConnection = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
+		
+		if (dbConnection == null) return;
 		JdbcTemplate 		template = new JdbcTemplate(new SingleConnectionDataSource(dbConnection, true));
 
 		ResultSetExtractor<List<Prof>> mapper = JdbcTemplateMapperFactory.newInstance().addKeys("id", "students_id").unorderedJoin().newResultSetExtractor(Prof.class);

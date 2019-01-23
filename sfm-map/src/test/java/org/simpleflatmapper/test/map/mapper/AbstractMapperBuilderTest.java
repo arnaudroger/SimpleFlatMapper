@@ -867,10 +867,11 @@ public class AbstractMapperBuilderTest {
         }, new ListCollector<Prof>()).getList();
 
         
+        boolean test = false;
         assertEquals(Arrays.asList(
-                new Prof(1l, "prof1", Arrays.asList(new Student(1l, "S1"), new Student(2l, "S2"))),
-                new Prof(2l, "prof2", Arrays.asList(new Student(3l, "S3"), new Student(4l, "S4"))),
-                new Prof(3l, "prof3", Arrays.asList(new Student(4l, "S4")))
+                new Prof(1l, "prof1", Arrays.asList(new Student(1l, "S1", test), new Student(2l, "S2", test))),
+                new Prof(2l, "prof2", Arrays.asList(new Student(3l, "S3", test), new Student(4l, "S4", test))),
+                new Prof(3l, "prof3", Arrays.asList(new Student(4l, "S4", test)))
         ), profs);
         
 
@@ -897,9 +898,40 @@ public class AbstractMapperBuilderTest {
         }, new ListCollector<Prof>()).getList();
 
 
+        boolean test = false;
         assertEquals(Arrays.asList(
-                new Prof(1l, "prof1", Arrays.asList(new Student(1l, "S1"))),
-                new Prof(2l, "prof2", Arrays.asList(new Student(1l, "S1")))
+                new Prof(1l, "prof1", Arrays.asList(new Student(1l, "S1", test))),
+                new Prof(2l, "prof2", Arrays.asList(new Student(1l, "S1", test)))
+        ), profs);
+
+
+    }
+
+    @Test
+    public void testJoinUnordere606() throws Exception {
+
+        SampleMapperBuilder<Prof> builderA =
+                new SampleMapperBuilder<Prof>(
+                        ReflectionService.newInstance().getClassMeta(Prof.class),
+                        MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().unorderedJoin(true));
+
+        builderA.addKey("id");
+        builderA.addMapping("name");
+        builderA.addKey("students_id");
+        builderA.addMapping("students_name");
+        builderA.addMapping("students_test");
+
+        SetRowMapper<Object[], Object[][], Prof, Exception> mapper = builderA.mapper();
+
+        List<Prof> profs = mapper.forEach(new Object[][]{
+                {1l, "prof1", 1l, "S1", true},
+                {2l, "prof2", 1l, "S1", false},
+        }, new ListCollector<Prof>()).getList();
+
+
+        assertEquals(Arrays.asList(
+                new Prof(1l, "prof1", Arrays.asList(new Student(1l, "S1", true))),
+                new Prof(2l, "prof2", Arrays.asList(new Student(1l, "S1", false)))
         ), profs);
 
 
@@ -949,10 +981,12 @@ public class AbstractMapperBuilderTest {
     public static class Student {
         public final long id;
         public final String name;
+        public final boolean test;
 
-        public Student(long id, String name) {
+        public Student(long id, String name, boolean test) {
             this.id = id;
             this.name = name;
+            this.test = test;
         }
 
         @Override
@@ -971,6 +1005,7 @@ public class AbstractMapperBuilderTest {
             Student student = (Student) o;
 
             if (id != student.id) return false;
+            if (test != student.test) return false;
             return name != null ? name.equals(student.name) : student.name == null;
         }
 
@@ -978,6 +1013,7 @@ public class AbstractMapperBuilderTest {
         public int hashCode() {
             int result = (int) (id ^ (id >>> 32));
             result = 31 * result + (name != null ? name.hashCode() : 0);
+            result = 31 * result + (test ? 1 : 0);
             return result;
         }
     }

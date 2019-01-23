@@ -8,20 +8,17 @@ import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.context.MappingContextFactory;
-import org.simpleflatmapper.map.context.impl.BreakDetector;
-import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContext;
-import org.simpleflatmapper.map.mapper.JoinMapperEnumerable;
 import org.simpleflatmapper.map.mapper.UnorderedJoinMapperEnumerable;
 import org.simpleflatmapper.poi.RowMapper;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.EnumerableIterator;
-import org.simpleflatmapper.util.EnumerableSpliterator;
 
 import java.util.Iterator;
 //IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.simpleflatmapper.util.EnumerableSpliterator;
 //IFJAVA8_END
 
 public class UnorderedJoinSheetMapper<T> implements RowMapper<T> {

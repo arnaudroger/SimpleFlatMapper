@@ -43,6 +43,7 @@ public class Sql2oIntegrationTest {
     }
 
 
+    //IFJAVA8_START
     @Test
     public void testDiscriminator608() throws SQLException {
         Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
@@ -81,6 +82,7 @@ public class Sql2oIntegrationTest {
             connection.close();
         }
     }
+    //IFJAVA8_END
 
 
     public static abstract class Device {

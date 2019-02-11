@@ -9,12 +9,14 @@ TMP="${TMP%%\(*}"                                        # remove everything aft
 JDK_BUILD="$(echo -e "${TMP}" | tr -d '[:space:]')" # remove all whitespace
 
 #JDK_ARCHIVE=openjdk-11_linux-x64_bin.tar.gz
-JDK_ARCHIVE=openjdk-${JDK_FEATURE}-ea+${JDK_BUILD}_linux-x64_bin.tar.gz
+JDK_ARCHIVE=openjdk-${JDK_FEATURE}+${JDK_BUILD}_linux-x64_bin.tar.gz
 
 cd ~
 #wget https://download.java.net/java/ga/jdk11/openjdk-11_linux-x64_bin.tar.gz
 # https://download.java.net/java/early_access/jdk12/13/GPL/openjdk-12-ea+13_linux-x64_bin.tar.gz
 # https://download.java.net/java/early_access/jdk12/13/GPL/openjdk-12-ea+13_linux-x64_bin.tar.gz
+# https://download.java.net/java/early_access/jdk12/31/GPL/openjdk-12+31_linux-x64_bin.tar.gz
+# https://download.java.net/java/early_access/jdk12/31/GPL/openjdk-12-ea+31_linux-x64_bin.tar.gz
 
 wget https://download.java.net/java/early_access/jdk${JDK_FEATURE}/${JDK_BUILD}/GPL/${JDK_ARCHIVE}
 tar -xzf ${JDK_ARCHIVE}

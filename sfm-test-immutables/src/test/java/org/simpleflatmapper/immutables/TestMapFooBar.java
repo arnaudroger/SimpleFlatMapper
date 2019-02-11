@@ -23,6 +23,16 @@ public class TestMapFooBar {
 
 
     @Test
+    public void mapFooBarBuilder() {
+        final JdbcMapperBuilder<ImmutableFoobarValue.Builder> builder = JdbcMapperFactory.newInstance().newBuilder(ImmutableFoobarValue.Builder.class);
+
+        assertNotNull(builder.addKey("foo").addKey("bar").addKey("crux").mapper());
+
+    }
+
+
+
+    @Test
     public void mapFooBarNoBuilderLink() throws NoSuchMethodException {
         final JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance();
         final ClassMeta<FoobarValueNoBuilderLink> meta =

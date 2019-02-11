@@ -243,6 +243,20 @@ public class DefaultReflectionService extends ReflectionService {
 
 		if (extraInstantiator == null) {
 			list.addAll(BuilderInstantiatorDefinitionFactory.extractDefinitions(target));
+
+			if (list.isEmpty()) {
+				Class<?> enclosing = TypeHelper.toClass(target).getEnclosingClass();
+				while (enclosing != null) {
+					for(Method m : enclosing.getDeclaredMethods()) {
+						if (Modifier.isPublic(m.getModifiers())
+								&& Modifier.isStatic(m.getModifiers())
+								&& TypeHelper.toClass(target).isAssignableFrom(m.getReturnType())) {
+							list.add(ReflectionInstantiatorDefinitionFactory.definition(m));
+						}
+					}
+					enclosing = enclosing.getEnclosingClass();
+				}
+			}
 		} else {
 			if (extraInstantiator instanceof Method && TypeHelper.areEquals(target, ((Method)extraInstantiator).getGenericReturnType())) {
 				// factory method

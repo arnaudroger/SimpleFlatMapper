@@ -1,6 +1,7 @@
 package org.simpleflatmapper.reflect.test.meta;
 
 import org.junit.Test;
+import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.reflect.test.KeyTest;
@@ -445,6 +446,18 @@ public class ObjectClassMetaTest {
         }
     }
     //IFJAVA8_END
+
+
+
+
+    @Test
+    public void testTargetBuilder574() {
+        ClassMeta<ImmutableFoobarValue.Builder> classMeta = ReflectionService.newInstance().getClassMeta(ImmutableFoobarValue.Builder.class);
+
+        List<InstantiatorDefinition> instantiatorDefinitions = classMeta.getInstantiatorDefinitions();
+
+        assertFalse(instantiatorDefinitions.isEmpty());
+    }
 
 
 }

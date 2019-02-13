@@ -19,7 +19,7 @@ function java6 {
 #rm release.properties
 REL=6.4.0
 DEV=6.4.1-SNAPSHOT
-REPOID=orgsimpleflatmapper-1646
+REPOID=orgsimpleflatmapper-1648
 #mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
 #                 -DreleaseVersion=$REL \
 #                 -DdevelopmentVersion=$DEV

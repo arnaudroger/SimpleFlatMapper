@@ -16,6 +16,8 @@ import org.simpleflatmapper.reflect.meta.MapClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 //IFJAVA8_START
 import org.simpleflatmapper.reflect.meta.OptionalClassMeta;
+
+import java.lang.annotation.Annotation;
 import java.util.Optional;
 //IFJAVA8_END
 
@@ -173,7 +175,43 @@ public class DefaultReflectionService extends ReflectionService {
 		} else if (ArrayClassMeta.supports(target)) {
 			return newCollectionMeta(target);
 		}
+
+		if (isImmutableOrg(target)) {
+			ClassMeta<T> classMeta = getImmutableOrgClassMeta(target);
+			if (classMeta != null){
+				return classMeta;
+			}
+		}
+
 		return new ObjectClassMeta<T>(target, getBuilderInstantiator(target), this);
+	}
+
+	private <T> ClassMeta<T> getImmutableOrgClassMeta(Type target) {
+		String name = target.getTypeName();
+
+		int indexOfLastDot = name.lastIndexOf('.');
+
+		String immutableName;
+		if (indexOfLastDot != -1) {
+			immutableName = name.substring(0, indexOfLastDot + 1) + "Immutable" + name.substring(indexOfLastDot + 1);
+		} else {
+			immutableName = "Immutable" + name;
+		}
+
+		try {
+			ClassLoader classLoader = TypeHelper.toClass(target).getClassLoader();
+			if (classLoader != null) {
+				Class<?> immutableClass = classLoader.loadClass(immutableName);
+				return new ObjectClassMeta<T>(immutableClass, getBuilderInstantiator(immutableClass), this);
+			}
+		} catch (ClassNotFoundException e) {
+		}
+
+		return null;
+	}
+
+	private boolean isImmutableOrg(Type target) {
+		return TypeHelper.toClass(target).isInterface();
 	}
 
 	private Member getBuilderInstantiator(Type target) {

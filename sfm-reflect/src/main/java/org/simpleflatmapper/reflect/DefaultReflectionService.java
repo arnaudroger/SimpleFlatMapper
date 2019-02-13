@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinitionFactory;
+import org.simpleflatmapper.reflect.impl.ImmutableOrgHelper;
 import org.simpleflatmapper.reflect.impl.JavaLangClassMetaFactoryProducer;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
@@ -176,43 +177,29 @@ public class DefaultReflectionService extends ReflectionService {
 			return newCollectionMeta(target);
 		}
 
-		if (isImmutableOrg(target)) {
-			ClassMeta<T> classMeta = getImmutableOrgClassMeta(target);
-			if (classMeta != null){
-				return classMeta;
-			}
+		if (isAbstractOrInterface(target)) {
+			target = findImplementation(target);
 		}
 
 		return new ObjectClassMeta<T>(target, getBuilderInstantiator(target), this);
 	}
 
-	private <T> ClassMeta<T> getImmutableOrgClassMeta(Type target) {
-		String name = target.getTypeName();
-
-		int indexOfLastDot = name.lastIndexOf('.');
-
-		String immutableName;
-		if (indexOfLastDot != -1) {
-			immutableName = name.substring(0, indexOfLastDot + 1) + "Immutable" + name.substring(indexOfLastDot + 1);
-		} else {
-			immutableName = "Immutable" + name;
-		}
-
-		try {
-			ClassLoader classLoader = TypeHelper.toClass(target).getClassLoader();
-			if (classLoader != null) {
-				Class<?> immutableClass = classLoader.loadClass(immutableName);
-				return new ObjectClassMeta<T>(immutableClass, getBuilderInstantiator(immutableClass), this);
-			}
-		} catch (ClassNotFoundException e) {
-		}
-
-		return null;
+	private boolean isAbstractOrInterface(Type target) {
+		Class<?> clazz = TypeHelper.toClass(target);
+		return clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers());
 	}
 
-	private boolean isImmutableOrg(Type target) {
-		return TypeHelper.toClass(target).isInterface();
+	private Type findImplementation(Type target) {
+		Class<Object> clazz = TypeHelper.toClass(target);
+		Type implementation;
+
+		implementation = ImmutableOrgHelper.findImplementation(clazz);
+
+		if (implementation != null) return implementation;
+
+		return target;
 	}
+
 
 	private Member getBuilderInstantiator(Type target) {
 		String typeName = TypeHelper.toClass(target).getName();

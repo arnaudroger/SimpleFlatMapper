@@ -53,4 +53,13 @@ public class TestMapFooBar {
                 mapperFactory.newBuilder(FoobarValueNoBuilderLink.class);
         assertNotNull(builder.addKey("foo").addKey("bar").addKey("crux").mapper());
     }
+
+    @Test
+    public void mapFooBarNoBuilderLinkFindStyle609() throws NoSuchMethodException {
+        final JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance();
+
+        final JdbcMapperBuilder<FoobarValueNoBuilderLinkStyle> builder =
+                mapperFactory.newBuilder(FoobarValueNoBuilderLinkStyle.class);
+        assertNotNull(builder.addKey("foo").addKey("bar").addKey("crux").mapper());
+    }
 }

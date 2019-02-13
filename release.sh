@@ -14,12 +14,12 @@ function java6 {
 }
 
 #echo "change versions"
-exit
+#exit
 java8
 rm release.properties
 REL=6.4.0
 DEV=6.4.1-SNAPSHOT
-REPOID=orgsimpleflatmapper-1648
+REPOID=orgsimpleflatmapper-1649
 mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
                  -DdevelopmentVersion=$DEV

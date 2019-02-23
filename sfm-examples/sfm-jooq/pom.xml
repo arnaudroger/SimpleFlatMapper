@@ -17,7 +17,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<h2.version>1.4.193</h2.version>
+		<h2.version>1.4.198</h2.version>
 		<org.jooq.version>3.9.0</org.jooq.version>
 	</properties>
 
@@ -195,7 +195,7 @@
 								<database>
 									<name>org.jooq.util.h2.H2Database</name>
 									<includes>.*</includes>
-									<excludes />
+									<excludes/>
 									<inputSchema>PUBLIC</inputSchema>
 									<recordTimestampFields>REC_TIMESTAMP</recordTimestampFields>
 								</database>

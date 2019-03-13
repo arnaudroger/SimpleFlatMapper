@@ -9,6 +9,8 @@ import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.util.CheckedBiFunction;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.Predicate;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,7 +39,12 @@ public class Issue614Test {
                             public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, A> builder) {
                                 builder.when("A1", A1.class)
                                         .when("A2", A2.class)
-                                        .when(v -> true, A.class);
+                                        .when(new Predicate<String>() {
+                                            @Override
+                                            public boolean test(String v) {
+                                                return true;
+                                            }
+                                        }, A.class);
                             }
                         }
                 )
@@ -55,10 +62,10 @@ public class Issue614Test {
 
         Connection c = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
         if (c == null) return;
-        try (
-                Statement s = c.createStatement();
-                ResultSet rs = s.executeQuery("select 1 as id, '{\"a\": \"a\"}'::json as a_json, 'A1' as a_type"))
+        try
         {
+            Statement s = c.createStatement();
+            ResultSet rs = s.executeQuery("select 1 as id, '{\"a\": \"a\"}'::json as a_json, 'A1' as a_type");
 
             // use to fail
             mapper.forEach(rs, new CheckedConsumer<B>() {

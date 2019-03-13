@@ -184,7 +184,20 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
 
         @Override
         public Type getPropertyType() {
-            throw new UnsupportedOperationException();
+            Type t = null;
+
+            int i = 0;
+            while (i < matches.size()){
+                Type te = matches.get(0).matchedProperty.getPropertyMeta().getPropertyType();
+                if (t == null) {
+                    t = te;
+                } else if (!t.equals(te)) {
+                    throw new UnsupportedOperationException();
+                }
+                i++;
+            }
+
+            return t;
         }
 
         @Override

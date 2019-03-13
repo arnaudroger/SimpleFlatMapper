@@ -167,11 +167,16 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 
 	public <P> PropertyMapping<T, P, K> addProperty(final K key, final ColumnDefinition<K, ?> columnDefinition, final PropertyMeta<T, P> prop) {
 		if (columnDefinition.hasCustomSourceFrom(prop.getOwnerType())) {
-			Type type = prop.getPropertyType();
+			try {
+				Type type = prop.getPropertyType();
 
-			if (!checkTypeCompatibility(key, columnDefinition.getCustomSourceReturnTypeFrom(prop.getOwnerType()), type)) {
-				properties.add(null);
-				return null;
+				if (!checkTypeCompatibility(key, columnDefinition.getCustomSourceReturnTypeFrom(prop.getOwnerType()), type)) {
+					properties.add(null);
+					return null;
+				}
+			} catch (UnsupportedOperationException e) {
+				// handle discriminator case that have different type...
+				// assume the user is right
 			}
 		}
 

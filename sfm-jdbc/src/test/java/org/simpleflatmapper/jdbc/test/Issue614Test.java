@@ -1,18 +1,18 @@
 package org.simpleflatmapper.jdbc.test;
 
 import org.junit.Test;
-import org.postgresql.util.PGobject;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
+import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.util.TypeReference;
-
+import org.simpleflatmapper.util.CheckedConsumer;
+import org.simpleflatmapper.util.Consumer;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Issue614Test {
 
@@ -26,16 +26,24 @@ public class Issue614Test {
                 .discriminator(A.class,
                         "a_type",
                         ResultSet::getString,
-                        builder -> builder.when("A1", A1.class)
-                                .when("A2", A2.class)
-                                .when(v -> true, A.class)
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, A>>() {
+                            @Override
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, A> builder) {
+                                builder.when("A1", A1.class)
+                                        .when("A2", A2.class)
+                                        .when(v -> true, A.class);
+                            }
+                        }
                 )
                 .addCustomGetter(
                         "a_json",
-                        rs -> {
-                            HashMap<String, String> map = new HashMap<>();
-                            map.put("s", "t");
-                            return map;
+                        new Getter<ResultSet, Object>() {
+                            @Override
+                            public Object get(ResultSet rs) throws Exception {
+                                HashMap<String, String> map = new HashMap<String, String>();
+                                map.put("s", "t");
+                                return map;
+                            }
                         })
                 .newMapper(B.class);
 
@@ -47,7 +55,12 @@ public class Issue614Test {
         {
 
             // use to fail
-            mapper.forEach(rs, System.out::println);
+            mapper.forEach(rs, new CheckedConsumer<B>() {
+                @Override
+                public void accept(B x) throws Exception {
+                    System.out.println(x);
+                }
+            });
         } finally {
             c.close();
         }

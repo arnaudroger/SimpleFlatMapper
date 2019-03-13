@@ -6,6 +6,7 @@ import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.test.jdbc.DbHelper;
+import org.simpleflatmapper.util.CheckedBiFunction;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Consumer;
 import java.sql.Connection;
@@ -25,7 +26,12 @@ public class Issue614Test {
                 .newInstance()
                 .discriminator(A.class,
                         "a_type",
-                        ResultSet::getString,
+                        new CheckedBiFunction<ResultSet, String, String>() {
+                            @Override
+                            public String apply(ResultSet resultSet, String columnLabel) throws Exception {
+                                return resultSet.getString(columnLabel);
+                            }
+                        },
                         new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, A>>() {
                             @Override
                             public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, A> builder) {

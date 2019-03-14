@@ -6,8 +6,6 @@ import org.simpleflatmapper.converter.ContextualConverter;
 import java.time.*;
 import java.util.Date;
 
-import static org.simpleflatmapper.converter.impl.time.ObjectToJavaZonedDateTimeConverter.getWithCustomAccessor;
-
 
 public class ObjectToJavaOffsetDateTimeConverter implements ContextualConverter<Object, OffsetDateTime> {
     private final ZoneId zone;
@@ -48,11 +46,6 @@ public class ObjectToJavaOffsetDateTimeConverter implements ContextualConverter<
         if (o instanceof LocalDate) {
             LocalDateTime localDateTime = ((LocalDate) o).atTime(0, 0);
             return localDateTime.atOffset(zone.getRules().getOffset(localDateTime));
-        }
-
-        Instant i = getWithCustomAccessor(o);
-        if (i != null) {
-            return i.atOffset(zone.getRules().getOffset(i));
         }
 
         throw new IllegalArgumentException("Cannot convert " + o + " to OffsetDateTime");

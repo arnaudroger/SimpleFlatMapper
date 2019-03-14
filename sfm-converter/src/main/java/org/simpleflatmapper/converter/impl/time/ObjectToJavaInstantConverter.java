@@ -10,8 +10,6 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
-import static org.simpleflatmapper.converter.impl.time.ObjectToJavaZonedDateTimeConverter.getWithCustomAccessor;
-
 
 public class ObjectToJavaInstantConverter implements ContextualConverter<Object, Instant> {
 
@@ -41,12 +39,6 @@ public class ObjectToJavaInstantConverter implements ContextualConverter<Object,
 
         if (in instanceof Long || in instanceof Integer) {
             return Instant.ofEpochMilli(((Number)in).longValue());
-        }
-
-
-        Instant i = getWithCustomAccessor(in);
-        if (i != null) {
-            return i;
         }
 
         throw new IllegalArgumentException("Cannot convert " + in + " to Instant");

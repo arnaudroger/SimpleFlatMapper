@@ -10,8 +10,6 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
-import static org.simpleflatmapper.converter.impl.time.ObjectToJavaZonedDateTimeConverter.getWithCustomAccessor;
-
 
 public class ObjectToJavaLocalDateConverter implements ContextualConverter<Object, LocalDate> {
     private final ZoneId zone;
@@ -45,11 +43,6 @@ public class ObjectToJavaLocalDateConverter implements ContextualConverter<Objec
 
         if (o instanceof TemporalAccessor) {
             return LocalDate.from((TemporalAccessor) o);
-        }
-
-        Instant i = getWithCustomAccessor(o);
-        if (i != null) {
-            return i.atZone(zone).toLocalDate();
         }
 
         throw new IllegalArgumentException("Cannot convert " + o + " to LocalDate");

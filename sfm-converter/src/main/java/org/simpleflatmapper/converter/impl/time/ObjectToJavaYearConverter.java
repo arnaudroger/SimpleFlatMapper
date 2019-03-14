@@ -7,8 +7,6 @@ import java.time.*;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
-import static org.simpleflatmapper.converter.impl.time.ObjectToJavaZonedDateTimeConverter.getWithCustomAccessor;
-
 
 public class ObjectToJavaYearConverter implements ContextualConverter<Object, Year> {
     private final ZoneId zone;
@@ -34,12 +32,6 @@ public class ObjectToJavaYearConverter implements ContextualConverter<Object, Ye
 
         if (o instanceof TemporalAccessor) {
             return Year.from((TemporalAccessor) o);
-        }
-
-        Instant i = getWithCustomAccessor(o);
-        if (i != null) {
-            final ZonedDateTime dateTime = i.atZone(zone);
-            return Year.of(dateTime.getYear());
         }
 
         throw new IllegalArgumentException("Cannot convert " + o + " to Year");

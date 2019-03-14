@@ -7,6 +7,8 @@ import java.time.*;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
+import static org.simpleflatmapper.converter.impl.time.ObjectToJavaZonedDateTimeConverter.getWithCustomAccessor;
+
 
 public class ObjectToJavaOffsetTimeConverter implements ContextualConverter<Object, OffsetTime> {
     private final ZoneId zone;
@@ -47,6 +49,10 @@ public class ObjectToJavaOffsetTimeConverter implements ContextualConverter<Obje
             return OffsetTime.from((TemporalAccessor)o);
         }
 
+        Instant i = getWithCustomAccessor(o);
+        if (i != null) {
+            return i.atOffset(zone.getRules().getOffset(i)).toOffsetTime();
+        }
         throw new IllegalArgumentException("Cannot convert " + o + " to OffsetTime");
     }
 

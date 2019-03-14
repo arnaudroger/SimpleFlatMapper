@@ -3,6 +3,7 @@ package org.simpleflatmapper.jdbc;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.reflect.TypeAffinity;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
@@ -86,7 +87,18 @@ public final class JdbcColumnKey extends FieldKey<JdbcColumnKey> implements Type
 	public Type getType(Type targetType) {
 		if (columnClass != null && columnClass.length() > 0) {
 			try {
-				return Class.forName(columnClass);
+				Class<?> jdbcDriverClass = Class.forName(columnClass);
+
+				// only consider column class if compatible with object
+				// is a primitive or a java. class
+				// to avoid oracle.sql.TIMESTAMPTZ malarchy
+				// any other class won't have a converter
+				// and should go through the regular sql type
+				if (TypeHelper.isAssignable(targetType, jdbcDriverClass)
+						|| jdbcDriverClass.isPrimitive()
+						|| columnClass.startsWith("java.")) {
+					return jdbcDriverClass;
+				}
 			} catch (ClassNotFoundException e) {
 				// ignore not much can be done
 			}

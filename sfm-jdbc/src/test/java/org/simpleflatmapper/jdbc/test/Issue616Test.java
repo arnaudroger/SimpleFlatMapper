@@ -8,7 +8,6 @@ import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.ZonedDateTime;
 import java.util.Iterator;
 
 import static org.junit.Assert.assertEquals;
@@ -17,6 +16,7 @@ import static org.mockito.Mockito.when;
 
 public class Issue616Test {
 
+    //IFJAVA8_START
     public static final int TZ = -101;
 
     @org.junit.Test
@@ -38,6 +38,7 @@ public class Issue616Test {
     }
 
     public static class Test {
-        public ZonedDateTime zdt;
+        public java.time.ZonedDateTime zdt;
     }
+    //IFJAVA8_END
 }

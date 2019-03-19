@@ -171,6 +171,26 @@ public class ConverterServiceTest {
         if (converter == null ) return; // java 9 to sort in some way
         Bar b = new Bar();
         assertEquals(b, converter.convert(b, EmptyContextFactoryBuilder.INSTANCE.build().newContext()).b);
+
+
+        ContextualConverter<? super Number, ? extends MyEnum> converter2 =
+                converterService.findConverter(Number.class, MyEnum.class, EmptyContextFactoryBuilder.INSTANCE);
+
+        assertEquals(MyEnum.ZERO, converter2.convert(2, null));
+
+    }
+
+    @Test
+    public void testEnumOverrideIssue618() throws Exception {
+        ClassLoader loader = new URLClassLoader(new URL[]{new URL("file:target/test-classes/")}, getClass().getClassLoader());
+
+        ConverterService converterService = ConverterService.getInstance(loader);
+
+        ContextualConverter<? super Number, ? extends MyEnum> converter2 =
+                converterService.findConverter(Number.class, MyEnum.class, EmptyContextFactoryBuilder.INSTANCE);
+
+        assertEquals(MyEnum.ZERO, converter2.convert(2, null));
+
     }
     
     @Test

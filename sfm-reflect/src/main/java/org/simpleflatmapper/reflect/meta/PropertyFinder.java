@@ -280,7 +280,8 @@ public abstract class PropertyFinder<T> {
 		private final Predicate<PropertyMeta<?, ?>> propertyMetaPredicate;
 		private final Predicate<PropertyMeta<?, ?>> pathMetaPredicate;
 
-		private static final PropertyFilter TRUE_FILTER = new PropertyFilter(ConstantPredicate.truePredicate(), ConstantPredicate.truePredicate());
+		private static final PropertyFilter TRUE_FILTER = new PropertyFilter(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate(), ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+
 		public PropertyFilter(Predicate<PropertyMeta<?, ?>> predicate) {
 			this.propertyMetaPredicate = predicate;
 			this.pathMetaPredicate = predicate;

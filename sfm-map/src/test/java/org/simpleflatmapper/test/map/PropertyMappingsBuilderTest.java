@@ -392,7 +392,7 @@ public class PropertyMappingsBuilderTest {
                                         accessorNotFounds.add(new PropertyMappingsBuilder.AccessorNotFound(key, propertyMeta.getPath(), propertyMeta.getPropertyType(), ErrorDoc.CSFM_GETTER_NOT_FOUND, propertyMeta));
                                         return false;
                                     }
-                                }, ConstantPredicate.truePredicate());
+                                }, ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
                             }
                         });
 
@@ -427,7 +427,7 @@ public class PropertyMappingsBuilderTest {
                                         }
                                         return true;
                                     }
-                                }, ConstantPredicate.truePredicate());
+                                }, ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
                             }
                         });
 

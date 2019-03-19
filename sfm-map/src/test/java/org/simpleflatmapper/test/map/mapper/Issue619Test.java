@@ -10,7 +10,10 @@ import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.util.ListCollector;
 
 import java.util.List;
+
+//IFJAVA8_START
 import java.util.Optional;
+//IFJAVA8_END
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

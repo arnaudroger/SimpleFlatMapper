@@ -4,10 +4,7 @@ package org.simpleflatmapper.reflect.test.meta;
 import org.junit.Test;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.TypeAffinity;
-import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
-import org.simpleflatmapper.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
+import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.test.beans.Db1DeepObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -24,12 +21,7 @@ public class SubPropertyMetaTest {
     public void testSubProperty() throws Exception {
         ClassMeta<Db1DeepObject> classMeta = ReflectionService.newInstance().getClassMeta(Db1DeepObject.class);
 
-        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
-            @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                return true;
-            }
-        };
+        PropertyFinder.PropertyFilter predicate = PropertyFinder.PropertyFilter.trueFilter();
         PropertyMeta<Db1DeepObject, String> property = classMeta
                 .newPropertyFinder()
                 .findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false), new Object[0], (TypeAffinity)null, predicate);

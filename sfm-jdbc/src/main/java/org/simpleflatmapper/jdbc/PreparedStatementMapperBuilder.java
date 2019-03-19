@@ -32,10 +32,7 @@ import org.simpleflatmapper.reflect.getter.ArrayIndexedGetter;
 import org.simpleflatmapper.reflect.getter.ArraySizeGetter;
 import org.simpleflatmapper.reflect.getter.ListIndexedGetter;
 import org.simpleflatmapper.reflect.getter.ListSizeGetter;
-import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
-import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
-import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.reflect.primitive.IntGetter;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.ErrorDoc;
@@ -178,7 +175,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
 
                 PropertyMeta<C, P> childProperty =
                         (PropertyMeta<C, P>)
-                                pm.getPropertyMeta().getPropertyClassMeta().newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("0"), pm.getColumnDefinition().properties(), pm.getColumnKey(), ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+                                pm.getPropertyMeta().getPropertyClassMeta().newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("0"), pm.getColumnDefinition().properties(), pm.getColumnKey(), PropertyFinder.PropertyFilter.trueFilter());
 
                 final PropertyMapping<C, P, JdbcColumnKey> pmchildProperttMeta = pm.propertyMeta(childProperty);
 

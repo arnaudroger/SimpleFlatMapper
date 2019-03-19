@@ -24,6 +24,7 @@ import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.map.fieldmapper.FieldMapperGetterWithConverter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectPropertyMeta;
+import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
@@ -58,8 +59,8 @@ public final class SqlParameterSourceBuilder<T> {
         this.builder =
                 PropertyMappingsBuilder.of(classMeta, mapperConfig, new PropertyMappingsBuilder.PropertyPredicateFactory<JdbcColumnKey>() {
                     @Override
-                    public Predicate<PropertyMeta<?, ?>> predicate(JdbcColumnKey jdbcColumnKey, Object[] objects, List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
-                        return PropertyWithGetter.INSTANCE;
+                    public PropertyFinder.PropertyFilter predicate(JdbcColumnKey jdbcColumnKey, Object[] objects, List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
+                        return new PropertyFinder.PropertyFilter(PropertyWithGetter.INSTANCE);
                     }
                 });
     }

@@ -26,7 +26,7 @@ public class PassThroughPropertyFinder<T, V> extends PropertyFinder<T> {
     public void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
             Object[] properties, final FoundProperty<T> matchingProperties,
-            PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter){
+            PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter){
         propertyFinderTransformer.apply(propertyFinder).lookForProperties(propertyNameMatcher, properties, new FoundProperty<V>() {
             @Override
             public <P extends PropertyMeta<V, ?>> void found(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {

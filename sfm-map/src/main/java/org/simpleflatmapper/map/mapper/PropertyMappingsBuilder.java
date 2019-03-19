@@ -88,8 +88,8 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		PropertyNameMatcher propertyNameMatcher = propertyNameMatcherFactory.newInstance(key);
 		
 		List<AccessorNotFound> accessorNotFounds = new ArrayList<AccessorNotFound>();
-		
-		Predicate<PropertyMeta<?, ?>> propertyFilter = isValidPropertyMeta.predicate(key, columnDefinition.properties(), accessorNotFounds);
+
+		PropertyFinder.PropertyFilter propertyFilter = isValidPropertyMeta.predicate(key, columnDefinition.properties(), accessorNotFounds);
 		
 		final PropertyMeta<T, P> prop =
 				(PropertyMeta<T, P>) effectivePropertyFinder
@@ -316,7 +316,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 			final PropertyFinder<T> propertyFinder) {
 		final List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties = new ArrayList<ExtendPropertyFinder.CustomProperty<?, ?>>();
 
-		final Predicate<PropertyMeta<?, ?>> propertyPredicate = propertyPredicateFactory.predicate(null, null, new ArrayList<AccessorNotFound>());
+		final PropertyFinder.PropertyFilter propertyPredicate = propertyPredicateFactory.predicate(null, null, new ArrayList<AccessorNotFound>());
 		// setter
 		mapperConfig.columnDefinitions().forEach(SetterProperty.class, new BiConsumer<Predicate<? super K>, SetterProperty>() {
 			@Override
@@ -324,7 +324,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 				if (predicate instanceof CaseInsensitiveFieldKeyNamePredicate) {
 					CaseInsensitiveFieldKeyNamePredicate p = (CaseInsensitiveFieldKeyNamePredicate) predicate;
 					ExtendPropertyFinder.CustomProperty cp = new ExtendPropertyFinder.CustomProperty(setterProperty.getTargetType(), classMeta.getReflectionService(), p.getName(), setterProperty.getPropertyType(), setterProperty.getSetter(), NullGetter.getter());
-					if (propertyPredicate.test(cp)) {
+					if (propertyPredicate.testProperty(cp)) {
 						customProperties.add(cp);
 					}
 				}
@@ -338,7 +338,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 				if (predicate instanceof CaseInsensitiveFieldKeyNamePredicate) {
 					CaseInsensitiveFieldKeyNamePredicate p = (CaseInsensitiveFieldKeyNamePredicate) predicate;
 					ExtendPropertyFinder.CustomProperty cp = new ExtendPropertyFinder.CustomProperty(getterProperty.getSourceType(), classMeta.getReflectionService(), p.getName(), getterProperty.getReturnType(), NullSetter.NULL_SETTER, getterProperty.getGetter());
-					if (propertyPredicate.test(cp)) {
+					if (propertyPredicate.testProperty(cp)) {
 						customProperties.add(cp);
 					}
 				}
@@ -392,7 +392,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 	}
 
 	public interface PropertyPredicateFactory<K extends FieldKey<K>> {
-		Predicate<PropertyMeta<?, ?>> predicate(K key, Object[] properties, List<AccessorNotFound> accessorNotFounds);
+		PropertyFinder.PropertyFilter predicate(K key, Object[] properties, List<AccessorNotFound> accessorNotFounds);
 	}
 	
 	

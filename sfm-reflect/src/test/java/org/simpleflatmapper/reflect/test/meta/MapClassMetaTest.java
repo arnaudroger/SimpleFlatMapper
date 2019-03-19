@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 import static org.junit.Assert.*;
 
 public class MapClassMetaTest {
-    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
+    private PropertyFinder.PropertyFilter isValidPropertyMeta = PropertyFinder.PropertyFilter.trueFilter();
 
     @Test
     public void testForEach() {

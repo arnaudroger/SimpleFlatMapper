@@ -9,6 +9,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 import org.simpleflatmapper.lightningcsv.CsvCellWriter;
 import org.simpleflatmapper.reflect.TypeAffinity;
+import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.csv.CsvColumnKey;
@@ -175,7 +176,7 @@ public class FieldMapperToAppendableFactoryTest {
     }
 
     private <T> PropertyMapping<T, String, CsvColumnKey> newPropertyMapping(String col, ClassMeta<T> classMeta, FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
-        PropertyMeta<T, String> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(col), new Object[0], (TypeAffinity)null, ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+        PropertyMeta<T, String> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(col), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter());
         if (propertyMeta == null) throw new IllegalArgumentException("cannot find prop " + col);
         return new PropertyMapping<T, String, CsvColumnKey>(
                 propertyMeta,

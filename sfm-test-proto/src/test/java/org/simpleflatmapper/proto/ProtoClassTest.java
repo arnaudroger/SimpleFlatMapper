@@ -9,6 +9,7 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
+import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Predicate;
 
@@ -145,13 +146,8 @@ message AddressBook {
                 .newInstance()
                 .getClassMeta(AddressBookProtos.Person.class);
 
-        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
-            @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                return true;
-            }
-        };
-        PropertyMeta<AddressBookProtos.Person, Object> ts = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("ts"), new Object[0], (TypeAffinity)null, predicate);
+
+        PropertyMeta<AddressBookProtos.Person, Object> ts = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("ts"), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter());
         
         assertEquals(Timestamp.class, ts.getPropertyType());
 

@@ -26,12 +26,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class TupleClassMetaTest {
-    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = new Predicate<PropertyMeta<?, ?>>() {
-        @Override
-        public boolean test(PropertyMeta<?, ?> propertyMeta) {
-            return true;
-        }
-    };
+    private PropertyFinder.PropertyFilter isValidPropertyMeta = PropertyFinder.PropertyFilter.trueFilter();
 
     @Test
     public void failOnNoConstructorMatchingType() {

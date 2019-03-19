@@ -18,6 +18,7 @@ import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectPropertyMeta;
+import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ForEachCallBack;
@@ -59,8 +60,8 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
         this.propertyMappingsBuilder =
                 PropertyMappingsBuilder.of(classMeta, mapperConfig, new PropertyMappingsBuilder.PropertyPredicateFactory<K>() {
                     @Override
-                    public Predicate<PropertyMeta<?, ?>> predicate(K k, Object[] objects, List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
-                        return PropertyWithGetter.INSTANCE;
+                    public PropertyFinder.PropertyFilter predicate(K k, Object[] objects, List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
+                        return new PropertyFinder.PropertyFilter(PropertyWithGetter.INSTANCE);
                     }
                 });
         this.classMeta = classMeta;

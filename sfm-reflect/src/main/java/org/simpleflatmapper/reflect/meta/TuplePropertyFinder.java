@@ -35,7 +35,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
     }
 
     @Override
-    protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+    protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
         for (int i = 0; i < elements.size(); i++) {
             final IndexedElement element = elements.get(i);
 

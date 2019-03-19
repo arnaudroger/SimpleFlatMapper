@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class ReflectionServiceTest {
-    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.<PropertyMeta<?, ?>>truePredicate();
+    private PropertyFinder.PropertyFilter isValidPropertyMeta = PropertyFinder.PropertyFilter .trueFilter();
 
     @Test
     public void testClassMetaCache() {

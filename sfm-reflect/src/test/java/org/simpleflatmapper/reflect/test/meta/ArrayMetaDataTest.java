@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 
 public class ArrayMetaDataTest {
 
-    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
+    private PropertyFinder.PropertyFilter isValidPropertyMeta = PropertyFinder.PropertyFilter.trueFilter();
 
     @Test
     public void testListOfString() throws Exception {

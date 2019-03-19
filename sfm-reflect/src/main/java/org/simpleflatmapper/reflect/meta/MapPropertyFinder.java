@@ -72,7 +72,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     public void lookForProperties(
             final PropertyNameMatcher propertyNameMatcher,
             Object[] properties, final FoundProperty<T> matchingProperties,
-            final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+            final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
 
 
         if (isKeyValueEnabled(properties)) {

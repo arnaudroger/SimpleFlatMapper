@@ -6,6 +6,7 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.TypeAffinity;
+import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
@@ -72,7 +73,7 @@ public class AbstractConstantTargetMapperBuilderTest {
         for(int i = 0; i < headers.length; i++) {
             String str = headers[i];
             builder.addColumn(str);
-            row[i] = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(str), new Object[0], (TypeAffinity)null, ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).getGetter().get(instance1);
+            row[i] = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(str), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter()).getGetter().get(instance1);
 
         }
 

@@ -182,12 +182,7 @@ public class ConstantSourceMapperBuilderTest {
         };
         ClassMeta<Tuple2<TableA, List<Tuple3<TableB, List<TableC>, List<Tuple2<TableD, List<TableE>>>>>>> classMeta = this.classMeta.getReflectionService().getClassMeta(typeReference.getType());
 
-        Predicate<PropertyMeta<?, ?>> propertyFilter = new Predicate<PropertyMeta<?, ?>>() {
-            @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                return true;
-            }
-        };
+        PropertyFinder.PropertyFilter propertyFilter = PropertyFinder.PropertyFilter.trueFilter();
         PropertyFinder<Tuple2<TableA, List<Tuple3<TableB, List<TableC>, List<Tuple2<TableD, List<TableE>>>>>>> propertyFinder = classMeta.newPropertyFinder();
         PropertyMeta<Tuple2<TableA, List<Tuple3<TableB, List<TableC>, List<Tuple2<TableD, List<TableE>>>>>>, Object> p1 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("variableName", 0, false, false), new Object[0], (TypeAffinity)null, propertyFilter);
         PropertyMeta<Tuple2<TableA, List<Tuple3<TableB, List<TableC>, List<Tuple2<TableD, List<TableE>>>>>>, Object> p2 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("variableName", 0, false, false), new Object[0], (TypeAffinity)null, propertyFilter);
@@ -205,12 +200,7 @@ public class ConstantSourceMapperBuilderTest {
         };
         ClassMeta<List<Tuple3<Foo, Foo, Foo>>> classMeta = this.classMeta.getReflectionService().getClassMeta(typeReference.getType());
 
-        Predicate<PropertyMeta<?, ?>> propertyFilter = new Predicate<PropertyMeta<?, ?>>() {
-            @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                return true;
-            }
-        };
+        PropertyFinder.PropertyFilter propertyFilter = PropertyFinder.PropertyFilter.trueFilter();
         PropertyFinder<?> propertyFinder = classMeta.newPropertyFinder();
         PropertyMeta<?, ?> p1 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bar", 0, false, false), new Object[0], (TypeAffinity)null, propertyFilter);
         PropertyMeta<?, ?> p2 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bar", 0, false, false), new Object[0], (TypeAffinity)null, propertyFilter);

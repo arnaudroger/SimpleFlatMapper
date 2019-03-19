@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 
 public class JoolTupleTest {
 
-    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
+    private PropertyFinder.PropertyFilter isValidPropertyMeta = PropertyFinder.PropertyFilter.trueFilter();
 
 
     @Test
@@ -39,7 +39,7 @@ public class JoolTupleTest {
 
         PropertyFinder<List<? extends DbObject>> propertyFinder3 = cm3.newPropertyFinder();
 
-        PropertyMeta<List<? extends DbObject>, Object> prop3 = propertyFinder3.findProperty(DefaultPropertyNameMatcher.of("elt0_id"), new Object[0], (TypeAffinity)null, t -> true);
+        PropertyMeta<List<? extends DbObject>, Object> prop3 = propertyFinder3.findProperty(DefaultPropertyNameMatcher.of("elt0_id"), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter());
 
         System.out.println("prop3 = " + prop3.getPath());
 
@@ -53,7 +53,7 @@ public class JoolTupleTest {
 
         PropertyFinder<List<? extends Tuple2<DbObject, Long>>> propertyFinder2 = cm2.newPropertyFinder();
 
-        PropertyMeta<List<? extends Tuple2<DbObject, Long>>, Object> prop2 = propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("elt0_elt0_id"), new Object[0], (TypeAffinity)null, t -> true);
+        PropertyMeta<List<? extends Tuple2<DbObject, Long>>, Object> prop2 = propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("elt0_elt0_id"), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter());
 
         System.out.println("prop2 = " + prop2.getPath());
 
@@ -66,7 +66,7 @@ public class JoolTupleTest {
 
         PropertyFinder<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>> propertyFinder = cm.newPropertyFinder();
 
-        PropertyMeta<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>, Object> prop = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("elt1_elt0_elt0_id"), new Object[0], (TypeAffinity)null, t -> true);
+        PropertyMeta<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>, Object> prop = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("elt1_elt0_elt0_id"), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter());
 
         System.out.println("prop = " + prop.getPath());
         assertEquals("element1[0].element0.id", prop.getPath());

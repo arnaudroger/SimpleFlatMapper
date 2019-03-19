@@ -8,7 +8,6 @@ import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.tuple.Tuples;
-import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Predicate;
 
 import static org.junit.Assert.*;
@@ -16,7 +15,7 @@ import static org.junit.Assert.*;
 public class PropertyFinderTest {
 
 
-    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
+    private PropertyFinder.PropertyFilter isValidPropertyMeta = PropertyFinder.PropertyFilter.trueFilter();
 
     @Test
     public void testFindElementOnArray() {
@@ -143,12 +142,15 @@ public class PropertyFinderTest {
     public void testIsEnabled531() {
         ClassMeta<O531> classMeta = ReflectionService.newInstance().getClassMeta(O531.class);
 
-        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
+        Predicate<PropertyMeta<?, ?>> p = new Predicate<PropertyMeta<?, ?>>() {
             @Override
             public boolean test(PropertyMeta<?, ?> propertyMeta) {
                 return !NullGetter.isNull(propertyMeta.getGetter());
             }
         };
+
+        PropertyFinder.PropertyFilter predicate = new PropertyFinder.PropertyFilter(p);
+
         PropertyFinder<O531> propertyFinder = classMeta.newPropertyFinder();
         propertyFinder.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity) null, predicate);
         PropertyMeta<O531, Object> property = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("is_enabled"), new Object[0], (TypeAffinity) null, predicate);

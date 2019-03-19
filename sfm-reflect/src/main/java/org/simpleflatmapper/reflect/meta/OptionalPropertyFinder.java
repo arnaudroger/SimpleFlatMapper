@@ -31,7 +31,7 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
             PropertyMatchingScore score, boolean allowSelfReference, 
             PropertyFinderTransformer propertyFinderTransformer, 
             TypeAffinityScorer typeAffinityScorer, 
-            Predicate<PropertyMeta<?, ?>> propertyFilter){
+            PropertyFilter propertyFilter){
         propertyFinderTransformer.apply(propertyFinder).lookForProperties(propertyNameMatcher, properties, new FoundProperty<T>() {
             @Override
             public <P extends PropertyMeta<T, ?>> void found(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {

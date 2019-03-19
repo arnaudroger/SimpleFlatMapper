@@ -102,7 +102,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         this.propertyMappingsBuilder =
                 PropertyMappingsBuilder.of(classMeta, mapperConfig, new PropertyMappingsBuilder.PropertyPredicateFactory<K>() {
                     @Override
-                    public Predicate<PropertyMeta<?, ?>> predicate(final K k, final Object[] properties, final List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
+                    public PropertyFinder.PropertyFilter predicate(final K k, final Object[] properties, final List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
                         if (k != null) {
                             final MappingContextFactoryBuilder<Object, K> mappingContextFactoryBuilder1 = new MappingContextFactoryBuilder<Object, K>(new KeySourceGetter<K, Object>() {
                                 @Override
@@ -110,19 +110,19 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                                     return null;
                                 }
                             }, !mapperConfig.unorderedJoin());
-                            return new Predicate<PropertyMeta<?, ?>>() {
+                            Predicate<PropertyMeta<?, ?>> propertyMetaPredicate = new Predicate<PropertyMeta<?, ?>>() {
                                 @Override
                                 public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                                    
+
                                     if (!PropertyWithSetterOrConstructor.INSTANCE.test(propertyMeta))
                                         return false;
-                                    
+
                                     try {
                                         ContextualGetter<? super S, ?> getterFromSource = getContextualGetter(propertyMeta);
                                         if (NullContextualGetter.isNull(getterFromSource)) {
                                             accessorNotFounds.add(new PropertyMappingsBuilder.AccessorNotFound(k, propertyMeta.getPath(), propertyMeta.getPropertyType(), CSFM_GETTER_NOT_FOUND, propertyMeta));
                                             return false;
-                                        } 
+                                        }
                                         return true;
                                     } catch (Exception e) {
                                         return false;
@@ -131,15 +131,16 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
                                 public <O, P> ContextualGetter<? super S, ? extends P> getContextualGetter(PropertyMeta<O, P> propertyMeta) {
                                     return fieldMapperFactory.<P>getGetterFromSource(
-                                                                                k,
-                                                                                propertyMeta.getPropertyType(),
-                                                                                FieldMapperColumnDefinition.<K>of(properties),
-                                                                                propertyMeta.getPropertyClassMetaSupplier(),
-                                                                                mappingContextFactoryBuilder1);
+                                            k,
+                                            propertyMeta.getPropertyType(),
+                                            FieldMapperColumnDefinition.<K>of(properties),
+                                            propertyMeta.getPropertyClassMetaSupplier(),
+                                            mappingContextFactoryBuilder1);
                                 }
                             };
+                            return new PropertyFinder.PropertyFilter(propertyMetaPredicate, PropertyWithSetterOrConstructor.INSTANCE);
                         }
-                        return PropertyWithSetterOrConstructor.INSTANCE;
+                        return new PropertyFinder.PropertyFilter(PropertyWithSetterOrConstructor.INSTANCE);
                     }
                 }, propertyFinder);
 		this.target = requireNonNull("classMeta", classMeta).getType();

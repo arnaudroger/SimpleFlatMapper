@@ -4,6 +4,7 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.setter.NullSetter;
+import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -19,18 +20,18 @@ public abstract class PropertyFinder<T> {
 		this.selfScoreFullName = selfScoreFullName;
 	}
 
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity, PropertyFilter propertyFilter) {
 		return findProperty(propertyNameMatcher, properties, toTypeAffinityScorer(typeAffinity), propertyFilter);
 	}
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity, PropertyFilter propertyFilter) {
 		return findProperty(propertyNameMatcher, properties, typeAffinity, new DefaultPropertyFinderProbe(propertyNameMatcher), propertyFilter);
 	}
 
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity, PropertyFinderProbe propertyFinderProbe, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity, PropertyFinderProbe propertyFinderProbe, PropertyFilter propertyFilter) {
 		return findProperty(propertyNameMatcher, properties, toTypeAffinityScorer(typeAffinity), propertyFinderProbe, propertyFilter);
 	}
 		@SuppressWarnings("unchecked")
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity, PropertyFinderProbe propertyFinderProbe, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity, PropertyFinderProbe propertyFinderProbe, PropertyFilter propertyFilter) {
 		MatchingProperties matchingProperties = new MatchingProperties(propertyFinderProbe);
 		lookForProperties(propertyNameMatcher, properties, matchingProperties, PropertyMatchingScore.newInstance(selfScoreFullName), true, IDENTITY_TRANSFORMER,  typeAffinity, propertyFilter);
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
@@ -47,8 +48,8 @@ public abstract class PropertyFinder<T> {
             PropertyMatchingScore score,
             boolean allowSelfReference,
             PropertyFinderTransformer propertyFinderTransformer,
-            TypeAffinityScorer typeAffinityScorer, 
-			Predicate<PropertyMeta<?, ?>> propertyFilter);
+            TypeAffinityScorer typeAffinityScorer,
+			PropertyFilter propertyFilter);
 
 
 	public abstract List<InstantiatorDefinition> getEligibleInstantiatorDefinitions();
@@ -272,6 +273,33 @@ public abstract class PropertyFinder<T> {
 			if (DEBUG) {
 				System.out.println("PropertyFinder for '" + propertyNameMatcher + "' - select " + propertyMeta.getPath());
 			}
+		}
+	}
+
+	public static final class PropertyFilter {
+		private final Predicate<PropertyMeta<?, ?>> propertyMetaPredicate;
+		private final Predicate<PropertyMeta<?, ?>> pathMetaPredicate;
+
+		private static final PropertyFilter TRUE_FILTER = new PropertyFilter(ConstantPredicate.truePredicate(), ConstantPredicate.truePredicate());
+		public PropertyFilter(Predicate<PropertyMeta<?, ?>> predicate) {
+			this.propertyMetaPredicate = predicate;
+			this.pathMetaPredicate = predicate;
+		}
+
+		public PropertyFilter(Predicate<PropertyMeta<?, ?>> propertyMetaPredicate, Predicate<PropertyMeta<?, ?>> pathMetaPredicate) {
+			this.propertyMetaPredicate = propertyMetaPredicate;
+			this.pathMetaPredicate = pathMetaPredicate;
+		}
+
+		public static PropertyFilter trueFilter() {
+			return TRUE_FILTER;
+		}
+
+		public boolean testProperty(PropertyMeta<?, ?> propertyMeta) {
+			return propertyMetaPredicate.test(propertyMeta);
+		}
+		public boolean testPath(PropertyMeta<?, ?> propertyMeta) {
+			return pathMetaPredicate.test(propertyMeta);
 		}
 	}
 }

@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNull;
 public class ObjectClassMetaTest {
 
 
-    private Predicate<PropertyMeta<?, ?>> propertyFilter = ConstantPredicate.truePredicate();
+    private PropertyFinder.PropertyFilter propertyFilter = PropertyFinder.PropertyFilter.trueFilter();
 
     @Test
     public void testAliasProvider() {
@@ -372,13 +372,8 @@ public class ObjectClassMetaTest {
     public void testAnnotationsToProperty() {
         final ClassMeta<ObjectWithAnnotation> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithAnnotation.class);
 
-        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
-            @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                return true;
-            }
-        };
-        Object[] definedProperties = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity)null, predicate).getDefinedProperties();
+
+        Object[] definedProperties = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity)null, propertyFilter).getDefinedProperties();
 
         assertEquals(1, definedProperties.length);
         assertTrue(definedProperties[0] instanceof KeyTestProperty);
@@ -426,13 +421,7 @@ public class ObjectClassMetaTest {
     public void test501ZoneId() {
         final ClassMeta<C501> classMeta = ReflectionService.newInstance().getClassMeta(C501.class);
 
-        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
-            @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                return true;
-            }
-        };
-        PropertyMeta<C501, Object> zoneId = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("zoneId"), new Object[0], (TypeAffinity)null, predicate);
+        PropertyMeta<C501, Object> zoneId = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("zoneId"), new Object[0], (TypeAffinity)null, propertyFilter);
 
         System.out.println("zoneId = " + zoneId);
 

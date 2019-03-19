@@ -25,12 +25,8 @@ public class Issue451 {
         ClassMeta<List<Foo>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<List<Foo>>() {
         }.getType());
 
-        Predicate<PropertyMeta<?, ?>> predicate = new Predicate<PropertyMeta<?, ?>>() {
-            @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                return true;
-            }
-        };
+        PropertyFinder.PropertyFilter predicate = PropertyFinder.PropertyFilter.trueFilter();
+
         PropertyFinder<List<Foo>> finder = classMeta.newPropertyFinder();
 
         SubPropertyMeta f = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_f"), new Object[0], (TypeAffinity)null, predicate);

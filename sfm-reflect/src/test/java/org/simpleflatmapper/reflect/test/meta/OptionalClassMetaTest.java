@@ -6,6 +6,7 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
+import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.test.beans.DbObject;
@@ -32,7 +33,7 @@ public class OptionalClassMetaTest {
     ClassMeta<Optional<String>> stringClassMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Optional<String>>() {
     }.getType());
 
-    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
+    private PropertyFinder.PropertyFilter isValidPropertyMeta = PropertyFinder.PropertyFilter.trueFilter();
     @Test
     public void testFindProperty() throws Exception {
         PropertyMeta<Optional<DbObject>, String> email = objectClassMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("email"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);

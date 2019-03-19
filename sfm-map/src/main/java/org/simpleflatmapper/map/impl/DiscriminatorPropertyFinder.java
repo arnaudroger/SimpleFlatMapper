@@ -38,7 +38,7 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
     }
 
     @Override
-    public void lookForProperties(PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+    public void lookForProperties(PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
         
         final List<DiscriminatorMatch> matches = new ArrayList<DiscriminatorMatch>();
 

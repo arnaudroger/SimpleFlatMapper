@@ -24,7 +24,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
             Object[] properties, FoundProperty<T> matchingProperties,
             PropertyMatchingScore score,
             boolean allowSelfReference,
-            PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+            PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
 
 
         IndexedColumn indexedColumn = propertyNameMatcher.matchIndex();
@@ -38,7 +38,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
     @SuppressWarnings("unchecked")
     protected void lookForAgainstColumn(IndexedColumn indexedColumn, Object[] properties, final FoundProperty<T> matchingProperties, PropertyMatchingScore score,
-                                        PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+                                        PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
 
         if (indexedColumn == null || !isValidIndex(indexedColumn)) {
             // no index found
@@ -89,7 +89,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     }
 
 
-    private void speculativeMatching(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+    private void speculativeMatching(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
         // try to match against prefix
         PropertyNameMatch speculativeMatch = propertyNameMatcher.speculativeMatch();
 
@@ -102,7 +102,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
     protected abstract <E> IndexedElement<T,?> getIndexedElement(IndexedColumn indexedColumn);
 
-    protected abstract void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, Predicate<PropertyMeta<?, ?>> propertyFilter);
+    protected abstract void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter);
 
     @Override
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {

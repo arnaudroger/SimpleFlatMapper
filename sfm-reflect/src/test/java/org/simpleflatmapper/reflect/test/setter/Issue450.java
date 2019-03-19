@@ -9,7 +9,6 @@ import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMatchingScore;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.tuple.Tuple2;
-import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.util.List;
@@ -18,12 +17,8 @@ import static org.junit.Assert.assertEquals;
 
 public class Issue450 {
 
-    public static final Predicate<PropertyMeta<?, ?>> TRUE_PREDICATE = new Predicate<PropertyMeta<?, ?>>() {
-        @Override
-        public boolean test(PropertyMeta<?, ?> propertyMeta) {
-            return true;
-        }
-    };
+    public static final PropertyFinder.PropertyFilter TRUE_PREDICATE = PropertyFinder.PropertyFilter.trueFilter();
+
     private PropertyFinder.PropertyFinderProbe prob = new PropertyFinder.PropertyFinderProbe() {
         @Override
         public void found(PropertyMeta propertyMeta, PropertyMatchingScore score) {

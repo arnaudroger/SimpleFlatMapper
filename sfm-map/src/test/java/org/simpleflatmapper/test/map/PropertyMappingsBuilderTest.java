@@ -17,10 +17,7 @@ import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
-import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
-import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
+import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.Foo;
 import org.simpleflatmapper.tuple.Tuple2;
@@ -53,8 +50,8 @@ public class PropertyMappingsBuilderTest {
 
     public static final PropertyMappingsBuilder.PropertyPredicateFactory<SampleFieldKey> CONSTANT_PREDICATE = new PropertyMappingsBuilder.PropertyPredicateFactory<SampleFieldKey>() {
         @Override
-        public Predicate<PropertyMeta<?, ?>> predicate(SampleFieldKey sampleFieldKey, Object[] objects, List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
-            return ConstantPredicate.<PropertyMeta<?, ?>>truePredicate();
+        public PropertyFinder.PropertyFilter predicate(SampleFieldKey sampleFieldKey, Object[] objects, List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
+            return PropertyFinder.PropertyFilter.trueFilter();
         }
     };
 
@@ -387,15 +384,15 @@ public class PropertyMappingsBuilderTest {
                         MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().mapperBuilderErrorHandler(errorHandler),
                         new PropertyMappingsBuilder.PropertyPredicateFactory<SampleFieldKey>() {
                             @Override
-                            public Predicate<PropertyMeta<?, ?>> predicate( final SampleFieldKey key, Object[] properties, final List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
-                                return new Predicate<PropertyMeta<?, ?>>() {
+                            public PropertyFinder.PropertyFilter predicate(final SampleFieldKey key, Object[] properties, final List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
+                                return new PropertyFinder.PropertyFilter(new Predicate<PropertyMeta<?, ?>>() {
 
                                     @Override
                                     public boolean test(PropertyMeta<?, ?> propertyMeta) {
                                         accessorNotFounds.add(new PropertyMappingsBuilder.AccessorNotFound(key, propertyMeta.getPath(), propertyMeta.getPropertyType(), ErrorDoc.CSFM_GETTER_NOT_FOUND, propertyMeta));
                                         return false;
                                     }
-                                };
+                                }, ConstantPredicate.truePredicate());
                             }
                         });
 
@@ -419,8 +416,8 @@ public class PropertyMappingsBuilderTest {
                         MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().mapperBuilderErrorHandler(errorHandler),
                         new PropertyMappingsBuilder.PropertyPredicateFactory<SampleFieldKey>() {
                             @Override
-                            public Predicate<PropertyMeta<?, ?>> predicate( final SampleFieldKey key, Object[] properties, final List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
-                                return new Predicate<PropertyMeta<?, ?>>() {
+                            public PropertyFinder.PropertyFilter predicate( final SampleFieldKey key, Object[] properties, final List<PropertyMappingsBuilder.AccessorNotFound> accessorNotFounds) {
+                                return  new  PropertyFinder.PropertyFilter (new Predicate<PropertyMeta<?, ?>>() {
 
                                     @Override
                                     public boolean test(PropertyMeta<?, ?> propertyMeta) {
@@ -430,7 +427,7 @@ public class PropertyMappingsBuilderTest {
                                         }
                                         return true;
                                     }
-                                };
+                                }, ConstantPredicate.truePredicate());
                             }
                         });
 

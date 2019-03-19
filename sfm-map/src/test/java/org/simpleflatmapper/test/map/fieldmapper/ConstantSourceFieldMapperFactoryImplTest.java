@@ -7,6 +7,7 @@ import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.reflect.TypeAffinity;
+import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.fieldmapper.*;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -144,7 +145,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
             Class<T> target, String property) {
         ClassMeta<T> classMeta = REFLECTION_SERVICE.getClassMeta(target);
 
-        PropertyMeta<T, P> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(property), new Object[0], (TypeAffinity)null, ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
+        PropertyMeta<T, P> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(property), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter());
 
         PropertyMapping<T, P , SampleFieldKey> pm =
                 new PropertyMapping<T, P, SampleFieldKey>(

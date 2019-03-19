@@ -21,6 +21,7 @@ import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.map.property.MandatoryProperty;
 import org.simpleflatmapper.reflect.ModifyInjectedParams;
 import org.simpleflatmapper.reflect.TypeAffinity;
+import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.primitive.*;
 import org.simpleflatmapper.test.beans.DbListObject;
@@ -520,7 +521,7 @@ public class AbstractMapperBuilderTest {
             String str = headers[i];
             builder.addMapping(str);
             builderIndexed.addMapping(str, i);
-            row[i] = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(str), new Object[0], (TypeAffinity)null, ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).getGetter().get(instance1);
+            row[i] = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(str), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter()).getGetter().get(instance1);
 
         }
         EnumerableMapper<Object[][], T, ?> mapper = builder.mapper();

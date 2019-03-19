@@ -3,10 +3,8 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.TypeAffinity;
-import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -30,7 +28,7 @@ public class PassThroughClassMeta<T, V> implements ClassMeta<T> {
             String value = TypeHelper.toClass(type).getAnnotation(ReflectionService.PassThrough.class).value();
 			ObjectClassMeta<T> objectClassMeta = new ObjectClassMeta<T>(type, reflectionService);
 			this.instantiatorDefinition = objectClassMeta.getInstantiatorDefinitions().get(0);
-			Predicate<PropertyMeta<?, ?>> predicate = ConstantPredicate.truePredicate();
+			PropertyFinder.PropertyFilter predicate = PropertyFinder.PropertyFilter.trueFilter();
 			this.propertyMeta = objectClassMeta
 					.newPropertyFinder()
 					.findProperty(DefaultPropertyNameMatcher.of(value), new Object[0], (TypeAffinity) null, predicate);

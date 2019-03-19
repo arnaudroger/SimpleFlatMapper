@@ -6,10 +6,7 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.TypeAffinity;
-import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
-import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
-import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 
@@ -38,7 +35,7 @@ public class ArrayClassMetaTest {
                 return true;
             }
         };
-        PropertyMeta p = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("3"), new Object[0], (TypeAffinity)null, predicate);
+        PropertyMeta p = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("3"), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter());
 
         Object[] array = new Object[10];
         p.getSetter().set(array, "aaa");
@@ -67,13 +64,7 @@ public class ArrayClassMetaTest {
 
         assertTrue(classMeta instanceof ArrayClassMeta);
 
-        Predicate predicate = new Predicate() {
-            @Override
-            public boolean test(Object propertyMeta) {
-                return true;
-            }
-        };
-        PropertyMeta p = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("3"), new Object[0], (TypeAffinity)null, predicate);
+        PropertyMeta p = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("3"), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter());
 
         p.getSetter().set(array, value);
         assertEquals(value, p.getGetter().get(array));
@@ -154,13 +145,7 @@ public class ArrayClassMetaTest {
     }
 
     private PropertyMeta findProperty(ClassMeta<?> classMeta) {
-        Predicate predicate = new Predicate() {
-            @Override
-            public boolean test(Object propertyMeta) {
-                return true;
-            }
-        };
-        return classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("v"), new Object[0], (TypeAffinity)null, predicate);
+        return classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("v"), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter());
     }
 
     private Object instantiate(ClassMeta<?> classMeta) throws Exception {

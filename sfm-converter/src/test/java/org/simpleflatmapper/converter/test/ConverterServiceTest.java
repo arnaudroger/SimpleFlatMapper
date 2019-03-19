@@ -171,13 +171,6 @@ public class ConverterServiceTest {
         if (converter == null ) return; // java 9 to sort in some way
         Bar b = new Bar();
         assertEquals(b, converter.convert(b, EmptyContextFactoryBuilder.INSTANCE.build().newContext()).b);
-
-
-        ContextualConverter<? super Number, ? extends MyEnum> converter2 =
-                converterService.findConverter(Number.class, MyEnum.class, EmptyContextFactoryBuilder.INSTANCE);
-
-        assertEquals(MyEnum.ZERO, converter2.convert(2, null));
-
     }
 
     @Test
@@ -185,6 +178,9 @@ public class ConverterServiceTest {
         ClassLoader loader = new URLClassLoader(new URL[]{new URL("file:target/test-classes/")}, getClass().getClassLoader());
 
         ConverterService converterService = ConverterService.getInstance(loader);
+
+        ContextualConverter<? super Bar, ? extends Foo> converter = converterService.findConverter(Bar.class, Foo.class, EmptyContextFactoryBuilder.INSTANCE);
+        if (converter == null ) return; // java 9 to sort in some way missing module-info.java
 
         ContextualConverter<? super Number, ? extends MyEnum> converter2 =
                 converterService.findConverter(Number.class, MyEnum.class, EmptyContextFactoryBuilder.INSTANCE);

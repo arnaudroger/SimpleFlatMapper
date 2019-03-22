@@ -71,6 +71,9 @@ public class ConverterService {
         DefaultContextFactoryBuilder builder = new DefaultContextFactoryBuilder();
 
         ContextualConverter<? super F, ? extends P> converter = findConverter((Type) inType, (Type) outType, builder, params);
+
+        if (converter == null) return null;
+
         return new ConverterToContextualAdapter<F, P>(converter, builder.build());
     }
 

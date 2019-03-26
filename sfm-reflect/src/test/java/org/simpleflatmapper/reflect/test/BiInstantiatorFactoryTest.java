@@ -27,7 +27,7 @@ import static org.junit.Assert.fail;
 public class BiInstantiatorFactoryTest {
 
 	public static final InstantiatorFactory DISABLE_ASM = new InstantiatorFactory(null);
-	public static final InstantiatorFactory ASM = new InstantiatorFactory(new AsmFactory(BiInstantiatorFactoryTest.class.getClassLoader()), true);
+	public static final InstantiatorFactory ASM = new InstantiatorFactory(new AsmFactory(), true);
 
 
 

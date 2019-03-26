@@ -108,4 +108,16 @@ public class MapperKey<K extends  FieldKey<K>> {
         result = 31 * result + source.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "MapperKey{" +
+                "keys=" + Arrays.toString(keys) +
+                ", fieldMappers=" + Arrays.toString(fieldMappers) +
+                ", constructorFieldMappers=" + Arrays.toString(constructorFieldMappers) +
+                ", instantiator=" + instantiator +
+                ", target=" + target +
+                ", source=" + source +
+                '}';
+    }
 }

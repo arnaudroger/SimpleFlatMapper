@@ -55,7 +55,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
         params.put(parameters[1], new ConstantGetter<Void, Object>("myname"));
         params.put(parameters[0], new ConstantIntGetter<Void>(3));
 
-        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(), true);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
                 .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
@@ -182,7 +182,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
         params.put(parameters[1], new ConstantGetter<Void, Object>("myname"));
         params.put(parameters[0], new ConstantGetter<Void, Integer>(3));
 
-        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(), true);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
                 .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
@@ -215,7 +215,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
         params.put(parameters[2], new ConstantGetter<Void, Object>("zrux"));
         params.put(parameters[0], new ConstantGetter<Void, Integer>(3));
 
-        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(), true);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
                 .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
@@ -279,7 +279,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
         params.put(parameters[2], new ConstantGetter<Void, Object>(null));
         params.put(parameters[0], new ConstantGetter<Void, Integer>(null));
 
-        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(), true);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
                 .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator

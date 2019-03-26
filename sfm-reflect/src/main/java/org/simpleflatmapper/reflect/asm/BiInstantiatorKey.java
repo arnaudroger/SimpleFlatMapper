@@ -129,4 +129,8 @@ public class BiInstantiatorKey {
 			return ((BuilderInstantiatorDefinition)constructor).getBuildMethod().getDeclaringClass();
 		}
 	}
+
+	public ClassLoader getClassLoader() {
+		return getDeclaringClass().getClassLoader();
+	}
 }

@@ -13,82 +13,99 @@ import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class AsmFactory {
-    private final FactoryClassLoader factoryClassLoader;
-	private final ConcurrentMap<Object, Setter<?, ?>> setterCache = new ConcurrentHashMap<Object, Setter<?, ?>>();
-    private final ConcurrentMap<Object, Getter<?, ?>> getterCache = new ConcurrentHashMap<Object, Getter<?, ?>>();
-	private final ConcurrentMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>> instantiatorCache = new ConcurrentHashMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>>();
-    private final ConcurrentMap<BiInstantiatorKey, Class<? extends BiInstantiator<?, ?, ?>>> biInstantiatorCache = new ConcurrentHashMap<BiInstantiatorKey, Class<? extends BiInstantiator<?, ?, ?>>>();
+    private final WeakHashMap<ClassLoader, ClassLoaderData> classLoadersData = new WeakHashMap<ClassLoader, ClassLoaderData>();
     private final ConcurrentMap<Class<?>, Object> subFactories = new ConcurrentHashMap<Class<?>, Object>();
 
+    public AsmFactory(ClassLoader cl) {
+    }
 
-	public AsmFactory(ClassLoader cl) {
-		factoryClassLoader = new FactoryClassLoader(cl);
+    public AsmFactory() {
 	}
 	
 	@SuppressWarnings("unchecked")
 	public <T, P> Setter<T,P> createSetter(final Method m) throws Exception {
-		Setter<T,P> setter = (Setter<T, P>) setterCache.get(m);
+	    ClassLoaderData classLoaderData = getClassLoaderData(m.getDeclaringClass().getClassLoader());
+		Setter<T,P> setter = (Setter<T, P>) classLoaderData.setterCache.get(m);
 		if (setter == null) {
 			final String className = generateClassNameForSetter(m);
 			final byte[] bytes = generateSetterByteCodes(m, className);
-            final Class<?> type = createClass(className, bytes, m.getDeclaringClass().getClassLoader());
+            final Class<?> type = classLoaderData.factoryClassLoader.registerClass(className, bytes);
             setter = (Setter<T, P>) type.newInstance();
-			setterCache.putIfAbsent(m, setter);
+            classLoaderData.setterCache.putIfAbsent(m, setter);
 		}
 		return setter;
 	}
 
     @SuppressWarnings("unchecked")
     public <T, P> Setter<T,P> createSetter(Field field) throws Exception {
-        Setter<T,P> setter = (Setter<T, P>) setterCache.get(field);
+        ClassLoaderData classLoaderData = getClassLoaderData(field.getDeclaringClass().getClassLoader());
+        Setter<T,P> setter = (Setter<T, P>) classLoaderData.setterCache.get(field);
         if (setter == null) {
             final String className = generateClassNameForSetter(field);
             final byte[] bytes = generateSetterByteCodes(field, className);
-            final Class<?> type = createClass(className, bytes, field.getDeclaringClass().getClassLoader());
+            final Class<?> type = classLoaderData.factoryClassLoader.registerClass(className, bytes);
             setter = (Setter<T, P>) type.newInstance();
-            setterCache.putIfAbsent(field, setter);
+            classLoaderData.setterCache.putIfAbsent(field, setter);
         }
         return setter;
     }
 
+    private ClassLoaderData getClassLoaderData(ClassLoader declaringClassLoader) {
+	    if (declaringClassLoader == null) {
+	        declaringClassLoader = Thread.currentThread().getContextClassLoader();
+        };
+	    synchronized (classLoadersData) {
+            ClassLoaderData factoryClassLoader = classLoadersData.get(declaringClassLoader);
 
-    public Class<?> createClass(String className, byte[] bytes, ClassLoader declaringClassLoader) {
-        return factoryClassLoader.registerClass(className, bytes, declaringClassLoader);
+            if (factoryClassLoader != null) {
+                return factoryClassLoader;
+            }
+
+            factoryClassLoader = new ClassLoaderData(declaringClassLoader);
+
+            classLoadersData.put(declaringClassLoader, factoryClassLoader);
+
+            return factoryClassLoader;
+        }
     }
 
     @SuppressWarnings("unchecked")
     public <T, P> Getter<T,P> createGetter(final Method m) throws Exception {
-        Getter<T,P> getter = (Getter<T, P>) getterCache.get(m);
+        ClassLoaderData classLoaderData = getClassLoaderData(m.getDeclaringClass().getClassLoader());
+        Getter<T,P> getter = (Getter<T, P>) classLoaderData.getterCache.get(m);
         if (getter == null) {
             final String className = generateClassNameForGetter(m);
             final byte[] bytes = generateGetterByteCodes(m, className);
-            final Class<?> type = createClass(className, bytes, m.getDeclaringClass().getClassLoader());
+            final Class<?> type = classLoaderData.factoryClassLoader.registerClass(className, bytes);
             getter = (Getter<T, P>) type.newInstance();
-            getterCache.putIfAbsent(m, getter);
+            classLoaderData.getterCache.putIfAbsent(m, getter);
         }
         return getter;
     }
 
     @SuppressWarnings("unchecked")
     public <T, P> Getter<T,P> createGetter(final Field m) throws Exception {
-        Getter<T,P> getter = (Getter<T, P>) getterCache.get(m);
+        ClassLoaderData classLoaderData = getClassLoaderData(m.getDeclaringClass().getClassLoader());
+        Getter<T,P> getter = (Getter<T, P>) classLoaderData.getterCache.get(m);
         if (getter == null) {
             final String className = generateClassNameForGetter(m);
             final byte[] bytes = generateGetterByteCodes(m, className);
-            final Class<?> type = createClass(className, bytes, m.getDeclaringClass().getClassLoader());
+            final Class<?> type = classLoaderData.factoryClassLoader.registerClass(className, bytes);
             getter = (Getter<T, P>) type.newInstance();
-            getterCache.putIfAbsent(m, getter);
+            classLoaderData.getterCache.putIfAbsent(m, getter);
         }
         return getter;
     }
@@ -131,21 +148,25 @@ public class AsmFactory {
 	
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> createEmptyArgsInstantiator(final Class<S> source, final Class<? extends T> target) throws Exception {
-		InstantiatorKey instantiatorKey = new InstantiatorKey(target, source);
-		Class<? extends Instantiator<?, ?>> instantiatorType = instantiatorCache.get(instantiatorKey);
+        ClassLoaderData classLoaderData = getClassLoaderData(target.getClassLoader());
+
+        InstantiatorKey instantiatorKey = new InstantiatorKey(target, source);
+		Class<? extends Instantiator<?, ?>> instantiatorType = classLoaderData.instantiatorCache.get(instantiatorKey);
 		if (instantiatorType == null) {
 			final String className = generateClassNameForInstantiator(instantiatorKey);
 			final byte[] bytes = ConstructorBuilder.createEmptyConstructor(className, source, target);
-			instantiatorType = (Class<? extends Instantiator<?, ?>>) createClass(className, bytes, target.getClassLoader());
-			instantiatorCache.putIfAbsent(instantiatorKey, instantiatorType);
+			instantiatorType = (Class<? extends Instantiator<?, ?>>) classLoaderData.factoryClassLoader.registerClass(className, bytes);
+            classLoaderData.instantiatorCache.putIfAbsent(instantiatorKey, instantiatorType);
 		}
 		return  (Instantiator<S, T>) instantiatorType.newInstance();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> createInstantiator(final Class<S> source, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, Getter<? super S, ?>> injections, boolean builderIgnoresNullValues) throws Exception {
-		InstantiatorKey<S> instantiatorKey = new InstantiatorKey<S>(instantiatorDefinition, injections, source);
-		Class<? extends Instantiator<?, ?>> instantiator = instantiatorCache.get(instantiatorKey);
+
+        InstantiatorKey<S> instantiatorKey = new InstantiatorKey<S>(instantiatorDefinition, injections, source);
+        ClassLoaderData classLoaderData = getClassLoaderData(instantiatorKey.getDeclaringClass().getClassLoader());
+        Class<? extends Instantiator<?, ?>> instantiator = classLoaderData.instantiatorCache.get(instantiatorKey);
         Instantiator<Void, ?> builderInstantiator = null;
 		if (instantiator == null) {
 			final String className = generateClassNameForInstantiator(instantiatorKey);
@@ -159,8 +180,8 @@ public class AsmFactory {
                         source,
                         (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
             }
-			instantiator = (Class<? extends Instantiator<?, ?>>) createClass(className, bytes, instantiatorKey.getDeclaringClass().getClassLoader());
-			instantiatorCache.put(instantiatorKey, instantiator);
+			instantiator = (Class<? extends Instantiator<?, ?>>) classLoaderData.factoryClassLoader.registerClass(className, bytes);
+            classLoaderData.instantiatorCache.put(instantiatorKey, instantiator);
 		}
 
 		Map<String, Getter<? super S, ?>> getterPerName = new HashMap<String, Getter<? super S, ?>>();
@@ -179,7 +200,10 @@ public class AsmFactory {
     @SuppressWarnings("unchecked")
     public <S1, S2, T> BiInstantiator<S1, S2, T> createBiInstantiator(final Class<?> s1, final Class<?> s2, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean builderIgnoresNullValues) throws Exception {
         BiInstantiatorKey instantiatorKey = new BiInstantiatorKey(instantiatorDefinition, injections, s1, s2);
-        Class<? extends BiInstantiator<?, ?, ?>> instantiator = biInstantiatorCache.get(instantiatorKey);
+
+        ClassLoaderData classLoaderData = getClassLoaderData(instantiatorKey.getDeclaringClass().getClassLoader());
+
+        Class<? extends BiInstantiator<?, ?, ?>> instantiator = classLoaderData.biInstantiatorCache.get(instantiatorKey);
         Instantiator builderInstantiator = null;
         if (instantiator == null) {
             final String className = generateClassNameForBiInstantiator(instantiatorKey);
@@ -195,8 +219,9 @@ public class AsmFactory {
                         builderInstantiator,
                         (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
             }
-            instantiator = (Class<? extends BiInstantiator<?, ?, ?>>) createClass(className, bytes, instantiatorKey.getDeclaringClass().getClassLoader());
-            biInstantiatorCache.put(instantiatorKey, instantiator);
+            ClassLoader classLoader = instantiatorKey.getClassLoader();
+            instantiator = (Class<? extends BiInstantiator<?, ?, ?>>) classLoaderData.factoryClassLoader.registerClass(className, bytes);
+            classLoaderData.biInstantiatorCache.put(instantiatorKey, instantiator);
         }
 
         Map<String, BiFunction<? super S1, ? super S2, ?>> factoryPerName = new HashMap<String, BiFunction<? super S1, ? super S2, ?>>();
@@ -339,5 +364,26 @@ public class AsmFactory {
 
 
         return t;
+    }
+
+    public Object createClass(String className, byte[] bytes, ClassLoader classLoader) {
+        ClassLoaderData cld = getClassLoaderData(classLoader);
+        return cld.factoryClassLoader.registerClass(className, bytes);
+    }
+
+    private static class ClassLoaderData {
+	    private final FactoryClassLoader factoryClassLoader;
+        private final ConcurrentMap<Object, Setter<?, ?>> setterCache = new ConcurrentHashMap<Object, Setter<?, ?>>();
+        private final ConcurrentMap<Object, Getter<?, ?>> getterCache = new ConcurrentHashMap<Object, Getter<?, ?>>();
+        private final ConcurrentMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>> instantiatorCache = new ConcurrentHashMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>>();
+        private final ConcurrentMap<BiInstantiatorKey, Class<? extends BiInstantiator<?, ?, ?>>> biInstantiatorCache = new ConcurrentHashMap<BiInstantiatorKey, Class<? extends BiInstantiator<?, ?, ?>>>();
+
+        private ClassLoaderData(FactoryClassLoader factoryClassLoader) {
+            this.factoryClassLoader = factoryClassLoader;
+        }
+
+        private ClassLoaderData(ClassLoader classLoader) {
+            this(new FactoryClassLoader(classLoader));
+        }
     }
 }

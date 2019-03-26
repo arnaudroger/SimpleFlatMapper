@@ -59,7 +59,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
         params.put(parameters[1], new ConstantBiFunction<Void, Object, String>("myname"));
         params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(3));
 
-        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(), true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
                 .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
@@ -187,7 +187,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
         params.put(parameters[1], new ConstantBiFunction<Void, Object, String>("myname"));
         params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(3));
 
-        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(), true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
                 .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
@@ -219,7 +219,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
         params.put(parameters[2], new ConstantBiFunction<Void, Object, String>("zrux"));
         params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(3));
 
-        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(), true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
                 .<Void, Object,ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
@@ -251,7 +251,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
         params.put(parameters[2], new ConstantBiFunction<Void, Object, String>(null));
         params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(null));
 
-        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(), true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
                 .<Void, Object,ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
@@ -359,7 +359,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
         params.put(parameters[1], new ConstantBiFunction<Void, Object, String>("myname"));
         params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(1));
 
-        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(), true);
         final BiInstantiator<Void, Object, User> instantiator = instantiatorFactory
                 .<Void, Object, User>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final User o = instantiator

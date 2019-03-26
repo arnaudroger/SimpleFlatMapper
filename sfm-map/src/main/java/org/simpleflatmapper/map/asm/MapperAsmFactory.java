@@ -9,8 +9,9 @@ import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 
 import java.lang.reflect.Constructor;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class MapperAsmFactory {
 
@@ -21,7 +22,7 @@ public class MapperAsmFactory {
 	}
 
 
-    private final ConcurrentMap<MapperKey, Constructor<? extends SourceMapper<?, ?>>> fieldMapperCache = new ConcurrentHashMap<MapperKey, Constructor<? extends SourceMapper<?, ?>>>();
+    private final WeakHashMap<ClassLoader, Map<MapperKey, Constructor<? extends SourceMapper<?, ?>>>> fieldMapperCachePerCL = new WeakHashMap<ClassLoader, Map<MapperKey, Constructor<? extends SourceMapper<?, ?>>>>();
 
     private <S, T> String generateClassNameForFieldMapper(final FieldMapper<S, T>[] mappers, final FieldMapper<S, T>[] constructorMappers, final Class<? super S> source, final Class<T> target) {
         StringBuilder sb = new StringBuilder();
@@ -51,18 +52,32 @@ public class MapperAsmFactory {
                                                     final BiInstantiator<S, MappingContext<? super S>, T> instantiator,
                                                     final Class<? super S> source,
                                                     final Class<T> target) throws Exception {
+        ClassLoader classLoader = target.getClass().getClassLoader();
+
 
         MapperKey key = MapperKey.of(keys, mappers, constructorMappers, instantiator, target, source);
-        Constructor<SourceMapper<S, T>> constructor = (Constructor<SourceMapper<S, T>>) fieldMapperCache.get(key);
-        if (constructor == null) {
 
-            final String className = generateClassNameForFieldMapper(mappers, constructorMappers, source, target);
-            final byte[] bytes = MapperAsmBuilder.dump(className, mappers, constructorMappers, source, target);
 
-            Class<SourceMapper<S, T>> type = (Class<SourceMapper<S, T>>) asmFactory.createClass(className, bytes, target.getClass().getClassLoader());
-            constructor = (Constructor<SourceMapper<S, T>>) type.getDeclaredConstructors()[0];
-            fieldMapperCache.put(key, constructor);
+
+        synchronized (fieldMapperCachePerCL) {
+            Map<MapperKey, Constructor<? extends SourceMapper<?, ?>>> fieldMapperCache = fieldMapperCachePerCL.get(classLoader);
+
+            if (fieldMapperCache == null) {
+                fieldMapperCache = new HashMap<>();
+                fieldMapperCachePerCL.put(classLoader, fieldMapperCache);
+            }
+
+            Constructor<SourceMapper<S, T>> constructor = (Constructor<SourceMapper<S, T>>) fieldMapperCache.get(key);
+            if (constructor == null) {
+
+                final String className = generateClassNameForFieldMapper(mappers, constructorMappers, source, target);
+                final byte[] bytes = MapperAsmBuilder.dump(className, mappers, constructorMappers, source, target);
+
+                Class<SourceMapper<S, T>> type = (Class<SourceMapper<S, T>>) asmFactory.createClass(className, bytes, classLoader);
+                constructor = (Constructor<SourceMapper<S, T>>) type.getDeclaredConstructors()[0];
+                fieldMapperCache.put(key, constructor);
+            }
+            return (AbstractMapper<S, T>) constructor.newInstance(mappers, constructorMappers, instantiator);
         }
-        return (AbstractMapper<S, T>) constructor.newInstance(mappers, constructorMappers, instantiator);
     }
 }

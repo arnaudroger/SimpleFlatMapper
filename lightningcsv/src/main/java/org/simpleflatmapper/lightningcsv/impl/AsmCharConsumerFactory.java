@@ -213,7 +213,7 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
             String className = newName.replace('/', '.');
             AsmUtils.writeClassToFile(className, bytes);
 
-            Class<?> clazz = classLoader.registerClass(className, bytes, null);
+            Class<?> clazz = classLoader.registerClass(className, bytes);
 
             return (Constructor<? extends AbstractCharConsumer>) clazz.getConstructor(CharBuffer.class, TextFormat.class, CellPreProcessor.class);
 

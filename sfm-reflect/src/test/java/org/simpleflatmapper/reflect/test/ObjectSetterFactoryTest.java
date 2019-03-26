@@ -34,11 +34,11 @@ import static org.junit.Assert.*;
 public class ObjectSetterFactoryTest {
 	
 	ObjectSetterFactory nonAsmFactory = new ObjectSetterFactory(null);
-	ObjectSetterFactory asmFactory = new ObjectSetterFactory(new AsmFactory(Thread.currentThread().getContextClassLoader()));
+	ObjectSetterFactory asmFactory = new ObjectSetterFactory(new AsmFactory());
 
 	@Test
 	public void testFailFallBackToMethod() throws Exception {
-		Setter<Foo, String> setter = new ObjectSetterFactory(new AsmFactory(Thread.currentThread().getContextClassLoader()){
+		Setter<Foo, String> setter = new ObjectSetterFactory(new AsmFactory(){
 			@Override
 			public <T, P> Setter<T, P> createSetter(Method m) throws Exception {
 				throw new UnsupportedOperationException();

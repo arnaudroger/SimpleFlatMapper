@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 @SuppressWarnings("unchecked")
 public class ObjectGetterFactoryTest {
 
-    private ObjectGetterFactory asm = new ObjectGetterFactory(new AsmFactory(getClass().getClassLoader()));
+    private ObjectGetterFactory asm = new ObjectGetterFactory(new AsmFactory());
     private ObjectGetterFactory noAsm = new ObjectGetterFactory(null);
 
     private DbObject dbo = new DbObject();

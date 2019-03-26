@@ -57,7 +57,7 @@ public class JdbcMapperBuilderImplTest {
 	}
 
 	public AsmFactory newAsmFactoryFailsOnmapper() {
-		return new AsmFactory(Thread.currentThread().getContextClassLoader()) {
+		return new AsmFactory() {
 			@Override
 			public Class<?> createClass(String className, byte[] bytes, ClassLoader declaringClassLoader) {
 				throw new IllegalArgumentException("Invalid class");

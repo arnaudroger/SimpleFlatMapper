@@ -72,7 +72,7 @@ public abstract class ReflectionService {
 		return newInstance(true);
 	}
 
-	private static final AsmFactory _asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
+	private static final AsmFactory _asmFactory = new AsmFactory();
 
 	public static ReflectionService newInstance(boolean useAsmGeneration) {
 		return new DefaultReflectionService(useAsmGeneration && canSeeSetterFromContextClassLoader() ? _asmFactory  : null);

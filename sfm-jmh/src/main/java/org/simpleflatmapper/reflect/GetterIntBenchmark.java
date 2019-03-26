@@ -110,7 +110,7 @@ public class GetterIntBenchmark {
             final Field value = IntBean.class.getField("value");
             METHOD_GETTER = ObjectGetterFactory.toIntGetter(new ObjectGetterFactory(null).getMethodGetter(getValue));
             FIELD_GETTER = ObjectGetterFactory.toIntGetter(new ObjectGetterFactory(null).getFieldGetter(value));
-            ASM_GETTER = ObjectGetterFactory.toIntGetter(new ObjectGetterFactory(new AsmFactory(Thread.currentThread().getContextClassLoader())).getMethodGetter(getValue));
+            ASM_GETTER = ObjectGetterFactory.toIntGetter(new ObjectGetterFactory(new AsmFactory()).getMethodGetter(getValue));
             MH_GETTER = new MethodHandlerGetter(MethodHandles.lookup().unreflect(getValue));
             MHE_GETTER = new MethodHandlerExactGetter(MethodHandles.lookup().unreflect(getValue));
             MHF_GETTER = new MethodHandlerGetter(MethodHandles.lookup().unreflectGetter(value));

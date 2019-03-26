@@ -6,6 +6,7 @@ import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
+import org.simpleflatmapper.map.property.IgnoreProperty;
 import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -25,9 +26,7 @@ import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 // I don't really like using inheritance but did not see any other way
@@ -279,6 +278,40 @@ public abstract class AbstractMapperFactory<
 			addAlias(e.getKey(), e.getValue());
 		}
 		return (MF) this;
+	}
+
+	/**
+	 * Ignore column that match the predicate.
+	 * @param predicate the predicate.
+	 * @return the current factory
+	 */
+	public final MF ignoreColumns(Predicate<? super K> predicate) {
+    	return addColumnProperty(predicate, new IgnoreProperty());
+	}
+
+	/**
+	 * Ignore column with the specified names, case insensitive.
+	 * @param columnNames the columnNames.
+	 * @return the current factory
+	 */
+	public final MF ignoreColumns(String... columnNames) {
+		return ignoreColumns(Arrays.asList(columnNames));
+	}
+
+	/**
+	 * Ignore column with the specified names, case insensitive.
+	 * @param columnNames the columnNames.
+	 * @return the current factory
+	 */
+	public final MF ignoreColumns(final Collection<String> columnNames) {
+		final Set<String> columnSet = new HashSet<String>();
+		for(String c : columnNames) columnSet.add(c.toUpperCase());
+		return ignoreColumns(new Predicate<K>() {
+			@Override
+			public boolean test(K k) {
+				return columnSet.contains(k.getName().toUpperCase());
+			}
+		});
 	}
 
     /**

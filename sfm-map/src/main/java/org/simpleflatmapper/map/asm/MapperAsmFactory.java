@@ -63,7 +63,7 @@ public class MapperAsmFactory {
             Map<MapperKey, Constructor<? extends SourceMapper<?, ?>>> fieldMapperCache = fieldMapperCachePerCL.get(classLoader);
 
             if (fieldMapperCache == null) {
-                fieldMapperCache = new HashMap<>();
+                fieldMapperCache = new HashMap<MapperKey, Constructor<? extends SourceMapper<?, ?>>>();
                 fieldMapperCachePerCL.put(classLoader, fieldMapperCache);
             }
 

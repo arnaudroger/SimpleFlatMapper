@@ -3,8 +3,9 @@ package org.simpleflatmapper.jdbc;
 import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFactory;
-import org.simpleflatmapper.map.mapper.ContextualSourceFieldMapperImpl;
 import org.simpleflatmapper.map.mapper.DynamicSourceFieldMapper;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.jdbc.impl.JdbcColumnKeyMapperKeyComparator;
@@ -68,19 +69,22 @@ public final class JdbcMapperFactory
 		return new JdbcMapperFactory();
 	}
 
+	public static JdbcMapperFactory newInstance(JdbcMapperFactory config) {
+		return new JdbcMapperFactory(config);
+	}
+
 	public static JdbcMapperFactory newInstance(
 			AbstractMapperFactory<JdbcColumnKey, ?, ResultSet> config) {
 		return new JdbcMapperFactory(config);
 	}
 
-	private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = ResultSetGetterFactory.INSTANCE;
 
 	private JdbcMapperFactory(AbstractMapperFactory<JdbcColumnKey, ?, ResultSet> config) {
 		super(config, NameBasedResultSetGetterFactory.INSTANCE);
 	}
 
 	private JdbcMapperFactory() {
-		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(), FieldMapperColumnDefinition.<JdbcColumnKey>identity(), NameBasedResultSetGetterFactory.INSTANCE);
+		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(), FieldMapperColumnDefinition.<JdbcColumnKey>identity(), NameBasedResultSetGetterFactory.INSTANCE, new ContextualGetterFactoryAdapter<ResultSet, JdbcColumnKey>(ResultSetGetterFactory.INSTANCE));
 	}
 
 	/**
@@ -89,10 +93,17 @@ public final class JdbcMapperFactory
 	 * @return the current factory
 	 */
 	public JdbcMapperFactory getterFactory(final GetterFactory<ResultSet, JdbcColumnKey> getterFactory) {
-		this.getterFactory = getterFactory;
-		return this;
+		return addGetterFactory(new ContextualGetterFactoryAdapter<ResultSet, JdbcColumnKey>(getterFactory));
 	}
 
+	/**
+	 * Override the default implementation of the GetterFactory used to get access to value from the ResultSet.
+	 * @param getterFactory the getterFactory
+	 * @return the current factory
+	 */
+	public JdbcMapperFactory addGetterFactory(final ContextualGetterFactory<ResultSet, JdbcColumnKey> getterFactory) {
+		return super.addGetterFactory(getterFactory);
+	}
 
 	/**
 	 * Associate the specified FieldMapper for the specified property.

@@ -7,6 +7,7 @@ import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.context.MappingContextFactory;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.DefaultSetRowMapperBuilder;
@@ -87,6 +88,22 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
                 new JdbcMappingContextFactoryBuilder(!MapperConfig.<JdbcColumnKey, ResultSet>fieldMapperConfig().unorderedJoin()));
     }
 
+
+
+    /**
+     * @param classMeta                  the meta for the target class.
+     * @param mapperConfig               the mapperConfig.
+     * @param getterFactory              the Getter factory.
+     * @param parentBuilder              the parent builder, null if none.
+     */
+    public JdbcMapperBuilder(
+            final ClassMeta<T> classMeta,
+            final MapperConfig<JdbcColumnKey, ResultSet> mapperConfig,
+            final GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
+            final MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
+        this(classMeta, mapperConfig, new ContextualGetterFactoryAdapter<ResultSet, JdbcColumnKey>(getterFactory), parentBuilder);
+    }
+
     /**
      * @param classMeta                  the meta for the target class.
      * @param mapperConfig               the mapperConfig.
@@ -96,13 +113,17 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
     public JdbcMapperBuilder(
              final ClassMeta<T> classMeta,
              final MapperConfig<JdbcColumnKey, ResultSet> mapperConfig,
-             final GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
+             final ContextualGetterFactory<? super ResultSet, JdbcColumnKey> getterFactory,
              final MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
-        
+
         super(KEY_FACTORY, 
                 new DefaultSetRowMapperBuilder<ResultSet, ResultSet, T, JdbcColumnKey, SQLException>(
-                        classMeta, parentBuilder, mapperConfig, 
-                        FIELD_MAPPER_SOURCE.getterFactory(getterFactory), KEY_FACTORY, new ResultSetEnumerableFactory(),
+                        classMeta,
+                        parentBuilder,
+                        mapperConfig,
+                        FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
+                        KEY_FACTORY,
+                        new ResultSetEnumerableFactory(),
                         JdbcKeySourceGetter.INSTANCE),
                 new BiFunction<SetRowMapper<ResultSet, ResultSet, T, SQLException>, List<JdbcColumnKey>, JdbcMapper<T>>() {
                     @Override

@@ -8,9 +8,9 @@ import org.simpleflatmapper.reflect.getter.GetterFactory;
 public class MapperSourceImpl<S, K extends FieldKey<K>> implements MapperSource<S, K> {
 
     private final Class<S> source;
-    private final ContextualGetterFactory<S, K> getterFactory;
+    private final ContextualGetterFactory<? super S, K> getterFactory;
 
-    public MapperSourceImpl(Class<S> source, ContextualGetterFactory<S, K> getterFactory) {
+    public MapperSourceImpl(Class<S> source, ContextualGetterFactory<? super S, K> getterFactory) {
         this.source = source;
         this.getterFactory = getterFactory;
     }
@@ -21,16 +21,18 @@ public class MapperSourceImpl<S, K extends FieldKey<K>> implements MapperSource<
     }
 
     @Override
-    public ContextualGetterFactory<S, K> getterFactory() {
+    public ContextualGetterFactory<? super S, K> getterFactory() {
         return getterFactory;
     }
 
-    public MapperSourceImpl<S, K> getterFactory(ContextualGetterFactory<S, K> getterFactory) {
+    public MapperSourceImpl<S, K> getterFactory(ContextualGetterFactory<? super S, K> getterFactory) {
+        if (getterFactory == null) return this;
         return new MapperSourceImpl<S, K>(source, getterFactory);
     }
 
-    public MapperSourceImpl<S, K> getterFactory(GetterFactory<S, K> getterFactory) {
-        return new MapperSourceImpl<S, K>(source, new ContextualGetterFactoryAdapter<S, K>(getterFactory));
+    public MapperSourceImpl<S, K> getterFactory(GetterFactory<? super S, K> getterFactory) {
+        if (getterFactory == null) return this;
+        return getterFactory(new ContextualGetterFactoryAdapter<S, K>(getterFactory));
     }
 
 }

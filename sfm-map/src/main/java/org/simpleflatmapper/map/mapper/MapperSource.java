@@ -6,5 +6,5 @@ import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 
 public interface MapperSource<S, K extends FieldKey<K>> {
     Class<S> source();
-    ContextualGetterFactory<S, K> getterFactory();
+    ContextualGetterFactory<? super S, K> getterFactory();
 }

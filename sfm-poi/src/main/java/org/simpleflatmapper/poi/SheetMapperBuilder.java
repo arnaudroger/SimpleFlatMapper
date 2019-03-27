@@ -7,6 +7,7 @@ import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.ContextualSourceFieldMapper;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.MapperBuilder;
@@ -47,8 +48,12 @@ public class SheetMapperBuilder<T> extends MapperBuilder<Row, Sheet, T, CsvColum
 
     public SheetMapperBuilder(ClassMeta<T> classMeta,
                               MapperConfig<CsvColumnKey, Row> mapperConfig,
-                              GetterFactory<Row, CsvColumnKey> getterFactory) {
-        super(KEY_FACTORY, 
+                              GetterFactory<? super Row, CsvColumnKey> getterFactory) {
+        this(classMeta, mapperConfig, new ContextualGetterFactoryAdapter<Row, CsvColumnKey>(getterFactory));
+    }
+    public SheetMapperBuilder(ClassMeta<T> classMeta,
+                MapperConfig<CsvColumnKey, Row> mapperConfig,
+                ContextualGetterFactory<? super Row, CsvColumnKey> getterFactory) {        super(KEY_FACTORY,
                 new SetRowMapperBuilderImpl<RowMapper<T> , Row, Sheet, T, CsvColumnKey, RuntimeException>(
                         classMeta,
                         new MappingContextFactoryBuilder<Row, CsvColumnKey>(CsvColumnKeyRowKeySourceGetter.INSTANCE, !mapperConfig.unorderedJoin()),

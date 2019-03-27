@@ -8,16 +8,16 @@ import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 
-public class RecordGetterFactory<R extends Record> implements
-		GetterFactory<R, JooqFieldKey> {
+public class RecordGetterFactory implements
+		GetterFactory<Record, JooqFieldKey> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public <P> Getter<R, P> newGetter(Type genericType, JooqFieldKey key, Object... properties) {
+	public <P> Getter<Record, P> newGetter(Type genericType, JooqFieldKey key, Object... properties) {
 		Class<P> propertyClass = TypeHelper.toClass(genericType);
 
 		if (TypeHelper.areCompatible(propertyClass, TypeHelper.toClass(key.getType(genericType)))) {
-			return new RecordGetter<R, P>(key.getIndex());
+			return new RecordGetter<P>(key.getIndex());
 		}
 
 		return null;

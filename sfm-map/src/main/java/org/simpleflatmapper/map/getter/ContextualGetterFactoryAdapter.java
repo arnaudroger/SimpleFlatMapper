@@ -8,15 +8,15 @@ import java.lang.reflect.Type;
 
 public class ContextualGetterFactoryAdapter<T, K> implements ContextualGetterFactory<T, K> {
     
-    private final GetterFactory<T, K> delegate;
+    private final GetterFactory<? super T, K> delegate;
 
-    public ContextualGetterFactoryAdapter(GetterFactory<T, K> delegate) {
+    public ContextualGetterFactoryAdapter(GetterFactory<? super T, K> delegate) {
         this.delegate = delegate;
     }
 
     @Override
     public <P> ContextualGetter<T, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
-        Getter<T, P> getter = delegate.newGetter(target, key, properties);
+        Getter<? super T, P> getter = delegate.newGetter(target, key, properties);
         if (getter == null) return null;
         return ContextualGetterAdapter.of(getter);
     }

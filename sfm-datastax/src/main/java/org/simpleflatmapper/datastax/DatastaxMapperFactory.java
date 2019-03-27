@@ -5,19 +5,21 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.SettableByIndexData;
 import com.datastax.driver.core.exceptions.DriverException;
-import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.impl.DatastaxMapperKeyComparator;
 import org.simpleflatmapper.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.simpleflatmapper.datastax.impl.RowGetterFactory;
 import org.simpleflatmapper.datastax.impl.SettableDataSetterFactory;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
 import org.simpleflatmapper.map.mapper.DynamicSetRowMapper;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.simpleflatmapper.map.mapper.MapperKey;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.UnaryFactory;
@@ -27,10 +29,14 @@ import java.lang.reflect.Type;
 
 public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnKey, DatastaxMapperFactory, Row> {
 
-    private GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory = new RowGetterFactory(this);
-
     private DatastaxMapperFactory() {
-        super(new FieldMapperColumnDefinitionProviderImpl<DatastaxColumnKey>(), FieldMapperColumnDefinition.<DatastaxColumnKey>identity());
+        super(new FieldMapperColumnDefinitionProviderImpl<DatastaxColumnKey>(), FieldMapperColumnDefinition.<DatastaxColumnKey>identity(),
+                new Function<DatastaxMapperFactory, ContextualGetterFactory<GettableByIndexData, DatastaxColumnKey>>() {
+            @Override
+            public ContextualGetterFactory<GettableByIndexData, DatastaxColumnKey> apply(DatastaxMapperFactory datastaxMapperFactory) {
+                return new ContextualGetterFactoryAdapter<GettableByIndexData, DatastaxColumnKey>(new RowGetterFactory(datastaxMapperFactory));
+            }
+        });
     }
 
     private DatastaxMapperFactory(AbstractMapperFactory<DatastaxColumnKey, ?, Row> config) {
@@ -64,7 +70,7 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
         MapperConfig<DatastaxColumnKey, Row> mapperConfig = mapperConfig();
         return new DatastaxMapperBuilder<T>(classMeta,
                 mapperConfig,
-                getterFactory,
+                (ContextualGetterFactory<? super GettableByIndexData, DatastaxColumnKey>) getterFactory,
                 new DatastaxMappingContextFactoryBuilder<Row>(!mapperConfig.unorderedJoin()));
     }
 

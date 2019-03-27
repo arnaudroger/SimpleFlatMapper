@@ -1,6 +1,7 @@
 package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.Consumer;
@@ -16,8 +17,8 @@ public class AbstractColumnNameDiscriminatorMapperFactory<
         this.columnNameGetterFactory = columnNameGetterFactory;
     }
 
-    public AbstractColumnNameDiscriminatorMapperFactory(AbstractColumnDefinitionProvider<K> columnDefinitions, ColumnDefinition<K, ?> identity, ColumnNameGetterFactory<S> columnNameGetterFactory) {
-        super(columnDefinitions, identity);
+    public AbstractColumnNameDiscriminatorMapperFactory(AbstractColumnDefinitionProvider<K> columnDefinitions, ColumnDefinition<K, ?> identity, ColumnNameGetterFactory<S> columnNameGetterFactory, ContextualGetterFactory<S, K> getterFactory) {
+        super(columnDefinitions, identity, getterFactory);
         this.columnNameGetterFactory = columnNameGetterFactory;
     }
     public <T> MF discriminator(Class<T> commonType, String discriminatorColumn, Consumer<DiscriminatorConditionBuilder<S, Object, T>> consumer) {

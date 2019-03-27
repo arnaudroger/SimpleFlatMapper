@@ -89,8 +89,6 @@ public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMappe
 		}
 	};
 	
-	private ContextualGetterFactory<CsvRow, CsvColumnKey> getterFactory = CsvRowGetterFactory.INSTANCE;
-
 	/**
 	 * instantiate a new JdbcMapperFactory
 	 * @return a new JdbcMapperFactory
@@ -104,11 +102,11 @@ public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMappe
 	private String defaultDateFormat = CsvMapperBuilder.DEFAULT_DATE_FORMAT;
 
 	private CsvMapperFactory(AbstractColumnDefinitionProvider<CsvColumnKey> columnDefinitionProvider) {
-		super(columnDefinitionProvider, CsvColumnDefinition.identity(), NAMED_GETTER);
+		super(columnDefinitionProvider, CsvColumnDefinition.identity(), NAMED_GETTER,  CsvRowGetterFactory.INSTANCE);
 	}
 
 	private CsvMapperFactory() {
-		super(new CsvColumnDefinitionProviderImpl(), CsvColumnDefinition.identity(), NAMED_GETTER);
+		super(new CsvColumnDefinitionProviderImpl(), CsvColumnDefinition.identity(), NAMED_GETTER,  CsvRowGetterFactory.INSTANCE);
 	}
 	
 	private CsvMapperFactory(CsvMapperFactory parent)  {

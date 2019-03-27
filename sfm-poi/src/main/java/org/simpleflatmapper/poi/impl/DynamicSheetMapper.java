@@ -4,6 +4,8 @@ package org.simpleflatmapper.poi.impl;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.map.MapperConfig;
@@ -34,12 +36,21 @@ public class DynamicSheetMapper<T> implements SheetMapper<T> {
             new MapperCache<CsvColumnKey, SheetMapper<T>>(CsvColumnKeyMapperKeyComparator.INSTANCE);
     private final ClassMeta<T> classMeta;
     private final MapperConfig<CsvColumnKey, Row> mapperConfig;
-    private final GetterFactory<Row, CsvColumnKey> getterFactory;
+    private final ContextualGetterFactory<? super Row, CsvColumnKey> getterFactory;
+
 
     public DynamicSheetMapper(
             ClassMeta<T> classMeta,
             MapperConfig<CsvColumnKey, Row> mapperConfig,
-            GetterFactory<Row, CsvColumnKey> getterFactory) {
+            GetterFactory<? super Row, CsvColumnKey> getterFactory) {
+        this(classMeta, mapperConfig, new ContextualGetterFactoryAdapter<Row, CsvColumnKey>(getterFactory));
+    }
+
+
+    public DynamicSheetMapper(
+            ClassMeta<T> classMeta,
+            MapperConfig<CsvColumnKey, Row> mapperConfig,
+            ContextualGetterFactory<? super Row, CsvColumnKey> getterFactory) {
         this.classMeta = classMeta;
         this.mapperConfig = mapperConfig;
         this.getterFactory = getterFactory;

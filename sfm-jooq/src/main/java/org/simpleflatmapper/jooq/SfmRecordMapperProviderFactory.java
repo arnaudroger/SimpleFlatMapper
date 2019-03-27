@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jooq;
 
 import org.jooq.Record;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFactory;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
@@ -38,11 +39,11 @@ public class SfmRecordMapperProviderFactory
     }
 
     public SfmRecordMapperProviderFactory(AbstractColumnDefinitionProvider<JooqFieldKey> columnDefinitions, FieldMapperColumnDefinition<JooqFieldKey> identity) {
-        super(columnDefinitions, identity, NAMED_GETTER);
+        super(columnDefinitions, identity, NAMED_GETTER, new ContextualGetterFactoryAdapter<Record, JooqFieldKey>(new RecordGetterFactory()));
     }
 
     private SfmRecordMapperProviderFactory() {
-        super(new FieldMapperColumnDefinitionProviderImpl<JooqFieldKey>(), FieldMapperColumnDefinition.<JooqFieldKey>identity(), NAMED_GETTER);
+        super(new FieldMapperColumnDefinitionProviderImpl<JooqFieldKey>(), FieldMapperColumnDefinition.<JooqFieldKey>identity(), NAMED_GETTER, new ContextualGetterFactoryAdapter<Record, JooqFieldKey>(new RecordGetterFactory()));
     }
 
     public SfmRecordMapperProvider newProvider() {

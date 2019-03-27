@@ -1135,7 +1135,7 @@ public class AbstractMapperBuilderTest {
         }
         
         public SampleMapperFactory() {
-            super(new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>(), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+            super(new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>(), FieldMapperColumnDefinition.<SampleFieldKey>identity(), new ContextualGetterFactoryAdapter<Object[], SampleFieldKey>(GETTER_FACTORY));
         }
 
         public SampleMapperFactory(AbstractMapperFactory<SampleFieldKey, ?, Object[]> config) {

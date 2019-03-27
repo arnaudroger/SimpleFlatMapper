@@ -4,28 +4,27 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
+import org.simpleflatmapper.map.getter.ComposedContextualGetterFactory;
+import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.property.IgnoreProperty;
 import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.util.CheckedBiFunction;
-import org.simpleflatmapper.util.ConstantPredicate;
-import org.simpleflatmapper.util.Consumer;
-import org.simpleflatmapper.util.EqualsPredicate;
-import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.Predicate;
-import org.simpleflatmapper.util.TypeHelper;
-import org.simpleflatmapper.util.TypeReference;
-import org.simpleflatmapper.util.UnaryFactory;
+import org.simpleflatmapper.util.*;
 
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
+import java.sql.ResultSet;
 import java.util.*;
 
 
@@ -58,6 +57,7 @@ public abstract class AbstractMapperFactory<
 	private Predicate<? super S> rowFilter = null;
 	private boolean unorderedJoin;
 
+	protected ContextualGetterFactory<? super S, K> getterFactory;
 
 	public AbstractMapperFactory(AbstractMapperFactory<K, ?, S> config) {
 		this.fieldMapperErrorHandler = config.fieldMapperErrorHandler;
@@ -78,12 +78,20 @@ public abstract class AbstractMapperFactory<
 		this.assumeInjectionModifiesValues = config.assumeInjectionModifiesValues;
 		this.rowFilter = config.rowFilter;
 		this.unorderedJoin = config.unorderedJoin;
+		this.getterFactory = config.getterFactory;
 	}
 
 
-	public AbstractMapperFactory(AbstractColumnDefinitionProvider<K> columnDefinitions, ColumnDefinition<K, ?> identity) {
+	public AbstractMapperFactory(AbstractColumnDefinitionProvider<K> columnDefinitions, ColumnDefinition<K, ?> identity, ContextualGetterFactory<? super S, K> getterFactory) {
 		this.columnDefinitions = columnDefinitions;
 		this.identity = identity;
+		this.getterFactory = getterFactory;
+	}
+
+	public AbstractMapperFactory(AbstractColumnDefinitionProvider<K> columnDefinitions, ColumnDefinition<K, ?> identity, Function<MF, ? extends ContextualGetterFactory<? super S, K>> getterFactoryFactory) {
+		this.columnDefinitions = columnDefinitions;
+		this.identity = identity;
+		this.getterFactory = getterFactoryFactory.apply((MF)this);
 	}
 
 	/**
@@ -298,6 +306,56 @@ public abstract class AbstractMapperFactory<
 		return ignoreColumns(Arrays.asList(columnNames));
 	}
 
+
+	public MF addGetterFactory(ContextualGetterFactory<S, K> getterFactory) {
+		this.getterFactory = ComposedContextualGetterFactory.composed(getterFactory, this.getterFactory);
+		return (MF) this;
+	}
+
+
+	public MF addGetterForType(final Type type, final Function<K, ContextualGetter<S, ?>> getterFactory) {
+		return addGetterForType(new Predicate<Type>() {
+			@Override
+			public boolean test(Type t) {
+				return TypeHelper.isAssignable(t, type);
+			}
+		}, getterFactory);
+	}
+
+	public MF addGetterForType(final Type type, final ContextualGetterFactory<S, K> getterFactory) {
+		return addGetterForType(new Predicate<Type>() {
+			@Override
+			public boolean test(Type t) {
+				return TypeHelper.isAssignable(t, type);
+			}
+		}, getterFactory);
+	}
+
+	public MF addGetterForType(final Predicate<Type> typePredicate, final Function<K, ContextualGetter<S, ?>> getterFactory) {
+		return addGetterFactory(new ContextualGetterFactory<S, K>() {
+			@Override
+			public <P> ContextualGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
+				if (typePredicate.test(target)) {
+					return (ContextualGetter<S, P>) getterFactory.apply(key);
+				}
+				return null;
+			}
+		});
+	}
+
+	public MF addGetterForType(final Predicate<Type> typePredicate, final ContextualGetterFactory<S, K> getterFactory) {
+		return addGetterFactory(new ContextualGetterFactory<S, K>() {
+			@Override
+			public <P> ContextualGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
+				if (typePredicate.test(target)) {
+					return getterFactory.newGetter(target, key, mappingContextFactoryBuilder, properties);
+				}
+				return null;
+			}
+		});
+	}
+
+
 	/**
 	 * Ignore column with the specified names, case insensitive.
 	 * @param columnNames the columnNames.
@@ -457,7 +515,7 @@ public abstract class AbstractMapperFactory<
 		};
 		return discriminator(commonType, getter, consumer);
 	}
-	
+
 	public static class DiscriminatorConditionBuilder<S, V, T> {
     	private final DiscriminatorBuilder<S, T> discriminatorBuilder;
     	private final Getter<? super S, ? extends V> getter;

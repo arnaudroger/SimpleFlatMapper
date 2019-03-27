@@ -1,6 +1,7 @@
 package org.simpleflatmapper.poi;
 
 import org.apache.poi.ss.usermodel.Row;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
@@ -16,8 +17,6 @@ import java.lang.reflect.Type;
 
 public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, SheetMapperFactory, Row> {
 
-    private GetterFactory<Row, CsvColumnKey> getterFactory = new RowGetterFactory();
-
     /**
      *
      * @return new newInstance of factory
@@ -27,7 +26,7 @@ public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, Shee
     }
 
     private SheetMapperFactory() {
-        super(new FieldMapperColumnDefinitionProviderImpl<CsvColumnKey>(), FieldMapperColumnDefinition.<CsvColumnKey>identity());
+        super(new FieldMapperColumnDefinitionProviderImpl<CsvColumnKey>(), FieldMapperColumnDefinition.<CsvColumnKey>identity(), new ContextualGetterFactoryAdapter<Row, CsvColumnKey>(new RowGetterFactory()));
     }
 
     /**
@@ -36,8 +35,7 @@ public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, Shee
      * @return the newInstance
      */
     public SheetMapperFactory getterFactory(GetterFactory<Row, CsvColumnKey> getterFactory) {
-        this.getterFactory = getterFactory;
-        return this;
+        return super.addGetterFactory(new ContextualGetterFactoryAdapter<Row, CsvColumnKey>(getterFactory));
     }
 
     /**

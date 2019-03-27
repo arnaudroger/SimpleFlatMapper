@@ -12,7 +12,10 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.reflect.DefaultReflectionService;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
@@ -271,7 +274,12 @@ public class AbstractMapperFactoryTest {
 
     static class MapperFactory extends AbstractMapperFactory<SampleFieldKey, MapperFactory, Object[]> {
         public MapperFactory() {
-            super(new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>(), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+            super(new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>(), FieldMapperColumnDefinition.<SampleFieldKey>identity(), new ContextualGetterFactoryAdapter<Object[], SampleFieldKey>(new GetterFactory<Object[], SampleFieldKey>() {
+                @Override
+                public <P> Getter<Object[], P> newGetter(Type target, SampleFieldKey key, Object... properties) {
+                    return null;
+                }
+            }));
         }
 
         public MapperFactory(AbstractMapperFactory<SampleFieldKey, ?, Object[]> config) {

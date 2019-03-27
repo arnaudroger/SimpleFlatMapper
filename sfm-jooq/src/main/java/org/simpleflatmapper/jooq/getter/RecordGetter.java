@@ -3,7 +3,7 @@ package org.simpleflatmapper.jooq.getter;
 import org.jooq.Record;
 import org.simpleflatmapper.reflect.Getter;
 
-public class RecordGetter<R extends Record, P> implements Getter<R, P> {
+public class RecordGetter<P> implements Getter<Record, P> {
 
 	private final int index;
 	
@@ -13,7 +13,7 @@ public class RecordGetter<R extends Record, P> implements Getter<R, P> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public P get(R target) throws Exception {
+	public P get(Record target) throws Exception {
 		return (P) target.getValue(index);
 	}
 

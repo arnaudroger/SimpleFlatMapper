@@ -80,7 +80,7 @@ public class CsvMapperBuilder<T> extends MapperBuilder<CsvRow, CsvRowSet, T, Csv
 	public CsvMapperBuilder(
 			final ClassMeta<T> classMeta,
 			final MapperConfig<CsvColumnKey, CsvRow> mapperConfig,
-			final ContextualGetterFactory<CsvRow, CsvColumnKey> getterFactory,
+			final ContextualGetterFactory<? super CsvRow, CsvColumnKey> getterFactory,
 			final MappingContextFactoryBuilder<CsvRow, CsvColumnKey> parentBuilder) {
 
 		super(KEY_FACTORY,

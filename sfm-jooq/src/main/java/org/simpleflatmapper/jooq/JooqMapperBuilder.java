@@ -24,7 +24,7 @@ import java.lang.reflect.Type;
 
 public class JooqMapperBuilder<E> {
 
-	public static final MapperSource<Record, JooqFieldKey> FIELD_MAPPER_SOURCE = new MapperSourceImpl<Record, JooqFieldKey>(Record.class, new ContextualGetterFactoryAdapter<Record, JooqFieldKey>(new RecordGetterFactory<Record>()));
+	public static final MapperSource<Record, JooqFieldKey> FIELD_MAPPER_SOURCE = new MapperSourceImpl<Record, JooqFieldKey>(Record.class, new ContextualGetterFactoryAdapter<Record, JooqFieldKey>(new RecordGetterFactory()));
 	private static final KeyFactory<JooqFieldKey> KEY_FACTORY = new KeyFactory<JooqFieldKey>() {
 		@Override
 		public JooqFieldKey newKey(String name, int i) {

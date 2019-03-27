@@ -3,22 +3,34 @@ package org.simpleflatmapper.jdbc.spring.test;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.spring.JdbcTemplateMapperFactory;
 import org.simpleflatmapper.jdbc.spring.PreparedStatementCallbackImpl;
 import org.simpleflatmapper.jdbc.spring.ResultSetExtractorImpl;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.util.ListCollector;
+import org.simpleflatmapper.util.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+import javax.swing.plaf.nimbus.State;
+import java.lang.reflect.Type;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class JdbcTemplateMapperFactoryTest {
 	
@@ -76,8 +88,8 @@ public class JdbcTemplateMapperFactoryTest {
 		ResultSetExtractor<List<ThinDbObject>> mapper = 
 				JdbcTemplateMapperFactory.newInstance().ignorePropertyNotFound().newResultSetExtractor(ThinDbObject.class);
 		List<ThinDbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
-		Assert.assertEquals(1, results.get(0).getId());
-		Assert.assertEquals("name 1", results.get(0).getName());
+		assertEquals(1, results.get(0).getId());
+		assertEquals("name 1", results.get(0).getName());
 	}
 	
 	
@@ -97,6 +109,8 @@ public class JdbcTemplateMapperFactoryTest {
 
 
 	}
+
+
 
 
 	public static class Prof {
@@ -232,4 +246,112 @@ public class JdbcTemplateMapperFactoryTest {
 			this.name = name;
 		}
 	}
+
+
+	@Test
+	public void testIssue618OverrideEnum() throws SQLException {
+
+		JdbcTemplateMapperFactory config = JdbcTemplateMapperFactory.newInstance().addGetterForType(
+				new Predicate<Type>() {
+					@Override
+					public boolean test(Type type) {
+						return TypeHelper.isAssignable(LookupValue.class, type);
+					}
+				}, new ContextualGetterFactory<ResultSet, JdbcColumnKey>() {
+					@Override
+					public <P> ContextualGetter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, MappingContextFactoryBuilder<?, JdbcColumnKey> mappingContextFactoryBuilder, Object... properties) {
+						Class enumClass = TypeHelper.toClass(target);
+						final Enum[] values = EnumHelper.getValues(enumClass);
+						final int index = key.getIndex();
+
+						return new ContextualGetter<ResultSet, P>() {
+							@Override
+							public P get(ResultSet resultSet, Context context) throws Exception {
+								int i = resultSet.getInt(index);
+
+								for(Enum e : values) {
+									if (((LookupValue)e).lookupValue() == i) {
+										return (P)e;
+									}
+								}
+								return null;
+							}
+						};
+					}
+				}
+		);
+
+
+		ResultSetExtractorImpl<Issue618> rse = JdbcTemplateMapperFactory.newInstance(config).newResultSetExtractor(Issue618.class);
+
+		Connection conn = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
+		Statement st = null;
+		ResultSet rs = null;
+		if (conn == null) return;
+
+		try {
+			st = conn.createStatement();
+
+			rs = st.executeQuery("SELECT * FROM (VALUES (1, 1), (2, 2)) AS t (id, enum618) ");
+
+			List<Issue618> issue618s = rse.extractData(rs);
+
+			assertEquals(Arrays.asList(new Issue618(1, Enum618.A), new Issue618(2, Enum618.B)), issue618s);
+
+		} finally {
+			if (rs != null) rs.close();
+			if (st != null) st.close();
+			conn.close();
+		}
+
+
+	}
+
+	public static class Issue618 {
+		public final long id;
+		public final Enum618 enum618;
+
+		public Issue618(long id, Enum618 enum618) {
+			this.id = id;
+			this.enum618 = enum618;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Issue618 issue618 = (Issue618) o;
+
+			if (id != issue618.id) return false;
+			return enum618 == issue618.enum618;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = (int) (id ^ (id >>> 32));
+			result = 31 * result + (enum618 != null ? enum618.hashCode() : 0);
+			return result;
+		}
+	}
+
+	public enum Enum618 implements LookupValue {
+		A(1), B(2);
+
+		private final int lookupValue;
+
+		Enum618(int lookupValue) {
+			this.lookupValue = lookupValue;
+		}
+
+		@Override
+		public int lookupValue() {
+			return lookupValue;
+		}
+	}
+
+	public interface LookupValue {
+		int lookupValue();
+	}
+
 }

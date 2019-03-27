@@ -99,6 +99,11 @@ public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMappe
 	public static CsvMapperFactory newInstance(AbstractColumnDefinitionProvider<CsvColumnKey> columnDefinitionProvider) {
 		return new CsvMapperFactory(columnDefinitionProvider);
 	}
+
+	public static CsvMapperFactory newInstance(CsvMapperFactory cfg) {
+		return new CsvMapperFactory(cfg);
+	}
+
 	private String defaultDateFormat = CsvMapperBuilder.DEFAULT_DATE_FORMAT;
 
 	private CsvMapperFactory(AbstractColumnDefinitionProvider<CsvColumnKey> columnDefinitionProvider) {
@@ -112,6 +117,8 @@ public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMappe
 	private CsvMapperFactory(CsvMapperFactory parent)  {
 		super(parent, NAMED_GETTER);
 	}
+
+
 
 	@Override
 	public AbstractColumnDefinitionProvider<CsvColumnKey> enrichColumnDefinitions(AbstractColumnDefinitionProvider<CsvColumnKey> columnDefinitions) {

@@ -17,12 +17,21 @@ import java.lang.reflect.Type;
 
 public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, SheetMapperFactory, Row> {
 
+
+    private SheetMapperFactory(AbstractMapperFactory<CsvColumnKey, ?, Row> config) {
+        super(config);
+    }
+
     /**
      *
      * @return new newInstance of factory
      */
     public static SheetMapperFactory newInstance() {
         return new SheetMapperFactory();
+    }
+
+    public static SheetMapperFactory newInstance(AbstractMapperFactory<CsvColumnKey, ?, Row> config) {
+        return new SheetMapperFactory(config);
     }
 
     private SheetMapperFactory() {

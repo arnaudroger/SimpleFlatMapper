@@ -69,10 +69,6 @@ public final class JdbcMapperFactory
 		return new JdbcMapperFactory();
 	}
 
-	public static JdbcMapperFactory newInstance(JdbcMapperFactory config) {
-		return new JdbcMapperFactory(config);
-	}
-
 	public static JdbcMapperFactory newInstance(
 			AbstractMapperFactory<JdbcColumnKey, ?, ResultSet> config) {
 		return new JdbcMapperFactory(config);

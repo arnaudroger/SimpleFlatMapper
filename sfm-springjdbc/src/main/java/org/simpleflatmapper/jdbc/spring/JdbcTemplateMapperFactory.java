@@ -4,6 +4,7 @@ import org.simpleflatmapper.jdbc.*;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFactory;
+import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.simpleflatmapper.util.TypeReference;
@@ -14,6 +15,9 @@ import java.sql.ResultSet;
 
 public final class JdbcTemplateMapperFactory extends AbstractColumnNameDiscriminatorMapperFactory<JdbcColumnKey, JdbcTemplateMapperFactory, ResultSet> {
 
+	private JdbcTemplateMapperFactory(AbstractMapperFactory<JdbcColumnKey, ?, ResultSet> config) {
+		super(config, NameBasedResultSetGetterFactory.INSTANCE);
+	}
 
 	private JdbcTemplateMapperFactory() {
 		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(),
@@ -25,7 +29,11 @@ public final class JdbcTemplateMapperFactory extends AbstractColumnNameDiscrimin
 	public static JdbcTemplateMapperFactory newInstance() {
 		return new JdbcTemplateMapperFactory();
 	}
-	
+
+	public static JdbcTemplateMapperFactory newInstance(AbstractMapperFactory<JdbcColumnKey, ?, ResultSet> config) {
+		return new JdbcTemplateMapperFactory(config);
+	}
+
 	public <T> RowMapperImpl<T> newRowMapper(Class<T> target)
 			throws MapperBuildingException {
 		return newRowMapper((Type)target);

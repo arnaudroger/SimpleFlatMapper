@@ -40,7 +40,7 @@ public class ObjectSetterFactoryTest {
 
 	@Test
 	public void testFailFallBackToMethod() throws Exception {
-		AsmFactory asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader()) {
+		final AsmFactory asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader()) {
 			@Override
 			public <T, P> Setter<T, P> createSetter(Method m) throws Exception {
 				throw new UnsupportedOperationException();

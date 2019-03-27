@@ -1,6 +1,7 @@
 package org.simpleflatmapper.reflect;
 
 import org.simpleflatmapper.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.asm.AsmFactoryProvider;
 import org.simpleflatmapper.reflect.meta.AliasProvider;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.BiConsumer;
@@ -19,18 +20,17 @@ import java.lang.reflect.*;
 import java.util.*;
 
 
-public abstract class ReflectionService {
+public abstract class ReflectionService implements AsmFactoryProvider {
 
 	
 	public abstract void registerClassMeta(Type type, ClassMeta<?> classMeta);
 
 	public abstract ObjectSetterFactory getObjectSetterFactory();
-
+	public abstract ObjectGetterFactory getObjectGetterFactory();
 	public abstract InstantiatorFactory getInstantiatorFactory();
 
 
 	public abstract boolean isAsmActivated();
-	public abstract AsmFactory getAsmFactory();
 
 	public final <T> ClassMeta<T> getClassMeta(Class<T> target) {
 		return getClassMeta((Type)target);
@@ -51,12 +51,6 @@ public abstract class ReflectionService {
 
 	public abstract List<InstantiatorDefinition> extractInstantiator(Type target, Member extraInstantiator) throws IOException;
 
-
-    public abstract ObjectGetterFactory getObjectGetterFactory();
-
-	public abstract boolean hasAsmFactory();
-
-
 	public abstract ReflectionService withAliasProvider(AliasProvider aliasProvider);
 	public abstract ReflectionService withBuilderIgnoresNullValues(boolean builderIgnoresNullValues);
 	public abstract ReflectionService withSelfScoreFullName(boolean selfScoreFullName);
@@ -72,10 +66,10 @@ public abstract class ReflectionService {
 		return newInstance(true);
 	}
 
-	private static final AsmFactory _asmFactory = new AsmFactory();
+	private static final AsmFactory _defaultAsmFactory = new AsmFactory(ReflectionService.class.getClassLoader());
 
 	public static ReflectionService newInstance(boolean useAsmGeneration) {
-		return new DefaultReflectionService(useAsmGeneration && canSeeSetterFromContextClassLoader() ? _asmFactory  : null);
+		return new DefaultReflectionService(useAsmGeneration && canSeeSetterFromContextClassLoader() ? _defaultAsmFactory : null);
 	}
 
 	public static ReflectionService disableAsm() {

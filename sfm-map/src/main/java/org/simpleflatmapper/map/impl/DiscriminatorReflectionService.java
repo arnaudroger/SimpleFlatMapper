@@ -55,8 +55,8 @@ public class DiscriminatorReflectionService extends ReflectionService {
     }
 
     @Override
-    public AsmFactory getAsmFactory() {
-        return delegate.getAsmFactory();
+    public AsmFactory getAsmFactory(ClassLoader classLoader) {
+        return delegate.getAsmFactory(classLoader);
     }
 
     @Override
@@ -116,11 +116,6 @@ public class DiscriminatorReflectionService extends ReflectionService {
     @Override
     public ObjectGetterFactory getObjectGetterFactory() {
         return delegate.getObjectGetterFactory();
-    }
-
-    @Override
-    public boolean hasAsmFactory() {
-        return delegate.hasAsmFactory();
     }
 
     @Override

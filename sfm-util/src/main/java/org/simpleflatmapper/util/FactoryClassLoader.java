@@ -26,6 +26,7 @@ public class FactoryClassLoader extends ClassLoader {
 	
 	public FactoryClassLoader(final ClassLoader parent) {
 		super(null);
+		if (parent == null) throw new NullPointerException();
 		this.delegateClassLoader = new WeakReference<ClassLoader>(parent);
 	}
 

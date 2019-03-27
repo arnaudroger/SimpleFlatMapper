@@ -7,6 +7,7 @@ import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.asm.AsmFactoryProvider;
 import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.getter.BiFunctionGetter;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
@@ -23,11 +24,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.simpleflatmapper.reflect.test.Utils.TEST_ASM_FACTORY_PROVIDER;
 
 public class BiInstantiatorFactoryTest {
 
 	public static final InstantiatorFactory DISABLE_ASM = new InstantiatorFactory(null);
-	public static final InstantiatorFactory ASM = new InstantiatorFactory(new AsmFactory(), true);
+
+	public static final InstantiatorFactory ASM = new InstantiatorFactory(TEST_ASM_FACTORY_PROVIDER, true);
 
 
 

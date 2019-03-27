@@ -512,7 +512,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 && fields.length + constructorFieldMappersAndInstantiator.constructorInjections.parameterGetterMap.size() < mapperConfig.asmMapperNbFieldsLimit()) {
             try {
                 MapperAsmFactory mapperAsmFactory = reflectionService
-                        .getAsmFactory()
+                        .getAsmFactory(target.getClassLoader())
                         .registerOrCreate(MapperAsmFactory.class,
                                 new UnaryFactory<AsmFactory, MapperAsmFactory>() {
                                     @Override

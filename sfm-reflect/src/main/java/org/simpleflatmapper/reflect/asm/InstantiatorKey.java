@@ -101,12 +101,20 @@ public class InstantiatorKey<S> {
 	}
 
 	public Class<?> getDeclaringClass() {
+		Object constructor = this.constructor;
+		return getDeclaringClass(constructor);
+	}
+
+	public static Class<?> getDeclaringClass(Object constructor) {
 		if (constructor instanceof Member) {
-			return ((Member)constructor).getDeclaringClass();
+			return ((Member) constructor).getDeclaringClass();
 		} else if(constructor instanceof ExecutableInstantiatorDefinition) {
-			return ((ExecutableInstantiatorDefinition)constructor).getExecutable().getDeclaringClass();
+			return ((ExecutableInstantiatorDefinition) constructor).getExecutable().getDeclaringClass();
 		} else {
-			return ((BuilderInstantiatorDefinition)constructor).getBuildMethod().getDeclaringClass();
+			return ((BuilderInstantiatorDefinition) constructor).getBuildMethod().getDeclaringClass();
 		}
+	}
+	public static Class<?> getDeclaringClass(InstantiatorDefinition definition) {
+		return getDeclaringClass(getConstructor(definition));
 	}
 }

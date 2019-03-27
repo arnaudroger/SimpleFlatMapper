@@ -32,7 +32,7 @@ public class BiInstantiatorKey {
 		this(getConstructor(instantiatorDefinition), paramAndBuilderFactoryClass(injections), s1, s2);
 	}
 
-	private static Object getConstructor(InstantiatorDefinition def) {
+	public static Object getConstructor(InstantiatorDefinition def) {
 		if (def instanceof ExecutableInstantiatorDefinition) {
 			return ((ExecutableInstantiatorDefinition)def).getExecutable();
 		} else {
@@ -121,6 +121,10 @@ public class BiInstantiatorKey {
 	}
 
 	public Class<?> getDeclaringClass() {
+		return getDeclaringClass(constructor);
+	}
+
+	public static Class<?> getDeclaringClass(Object constructor) {
 		if (constructor instanceof Member) {
 			return ((Member)constructor).getDeclaringClass();
 		} else if(constructor instanceof ExecutableInstantiatorDefinition) {
@@ -128,6 +132,10 @@ public class BiInstantiatorKey {
 		} else {
 			return ((BuilderInstantiatorDefinition)constructor).getBuildMethod().getDeclaringClass();
 		}
+	}
+
+	public static Class<?> getDeclaringClass(InstantiatorDefinition def) {
+		return getDeclaringClass(getConstructor(def));
 	}
 
 	public ClassLoader getClassLoader() {

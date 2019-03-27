@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MapperAsmFactoryTest {
 
-	static MapperAsmFactory asmFactory = new MapperAsmFactory(new AsmFactory());
+	static MapperAsmFactory asmFactory = new MapperAsmFactory(new AsmFactory(Thread.currentThread().getContextClassLoader()));
 	
 
 	@SuppressWarnings("unchecked")

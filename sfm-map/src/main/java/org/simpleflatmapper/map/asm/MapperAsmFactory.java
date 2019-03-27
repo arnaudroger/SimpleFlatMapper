@@ -22,7 +22,7 @@ public class MapperAsmFactory {
 	}
 
 
-    private final WeakHashMap<ClassLoader, Map<MapperKey, Constructor<? extends SourceMapper<?, ?>>>> fieldMapperCachePerCL = new WeakHashMap<ClassLoader, Map<MapperKey, Constructor<? extends SourceMapper<?, ?>>>>();
+    private final Map<MapperKey, Constructor<? extends SourceMapper<?, ?>>> fieldMapperCache = new HashMap<MapperKey, Constructor<? extends SourceMapper<?, ?>>>();
 
     private <S, T> String generateClassNameForFieldMapper(final FieldMapper<S, T>[] mappers, final FieldMapper<S, T>[] constructorMappers, final Class<? super S> source, final Class<T> target) {
         StringBuilder sb = new StringBuilder();
@@ -52,21 +52,11 @@ public class MapperAsmFactory {
                                                     final BiInstantiator<S, MappingContext<? super S>, T> instantiator,
                                                     final Class<? super S> source,
                                                     final Class<T> target) throws Exception {
-        ClassLoader classLoader = target.getClass().getClassLoader();
-
+        ClassLoader classLoader = target.getClassLoader();
 
         MapperKey key = MapperKey.of(keys, mappers, constructorMappers, instantiator, target, source);
 
-
-
-        synchronized (fieldMapperCachePerCL) {
-            Map<MapperKey, Constructor<? extends SourceMapper<?, ?>>> fieldMapperCache = fieldMapperCachePerCL.get(classLoader);
-
-            if (fieldMapperCache == null) {
-                fieldMapperCache = new HashMap<MapperKey, Constructor<? extends SourceMapper<?, ?>>>();
-                fieldMapperCachePerCL.put(classLoader, fieldMapperCache);
-            }
-
+        synchronized (fieldMapperCache) {
             Constructor<SourceMapper<S, T>> constructor = (Constructor<SourceMapper<S, T>>) fieldMapperCache.get(key);
             if (constructor == null) {
 

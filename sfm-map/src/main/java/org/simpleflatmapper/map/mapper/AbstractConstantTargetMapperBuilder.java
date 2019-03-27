@@ -133,7 +133,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
             try {
                 mapper =
                         reflectionService
-                                .getAsmFactory()
+                                .getAsmFactory(TypeHelper.toClass(classMeta.getType()).getClassLoader())
                                 .registerOrCreate(MapperAsmFactory.class, new UnaryFactory<AsmFactory, MapperAsmFactory>() {
                                     @Override
                                     public MapperAsmFactory newInstance(AsmFactory asmFactory) {

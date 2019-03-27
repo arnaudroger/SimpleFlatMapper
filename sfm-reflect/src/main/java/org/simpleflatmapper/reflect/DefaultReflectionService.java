@@ -18,8 +18,7 @@ import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 //IFJAVA8_START
 import org.simpleflatmapper.reflect.meta.OptionalClassMeta;
 
-import java.lang.annotation.Annotation;
-import java.util.Optional;
+import java.util.*;
 //IFJAVA8_END
 
 import org.simpleflatmapper.reflect.meta.PassThroughClassMeta;
@@ -39,11 +38,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -58,38 +52,39 @@ public class DefaultReflectionService extends ReflectionService {
 	private static final Consumer<BiConsumer<String, UnaryFactory<Type, Member>>>[] predefinedBuilderProducers = 
 			getPredifinedBuilderProducers();
 
-	private final ObjectSetterFactory objectSetterFactory;
-	private final ObjectGetterFactory objectGetterFactory;
-	private final InstantiatorFactory instantiatorFactory;
-	private final AsmFactory asmFactory;
 	private final AliasProvider aliasProvider;
 	private final boolean builderIgnoresNullValues;
 	private final boolean selfScoreFullName;
 
 	private final ConcurrentMap<Type, ClassMeta<?>> metaCache = new ConcurrentHashMap<Type, ClassMeta<?>>();
 	private final ConcurrentMap<String,  UnaryFactory<Type, Member>> builderMethods = new ConcurrentHashMap<String,  UnaryFactory<Type, Member>>();
+	private final Map<ClassLoader,  AsmFactory> asmFactoryPerClassLoader;
+	private final boolean isAsmActivated;
 
 	public DefaultReflectionService(final AsmFactory asmFactory) {
 		this(
-				new ObjectSetterFactory(asmFactory),
-				new ObjectGetterFactory(asmFactory),
-				new InstantiatorFactory(asmFactory),
-				asmFactory,
+				asmFactory != null,
+				defaultAsmFactortyPerClassLoader(asmFactory),
 				AliasProviderService.getAliasProvider(),
 				true, false);
 	}
 
-	private DefaultReflectionService(ObjectSetterFactory objectSetterFactory,
-                                     ObjectGetterFactory objectGetterFactory,
-                                     InstantiatorFactory instantiatorFactory,
-                                     AsmFactory asmFactory,
+	private static Map<ClassLoader, AsmFactory> defaultAsmFactortyPerClassLoader(AsmFactory asmFactory) {
+
+		Map<ClassLoader, AsmFactory> map = new HashMap<ClassLoader, AsmFactory>();
+		if (asmFactory != null)
+			map.put(asmFactory.targetClassLoader, asmFactory);
+		return map;
+	}
+
+	private DefaultReflectionService(boolean isAsmActivated,
+									 Map<ClassLoader,  AsmFactory> asmFactoryPerClassLoader,
                                      AliasProvider aliasProvider,
                                      boolean builderIgnoresNullValues,
                                      boolean selfScoreFullName) {
-		this.objectSetterFactory = objectSetterFactory;
-		this.objectGetterFactory = objectGetterFactory;
-		this.instantiatorFactory = instantiatorFactory;
-		this.asmFactory = asmFactory;
+
+		this.isAsmActivated = isAsmActivated;
+		this.asmFactoryPerClassLoader = asmFactoryPerClassLoader;
 		this.aliasProvider = aliasProvider;
 		this.builderIgnoresNullValues = builderIgnoresNullValues;
 		this.selfScoreFullName = selfScoreFullName;
@@ -118,22 +113,33 @@ public class DefaultReflectionService extends ReflectionService {
 
 	@Override
 	public ObjectSetterFactory getObjectSetterFactory() {
-		return objectSetterFactory;
+		return new ObjectSetterFactory(this);
 	}
 
 	@Override
 	public InstantiatorFactory getInstantiatorFactory() {
-		return instantiatorFactory;
+		return new InstantiatorFactory(this);
 	}
 
 
 	@Override
 	public boolean isAsmActivated() {
-		return asmFactory != null;
+		return isAsmActivated;
 	}
 	@Override
-	public AsmFactory getAsmFactory() {
-		return asmFactory;
+	public AsmFactory getAsmFactory(ClassLoader classLoader) {
+		if (classLoader == null) // system class loader override with sfm one
+			classLoader = getClass().getClassLoader();
+
+		if (!isAsmActivated) return null;
+		synchronized (asmFactoryPerClassLoader) {
+			AsmFactory asmFactory = asmFactoryPerClassLoader.get(classLoader);
+			if (asmFactory == null) {
+				asmFactory = new AsmFactory(classLoader);
+				asmFactoryPerClassLoader.put(classLoader, asmFactory);
+			}
+			return asmFactory;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -382,42 +388,28 @@ public class DefaultReflectionService extends ReflectionService {
 
 	@Override
 	public ObjectGetterFactory getObjectGetterFactory() {
-        return objectGetterFactory;
+        return new ObjectGetterFactory(this);
     }
-
-	@Override
-	public boolean hasAsmFactory() {
-		return asmFactory != null;
-	}
 
 
 	@Override
 	public DefaultReflectionService withAliasProvider(AliasProvider aliasProvider) {
 		return new DefaultReflectionService(
-				objectSetterFactory,
-				objectGetterFactory,
-				instantiatorFactory,
-				asmFactory,
+				isAsmActivated, asmFactoryPerClassLoader,
 				aliasProvider, builderIgnoresNullValues, selfScoreFullName);
 	}
 
 	@Override
 	public DefaultReflectionService withBuilderIgnoresNullValues(boolean builderIgnoresNullValues) {
 		return new DefaultReflectionService(
-				objectSetterFactory,
-				objectGetterFactory,
-				instantiatorFactory,
-				asmFactory,
+				isAsmActivated, asmFactoryPerClassLoader,
 				aliasProvider, builderIgnoresNullValues, selfScoreFullName);
 	}
 
 	@Override
 	public DefaultReflectionService withSelfScoreFullName(boolean selfScoreFullName) {
 		return new DefaultReflectionService(
-				objectSetterFactory,
-				objectGetterFactory,
-				instantiatorFactory,
-				asmFactory,
+				isAsmActivated, asmFactoryPerClassLoader,
 				aliasProvider, builderIgnoresNullValues, selfScoreFullName);
 	}
 

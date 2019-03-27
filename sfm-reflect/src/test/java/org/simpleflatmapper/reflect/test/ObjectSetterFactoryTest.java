@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.reflect.ObjectSetterFactory;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.asm.AsmFactoryProvider;
 import org.simpleflatmapper.reflect.getter.FieldSetter;
 import org.simpleflatmapper.reflect.setter.MethodSetter;
 import org.simpleflatmapper.reflect.primitive.BooleanFieldSetter;
@@ -30,18 +31,25 @@ import org.simpleflatmapper.test.beans.FooField;
 import java.lang.reflect.Method;
 
 import static org.junit.Assert.*;
+import static org.simpleflatmapper.reflect.test.Utils.TEST_ASM_FACTORY_PROVIDER;
 
 public class ObjectSetterFactoryTest {
 	
 	ObjectSetterFactory nonAsmFactory = new ObjectSetterFactory(null);
-	ObjectSetterFactory asmFactory = new ObjectSetterFactory(new AsmFactory());
+	ObjectSetterFactory asmFactory = new ObjectSetterFactory(TEST_ASM_FACTORY_PROVIDER);
 
 	@Test
 	public void testFailFallBackToMethod() throws Exception {
-		Setter<Foo, String> setter = new ObjectSetterFactory(new AsmFactory(){
+		AsmFactory asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader()) {
 			@Override
 			public <T, P> Setter<T, P> createSetter(Method m) throws Exception {
 				throw new UnsupportedOperationException();
+			}
+		};
+		Setter<Foo, String> setter = new ObjectSetterFactory(new AsmFactoryProvider() {
+			@Override
+			public AsmFactory getAsmFactory(ClassLoader classLoader) {
+				return asmFactory;
 			}
 		}).getSetter(Foo.class, "foo");
 		assertTrue(setter instanceof MethodSetter);

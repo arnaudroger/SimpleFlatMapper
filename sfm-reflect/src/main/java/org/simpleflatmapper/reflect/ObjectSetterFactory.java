@@ -1,6 +1,6 @@
 package org.simpleflatmapper.reflect;
 
-import org.simpleflatmapper.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.asm.AsmFactoryProvider;
 import org.simpleflatmapper.reflect.getter.FieldSetter;
 import org.simpleflatmapper.reflect.setter.MethodSetter;
 import org.simpleflatmapper.reflect.setter.NullSetter;
@@ -39,10 +39,10 @@ import java.lang.reflect.Modifier;
  */
 public final class ObjectSetterFactory {
 	
-	private final AsmFactory asmFactory;
+	private final AsmFactoryProvider asmFactoryProvider;
 	
-	public ObjectSetterFactory(final AsmFactory asmFactory) {
-		this.asmFactory = asmFactory;
+	public ObjectSetterFactory(final AsmFactoryProvider asmFactoryProvider) {
+		this.asmFactoryProvider = asmFactoryProvider;
 	}
 
 	public <T, P> Setter<T, P> getSetter(final Class<? extends T> target, final String property) {
@@ -59,9 +59,9 @@ public final class ObjectSetterFactory {
 
 	public <T, P> Setter<T, P> getMethodSetter(final Method method) {
 		boolean accessible = Modifier.isPublic(method.getModifiers()) && Modifier.isPublic(method.getDeclaringClass().getModifiers());
-		if (asmFactory != null && accessible) {
+		if (asmFactoryProvider != null && accessible) {
 			try {
-				return asmFactory.createSetter(method);
+				return asmFactoryProvider.getAsmFactory(method.getDeclaringClass().getClassLoader()).createSetter(method);
 			} catch(Throwable e) {
                 // ignore
 			}
@@ -90,9 +90,9 @@ public final class ObjectSetterFactory {
 
     public <T, P> Setter<T, P> getFieldSetter(Field field) {
 		boolean accessible = Modifier.isPublic(field.getModifiers()) && Modifier.isPublic(field.getDeclaringClass().getModifiers());
-		if (asmFactory != null && accessible) {
+		if (asmFactoryProvider != null && accessible) {
             try {
-                return asmFactory.createSetter(field);
+                return asmFactoryProvider.getAsmFactory(field.getDeclaringClass().getClassLoader()).createSetter(field);
             } catch(Throwable e) {
             }
         }

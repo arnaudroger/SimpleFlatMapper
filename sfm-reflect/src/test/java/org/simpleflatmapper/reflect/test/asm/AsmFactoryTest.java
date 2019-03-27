@@ -29,7 +29,7 @@ import static org.junit.Assert.assertSame;
 
 public class AsmFactoryTest {
 
-	static AsmFactory asmFactory = new AsmFactory();
+	static AsmFactory asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
 	
 	
 	@Test
@@ -121,7 +121,7 @@ public class AsmFactoryTest {
 
 	@Test
 	public void testRegisterOrCreate() {
-		AsmFactory asmFactory = new AsmFactory();
+		AsmFactory asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
 
 		final MyService[] services = new MyService[] {new MyService(), new MyService() };
 		UnaryFactory<AsmFactory, MyService> factory = new UnaryFactory<AsmFactory, MyService>() {

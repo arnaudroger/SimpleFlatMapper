@@ -5,6 +5,7 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ObjectGetterFactory;
 import org.simpleflatmapper.reflect.ObjectSetterFactory;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.asm.AsmFactoryProvider;
 import org.simpleflatmapper.reflect.getter.FieldGetter;
 import org.simpleflatmapper.reflect.getter.MethodGetter;
 import org.simpleflatmapper.reflect.primitive.BooleanGetter;
@@ -27,7 +28,13 @@ import static org.junit.Assert.*;
 @SuppressWarnings("unchecked")
 public class ObjectGetterFactoryTest {
 
-    private ObjectGetterFactory asm = new ObjectGetterFactory(new AsmFactory());
+    private ObjectGetterFactory asm = new ObjectGetterFactory(new AsmFactoryProvider() {
+        AsmFactory asmFactory = new AsmFactory(ObjectGetterFactoryTest.class.getClassLoader());
+        @Override
+        public AsmFactory getAsmFactory(ClassLoader classLoader) {
+            return asmFactory;
+        }
+    });
     private ObjectGetterFactory noAsm = new ObjectGetterFactory(null);
 
     private DbObject dbo = new DbObject();

@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 @SuppressWarnings("SpellCheckingInspection")
 public class AsmSetterTest {
 
-	AsmFactory factory = new AsmFactory();
+	AsmFactory factory = new AsmFactory(Thread.currentThread().getContextClassLoader());
 
 	DbPrimitiveObjectWithSetter object = new DbPrimitiveObjectWithSetter();
 	DbPrimitiveObjectFields objectField = new DbPrimitiveObjectFields();

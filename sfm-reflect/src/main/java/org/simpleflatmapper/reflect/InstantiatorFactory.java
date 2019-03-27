@@ -1,6 +1,9 @@
 package org.simpleflatmapper.reflect;
 
 import org.simpleflatmapper.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.asm.AsmFactoryProvider;
+import org.simpleflatmapper.reflect.asm.BiInstantiatorKey;
+import org.simpleflatmapper.reflect.asm.InstantiatorKey;
 import org.simpleflatmapper.reflect.getter.IdentityGetter;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiator;
 import org.simpleflatmapper.reflect.impl.EmptyConstructorBiInstantiator;
@@ -26,15 +29,15 @@ import java.util.Map;
 import java.util.Set;
 
 public class InstantiatorFactory {
-	private final AsmFactory asmFactory;
+	private final AsmFactoryProvider asmFactory;
 
 	private final boolean failOnAsmError;
 	
-	public InstantiatorFactory(final AsmFactory asmFactory) {
+	public InstantiatorFactory(final AsmFactoryProvider asmFactory) {
 		this(asmFactory, false);
 	}
 
-	public InstantiatorFactory(AsmFactory asmFactory, boolean faileOnAsmError) {
+	public InstantiatorFactory(AsmFactoryProvider asmFactory, boolean faileOnAsmError) {
 		this.asmFactory = asmFactory;
 		this.failOnAsmError = faileOnAsmError;
 	}
@@ -64,12 +67,13 @@ public class InstantiatorFactory {
 		}
 		
 		if (asmFactory != null  && useAsmIfEnabled) {
+			ClassLoader targetClassLoader = BiInstantiatorKey.getDeclaringClass(instantiatorDefinition).getClassLoader();
 			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
 				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
 				Member executable = executableInstantiatorDefinition.getExecutable();
 				if (Modifier.isPublic(executable.getModifiers())) {
 					try {
-						return asmFactory.createBiInstantiator(s1, s2, executableInstantiatorDefinition, injections, builderIgnoresNullValues);
+						return asmFactory.getAsmFactory(targetClassLoader).createBiInstantiator(s1, s2, executableInstantiatorDefinition, injections, builderIgnoresNullValues);
 					} catch (Exception e) {
 						// fall back on reflection
 						if (failOnAsmError) ErrorHelper.rethrow(e);
@@ -77,7 +81,7 @@ public class InstantiatorFactory {
 				}
 			} else {
 				try {
-					return asmFactory.createBiInstantiator(s1, s2, (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
+					return asmFactory.getAsmFactory(targetClassLoader).createBiInstantiator(s1, s2, (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
 				} catch (Exception e) {
 					// fall back on reflection
 					if (failOnAsmError) ErrorHelper.rethrow(e);
@@ -126,12 +130,13 @@ public class InstantiatorFactory {
 		}
 		
 		if (asmFactory != null  && useAsmIfEnabled) {
+			ClassLoader targetClassLoader = InstantiatorKey.getDeclaringClass(instantiatorDefinition).getClassLoader();
 			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
 				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
 				Member executable = executableInstantiatorDefinition.getExecutable();
 				if (Modifier.isPublic(executable.getModifiers())) {
 					try {
-						return asmFactory.createInstantiator(source, executableInstantiatorDefinition, injections, builderIgnoresNullValues);
+						return asmFactory.getAsmFactory(targetClassLoader).createInstantiator(source, executableInstantiatorDefinition, injections, builderIgnoresNullValues);
 					} catch (Exception e) {
 						// fall back on reflection
 						if (failOnAsmError) ErrorHelper.rethrow(e);
@@ -139,7 +144,7 @@ public class InstantiatorFactory {
 				}
 			} else {
 				try {
-					return asmFactory.createInstantiator(source, (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
+					return asmFactory.getAsmFactory(targetClassLoader).createInstantiator(source, (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
 				} catch (Exception e) {
 					// fall back on reflection
 					if (failOnAsmError) ErrorHelper.rethrow(e);

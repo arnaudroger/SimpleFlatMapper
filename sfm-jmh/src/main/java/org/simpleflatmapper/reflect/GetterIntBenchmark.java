@@ -29,6 +29,7 @@ import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.asm.AsmFactoryProvider;
 import org.simpleflatmapper.reflect.primitive.IntGetter;
 
 import java.lang.invoke.MethodHandle;
@@ -110,7 +111,13 @@ public class GetterIntBenchmark {
             final Field value = IntBean.class.getField("value");
             METHOD_GETTER = ObjectGetterFactory.toIntGetter(new ObjectGetterFactory(null).getMethodGetter(getValue));
             FIELD_GETTER = ObjectGetterFactory.toIntGetter(new ObjectGetterFactory(null).getFieldGetter(value));
-            ASM_GETTER = ObjectGetterFactory.toIntGetter(new ObjectGetterFactory(new AsmFactory()).getMethodGetter(getValue));
+            ASM_GETTER = ObjectGetterFactory.toIntGetter(new ObjectGetterFactory(new AsmFactoryProvider() {
+                AsmFactory asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
+                @Override
+                public AsmFactory getAsmFactory(ClassLoader classLoader) {
+                    return asmFactory;
+                }
+            }).getMethodGetter(getValue));
             MH_GETTER = new MethodHandlerGetter(MethodHandles.lookup().unreflect(getValue));
             MHE_GETTER = new MethodHandlerExactGetter(MethodHandles.lookup().unreflect(getValue));
             MHF_GETTER = new MethodHandlerGetter(MethodHandles.lookup().unreflectGetter(value));

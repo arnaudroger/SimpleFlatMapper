@@ -14,11 +14,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.simpleflatmapper.reflect.test.Utils.TEST_ASM_FACTORY_PROVIDER;
 
 public class InstantiatorFactoryTest {
 
 	public static final InstantiatorFactory DISABLE_ASM = new InstantiatorFactory(null);
-	public static final InstantiatorFactory ASM = new InstantiatorFactory(new AsmFactory(), true);
+	public static final InstantiatorFactory ASM = new InstantiatorFactory(TEST_ASM_FACTORY_PROVIDER, true);
 
 
 

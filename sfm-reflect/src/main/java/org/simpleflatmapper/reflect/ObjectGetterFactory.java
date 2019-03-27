@@ -1,6 +1,6 @@
 package org.simpleflatmapper.reflect;
 
-import org.simpleflatmapper.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.asm.AsmFactoryProvider;
 import org.simpleflatmapper.reflect.getter.FieldGetter;
 import org.simpleflatmapper.reflect.getter.MethodGetter;
 import org.simpleflatmapper.reflect.getter.GetterHelper;
@@ -32,9 +32,9 @@ import static org.simpleflatmapper.util.Asserts.requireNonNull;
  *
  */
 public final class ObjectGetterFactory {
-    private final AsmFactory asmFactory;
+    private final AsmFactoryProvider asmFactory;
 
-	public ObjectGetterFactory(AsmFactory asmFactory) {
+	public ObjectGetterFactory(AsmFactoryProvider asmFactory) {
         this.asmFactory = asmFactory;
     }
 	
@@ -55,7 +55,7 @@ public final class ObjectGetterFactory {
 		boolean accessible = Modifier.isPublic(method.getModifiers()) && Modifier.isPublic(method.getDeclaringClass().getModifiers());
 		if (asmFactory != null && accessible) {
             try {
-                return asmFactory.createGetter(method);
+                return asmFactory.getAsmFactory(method.getDeclaringClass().getClassLoader()).createGetter(method);
             } catch(Throwable e) {
                 // ignore
             }
@@ -87,7 +87,7 @@ public final class ObjectGetterFactory {
 		boolean accessible = Modifier.isPublic(field.getModifiers()) && Modifier.isPublic(field.getDeclaringClass().getModifiers());
 		if (asmFactory != null && accessible) {
             try {
-                return asmFactory.createGetter(field);
+                return asmFactory.getAsmFactory(field.getDeclaringClass().getClassLoader()).createGetter(field);
             } catch(Throwable e) {}
         }
 

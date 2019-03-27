@@ -17,9 +17,8 @@ import org.simpleflatmapper.reflect.meta.MapClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 //IFJAVA8_START
 import org.simpleflatmapper.reflect.meta.OptionalClassMeta;
-
-import java.util.*;
 //IFJAVA8_END
+import java.util.*;
 
 import org.simpleflatmapper.reflect.meta.PassThroughClassMeta;
 import org.simpleflatmapper.reflect.meta.TupleClassMeta;

@@ -19,7 +19,7 @@ public final class JdbcTemplateMapperFactory extends AbstractColumnNameDiscrimin
 		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(),
 				FieldMapperColumnDefinition.<JdbcColumnKey>identity(),
 				NameBasedResultSetGetterFactory.INSTANCE,
-				new ContextualGetterFactoryAdapter<>(ResultSetGetterFactory.INSTANCE));
+				new ContextualGetterFactoryAdapter<ResultSet, JdbcColumnKey>(ResultSetGetterFactory.INSTANCE));
 	}
 
 	public static JdbcTemplateMapperFactory newInstance() {

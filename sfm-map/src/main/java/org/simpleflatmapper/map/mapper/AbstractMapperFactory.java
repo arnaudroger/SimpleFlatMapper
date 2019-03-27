@@ -2,7 +2,6 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
@@ -10,12 +9,10 @@ import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.getter.ComposedContextualGetterFactory;
 import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
-import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.property.IgnoreProperty;
 import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
-import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
@@ -24,7 +21,6 @@ import org.simpleflatmapper.util.*;
 
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
-import java.sql.ResultSet;
 import java.util.*;
 
 

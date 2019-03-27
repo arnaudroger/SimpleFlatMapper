@@ -20,7 +20,6 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
-import javax.swing.plaf.nimbus.State;
 import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.ResultSet;

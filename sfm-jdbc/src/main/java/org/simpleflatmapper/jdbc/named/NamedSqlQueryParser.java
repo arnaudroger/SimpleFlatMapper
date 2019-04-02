@@ -87,7 +87,7 @@ public final class NamedSqlQueryParser {
     }
 
     private boolean isSpaceOrSymbol(char c) {
-        return c == ' ' || c == '=' || c == '<' || c == '>' || c == '!' || c == ',';
+        return c == ' ' || c == '=' || c == '<' || c == '>' || c == '!' || c == ','|| c == '\r' || c == '\n' ;
     }
 
     private Symbol consumeSymbol(CharSequence cs, int i) {

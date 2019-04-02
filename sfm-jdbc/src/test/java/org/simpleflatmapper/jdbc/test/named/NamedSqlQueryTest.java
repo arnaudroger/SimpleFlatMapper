@@ -112,4 +112,23 @@ public class NamedSqlQueryTest {
                 namedSqlQuery.toSqlQuery());
 
     }
+
+    @Test
+    public void testIssue625() {
+        String sql = "WITH some_cte AS (\n" +
+                "    SELECT :form_email_address\n" +
+                "    FROM something s\n" +
+                ")\n" +
+                "SELECT :form_name\n" +
+                "FROM something s";
+
+        NamedSqlQuery namedSqlQuery = NamedSqlQuery.parse(sql);
+
+        assertEquals(2, namedSqlQuery.getParametersSize());
+
+        assertEquals("form_email_address", namedSqlQuery.getParameter(0).getName());
+        assertEquals("form_name", namedSqlQuery.getParameter(1).getName());
+
+
+    }
 }

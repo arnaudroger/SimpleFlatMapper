@@ -7,12 +7,11 @@ import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.map.annotation.Key;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Collection;
 
 public class Issue626Test {
 
-
+//IFJAVA8_START
     @Test
     public void test() {
 
@@ -54,9 +53,9 @@ public class Issue626Test {
 
         private boolean promotion;
 
-        private LocalDate created;
+        private java.time.LocalDate created;
 
-        private LocalDate updated;
+        private java.time.LocalDate updated;
 
         private boolean status;
 
@@ -102,19 +101,19 @@ public class Issue626Test {
             this.promotion = promotion;
         }
 
-        public LocalDate getCreated() {
+        public java.time.LocalDate getCreated() {
             return created;
         }
 
-        public void setCreated(LocalDate created) {
+        public void setCreated(java.time.LocalDate created) {
             this.created = created;
         }
 
-        public LocalDate getUpdated() {
+        public java.time.LocalDate getUpdated() {
             return updated;
         }
 
-        public void setUpdated(LocalDate updated) {
+        public void setUpdated(java.time.LocalDate updated) {
             this.updated = updated;
         }
 
@@ -144,8 +143,8 @@ public class Issue626Test {
         private String description;
 
         private String url;
-        private LocalDate created;
-        private LocalDate updated;
+        private java.time.LocalDate created;
+        private java.time.LocalDate updated;
 
 
         public Long getId() {
@@ -180,20 +179,21 @@ public class Issue626Test {
             this.url = url;
         }
 
-        public LocalDate getCreated() {
+        public java.time.LocalDate getCreated() {
             return created;
         }
 
-        public void setCreated(LocalDate created) {
+        public void setCreated(java.time.LocalDate created) {
             this.created = created;
         }
 
-        public LocalDate getUpdated() {
+        public java.time.LocalDate getUpdated() {
             return updated;
         }
 
-        public void setUpdated(LocalDate updated) {
+        public void setUpdated(java.time.LocalDate updated) {
             this.updated = updated;
         }
     }
+    //IFJAVA8_END
 }

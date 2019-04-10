@@ -1476,7 +1476,20 @@ public class AbstractMapperBuilderTest {
         
         assertEquals(1, c.id.getId());
         assertEquals("n", c.values.get(0).name);
-    }  
+    }
+
+    @Test
+    public void test624() {
+        SampleMapperBuilder<C543_NamedParam> builder = new SampleMapperBuilder<C543_NamedParam>(ReflectionService.newInstance().disableAsm().getClassMeta(C543_NamedParam.class), MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().assumeInjectionModifiesValues(true));
+        builder.addMapping("id_id", KeyProperty.DEFAULT);
+        builder.addMapping("values_name", KeyProperty.DEFAULT);
+
+        SetRowMapper<Object[], Object[][], C543_NamedParam, Exception> mapper = builder.mapper();
+
+        C543_NamedParam c = mapper.map(new Object[]{1, "n"});
+        assertEquals(1, c.id.getId());
+        assertEquals("n", c.values.get(0).name);
+    }
     
     public static class C543 {
         private final List<String> values;

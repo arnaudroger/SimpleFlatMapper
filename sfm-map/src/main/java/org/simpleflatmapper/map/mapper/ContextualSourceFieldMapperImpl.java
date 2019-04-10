@@ -28,7 +28,9 @@ public class ContextualSourceFieldMapperImpl<S, T> implements ContextualSourceFi
 
     @Override
     public T map(S source) throws MappingException {
-        return delegate.map(source, mappingContextFactory.newContext());
+        MappingContext<? super S> context = mappingContextFactory.newContext();
+        context.handleSource(source);
+        return delegate.map(source, context);
     }
 
     @Override

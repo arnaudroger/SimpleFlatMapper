@@ -4,7 +4,9 @@ import org.junit.Test;
 import org.simpleflatmapper.jdbc.impl.JpaAliasProvider;
 import org.simpleflatmapper.jdbc.impl.JpaAliasProviderFactory;
 import org.simpleflatmapper.reflect.getter.ConstantBooleanGetter;
+import org.simpleflatmapper.reflect.meta.AliasProvider;
 import org.simpleflatmapper.reflect.meta.AliasProviderService;
+import org.simpleflatmapper.reflect.meta.ArrayAliasProvider;
 import org.simpleflatmapper.reflect.meta.DefaultAliasProvider;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ListCollector;
@@ -17,8 +19,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -50,7 +51,20 @@ public class AliasProviderTest {
     
     @Test
     public void testFactoryJPAPresent() {
-        assertEquals(JpaAliasProvider.class, AliasProviderService.getAliasProvider().getClass());
+        AliasProvider aliasProvider = AliasProviderService.getAliasProvider();
+        if (aliasProvider instanceof ArrayAliasProvider) {
+            ArrayAliasProvider arrayAliasProvider = (ArrayAliasProvider) aliasProvider;
+            for(AliasProvider ap : arrayAliasProvider.providers()) {
+                if (ap instanceof JpaAliasProvider) {
+                    return;
+                }
+            }
+
+            fail();
+
+        } else {
+            assertEquals(JpaAliasProvider.class, aliasProvider.getClass());
+        }
     }
     @Test
     public void testFactoryJPANotPresent() throws Exception {
@@ -93,8 +107,11 @@ public class AliasProviderTest {
             Object consumer = cl.loadClass(ListCollector.class.getName()).newInstance();
             jpa.getMethod("produce", consumerClass).invoke(jpa.getConstructor().newInstance(), consumer);
 
-            List<String> list = (List<String>) consumer.getClass().getMethod("getList").invoke(consumer);
-            assertTrue(list.isEmpty());
+            List<AliasProvider> list = (List<AliasProvider>) consumer.getClass().getMethod("getList").invoke(consumer);
+
+            for(Object ap : list) {
+                if (ap.getClass().getName().equals(JpaAliasProvider.class.getName())) fail();
+            }
 
         } finally {
             Thread.currentThread().setContextClassLoader(original);

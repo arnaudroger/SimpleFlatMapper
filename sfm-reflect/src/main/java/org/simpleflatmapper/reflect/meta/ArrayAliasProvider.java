@@ -35,7 +35,7 @@ public class ArrayAliasProvider implements AliasProvider {
             Table table = ap.getTable(target);
             if (! Table.isNull(table)) return table;
         }
-        return null;
+        return Table.NULL;
     }
 
     public AliasProvider[] providers() {

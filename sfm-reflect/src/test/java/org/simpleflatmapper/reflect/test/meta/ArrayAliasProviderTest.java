@@ -42,7 +42,7 @@ public class ArrayAliasProviderTest {
 
         assertNull(p2.getAliasForField(null));
         assertNull(p2.getAliasForMethod(null));
-        assertNull(p2.getTable(null));
+        assertEquals(Table.NULL, p2.getTable(null));
     }
 
 }

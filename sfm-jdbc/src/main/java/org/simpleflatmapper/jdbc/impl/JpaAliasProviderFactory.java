@@ -19,5 +19,6 @@ public class JpaAliasProviderFactory implements AliasProviderProducer {
         if (isActive()) {
             consumer.accept(new JpaAliasProvider());
         }
+        consumer.accept(new SfmAliasProvider());
     }
 }

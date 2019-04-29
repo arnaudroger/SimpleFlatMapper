@@ -290,7 +290,7 @@ public abstract class AbstractMapperFactory<
 	 * @return the current factory
 	 */
 	public final MF addColumnPropertyForType(Type type, Predicate<? super K> keyPredicate, Object... properties) {
-		for(Object property : properties) {
+		for(final Object property : properties) {
 			addColumnPropertyForType(type, keyPredicate, new UnaryFactory<K, Object>() {
 				@Override
 				public Object newInstance(K k) {
@@ -309,7 +309,7 @@ public abstract class AbstractMapperFactory<
 	 * @param propertyFactory the properties
 	 * @return the current factory
 	 */
-	public final MF addColumnPropertyForType(Type type, Predicate<? super K> keyPredicate, UnaryFactory<K, Object> propertyFactory) {
+	public final MF addColumnPropertyForType(final Type type, Predicate<? super K> keyPredicate, UnaryFactory<K, Object> propertyFactory) {
 		return addColumnPropertyForType(new Predicate<Type>() {
 			@Override
 			public boolean test(Type t) {

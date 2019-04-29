@@ -12,7 +12,7 @@ JDK_ARCHIVE=openjdk-10_linux-x64_bin.tar.gz
 #jdk-${JDK_FEATURE}+${JDK_BUILD}_linux-x64_bin.tar.gz
 
 cd ~
-wget https://download.java.net/java/GA/jdk10/10/binaries/openjdk-10_linux-x64_bin.tar.gz
+wget --no-check-certificate https://download.java.net/java/GA/jdk10/10/binaries/openjdk-10_linux-x64_bin.tar.gz
 #https://download.java.net/java/jdk${JDK_FEATURE}/archive/${JDK_BUILD}/BCL/${JDK_ARCHIVE}
 tar -xzf ${JDK_ARCHIVE}
 export JAVA_HOME=~/jdk-${JDK_FEATURE}

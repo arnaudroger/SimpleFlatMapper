@@ -12,7 +12,7 @@ JDK_ARCHIVE=openjdk-11_linux-x64_bin.tar.gz
 #JDK_ARCHIVE=openjdk-${JDK_FEATURE}+${JDK_BUILD}_linux-x64_bin.tar.gz
 
 cd ~
-wget https://download.java.net/java/ga/jdk11/openjdk-11_linux-x64_bin.tar.gz
+wget --no-check-certificate https://download.java.net/java/ga/jdk11/openjdk-11_linux-x64_bin.tar.gz
 #wget https://download.java.net/java/early_access/jdk${JDK_FEATURE}/${JDK_BUILD}/GPL/${JDK_ARCHIVE}
 tar -xzf ${JDK_ARCHIVE}
 export JAVA_HOME=~/jdk-${JDK_FEATURE}

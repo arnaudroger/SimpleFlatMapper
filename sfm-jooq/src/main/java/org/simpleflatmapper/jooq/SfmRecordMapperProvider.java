@@ -5,7 +5,9 @@ import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.util.Function;
 
+import java.lang.reflect.Type;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -16,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
 public class SfmRecordMapperProvider implements RecordMapperProvider {
 
 	private final ConcurrentMap<TargetColumnsMapperKey, MapperAndContext> mapperCache = new ConcurrentHashMap<TargetColumnsMapperKey, MapperAndContext>();
-	private final MapperConfig<JooqFieldKey, Record> mapperConfig;
+	private final Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory;
 	private final ReflectionService reflectionService;
 
 	@Deprecated
@@ -24,7 +26,12 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 	 * please use SfmRecorMapperProviderFactory.
 	 */
 	public SfmRecordMapperProvider() {
-		this(MapperConfig.<JooqFieldKey, Record>fieldMapperConfig(), ReflectionService.newInstance());
+		this(new Function<Type, MapperConfig<JooqFieldKey, Record>>() {
+			@Override
+			public MapperConfig<JooqFieldKey, Record> apply(Type type) {
+				return MapperConfig.<JooqFieldKey, Record>fieldMapperConfig();
+			}
+		}, ReflectionService.newInstance());
 	}
 
 	@Deprecated
@@ -32,8 +39,8 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 	 * please use SfmRecorMapperProviderFactory.
 	 */
 	public SfmRecordMapperProvider(
-			MapperConfig<JooqFieldKey, Record> mapperConfig, ReflectionService reflectionService) {
-		this.mapperConfig = mapperConfig;
+			Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory, ReflectionService reflectionService) {
+		this.mapperConfigFactory = mapperConfigFactory;
 		this.reflectionService = reflectionService;
 	}
 
@@ -49,6 +56,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 		
 				
 		if (mc == null) {
+			MapperConfig<JooqFieldKey, Record> mapperConfig = mapperConfigFactory.apply(type);
 
 			JooqMapperBuilder<E> mapperBuilder =
 					new JooqMapperBuilder<E>(

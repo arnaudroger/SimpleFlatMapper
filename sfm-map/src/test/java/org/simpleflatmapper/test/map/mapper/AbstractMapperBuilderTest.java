@@ -1144,7 +1144,7 @@ public class AbstractMapperBuilderTest {
 
         public <T> SampleMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
             return new SampleMapperBuilder<T>(
-                    classMeta, mapperConfig()
+                    classMeta, mapperConfig(classMeta.getType())
             );
         }
     }

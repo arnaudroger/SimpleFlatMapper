@@ -10,7 +10,7 @@ public class FieldMapperColumnDefinitionProviderImpl<K extends FieldKey<K>> exte
     public FieldMapperColumnDefinitionProviderImpl() {
     }
 
-    public FieldMapperColumnDefinitionProviderImpl(List<PredicatedColunnPropertyFactory<K>> properties) {
+    public FieldMapperColumnDefinitionProviderImpl(List<PredicatedColumnPropertyFactory<K>> properties) {
         super(properties);
     }
 

@@ -18,12 +18,12 @@ import java.util.List;
 
 public abstract class AbstractColumnDefinitionProvider<K extends FieldKey<K>> implements ColumnDefinitionProvider<K> {
 
-    protected final List<PredicatedColunnPropertyFactory<K>> properties;
+    protected final List<PredicatedColumnPropertyFactory<K>> properties;
 
     public AbstractColumnDefinitionProvider() {
-        this(new ArrayList<PredicatedColunnPropertyFactory<K>>());
+        this(new ArrayList<PredicatedColumnPropertyFactory<K>>());
     }
-    public AbstractColumnDefinitionProvider(List<PredicatedColunnPropertyFactory<K>> properties) {
+    public AbstractColumnDefinitionProvider(List<PredicatedColumnPropertyFactory<K>> properties) {
         this.properties = properties;
     }
 
@@ -48,7 +48,7 @@ public abstract class AbstractColumnDefinitionProvider<K extends FieldKey<K>> im
     }
 
     public void addColumnProperty(Predicate<? super K> predicate, UnaryFactory<? super K, Object> propertyFactory) {
-        properties.add(new PredicatedColunnPropertyFactory<K>(predicate, propertyFactory));
+        properties.add(new PredicatedColumnPropertyFactory<K>(predicate, propertyFactory));
     }
 
 
@@ -78,7 +78,7 @@ public abstract class AbstractColumnDefinitionProvider<K extends FieldKey<K>> im
         ColumnDefinition<K, ?> definition = identity();
 
         for(int i = properties.size() - 1; i >= 0; i--) {
-            PredicatedColunnPropertyFactory<K> tuple2 = properties.get(i);
+            PredicatedColumnPropertyFactory<K> tuple2 = properties.get(i);
             if (tuple2.predicate.test(key)) {
                 Object columnProperty = tuple2.columnPropertyFactory.newInstance(key);
                 if (columnProperty != null) {
@@ -94,13 +94,13 @@ public abstract class AbstractColumnDefinitionProvider<K extends FieldKey<K>> im
 
     protected abstract ColumnDefinition<K, ?> identity();
 
-    public List<PredicatedColunnPropertyFactory<K>> getProperties() {
+    public List<PredicatedColumnPropertyFactory<K>> getProperties() {
         return properties;
     }
 
     @Override
     public <CP, BC extends BiConsumer<Predicate<? super K>, CP>> BC forEach(Class<CP> propertyType, BC consumer) {
-        for (PredicatedColunnPropertyFactory<K> tuple2 : properties) {
+        for (PredicatedColumnPropertyFactory<K> tuple2 : properties) {
             final UnaryFactory<? super K, Object> unaryFactory = tuple2.columnPropertyFactory;
             if (unaryFactory instanceof ConstantUnaryFactory) {
                 final Object columnProperty = unaryFactory.newInstance(null);
@@ -112,11 +112,15 @@ public abstract class AbstractColumnDefinitionProvider<K extends FieldKey<K>> im
         return consumer;
     }
 
-    public static class PredicatedColunnPropertyFactory<K extends FieldKey<K>> {
+    public void addColumnProperty(PredicatedColumnPropertyFactory predicatedColumnPropertyFactory) {
+        properties.add(predicatedColumnPropertyFactory);
+    }
+
+    public static class PredicatedColumnPropertyFactory<K extends FieldKey<K>> {
         private final Predicate<? super K> predicate;
         private final UnaryFactory<? super K, Object> columnPropertyFactory;
 
-        public PredicatedColunnPropertyFactory(Predicate<? super K> predicate, UnaryFactory<? super K, Object> columnPropertyFactory) {
+        public PredicatedColumnPropertyFactory(Predicate<? super K> predicate, UnaryFactory<? super K, Object> columnPropertyFactory) {
             this.predicate = predicate;
             this.columnPropertyFactory = columnPropertyFactory;
         }

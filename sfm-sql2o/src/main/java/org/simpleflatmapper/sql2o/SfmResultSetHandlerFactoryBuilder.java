@@ -40,7 +40,7 @@ public class SfmResultSetHandlerFactoryBuilder extends DefaultResultSetHandlerFa
         JdbcMapperFactory jdbcMapperFactory = jdbcMapperFactoryFactory.apply(aClass);
 
         PropertyNameMatcherFactory propertyNameMatcherFactory =
-                jdbcMapperFactory.mapperConfig().propertyNameMatcherFactory();
+                jdbcMapperFactory.mapperConfig(aClass).propertyNameMatcherFactory();
         if (propertyNameMatcherFactory instanceof DefaultPropertyNameMatcherFactory) {
             propertyNameMatcherFactory  =
                     ((DefaultPropertyNameMatcherFactory)propertyNameMatcherFactory).exactMatch(exactMatch).caseSensitive(isCaseSensitive());

@@ -1,8 +1,6 @@
 package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.map.FieldKey;
-import org.simpleflatmapper.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.*;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
@@ -11,12 +9,10 @@ import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.property.IgnoreProperty;
 import org.simpleflatmapper.map.property.OptionalProperty;
+import org.simpleflatmapper.map.property.RenameProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.map.PropertyNameMatcherFactory;
-import org.simpleflatmapper.map.MapperBuilderErrorHandler;
-import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.util.*;
 
 import java.lang.reflect.Member;
@@ -37,6 +33,7 @@ public abstract class AbstractMapperFactory<
     private ConsumerErrorHandler consumerErrorHandler = RethrowConsumerErrorHandler.INSTANCE;
 
     private final AbstractColumnDefinitionProvider<K> columnDefinitions;
+    private final List<TypedPredicatedPredicatedColumnPropertyFactory<K>> typedPredicatedPredicatedColunnPropertyFactories = new ArrayList<TypedPredicatedPredicatedColumnPropertyFactory<K>>();
     private final List<MapperConfig.Discriminator<S, ?>> discriminators = new ArrayList<MapperConfig.Discriminator<S, ?>>();
 	private final ColumnDefinition<K, ?> identity;
 
@@ -172,10 +169,12 @@ public abstract class AbstractMapperFactory<
 		this.rowFilter = rowFilter;
 		return (MF) this;
 	}
-	
 	public final MapperConfig<K, S> mapperConfig() {
+		return mapperConfig(Object.class);
+	}
+	public final MapperConfig<K, S> mapperConfig(Type targetType) {
 		return MapperConfig
-				.<K, S>config(enrichColumnDefinitions(columnDefinitions))
+				.<K, S>config(enrichColumnDefinitions(columnDefinitions(targetType)))
 				.mapperBuilderErrorHandler(mapperBuilderErrorHandler)
 				.propertyNameMatcherFactory(propertyNameMatcherFactory)
 				.failOnAsm(failOnAsm)
@@ -202,6 +201,16 @@ public abstract class AbstractMapperFactory<
 	public final MF addAlias(String column, String actualPropertyName) {
 		return addColumnDefinition(column,  identity.addRename(actualPropertyName));
 	}
+
+    /**
+     * Associate an alias on the property key to rename to value on the specific type.
+     * @param column the column name to rename
+     * @param actualPropertyName then name to rename to match the actual property name
+     * @return the current factory
+     */
+    public final MF addAliasForType(Type type, String column, String actualPropertyName) {
+        return addColumnPropertyForType(type, column,  new RenameProperty(actualPropertyName));
+    }
 
     /**
      * Associate the specified columnDefinition to the specified property.
@@ -259,6 +268,65 @@ public abstract class AbstractMapperFactory<
 	 */
 	public final MF addColumnProperty(Predicate<? super K> predicate, UnaryFactory<K, Object> propertyFactory) {
 		columnDefinitions.addColumnProperty(predicate, propertyFactory);
+		return (MF) this;
+	}
+
+	/**
+	 * Associate the specified columnProperties to the property matching the key predicate and type.
+	 * @param type the type
+	 * @param column the property predicate
+	 * @param properties the properties
+	 * @return the current factory
+	 */
+	public final MF addColumnPropertyForType(Type type, String column, Object... properties) {
+		return addColumnPropertyForType(type, CaseInsensitiveFieldKeyNamePredicate.of(column), properties);
+	}
+
+	/**
+	 * Associate the specified columnProperties to the property matching the key predicate and type.
+	 * @param type the type
+	 * @param keyPredicate the property predicate
+	 * @param properties the properties
+	 * @return the current factory
+	 */
+	public final MF addColumnPropertyForType(Type type, Predicate<? super K> keyPredicate, Object... properties) {
+		for(Object property : properties) {
+			addColumnPropertyForType(type, keyPredicate, new UnaryFactory<K, Object>() {
+				@Override
+				public Object newInstance(K k) {
+					return property;
+				}
+			});
+		}
+		return (MF) this;
+	}
+
+
+	/**
+	 * Associate the specified columnProperties to the property matching the key predicate and type.
+	 * @param type the type
+	 * @param keyPredicate the property predicate
+	 * @param propertyFactory the properties
+	 * @return the current factory
+	 */
+	public final MF addColumnPropertyForType(Type type, Predicate<? super K> keyPredicate, UnaryFactory<K, Object> propertyFactory) {
+		return addColumnPropertyForType(new Predicate<Type>() {
+			@Override
+			public boolean test(Type t) {
+				return TypeHelper.areEquals(type, t);
+			}
+		}, keyPredicate, propertyFactory);
+	}
+
+	/**
+	 * Associate the specified columnProperties to the property matching the key predicate and type predicate.
+	 * @param typePredicate the type predicate
+	 * @param keyPredicate the property predicate
+	 * @param propertyFactory the properties
+	 * @return the current factory
+	 */
+	public final MF addColumnPropertyForType(Predicate<Type> typePredicate, Predicate<? super K> keyPredicate, UnaryFactory<K, Object> propertyFactory) {
+		typedPredicatedPredicatedColunnPropertyFactories.add(new TypedPredicatedPredicatedColumnPropertyFactory<K>(typePredicate, new AbstractColumnDefinitionProvider.PredicatedColumnPropertyFactory(keyPredicate, propertyFactory)));
 		return (MF) this;
 	}
 
@@ -469,6 +537,18 @@ public abstract class AbstractMapperFactory<
 		return columnDefinitions;
 	}
 
+	public AbstractColumnDefinitionProvider<K> columnDefinitions(Type targetType) {
+		AbstractColumnDefinitionProvider<K> provider = columnDefinitions.copy();
+
+		for(TypedPredicatedPredicatedColumnPropertyFactory f : typedPredicatedPredicatedColunnPropertyFactories) {
+			if (f.predicate.test(targetType)) {
+				provider.addColumnProperty(f.predicatedColumnPropertyFactory);
+			}
+		}
+
+		return provider;
+	}
+
 	public <T> MF discriminator(Type commonType, Consumer<DiscriminatorBuilder<S, T>> consumer) {
 		DiscriminatorBuilder<S, T> db = new DiscriminatorBuilder<S, T>(commonType, getReflectionService());
 		
@@ -649,6 +729,16 @@ public abstract class AbstractMapperFactory<
 				throw new IllegalArgumentException("type " + target + " is not a subclass of " + commonType);
 			}
 			return discriminatorCase(predicate, reflectionService.<T>getClassMeta(target));
+		}
+	}
+
+	private class TypedPredicatedPredicatedColumnPropertyFactory<K> {
+    	private final Predicate<Type> predicate;
+    	private final AbstractColumnDefinitionProvider.PredicatedColumnPropertyFactory predicatedColumnPropertyFactory;
+
+		private TypedPredicatedPredicatedColumnPropertyFactory(Predicate<Type> predicate, AbstractColumnDefinitionProvider.PredicatedColumnPropertyFactory predicatedColumnPropertyFactory) {
+			this.predicate = predicate;
+			this.predicatedColumnPropertyFactory = predicatedColumnPropertyFactory;
 		}
 	}
 }

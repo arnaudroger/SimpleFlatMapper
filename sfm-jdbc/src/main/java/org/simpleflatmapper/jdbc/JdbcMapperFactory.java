@@ -167,7 +167,7 @@ public final class JdbcMapperFactory
 	}
 
 	public <T> JdbcMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
-		MapperConfig<JdbcColumnKey, ResultSet> mapperConfig = mapperConfig();
+		MapperConfig<JdbcColumnKey, ResultSet> mapperConfig = mapperConfig(classMeta.getType());
 		return new JdbcMapperBuilder<T>(
 						classMeta,
 						mapperConfig,
@@ -195,7 +195,7 @@ public final class JdbcMapperFactory
 	}
 
 	public <T> PreparedStatementMapperBuilder<T> buildFrom(final ClassMeta<T> classMeta) {
-		return new PreparedStatementMapperBuilder<T>(classMeta, mapperConfig(), ConstantTargetFieldMapperFactoryImpl.newInstance(PreparedStatementSetterFactory.INSTANCE, PreparedStatement.class));
+		return new PreparedStatementMapperBuilder<T>(classMeta, mapperConfig(classMeta.getType()), ConstantTargetFieldMapperFactoryImpl.newInstance(PreparedStatementSetterFactory.INSTANCE, PreparedStatement.class));
 	}
 
 	public <T> PreparedStatementMapperBuilder<T> from(final Class<T> target) {

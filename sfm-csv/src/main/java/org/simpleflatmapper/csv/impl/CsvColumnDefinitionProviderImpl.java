@@ -4,7 +4,6 @@ package org.simpleflatmapper.csv.impl;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +12,14 @@ public class CsvColumnDefinitionProviderImpl extends AbstractColumnDefinitionPro
     public CsvColumnDefinitionProviderImpl(){
     }
 
-    public CsvColumnDefinitionProviderImpl(List<PredicatedColunnPropertyFactory<CsvColumnKey>> properties) {
+    public CsvColumnDefinitionProviderImpl(List<PredicatedColumnPropertyFactory<CsvColumnKey>> properties) {
         super(properties);
     }
 
 
     @Override
     public AbstractColumnDefinitionProvider<CsvColumnKey> copy() {
-        return new CsvColumnDefinitionProviderImpl(new ArrayList<PredicatedColunnPropertyFactory<CsvColumnKey>>(properties));
+        return new CsvColumnDefinitionProviderImpl(new ArrayList<PredicatedColumnPropertyFactory<CsvColumnKey>>(properties));
     }
 
     @Override

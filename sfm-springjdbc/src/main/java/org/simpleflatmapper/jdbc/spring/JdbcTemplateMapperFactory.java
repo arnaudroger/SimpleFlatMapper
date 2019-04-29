@@ -88,7 +88,7 @@ public final class JdbcTemplateMapperFactory extends AbstractColumnNameDiscrimin
 	}
 
 	public <T> SqlParameterSourceFactory<T> newSqlParameterSourceFactory(Type target) {
-		return new SqlParameterSourceFactory<T>(new DynamicPlaceHolderValueGetterSource<T>(this.<T>getClassMeta(target), mapperConfig()));
+		return new SqlParameterSourceFactory<T>(new DynamicPlaceHolderValueGetterSource<T>(this.<T>getClassMeta(target), mapperConfig(target)));
 	}
 
 	public <T> SqlParameterSourceFactory<T> newSqlParameterSourceFactory(TypeReference<T> target) {
@@ -100,7 +100,7 @@ public final class JdbcTemplateMapperFactory extends AbstractColumnNameDiscrimin
 	}
 
 	public <T> SqlParameterSourceFactory<T> newSqlParameterSourceFactory(Type target, String sql) {
-		SqlParameterSourceBuilder<T> builder = new SqlParameterSourceBuilder<T>(this.<T>getClassMeta(target), mapperConfig());
+		SqlParameterSourceBuilder<T> builder = new SqlParameterSourceBuilder<T>(this.<T>getClassMeta(target), mapperConfig(target));
 		return builder.buildFactory(sql);
 	}
 

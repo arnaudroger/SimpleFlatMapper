@@ -54,7 +54,7 @@ public class FieldMapperColumnDefinitionProviderImplTest {
         provider.addColumnProperty(prop2Predicate, prop2Fact);
 
 
-        List<AbstractColumnDefinitionProvider.PredicatedColunnPropertyFactory<SampleFieldKey>> properties =
+        List<AbstractColumnDefinitionProvider.PredicatedColumnPropertyFactory<SampleFieldKey>> properties =
                 provider.getProperties();
 
         assertEquals(2, properties.size());

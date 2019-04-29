@@ -220,7 +220,7 @@ public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMappe
 	}
 
 	public <T> CsvMapperBuilder<T> newBuilder(final ClassMeta<T> classMeta) {
-		MapperConfig<CsvColumnKey, CsvRow> mapperConfig = mapperConfig();
+		MapperConfig<CsvColumnKey, CsvRow> mapperConfig = mapperConfig(classMeta.getType());
 		CsvMappingContextFactoryBuilder parentBuilder = new CsvMappingContextFactoryBuilder(!mapperConfig.unorderedJoin());
 		if (mapperConfig.fieldMapperErrorHandler() instanceof ResultFieldMapperErrorHandler) {
 			parentBuilder.addSupplier(new Supplier<Object>() {

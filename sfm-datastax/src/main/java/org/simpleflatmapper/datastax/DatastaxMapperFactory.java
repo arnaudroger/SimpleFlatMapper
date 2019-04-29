@@ -67,7 +67,7 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
     }
 
     public <T> DatastaxMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
-        MapperConfig<DatastaxColumnKey, Row> mapperConfig = mapperConfig();
+        MapperConfig<DatastaxColumnKey, Row> mapperConfig = mapperConfig(classMeta.getType());
         return new DatastaxMapperBuilder<T>(classMeta,
                 mapperConfig,
                 (ContextualGetterFactory<? super GettableByIndexData, DatastaxColumnKey>) getterFactory,
@@ -88,7 +88,7 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
     }
 
     public <T> SettableDataMapperBuilder<T> newBuilderFrom(ClassMeta<T> classMeta) {
-        MapperConfig<DatastaxColumnKey,Row> config = mapperConfig();
+        MapperConfig<DatastaxColumnKey,Row> config = mapperConfig(classMeta.getType());
         return new SettableDataMapperBuilder<T>(
                 classMeta,
                 config,
@@ -104,7 +104,7 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
     }
     public <T> DatastaxBinder<T> mapFrom(Type type) {
         final ClassMeta<T> classMeta = getClassMeta(type);
-        return new DatastaxBinder<T>(classMeta, mapperConfig());
+        return new DatastaxBinder<T>(classMeta, mapperConfig(type));
     }
 
     public <T> DatastaxMapper<T> mapTo(Class<T> type) {

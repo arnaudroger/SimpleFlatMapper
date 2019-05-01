@@ -4,7 +4,7 @@ module org.simpleflatmapper.datastax {
         requires transitive org.simpleflatmapper.map;
         requires transitive org.simpleflatmapper.tuple;
         requires cassandra.driver.core;
-        requires com.google.common;
+        requires guava;
         exports org.simpleflatmapper.datastax;
 
         provides org.simpleflatmapper.reflect.meta.AliasProviderProducer

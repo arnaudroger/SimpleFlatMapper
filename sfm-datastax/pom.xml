@@ -54,11 +54,10 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>27.1-android</version>
+			<version>19.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -151,14 +150,6 @@
 			<activation>
 				<jdk>1.6</jdk>
 			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-					<version>18.0</version>
-					<scope>provided</scope>
-				</dependency>
-			</dependencies>
 			<build>
 				<plugins>
 					<plugin>
@@ -186,14 +177,6 @@
 			<activation>
 				<jdk>1.7</jdk>
 			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-					<version>18.0</version>
-					<scope>provided</scope>
-				</dependency>
-			</dependencies>
 			<build>
 				<plugins>
 					<plugin>

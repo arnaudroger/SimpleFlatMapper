@@ -6,7 +6,7 @@ package com.infotech.opensesame.src.user.user;//
 
 import org.simpleflatmapper.map.annotation.Key;
 
-public class CompanyDTO {
+public class ParkSlotDTO {
     @Key
     private Long id;
     private String name;
@@ -68,10 +68,10 @@ public class CompanyDTO {
         return "CompanyDTO(id=" + var10000 + ", name=" + this.getName() + ", externalId=" + this.getExternalId() + ", floor=" + this.getFloor() + ", phone=" + this.getPhone() + ", description=" + this.getDescription() + ")";
     }
 
-    public CompanyDTO() {
+    public ParkSlotDTO() {
     }
 
-    public CompanyDTO(Long id, String name, String externalId, int floor, String phone, String description) {
+    public ParkSlotDTO(Long id, String name, String externalId, int floor, String phone, String description) {
         this.id = id;
         this.name = name;
         this.externalId = externalId;
@@ -83,10 +83,10 @@ public class CompanyDTO {
     public boolean equals(Object o) {
         if (o == this) {
             return true;
-        } else if (!(o instanceof CompanyDTO)) {
+        } else if (!(o instanceof ParkSlotDTO)) {
             return false;
         } else {
-            CompanyDTO other = (CompanyDTO)o;
+            ParkSlotDTO other = (ParkSlotDTO)o;
             if (!other.canEqual(this)) {
                 return false;
             } else {
@@ -154,7 +154,7 @@ public class CompanyDTO {
     }
 
     protected boolean canEqual(Object other) {
-        return other instanceof CompanyDTO;
+        return other instanceof ParkSlotDTO;
     }
 
     public int hashCode() {

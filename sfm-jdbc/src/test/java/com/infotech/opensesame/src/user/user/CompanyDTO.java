@@ -1,4 +1,4 @@
-//
+package com.infotech.opensesame.src.user.user;//
 // Source code recreated from a .class file by IntelliJ IDEA
 // (powered by Fernflower decompiler)
 //
@@ -158,10 +158,10 @@ public class CompanyDTO {
     }
 
     public int hashCode() {
-        int PRIME = true;
+        int PRIME = 31;
         int result = 1;
         Object $id = this.getId();
-        int result = result * 59 + ($id == null ? 43 : $id.hashCode());
+        result = result * 59 + ($id == null ? 43 : $id.hashCode());
         Object $name = this.getName();
         result = result * 59 + ($name == null ? 43 : $name.hashCode());
         Object $externalId = this.getExternalId();

@@ -1,15 +1,14 @@
 package org.simpleflatmapper.jdbc.property;
 
 
-import org.simpleflatmapper.jdbc.impl.setter.PreparedStatementSetterImpl;
 import org.simpleflatmapper.map.property.SetterFactoryProperty;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
 
-import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class IndexedSetterProperty extends SetterFactoryProperty {
 
@@ -32,6 +31,15 @@ public class IndexedSetterProperty extends SetterFactoryProperty {
         this.setter = setter;
     }
 
+    public static <T> IndexedSetterProperty of(final PreparedStatementSetter<T> setter) {
+        return new IndexedSetterProperty(new IndexedSetter<PreparedStatement, T>() {
+            @Override
+            public void set(PreparedStatement target, T value, int index) throws Exception {
+                setter.set(target, index, value);
+            }
+        });
+    }
+
     public IndexedSetter<?, ?> getIndexedSetter() {
         return setter;
     }
@@ -40,4 +48,10 @@ public class IndexedSetterProperty extends SetterFactoryProperty {
     public String toString() {
         return "IndexedSetter{IndexedSetter}";
     }
+
+
+    public interface PreparedStatementSetter<T> {
+        void set(PreparedStatement ps, int i, T val) throws SQLException;
+    }
+
 }

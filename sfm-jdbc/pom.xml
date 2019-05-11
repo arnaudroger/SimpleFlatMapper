@@ -76,6 +76,16 @@
 			<scope>test</scope>
 			<classifier>${jar.classifier}</classifier>
 		</dependency>
+
+		<dependency>
+			<groupId>issue</groupId>
+			<artifactId>issue653</artifactId>
+			<version>0.0.1</version>
+			<scope>system</scope>
+			<systemPath>
+				/Users/aroger/dev/github/SimpleFlatMapper/sfm-jdbc/src/test/resources/issue653/opensesame.jar
+			</systemPath>
+		</dependency>
 	</dependencies>
 
 	<build>

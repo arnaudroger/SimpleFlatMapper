@@ -143,9 +143,8 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 					// escaped area
 					while (currentIndex < bufferSize) {
 						if ((currentState & ESCAPED) == 0) {
-							char c = chars[currentIndex];
+							char c = chars[currentIndex++];
 							if (c == quoteChar) {
-								currentIndex++;
 								currentState &= TURN_OFF_QUOTED_AREA;
 								continue mainloop;
 							} else if (c == escapeChar) {
@@ -154,7 +153,6 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 						} else {
 							currentState &= TURN_OFF_ESCAPED;
 						}
-						currentIndex++;
 					}
 					return;
 				} else { // comment
@@ -242,7 +240,7 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 								final char c = chars[currentIndex];
 								final int ce = currentIndex;
 								currentIndex++;
-								if (((c & separatorFingerPrintMask) == separatorFingerPrint) 
+								if (((c & separatorFingerPrintMask) == separatorFingerPrint)
 										&& (c == separatorChar || c == LF || c == CR)) { // separator
 									cellPreProcessor.newCell(chars, csvBuffer.cellStartMark, ce, cellConsumer, currentState);
 									if (c == separatorChar) {
@@ -287,9 +285,8 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 					// escaped area
 					while (currentIndex < bufferSize) {
 						if ((currentState & ESCAPED) == 0) {
-							char c = chars[currentIndex];
+							char c = chars[currentIndex++];
 							if (c == quoteChar) {
-								currentIndex++;
 								currentState &= TURN_OFF_QUOTED_AREA;
 								continue mainloop;
 							} else if (c == escapeChar) {
@@ -298,7 +295,6 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 						} else {
 							currentState &= TURN_OFF_ESCAPED;
 						}
-						currentIndex++;
 					}
 					return false;
 				} else {

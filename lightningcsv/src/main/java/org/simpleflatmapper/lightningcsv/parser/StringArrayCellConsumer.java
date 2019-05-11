@@ -20,7 +20,7 @@ public final class StringArrayCellConsumer<RH extends CheckedConsumer<? super St
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
 		ensureCapacity();
-		currentRow[currentIndex] = new String(chars, offset, length);
+		currentRow[currentIndex] = length > 0 ? new String(chars, offset, length) : "";
 		currentIndex ++;
 	}
 

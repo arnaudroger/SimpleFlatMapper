@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class JdbcGetterFactoryProperty {
-    public static <T> GetterFactoryProperty forType(Class<T> type, final ResultSetGetter<T> getter) {
+    public static <T> GetterFactoryProperty forType(final Class<T> type, final ResultSetGetter<T> getter) {
         GetterFactory<ResultSet, JdbcColumnKey> setterFactory = new GetterFactory<ResultSet, JdbcColumnKey>() {
             @Override
             public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, Object... properties) {

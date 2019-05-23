@@ -23,7 +23,7 @@ public class JdbcGetterFactoryProperty {
 
                 if (TypeHelper.areEquals(type, target)) {
                     final int index = key.getIndex();
-                    return (Getter<ResultSet, P>) new ResultSetGetterAdapter<>(getter, index);
+                    return (Getter<ResultSet, P>) new ResultSetGetterAdapter<T>(getter, index);
                 }
                 return null;
             }

@@ -16,6 +16,7 @@ public class Issue649Test {
 
 
 
+    //IFJAVA8_START
     @Test
     public void testInetAddress() throws SQLException, UnknownHostException {
 
@@ -101,5 +102,6 @@ public class Issue649Test {
             this.b = b;
         }
     }
+    //IFJAVA8_END
 
 }

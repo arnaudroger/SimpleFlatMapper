@@ -27,59 +27,54 @@ public final class ReaderCharBuffer extends CharBuffer {
 		// shift buffer consumer data
 		int currentSize = this.bufferSize;
 		
-		int leftOverSize = currentSize - shiftFrom;
+		int newSize = currentSize - shiftFrom;
 		
 		// shift left over
-		char[] buffer = this.buffer;
-		System.arraycopy(buffer, shiftFrom, buffer, 0, leftOverSize);
+		char[] lbuffer = this.buffer;
+		System.arraycopy(lbuffer, shiftFrom, lbuffer, 0, newSize);
 		cellStartMark -= shiftFrom;
 		rowStartMark -= shiftFrom;
 
-		int availableSpace = buffer.length - leftOverSize;
+		int bufferLength = lbuffer.length;
+
+		int availableSpace = bufferLength - newSize;
+
+		int effectiveReadSize = readSize;
 	
 		// make sure we can read readSize
-		int readSize = this.readSize;
-		if  (availableSpace >= readSize){
-			int l = reader.read(buffer, leftOverSize, readSize);
+		if (availableSpace < effectiveReadSize) {
+			int newBufferSize = bufferLength * 2;
+
+			if (newBufferSize < bufferLength + effectiveReadSize) {
+				newBufferSize =  bufferLength + effectiveReadSize;
+			}
+
+			if (newBufferSize > maxBufferSize) {
+				newBufferSize = maxBufferSize;
+			}
+
+			if (newSize >= newBufferSize) {
+				throw new BufferOverflowException("The content in the csv cell exceed the maxSizeBuffer " + maxBufferSize + ",  "+ newSize  + ", see CsvParser.DSL.maxSizeBuffer(int) to change the default value");
+			}
+
+
+			lbuffer = Arrays.copyOf(lbuffer, newBufferSize);
+			this.buffer = lbuffer;
+
+			if (effectiveReadSize > bufferLength - newSize) {
+				effectiveReadSize = bufferLength - newSize;
+			}
+		}
+
+		int l = reader.read(lbuffer, newSize, effectiveReadSize);
 
 			if (l >= 0) {
-				this.bufferSize = leftOverSize + l;
-				return true;
-			} else {
-				this.bufferSize = leftOverSize;
-				return false;
-			}
-		} else {
-			return readWithResize(leftOverSize, buffer, readSize);
-		}
-	}
-
-	private boolean readWithResize(int leftOverSize, char[] buffer, int readSize) throws IOException {
-		int newBufferSize = calculateNewBufferSize(leftOverSize);
-
-		buffer = Arrays.copyOf(buffer, newBufferSize);
-		this.buffer = buffer;
-
-		int effectiveReadSize = Math.min(readSize, newBufferSize - leftOverSize);
-
-		int l = reader.read(buffer, leftOverSize, effectiveReadSize);
-
-		if (l >= 0) {
-			this.bufferSize = leftOverSize + l;
+			this.bufferSize = newSize + l;
 			return true;
 		} else {
-			this.bufferSize = leftOverSize;
+			this.bufferSize = newSize;
 			return false;
 		}
-	}
-
-	private int calculateNewBufferSize(int leftOverSize) throws BufferOverflowException {
-		int newBufferSize = Math.min(buffer.length + Math.max(buffer.length, readSize), maxBufferSize);
-
-		if (leftOverSize >= newBufferSize) {
-			throw new BufferOverflowException("The content in the csv cell exceed the maxSizeBuffer " + maxBufferSize + ",  "+ leftOverSize  + ", see CsvParser.DSL.maxSizeBuffer(int) to change the default value");
-		}
-		return newBufferSize;
 	}
 
 }

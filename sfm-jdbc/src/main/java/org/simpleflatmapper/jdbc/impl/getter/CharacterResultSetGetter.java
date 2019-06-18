@@ -1,12 +1,18 @@
 package org.simpleflatmapper.jdbc.impl.getter;
 
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.map.getter.CharacterContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.primitive.CharacterGetter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public final class CharacterResultSetGetter implements CharacterGetter<ResultSet>, Getter<ResultSet, Character> {
+public final class CharacterResultSetGetter implements
+		CharacterGetter<ResultSet>, Getter<ResultSet, Character>,
+		CharacterContextualGetter<ResultSet>, ContextualGetter<ResultSet, Character>
+{
 
 	private final int column;
 	
@@ -27,6 +33,16 @@ public final class CharacterResultSetGetter implements CharacterGetter<ResultSet
 		} else {
 			return c;
 		}
+	}
+
+	@Override
+	public char getCharacter(ResultSet resultSet, Context mappingContext) throws Exception {
+		return getCharacter(resultSet);
+	}
+
+	@Override
+	public Character get(ResultSet resultSet, Context context) throws Exception {
+		return get(resultSet);
 	}
 
     @Override

@@ -1,12 +1,17 @@
 package org.simpleflatmapper.jdbc.impl.getter;
 
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.ShortContextualGetter;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.primitive.ShortGetter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public final class ShortResultSetGetter implements ShortGetter<ResultSet>, Getter<ResultSet, Short> {
+public final class ShortResultSetGetter implements
+		ShortGetter<ResultSet>, Getter<ResultSet, Short>,
+		ShortContextualGetter<ResultSet>, ContextualGetter<ResultSet, Short> {
 
 	private final int column;
 	
@@ -27,6 +32,16 @@ public final class ShortResultSetGetter implements ShortGetter<ResultSet>, Gette
 		} else {
 			return s;
 		}
+	}
+
+	@Override
+	public Short get(ResultSet resultSet, Context context) throws Exception {
+		return get(resultSet);
+	}
+
+	@Override
+	public short getShort(ResultSet resultSet, Context mappingContext) throws Exception {
+		return getShort(resultSet);
 	}
 
     @Override

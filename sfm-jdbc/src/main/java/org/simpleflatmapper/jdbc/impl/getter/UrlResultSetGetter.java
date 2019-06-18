@@ -1,13 +1,15 @@
 package org.simpleflatmapper.jdbc.impl.getter;
 
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.reflect.Getter;
 
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UrlResultSetGetter implements
-		Getter<ResultSet, URL> {
+public final class UrlResultSetGetter implements
+		Getter<ResultSet, URL>, ContextualGetter<ResultSet, URL> {
 	private final int column;
 	
 	public UrlResultSetGetter(final int column) {
@@ -18,10 +20,17 @@ public class UrlResultSetGetter implements
 		return target.getURL(column);
 	}
 
+	@Override
+	public URL get(ResultSet resultSet, Context context) throws Exception {
+		return get(resultSet);
+	}
+
     @Override
     public String toString() {
         return "UrlResultSetGetter{" +
                 "property=" + column +
                 '}';
     }
+
+
 }

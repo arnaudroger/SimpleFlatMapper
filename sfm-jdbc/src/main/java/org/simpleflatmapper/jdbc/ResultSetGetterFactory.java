@@ -2,6 +2,10 @@ package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.jdbc.impl.getter.BigDecimalFromStringResultSetGetter;
 import org.simpleflatmapper.jdbc.impl.getter.BigIntegerFromStringResultSetGetter;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.reflect.getter.BytesUUIDGetter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.getter.GetterFactoryRegistry;
@@ -53,7 +57,7 @@ import org.simpleflatmapper.jdbc.impl.getter.UrlFromStringResultSetGetter;
 import org.simpleflatmapper.jdbc.impl.getter.UrlResultSetGetter;
 import org.simpleflatmapper.util.TypeHelper;
 
-public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey> {
+public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>, ContextualGetterFactory<ResultSet, JdbcColumnKey> {
 	public static final ResultSetGetterFactory INSTANCE = new ResultSetGetterFactory();
 
 	private ResultSetGetterFactory() {
@@ -77,6 +81,16 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		}
 	};
+
+	@Override
+	public <P> ContextualGetter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, MappingContextFactoryBuilder<?, JdbcColumnKey> mappingContextFactoryBuilder, Object... properties) {
+		Getter<ResultSet, Object> getter = newGetter(target, key, properties);
+		if (getter == null) return null;
+		if (getter instanceof ContextualGetter){
+			return (ContextualGetter<ResultSet, P>) getter;
+		}
+		return (ContextualGetter<ResultSet, P>) ContextualGetterAdapter.of(getter);
+	}
 
 	public static final class StringResultSetGetterFactory implements
 			GetterFactory<ResultSet, JdbcColumnKey> {

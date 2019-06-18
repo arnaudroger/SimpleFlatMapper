@@ -84,7 +84,7 @@ public final class JdbcMapperBuilder<T> extends MapperBuilder<ResultSet, ResultS
     public JdbcMapperBuilder(final Type target, ReflectionService reflectService) {
         this(reflectService.<T>getClassMeta(target),
                 MapperConfig.<JdbcColumnKey, ResultSet>fieldMapperConfig(),
-                ResultSetGetterFactory.INSTANCE,
+                (ContextualGetterFactory<ResultSet, JdbcColumnKey>)ResultSetGetterFactory.INSTANCE,
                 new JdbcMappingContextFactoryBuilder(!MapperConfig.<JdbcColumnKey, ResultSet>fieldMapperConfig().unorderedJoin()));
     }
 

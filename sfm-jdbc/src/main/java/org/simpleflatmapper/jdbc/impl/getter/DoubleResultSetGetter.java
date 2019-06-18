@@ -1,12 +1,18 @@
 package org.simpleflatmapper.jdbc.impl.getter;
 
+import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.DoubleContextualGetter;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.primitive.DoubleGetter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public final class DoubleResultSetGetter implements DoubleGetter<ResultSet>, Getter<ResultSet, Double> {
+public final class DoubleResultSetGetter implements
+		DoubleGetter<ResultSet>, Getter<ResultSet, Double>,
+		DoubleContextualGetter<ResultSet>, ContextualGetter<ResultSet, Double>
+{
 
 	private final int column;
 	
@@ -27,6 +33,16 @@ public final class DoubleResultSetGetter implements DoubleGetter<ResultSet>, Get
 		} else {
 			return d;
 		}
+	}
+
+	@Override
+	public Double get(ResultSet resultSet, Context context) throws Exception {
+		return get(resultSet);
+	}
+
+	@Override
+	public double getDouble(ResultSet resultSet, Context mappingContext) throws Exception {
+		return getDouble(resultSet);
 	}
 
     @Override

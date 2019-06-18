@@ -1,13 +1,15 @@
 package org.simpleflatmapper.map.property;
 
 
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 
 public class GetterFactoryProperty {
-    private final GetterFactory<?, ?> getterFactory;
+    private final ContextualGetterFactory<?, ?> getterFactory;
     private final Type sourceType;
 
     public GetterFactoryProperty(GetterFactory<?, ?> getterFactory) {
@@ -15,11 +17,11 @@ public class GetterFactoryProperty {
     }
 
     public GetterFactoryProperty(GetterFactory<?, ?> getterFactory, Type sourceType) {
-        this.getterFactory = getterFactory;
+        this.getterFactory = new ContextualGetterFactoryAdapter(getterFactory);
         this.sourceType = sourceType;
     }
 
-    public GetterFactory<?, ?> getGetterFactory() {
+    public ContextualGetterFactory<?, ?> getGetterFactory() {
         return getterFactory;
     }
 

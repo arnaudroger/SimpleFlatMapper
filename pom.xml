@@ -302,6 +302,15 @@
                 </plugins>
                 </pluginManagement>
             </build>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-jdbc</artifactId>
+                        <version>4.3.14.RELEASE</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
         <profile>
             <id>jdk17</id>
@@ -402,7 +411,17 @@
                 </plugins>
                 </pluginManagement>
             </build>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-jdbc</artifactId>
+                        <version>4.3.14.RELEASE</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
+
 
         <profile>
             <id>jdk18</id>

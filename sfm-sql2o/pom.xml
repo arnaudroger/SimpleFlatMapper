@@ -46,6 +46,7 @@
 			<groupId>org.sql2o</groupId>
 			<artifactId>sql2o</artifactId>
 			<version>1.6.0-RC3</version>
+			<scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>

@@ -53,6 +53,7 @@
 					<artifactId>annotations</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>provided</scope>
 		</dependency>
 
 

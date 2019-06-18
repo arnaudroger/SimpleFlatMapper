@@ -50,6 +50,7 @@
 			<groupId>com.mysema.querydsl</groupId>
 			<artifactId>querydsl-sql</artifactId>
 			<version>3.7.4</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>

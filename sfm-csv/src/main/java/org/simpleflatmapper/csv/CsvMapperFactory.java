@@ -116,6 +116,7 @@ public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMappe
 	
 	private CsvMapperFactory(CsvMapperFactory parent)  {
 		super(parent, NAMED_GETTER);
+		this.defaultDateFormat = parent.defaultDateFormat;
 	}
 
 

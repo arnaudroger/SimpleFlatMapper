@@ -221,9 +221,9 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		ContextualGetter<? super S, ? extends P> getter = ContextualGetterAdapter.of((Getter<? super S, ? extends P>) columnDefinition.getCustomGetterFrom(sourceType));
 
 		if (getter == null) {
-            GetterFactory<? super S, K> customGetterFactory = (GetterFactory<? super S, K>) columnDefinition.getCustomGetterFactoryFrom(sourceType);
+			ContextualGetterFactory<? super S, K> customGetterFactory = (ContextualGetterFactory<? super S, K>) columnDefinition.getCustomGetterFactoryFrom(sourceType);
 			if (customGetterFactory != null) {
-				getter = (ContextualGetter<? super S, ? extends P>) ContextualGetterAdapter.<S, P>of(customGetterFactory.<P>newGetter(propertyType, columnKey, columnDefinition.properties()));
+				getter = (ContextualGetter<? super S, ? extends P>) customGetterFactory.<P>newGetter(propertyType, columnKey, mappingContextFactoryBuilder, columnDefinition.properties());
 			}
         }
 

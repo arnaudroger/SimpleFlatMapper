@@ -1,6 +1,10 @@
 package org.simpleflatmapper.jdbc.property;
 
+import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.property.GetterFactoryProperty;
 import org.simpleflatmapper.map.property.SetterFactoryProperty;
@@ -17,19 +21,18 @@ import java.sql.SQLException;
 
 public class JdbcGetterFactoryProperty {
     public static <T> GetterFactoryProperty forType(final Class<T> type, final ResultSetGetter<T> getter) {
-        GetterFactory<ResultSet, JdbcColumnKey> setterFactory = new GetterFactory<ResultSet, JdbcColumnKey>() {
+        ContextualGetterFactory<ResultSet, JdbcColumnKey> getterFactory = new ContextualGetterFactory<ResultSet, JdbcColumnKey>() {
             @Override
-            public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, Object... properties) {
-
+            public <P> ContextualGetter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, MappingContextFactoryBuilder<?, JdbcColumnKey> mappingContextFactoryBuilder, Object... properties) {
                 if (TypeHelper.areEquals(type, target)) {
                     final int index = key.getIndex();
-                    return (Getter<ResultSet, P>) new ResultSetGetterAdapter<T>(getter, index);
+                    return (ContextualGetter<ResultSet, P>) new ResultSetGetterAdapter<T>(getter, index);
                 }
                 return null;
             }
         };
 
-        return new GetterFactoryProperty(setterFactory);
+        return new GetterFactoryProperty(getterFactory);
     }
 
 
@@ -37,7 +40,7 @@ public class JdbcGetterFactoryProperty {
         T get(ResultSet ps, int i) throws SQLException;
     }
 
-    private static class ResultSetGetterAdapter<T> implements Getter<ResultSet, T> {
+    private static class ResultSetGetterAdapter<T> implements ContextualGetter<ResultSet, T> {
         private final ResultSetGetter<T> getter;
         private final int index;
 
@@ -47,7 +50,7 @@ public class JdbcGetterFactoryProperty {
         }
 
         @Override
-        public T get(ResultSet target) throws Exception {
+        public T get(ResultSet target, Context context) throws Exception {
             return getter.get(target, index);
         }
     }

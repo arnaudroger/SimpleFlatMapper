@@ -2,6 +2,7 @@ package org.simpleflatmapper.map.mapper;
 
 
 import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.property.GetterFactoryProperty;
 import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.map.property.IgnoreProperty;
@@ -130,10 +131,10 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
 
     }
 
-    public GetterFactory<?, K> getCustomGetterFactoryFrom(Type sourceType) {
+    public ContextualGetterFactory<?, K> getCustomGetterFactoryFrom(Type sourceType) {
         for(GetterFactoryProperty getterFactoryProperty : lookForAll(GetterFactoryProperty.class)) {
             if (getterFactoryProperty.getSourceType() == null || TypeHelper.isAssignable(getterFactoryProperty.getSourceType(), sourceType)) {
-                return (GetterFactory<?, K>) getterFactoryProperty.getGetterFactory();
+                return (ContextualGetterFactory<?, K>) getterFactoryProperty.getGetterFactory();
             }
         }
         return null;

@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
+import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
@@ -69,7 +71,7 @@ public class FieldMapperColumnDefinitionTest {
 
         Assert.assertEquals("blop", compose.rename(new SampleFieldKey("bar", -1)).getName());
         assertEquals(fieldMapper, compose.getCustomFieldMapper());
-        assertEquals(getterFactory, compose.getCustomGetterFactoryFrom(InputStream.class));
+        assertEquals(getterFactory, ((ContextualGetterFactoryAdapter)compose.getCustomGetterFactoryFrom(InputStream.class)).delegate);
         assertNull(compose.getCustomGetterFactoryFrom(Date.class));
         assertEquals(new Integer(3), compose.getCustomGetterFrom(InputStream.class).get(null));
         assertNull(compose.getCustomGetterFrom(Date.class));
@@ -78,7 +80,7 @@ public class FieldMapperColumnDefinitionTest {
 
         assertTrue(FieldMapperColumnDefinition.<SampleFieldKey>identity().addIgnore().ignore());
 
-        assertEquals("ColumnDefinition{Rename{'blop'}, Getter{Getter}, FieldMapper{FieldMapper}, GetterFactory{GetterFactory}, Key{K}, Ignore{}}", compose.addIgnore().toString());
+        assertEquals("ColumnDefinition{Rename{'blop'}, Getter{Getter}, FieldMapper{FieldMapper}, GetterFactory{ContextualGetterFactoryAdapter{delegate=GetterFactory}}, Key{K}, Ignore{}}", compose.addIgnore().toString());
 
         assertTrue(compose.isKey());
         assertFalse(FieldMapperColumnDefinition.<SampleFieldKey>identity().isKey());

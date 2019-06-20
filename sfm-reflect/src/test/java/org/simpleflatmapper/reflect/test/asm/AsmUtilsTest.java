@@ -46,14 +46,13 @@ public class AsmUtilsTest {
 	@Test
 	public void testToClass() throws  Exception {
 		assertEquals(int.class, AsmUtils.toGenericType("I", null, null));
-		assertEquals(String.class, AsmUtils.toGenericType("java/lang/String", null, null));
 		assertEquals(String.class, AsmUtils.toGenericType("Ljava/lang/String;", null, null));
 	}
 
 	@Test
 	public void testToGenericType() throws ClassNotFoundException {
 
-		ParameterizedType pt = (ParameterizedType) AsmUtils.toGenericType("java/util/List<Ljava/util/List<Ljava/lang/String;>;>", null, null);
+		ParameterizedType pt = (ParameterizedType) AsmUtils.toGenericType("Ljava/util/List<Ljava/util/List<Ljava/lang/String;>;>;", null, null);
 		ParameterizedType pt2 = (ParameterizedType) pt.getActualTypeArguments()[0];
 		assertEquals(List.class, pt.getRawType());
 		assertEquals(List.class, pt2.getRawType());
@@ -64,6 +63,17 @@ public class AsmUtilsTest {
 		assertNotEquals(pt, pt2);
 		assertEquals("ParameterizedTypeImpl{rawType=interface java.util.List, types=[ParameterizedTypeImpl{rawType=interface java.util.List, types=[class java.lang.String]}]}", pt.toString());
 	}
+
+	@Test
+	public void testToGenericType662() throws ClassNotFoundException {
+		ParameterizedType pt = (ParameterizedType) AsmUtils.toGenericType("Ljava/util/Map<Ljava/lang/String;[B>;", null, null);
+		assertEquals(Map.class, pt.getRawType());
+		assertEquals(String.class, pt.getActualTypeArguments()[0]);
+		assertEquals(byte[].class, pt.getActualTypeArguments()[1]);
+
+	}
+
+
 
 	@Test
 	public void testToAsmType() {
@@ -94,6 +104,7 @@ public class AsmUtilsTest {
 	@Test
 	public void testToGenericTypeArray() throws ClassNotFoundException {
 		assertEquals(String[].class, AsmUtils.toGenericType("[Ljava/lang/String;", Collections.<String>emptyList(), Object.class));
+		assertEquals(byte[].class, AsmUtils.toGenericType("[B", Collections.<String>emptyList(), Object.class));
 	}
 
     @Test
@@ -121,7 +132,7 @@ public class AsmUtilsTest {
 
 	@Test
 	public void testToClassFromGeneric() throws  Exception {
-		assertEquals(String.class, AsmUtils.toGenericType("TT1;", Arrays.asList("T0", "T1"), new ParameterizedType() {
+		Type actual = AsmUtils.toGenericType("TT1;", Arrays.asList("T0", "T1"), new ParameterizedType() {
 			@Override
 			public Type[] getActualTypeArguments() {
 				return new Type[]{Long.class, String.class};
@@ -129,14 +140,15 @@ public class AsmUtilsTest {
 
 			@Override
 			public Type getRawType() {
-				return null;
+				return Object.class;
 			}
 
 			@Override
 			public Type getOwnerType() {
 				return null;
 			}
-		}));
+		});
+		assertEquals(String.class, actual);
 	}
 
 	@Test

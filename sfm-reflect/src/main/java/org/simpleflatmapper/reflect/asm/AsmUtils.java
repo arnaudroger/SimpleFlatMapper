@@ -248,7 +248,7 @@ public class AsmUtils {
 		ClassLoader classLoader = TypeHelper.getClassLoader(target, Thread.currentThread().getContextClassLoader());
 
 		SignatureReader reader = new SignatureReader(sig);
-		final List<Type> types = new ArrayList<>();
+		final List<Type> types = new ArrayList<Type>();
 		TypeCreator typeCreator = new TypeCreator(new Consumer<Type>() {
 			@Override
 			public void accept(Type t) {
@@ -270,7 +270,7 @@ public class AsmUtils {
 		private final Type target;
 
 		protected Type type;
-		final List<Type> arguments  = new ArrayList<>();
+		final List<Type> arguments  = new ArrayList<Type>();
 
 		boolean flushed = false;
 
@@ -285,13 +285,11 @@ public class AsmUtils {
 
 		@Override
 		public void visitFormalTypeParameter(String name) {
-			System.out.println("visitFormalTypeParameter = " + name);
 			super.visitFormalTypeParameter(name);
 		}
 
 		@Override
 		public SignatureVisitor visitParameterType() {
-			System.out.println("visitParameterType");
 			return super.visitParameterType();
 		}
 
@@ -334,7 +332,6 @@ public class AsmUtils {
 
 		@Override
 		public void visitClassType(String name) {
-			System.out.println("visitClassType = " + name);
 			try {
 				type = (Class.forName(name.replace('/','.'), true, classLoader));
 			} catch (ClassNotFoundException e) {
@@ -343,14 +340,9 @@ public class AsmUtils {
 
 		}
 
-		@Override
-		public void visitTypeArgument() {
-			System.out.println("visitTypeArgument" );
-		}
 
 		@Override
 		public SignatureVisitor visitTypeArgument(char wildcard) {
-			System.out.println("visitTypeArgument = " + wildcard);
 			return new TypeCreator(new Consumer<Type>() {
 				@Override
 				public void accept(Type type) {

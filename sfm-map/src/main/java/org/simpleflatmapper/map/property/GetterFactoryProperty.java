@@ -11,8 +11,6 @@ import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class GetterFactoryProperty {
     private final ContextualGetterFactory<?, ?> getterFactory;
@@ -60,12 +58,12 @@ public class GetterFactoryProperty {
 
 
     public static <T, K extends FieldKey<K>, S> GetterFactoryProperty forType(final Class<T> type, final IndexedGetter<S, T> getter) {
-        ContextualGetterFactory<ResultSet, K> getterFactory = new ContextualGetterFactory<ResultSet, K>() {
+        ContextualGetterFactory<S, K> getterFactory = new ContextualGetterFactory<S, K>() {
             @Override
-            public <P> ContextualGetter<ResultSet, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
+            public <P> ContextualGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
                 if (TypeHelper.areEquals(type, target)) {
                     final int index = key.getIndex();
-                    return (ContextualGetter<ResultSet, P>) new IndexedGetterAdapter<S, T>(getter, index);
+                    return (ContextualGetter<S, P>) new IndexedGetterAdapter<S, T>(getter, index);
                 }
                 return null;
             }

@@ -4,13 +4,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.GetterFactoryProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -85,5 +88,29 @@ public class FieldMapperColumnDefinitionTest {
         assertTrue(compose.isKey());
         assertFalse(FieldMapperColumnDefinition.<SampleFieldKey>identity().isKey());
         assertSame(appliesTo, compose.keyAppliesTo());
+    }
+
+
+    @Test
+    public void testMultipleCustomGetterFactory() throws Exception {
+        GetterFactoryProperty property1 = GetterFactoryProperty.forType(String.class, new GetterFactoryProperty.IndexedGetter<Object, String>() {
+            @Override
+            public String get(Object o, int i) throws Exception {
+                return "hello";
+            }
+        });
+
+        GetterFactoryProperty property2 = GetterFactoryProperty.forType(Long.class, new GetterFactoryProperty.IndexedGetter<Object, Long>() {
+            @Override
+            public Long get(Object o, int i) throws Exception {
+                return 123l;
+            }
+        });
+
+        FieldMapperColumnDefinition<SampleFieldKey> def = FieldMapperColumnDefinition.<SampleFieldKey>identity().add(property1, property2);
+
+        assertEquals("hello", def.getCustomGetterFactoryFrom(Object.class).newGetter(String.class, new SampleFieldKey("sd", 3), null).get(null, null));
+        assertEquals(123l, def.getCustomGetterFactoryFrom(Object.class).newGetter(Long.class, new SampleFieldKey("sd", 3), null).get(null, null));
+
     }
 }

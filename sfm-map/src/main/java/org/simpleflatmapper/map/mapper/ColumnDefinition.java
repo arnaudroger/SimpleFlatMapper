@@ -2,6 +2,8 @@ package org.simpleflatmapper.map.mapper;
 
 
 import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.property.GetterFactoryProperty;
 import org.simpleflatmapper.map.property.GetterProperty;
@@ -132,12 +134,32 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
     }
 
     public ContextualGetterFactory<?, K> getCustomGetterFactoryFrom(Type sourceType) {
+        final List<ContextualGetterFactory<?, K>> factories = new ArrayList<ContextualGetterFactory<?, K>>();
         for(GetterFactoryProperty getterFactoryProperty : lookForAll(GetterFactoryProperty.class)) {
             if (getterFactoryProperty.getSourceType() == null || TypeHelper.isAssignable(getterFactoryProperty.getSourceType(), sourceType)) {
-                return (ContextualGetterFactory<?, K>) getterFactoryProperty.getGetterFactory();
+                factories.add((ContextualGetterFactory<?, K>) getterFactoryProperty.getGetterFactory());
             }
         }
-        return null;
+
+        if (factories.isEmpty())
+            return null;
+
+        if (factories.size() == 1) {
+            return (ContextualGetterFactory<?, K>) factories.get(0);
+        }
+
+        return new ContextualGetterFactory<Object, K>() {
+            @Override
+            public <P> ContextualGetter<Object, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
+                for(ContextualGetterFactory<?, K> fact : factories) {
+                    ContextualGetter<?, ?> getter = fact.newGetter(target, key, mappingContextFactoryBuilder, properties);
+                    if (getter != null) {
+                        return (ContextualGetter<Object, P>) getter;
+                    }
+                }
+                return null;
+            }
+        };
     }
 
     public Setter<?, ?> getCustomSetterTo(Type targetType) {

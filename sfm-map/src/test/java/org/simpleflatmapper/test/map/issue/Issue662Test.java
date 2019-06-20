@@ -46,7 +46,7 @@ public class Issue662Test {
         ClassMeta<Data> classMeta = ReflectionService.newInstance().getClassMeta(Data.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<Data> builder =
-                new AbstractMapperBuilderTest.SampleMapperBuilder<Data>(classMeta, MapperConfig.fieldMapperConfig());
+                new AbstractMapperBuilderTest.SampleMapperBuilder<Data>(classMeta, MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig());
 
         EnumerableMapper<Object[][], Data, ?> mapper =
                 builder

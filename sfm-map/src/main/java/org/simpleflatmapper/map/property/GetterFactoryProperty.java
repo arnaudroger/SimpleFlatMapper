@@ -7,6 +7,7 @@ import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
+import org.simpleflatmapper.reflect.IndexedGetter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -57,7 +58,7 @@ public class GetterFactoryProperty {
     }
 
 
-    public static <T, K extends FieldKey<K>, S> GetterFactoryProperty forType(final Class<T> type, final IndexedGetter<S, T> getter) {
+    public static <S, K extends FieldKey<K>, T> GetterFactoryProperty forType(final Type type, final IndexedGetter<S, T> getter) {
         ContextualGetterFactory<S, K> getterFactory = new ContextualGetterFactory<S, K>() {
             @Override
             public <P> ContextualGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
@@ -72,10 +73,6 @@ public class GetterFactoryProperty {
         return new GetterFactoryProperty(getterFactory);
     }
 
-
-    public interface IndexedGetter<S, T> {
-        T get(S s, int i) throws Exception;
-    }
 
     private static class IndexedGetterAdapter<S, T> implements ContextualGetter<S, T> {
         private final IndexedGetter<S, T> getter;

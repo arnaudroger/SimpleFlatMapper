@@ -7,10 +7,12 @@ import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.getter.ComposedContextualGetterFactory;
 import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
+import org.simpleflatmapper.map.property.GetterFactoryProperty;
 import org.simpleflatmapper.map.property.IgnoreProperty;
 import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.map.property.RenameProperty;
 import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.IndexedGetter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.*;
@@ -393,6 +395,10 @@ public abstract class AbstractMapperFactory<
 				return TypeHelper.isAssignable(t, type);
 			}
 		}, getterFactory);
+	}
+
+	public <T> MF addGetterForType(final Type type, final IndexedGetter<S, T> indexedGetter) {
+		return addColumnProperty(ConstantPredicate.truePredicate(), GetterFactoryProperty.<S, K, T>forType(type, indexedGetter));
 	}
 
 	public MF addGetterForType(final Predicate<Type> typePredicate, final Function<K, ContextualGetter<S, ?>> getterFactory) {

@@ -10,6 +10,7 @@ import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.GetterFactoryProperty;
 import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.IndexedGetter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Predicate;
@@ -93,14 +94,14 @@ public class FieldMapperColumnDefinitionTest {
 
     @Test
     public void testMultipleCustomGetterFactory() throws Exception {
-        GetterFactoryProperty property1 = GetterFactoryProperty.forType(String.class, new GetterFactoryProperty.IndexedGetter<Object, String>() {
+        GetterFactoryProperty property1 = GetterFactoryProperty.forType(String.class, new IndexedGetter<Object, String>() {
             @Override
             public String get(Object o, int i) throws Exception {
                 return "hello";
             }
         });
 
-        GetterFactoryProperty property2 = GetterFactoryProperty.forType(Long.class, new GetterFactoryProperty.IndexedGetter<Object, Long>() {
+        GetterFactoryProperty property2 = GetterFactoryProperty.forType(Long.class, new IndexedGetter<Object, Long>() {
             @Override
             public Long get(Object o, int i) throws Exception {
                 return 123l;

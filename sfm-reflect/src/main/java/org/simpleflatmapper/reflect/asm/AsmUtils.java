@@ -4,6 +4,7 @@ import org.simpleflatmapper.ow2asm.MethodVisitor;
 import org.simpleflatmapper.ow2asm.Opcodes;
 import org.simpleflatmapper.ow2asm.signature.SignatureReader;
 import org.simpleflatmapper.ow2asm.signature.SignatureVisitor;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
@@ -19,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import static org.simpleflatmapper.ow2asm.Opcodes.ALOAD;
 import static org.simpleflatmapper.ow2asm.Opcodes.ASTORE;

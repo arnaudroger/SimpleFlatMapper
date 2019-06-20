@@ -1083,7 +1083,10 @@ public class AbstractMapperBuilderTest {
         public <P> Getter<Object[], P> newGetter(Type target, final SampleFieldKey key, Object... properties) {
             Class<?> aClass = TypeHelper.toClass(target);
             Package p = aClass.getPackage();
-            
+
+            if(aClass.isArray()) {
+                return new SampleGetter<P>(key);
+            }
             if (aClass.equals(List.class)) return null;
             if (!Enum.class.isAssignableFrom(aClass) && !aClass.isPrimitive() &&(p == null || ! p.getName().startsWith("java"))) return null;
             

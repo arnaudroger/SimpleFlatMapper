@@ -4,6 +4,7 @@ import org.simpleflatmapper.ow2asm.MethodVisitor;
 import org.simpleflatmapper.ow2asm.Opcodes;
 import org.simpleflatmapper.ow2asm.signature.SignatureReader;
 import org.simpleflatmapper.ow2asm.signature.SignatureVisitor;
+import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.reflect.ParameterizedTypeImpl;
@@ -11,18 +12,14 @@ import org.simpleflatmapper.reflect.ParameterizedTypeImpl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.WildcardType;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static org.simpleflatmapper.ow2asm.Opcodes.ALOAD;
 import static org.simpleflatmapper.ow2asm.Opcodes.ASTORE;
@@ -248,72 +245,131 @@ public class AsmUtils {
 	}
 
 	public static Type toGenericType(String sig, List<String> genericTypeNames, Type target) throws ClassNotFoundException {
-		if (sig.length() == 1) {
-			switch (sig.charAt(0)) {
-			case 'Z': return boolean.class;
-			case 'B': return byte.class;
-			case 'C': return char.class;
-			case 'D': return double.class;
-			case 'F': return float.class;
-			case 'I': return int.class;
-			case 'J': return long.class;
-			case 'S': return short.class;
-			}
-		}
-
-		if (sig.startsWith("+")) {
-			sig = sig.substring(1);
-		}
-		if (sig.startsWith("[")) {
-			Type componentType = toGenericType(sig.substring(1), genericTypeNames, target);
-			Class<?> componentClass = TypeHelper.toClass(componentType);
-			return Array.newInstance(componentClass, 0).getClass();
-		} else if (sig.startsWith("L")) {
-			sig = sig.substring(1);
-			if (sig.endsWith(";")) {
-				sig = sig.substring(0, sig.length() - 1);
-			}
-		} else if (sig.startsWith("T")) {
-            String templateType = sig.substring(1, sig.length() - (sig.endsWith(";") ? 1 : 0));
-            int indexOfParam = genericTypeNames.indexOf(templateType);
-            if ( indexOfParam < 0 ) return null;
-			if (target instanceof  ParameterizedType) {
-				return ((ParameterizedType) target).getActualTypeArguments()[indexOfParam];
-			} else if (target instanceof WildcardType) {
-				WildcardType wt = (WildcardType) target;
-				Type[] upperBounds = wt.getUpperBounds();
-				if (indexOfParam < upperBounds.length) {
-					return upperBounds[indexOfParam];
-				}
-				return null;
-			} else {
-				// meethod parameter
-				return null;
-			}
-		}
-
-		int indexOf = sig.indexOf('<');
-
 		ClassLoader classLoader = TypeHelper.getClassLoader(target, Thread.currentThread().getContextClassLoader());
 
-		if (indexOf == -1) {
-			return Class.forName(sig.replace('/','.'), true, classLoader);
-		} else {
-			final Class<?> rawType = Class.forName(sig.substring(0, indexOf).replace('/','.'), true, classLoader);
+		SignatureReader reader = new SignatureReader(sig);
+		final List<Type> types = new ArrayList<>();
+		TypeCreator typeCreator = new TypeCreator(new Consumer<Type>() {
+			@Override
+			public void accept(Type t) {
+				types.add(t);
+			}
+		}, classLoader, genericTypeNames, target) {
 
-			final Type[] types = parseTypes(sig.substring(indexOf+ 1, sig.length() - 1), genericTypeNames, target);
+		};
 
-			return new ParameterizedTypeImpl(rawType, types);
-		}
+		reader.accept(typeCreator);
+		typeCreator.visitEnd();
+		return types.get(0);
 	}
 
-	private static ClassLoader getClassLoader(Type target) {
-		if (target == null)
-			return Thread.currentThread().getContextClassLoader();
-		Class<Object> aClass = TypeHelper.toClass(target);
-		if (aClass == null)
-			return Thread.currentThread().getContextClassLoader();
-		return aClass.getClassLoader();
+	private static class TypeCreator extends SignatureVisitor {
+		final Consumer<Type> consumer;
+		final ClassLoader classLoader;
+		private final List<String> genericTypeNames;
+		private final Type target;
+
+		protected Type type;
+		final List<Type> arguments  = new ArrayList<>();
+
+		boolean flushed = false;
+
+
+		public TypeCreator(Consumer<Type> consumer, ClassLoader classLoader, List<String> genericTypeNames, Type target) {
+			super(AsmUtils.API);
+			this.consumer = consumer;
+			this.classLoader = classLoader;
+			this.genericTypeNames = genericTypeNames;
+			this.target = target;
+		}
+
+		@Override
+		public void visitFormalTypeParameter(String name) {
+			System.out.println("visitFormalTypeParameter = " + name);
+			super.visitFormalTypeParameter(name);
+		}
+
+		@Override
+		public SignatureVisitor visitParameterType() {
+			System.out.println("visitParameterType");
+			return super.visitParameterType();
+		}
+
+		@Override
+		public void visitBaseType(char descriptor) {
+			switch (descriptor) {
+				case 'Z': type = (boolean.class); break;
+				case 'B': type = (byte.class);break;
+				case 'C': type = ( char.class);break;
+				case 'D': type = ( double.class);break;
+				case 'F': type = ( float.class);break;
+				case 'I': type = ( int.class);break;
+				case 'J': type = ( long.class);break;
+				case 'S': type = ( short.class);break;
+				default: throw new IllegalArgumentException("Unexpected primitiv " + descriptor);
+			}
+			visitEnd();
+		}
+
+		@Override
+		public void visitTypeVariable(String name) {
+
+			int i = genericTypeNames.indexOf(name);
+			if (i >= 0 && target instanceof ParameterizedType) {
+				Type resolvedType = ((ParameterizedType) target).getActualTypeArguments()[i];
+				consumer.accept(resolvedType);
+			}
+
+		}
+
+		@Override
+		public SignatureVisitor visitArrayType() {
+			return new TypeCreator(new Consumer<Type>() {
+				@Override
+				public void accept(Type type) {
+					consumer.accept(Array.newInstance(TypeHelper.toClass(type), 0).getClass());
+				}
+			}, classLoader, genericTypeNames, target);
+		}
+
+		@Override
+		public void visitClassType(String name) {
+			System.out.println("visitClassType = " + name);
+			try {
+				type = (Class.forName(name.replace('/','.'), true, classLoader));
+			} catch (ClassNotFoundException e) {
+				ErrorHelper.rethrow(e);
+			}
+
+		}
+
+		@Override
+		public void visitTypeArgument() {
+			System.out.println("visitTypeArgument" );
+		}
+
+		@Override
+		public SignatureVisitor visitTypeArgument(char wildcard) {
+			System.out.println("visitTypeArgument = " + wildcard);
+			return new TypeCreator(new Consumer<Type>() {
+				@Override
+				public void accept(Type type) {
+					arguments.add(type);
+				}
+			}, classLoader, genericTypeNames, target);
+		}
+
+		@Override
+		public void visitEnd() {
+			if (flushed) return;
+
+			flushed = true;
+			if (arguments.isEmpty()) {
+				consumer.accept(type);
+			} else {
+				consumer.accept(new ParameterizedTypeImpl(TypeHelper.toClass(type), arguments.toArray(EMPTY_TYPE_ARRAY)));
+			}
+		}
 	}
 
 	public static Type findClosestPublicTypeExposing(Type type, Class<?> expose) {
@@ -392,27 +448,8 @@ public class AsmUtils {
 		return types;
 	}
 
-	private static Type[] parseTypes(String sig, List<String> genericTypeNames, Type target) throws ClassNotFoundException {
-		List<Type> types = new ArrayList<Type>();
 
-		int genericLevel = 0;
-		int currentStart = 0;
-		for(int i = 0; i < sig.length(); i++) {
-			char c = sig.charAt(i);
-			switch(c) {
-				case '<': genericLevel ++; break;
-				case '>': genericLevel --; break;
-				case ';' :
-					if (genericLevel == 0) {
-						types.add(toGenericType(sig.substring(currentStart, i), genericTypeNames, target));
-						currentStart = i + 1;
-					}
-					break;
-			}
-		}
 
-		return types.toArray(EMPTY_TYPE_ARRAY);
-	}
 
 	public static List<String> extractTypeNamesFromSignature(String sig) {
 		final List<String> types = new ArrayList<String>();

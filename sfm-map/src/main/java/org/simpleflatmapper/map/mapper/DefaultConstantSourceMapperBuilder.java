@@ -160,10 +160,13 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             PropertyMapping<T, ?, K> propertyMapping = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
             if (propertyMapping != null) {
                 ColumnDefinition<K, ?> effectiveColumnDefinition = propertyMapping.getColumnDefinition();
-                Predicate<PropertyMeta<?, ?>> keyAppliesTo = effectiveColumnDefinition.keyAppliesTo();
-                if (effectiveColumnDefinition.isKey() && keyAppliesTo.test(propertyMapping.getPropertyMeta())) {
-                    Predicate<S> predicate = buildKeyPredicate(propertyMapping.getPropertyMeta(), keyAppliesTo);
+                if (effectiveColumnDefinition.isKey() && effectiveColumnDefinition.keyAppliesTo().test(propertyMapping.getPropertyMeta())) {
+                    Predicate<S> predicate = buildKeyPredicate(propertyMapping.getPropertyMeta(), effectiveColumnDefinition.keyAppliesTo());
                     mappingContextFactoryBuilder.addKey(new KeyAndPredicate<S, K>(mappedColumnKey, predicate));
+                } else if (effectiveColumnDefinition.isInferNull() && effectiveColumnDefinition.inferNullsAppliesTo().test(propertyMapping.getPropertyMeta())) {
+                    Predicate<S> predicate = buildKeyPredicate(propertyMapping.getPropertyMeta(), effectiveColumnDefinition.inferNullsAppliesTo());
+                    mappingContextFactoryBuilder.addInferNull(new KeyAndPredicate<S, K>(mappedColumnKey, predicate));
+
                 }
             }
         }
@@ -655,7 +658,8 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
     private MappingContextFactoryBuilder getMapperContextFactoryBuilder(PropertyMeta<?, ?> owner, List<PropertyMapping<T, ?, K>> properties) {
         final List<KeyAndPredicate<S, K>> subKeys = getSubKeys(properties);
-        return mappingContextFactoryBuilder.newBuilder(subKeys, owner);
+        final List<KeyAndPredicate<S, K>> inferNullColumns = getInferNulls(properties);
+        return mappingContextFactoryBuilder.newBuilder(subKeys, inferNullColumns, owner);
     }
 
     @SuppressWarnings("unchecked")
@@ -1027,6 +1031,35 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 }
             } else {
                 if (pm.getColumnDefinition().isKey()) {
+                    if (propertyMetaKeyPredicate.test(pm.getPropertyMeta())) {
+                        keys.add(new KeyAndPredicate<S, K>(pm.getColumnKey(), null));
+                    }
+                }
+            }
+        }
+
+        return keys;
+    }
+
+    private List<KeyAndPredicate<S, K>> getInferNulls(List<PropertyMapping<T, ?, K>> properties) {
+        List<KeyAndPredicate<S, K>> keys = new ArrayList<KeyAndPredicate<S, K>>();
+
+        // look for keys property of the object
+        for (PropertyMapping<T, ?, K> pm : properties) {
+            Predicate<PropertyMeta<?, ?>> propertyMetaKeyPredicate = pm.getColumnDefinition().inferNullsAppliesTo();
+            if (pm.getPropertyMeta().isSubProperty()) {
+                SubPropertyMeta<T, ?, ?> subPropertyMeta = (SubPropertyMeta<T, ?, ?>) pm.getPropertyMeta();
+                if (!(JoinUtils.isArrayElement(subPropertyMeta.getSubProperty()))) {
+                    // ignore ArrayElementPropertyMeta as it's a direct getter and will be managed in the setter
+                    if (pm.getColumnDefinition().isInferNull()) {
+                        if (propertyMetaKeyPredicate.test(subPropertyMeta.getSubProperty())) {
+                            Predicate<? super S> predicate = buildKeyPredicate(subPropertyMeta.getSubProperty(), propertyMetaKeyPredicate);;
+                            keys.add(new KeyAndPredicate<S, K>(pm.getColumnKey(), predicate));
+                        }
+                    }
+                }
+            } else {
+                if (pm.getColumnDefinition().isInferNull()) {
                     if (propertyMetaKeyPredicate.test(pm.getPropertyMeta())) {
                         keys.add(new KeyAndPredicate<S, K>(pm.getColumnKey(), null));
                     }

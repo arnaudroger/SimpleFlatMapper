@@ -206,7 +206,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 				return this.<T, P>primitiveIndexedFieldMapper(type, setter, getter);
 			}
 			
-			if (propertyMapping.getColumnDefinition().isKey() 
+			if (propertyMapping.getColumnDefinition().isInferNull()
 					&& JoinUtils.isArrayElement(propertyMapping.getPropertyMeta())) {
 				return new ConstantSourceFieldMapper<S, T, P>(getter, new NullValueFilterSetter(setter));
 			} else {

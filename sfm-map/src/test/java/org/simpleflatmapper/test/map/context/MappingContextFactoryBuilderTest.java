@@ -77,9 +77,9 @@ public class MappingContextFactoryBuilderTest {
     @Test
     public void testKeysWithSubBuilder() {
         builder.addKey(new KeyAndPredicate<Object[], SampleFieldKey>(new SampleFieldKey("k1", 0), null));
-        MappingContextFactoryBuilder<Object[], SampleFieldKey> subBuilder = builder.newBuilder(Arrays.asList(new KeyAndPredicate<Object[], SampleFieldKey>(new SampleFieldKey("k2", 3), null)), null);
+        MappingContextFactoryBuilder<Object[], SampleFieldKey> subBuilder = builder.newBuilder(Arrays.asList(new KeyAndPredicate<Object[], SampleFieldKey>(new SampleFieldKey("k2", 3), null)), null, null);
 
-        subBuilder.newBuilder(Arrays.asList(new KeyAndPredicate<Object[], SampleFieldKey>(new SampleFieldKey("k3", 6), null)), null);
+        subBuilder.newBuilder(Arrays.asList(new KeyAndPredicate<Object[], SampleFieldKey>(new SampleFieldKey("k3", 6), null)),  null,null);
 
         MappingContextFactory<Object[]> mappingContextFactory = builder.build();
 

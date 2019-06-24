@@ -24,6 +24,7 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
     private final int currentIndex;
     private final MappingContextFactoryBuilder<S, K> parent;
     private final List<KeyAndPredicate<S, K>> keys;
+    private final List<KeyAndPredicate<S, K>> inferNullColumns;
     private final KeySourceGetter<K, ? super S> keySourceGetter;
     private final List<MappingContextFactoryBuilder<S, K>> children = new ArrayList<MappingContextFactoryBuilder<S, K>>();
     private final List<Supplier<?>> suppliers = new ArrayList<Supplier<?>>();
@@ -31,13 +32,14 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
     private final boolean ignoreRootKey;
 
     public MappingContextFactoryBuilder(KeySourceGetter<K, ? super S> keySourceGetter, boolean ignoreRootKey) {
-        this(new Counter(), new ArrayList<KeyAndPredicate<S, K>>(), keySourceGetter, null, null, ignoreRootKey);
+        this(new Counter(), new ArrayList<KeyAndPredicate<S, K>>(), new ArrayList<KeyAndPredicate<S, K>>(), keySourceGetter, null, null, ignoreRootKey);
     }
 
-    protected MappingContextFactoryBuilder(Counter counter, List<KeyAndPredicate<S, K>> keys, KeySourceGetter<K, ? super S> keySourceGetter, MappingContextFactoryBuilder<S, K> parent, PropertyMeta<?, ?> owner, boolean ignoreRootKey) {
+    protected MappingContextFactoryBuilder(Counter counter, List<KeyAndPredicate<S, K>> keys, List<KeyAndPredicate<S, K>> inferNullColumns, KeySourceGetter<K, ? super S> keySourceGetter, MappingContextFactoryBuilder<S, K> parent, PropertyMeta<?, ?> owner, boolean ignoreRootKey) {
         this.counter = counter;
         this.currentIndex = counter.value;
         this.keys = keys;
+        this.inferNullColumns = inferNullColumns;
         this.keySourceGetter = keySourceGetter;
         this.parent = parent;
         this.ignoreRootKey = ignoreRootKey;
@@ -48,7 +50,13 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
 
     public void addKey(KeyAndPredicate<S, K> keyAndPredicate) {
         addKeyTo(keyAndPredicate, keys);
+        addKeyTo(keyAndPredicate, inferNullColumns);
     }
+
+    public void addInferNull(KeyAndPredicate<S, K> keyAndPredicate) {
+        addKeyTo(keyAndPredicate, inferNullColumns);
+    }
+
 
     private void addKeyTo(KeyAndPredicate<S, K> keyAndPredicate, List<KeyAndPredicate<S, K>> keyAndPredicates) {
         for(int i = 0; i < keyAndPredicates.size(); i++) {
@@ -73,10 +81,10 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
     }
 
     public Predicate<S> nullChecker() {
-        return new NullChecker<S, K>(keys, keySourceGetter);
+        return new NullChecker<S, K>(inferNullColumns, keySourceGetter);
     }
 
-    public MappingContextFactoryBuilder<S, K> newBuilder(List<KeyAndPredicate<S, K>> subKeys, PropertyMeta<?, ?> owner) {
+    public MappingContextFactoryBuilder<S, K> newBuilder(List<KeyAndPredicate<S, K>> subKeys, List<KeyAndPredicate<S, K>> inferNullColumns, PropertyMeta<?, ?> owner) {
         // look for duplicate 
         for(MappingContextFactoryBuilder<S, K> child : children) {
             if ((child.owner.getPath().equals(owner.getPath())
@@ -86,7 +94,7 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
             }
         }
         
-        MappingContextFactoryBuilder<S, K> subBuilder = new MappingContextFactoryBuilder<S, K>(counter, subKeys, keySourceGetter, this, owner, ignoreRootKey);
+        MappingContextFactoryBuilder<S, K> subBuilder = new MappingContextFactoryBuilder<S, K>(counter, subKeys, inferNullColumns, keySourceGetter, this, owner, ignoreRootKey);
         children.add(subBuilder);
         return subBuilder;
     }
@@ -277,6 +285,7 @@ public class MappingContextFactoryBuilder<S, K> implements ContextFactoryBuilder
     public boolean hasChildren() {
         return children.isEmpty();
     }
+
 
     private static class Counter {
         int value;

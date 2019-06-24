@@ -1,5 +1,6 @@
 package org.simpleflatmapper.reflect;
 
+import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.asm.AsmFactoryProvider;
 import org.simpleflatmapper.reflect.getter.FieldGetter;
 import org.simpleflatmapper.reflect.getter.MethodGetter;
@@ -87,7 +88,10 @@ public final class ObjectGetterFactory {
 		boolean accessible = Modifier.isPublic(field.getModifiers()) && Modifier.isPublic(field.getDeclaringClass().getModifiers());
 		if (asmFactory != null && accessible) {
             try {
-                return asmFactory.getAsmFactory(field.getDeclaringClass().getClassLoader()).createGetter(field);
+				AsmFactory asmFactory = this.asmFactory.getAsmFactory(field.getDeclaringClass().getClassLoader());
+				if (asmFactory != null) {
+					return asmFactory.createGetter(field);
+				}
             } catch(Throwable e) {}
         }
 

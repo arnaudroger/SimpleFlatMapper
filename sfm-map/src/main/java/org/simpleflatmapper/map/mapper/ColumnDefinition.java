@@ -2,13 +2,7 @@ package org.simpleflatmapper.map.mapper;
 
 
 import org.simpleflatmapper.map.FieldKey;
-import org.simpleflatmapper.map.property.GetterFactoryProperty;
-import org.simpleflatmapper.map.property.GetterProperty;
-import org.simpleflatmapper.map.property.IgnoreProperty;
-import org.simpleflatmapper.map.property.KeyProperty;
-import org.simpleflatmapper.map.property.RenameProperty;
-import org.simpleflatmapper.map.property.SetterFactoryProperty;
-import org.simpleflatmapper.map.property.SetterProperty;
+import org.simpleflatmapper.map.property.*;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
@@ -61,7 +55,26 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
         return has(KeyProperty.class);
     }
 
+    public boolean isInferNull() {
+        return has(KeyProperty.class) || has(InferNullProperty.class);
+    }
+
     public Predicate<PropertyMeta<?, ?>> keyAppliesTo() {
+        KeyProperty kp = lookFor(KeyProperty.class);
+
+        if (kp != null) {
+            return kp.getAppliesTo();
+        }
+
+        return DEFAULT_APPLIES_TO;
+    }
+    public Predicate<PropertyMeta<?, ?>> inferNullsAppliesTo() {
+        InferNullProperty inp = lookFor(InferNullProperty.class);
+
+        if (inp != null) {
+            return inp.getAppliesTo();
+        }
+
         KeyProperty kp = lookFor(KeyProperty.class);
 
         if (kp != null) {

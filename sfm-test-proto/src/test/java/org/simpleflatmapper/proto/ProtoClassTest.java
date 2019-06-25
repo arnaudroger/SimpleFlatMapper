@@ -72,6 +72,7 @@ message AddressBook {
         CsvMapper<AddressBookProtos.Person> csvMapper = 
                 CsvMapperFactory
                         .newInstance()
+                        .enableSpeculativeArrayIndexResolution()
                         .useAsm(false)
                         .newBuilder(AddressBookProtos.Person.class)
                         .addMapping("name")

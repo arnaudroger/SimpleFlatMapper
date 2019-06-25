@@ -1,7 +1,7 @@
 package org.simpleflatmapper.reflect.meta;
 
+import org.simpleflatmapper.reflect.property.SpeculativeArrayIndexResolutionProperty;
 import org.simpleflatmapper.util.BooleanSupplier;
-import org.simpleflatmapper.util.Predicate;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
@@ -48,17 +48,29 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
                 elementClassMeta.newPropertyFinder().findProperty(propertyNameMatcher, properties, typeAffinityScorer, propertyFilter);
 
         if (property != null) {
-            for (int i = 0; i < elements.size(); i++) {
-                IndexedElement element = elements.get(i);
-                ExtrapolateFoundProperty<T> matchingProperties = new ExtrapolateFoundProperty<T>(element, foundProperty);
-                lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), properties, matchingProperties, score.speculativeArrayIndex(i), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
-                if (matchingProperties.hasFound()) {
-                    return;
+            if (ObjectPropertyFinder.containsProperty(properties, SpeculativeArrayIndexResolutionProperty.class)) {
+                for (int i = 0; i < elements.size(); i++) {
+                    IndexedElement element = elements.get(i);
+                    ExtrapolateFoundProperty<T> matchingProperties = new ExtrapolateFoundProperty<T>(element, foundProperty);
+                    lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), properties, matchingProperties, score.speculativeArrayIndex(i), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                    if (matchingProperties.hasFound()) {
+                        return;
+                    }
                 }
-            }
 
-            int index = elements.size();
-            lookForAgainstColumn(new IndexedColumn(index,  propertyNameMatcher), properties, foundProperty, score.speculativeArrayIndex(index), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                int index = elements.size();
+                lookForAgainstColumn(new IndexedColumn(index, propertyNameMatcher), properties, foundProperty, score.speculativeArrayIndex(index), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+            } else {
+                // only look for element 0
+                FoundProperty<T> fp = foundProperty;
+                if (!elements.isEmpty()) {
+                    IndexedElement element = elements.get(0);
+                    if (element != null) {
+                        fp = new ExtrapolateFoundProperty<T>(element, foundProperty);
+                    }
+                }
+                lookForAgainstColumn(new IndexedColumn(0, propertyNameMatcher), properties, fp, score, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+            }
         }
 	}
 

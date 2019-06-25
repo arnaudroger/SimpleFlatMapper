@@ -15,6 +15,7 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.IndexedGetter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.property.SpeculativeArrayIndexResolutionProperty;
 import org.simpleflatmapper.util.*;
 
 import java.lang.reflect.Member;
@@ -598,7 +599,12 @@ public abstract class AbstractMapperFactory<
 		return discriminator(commonType, getter, consumer);
 	}
 
-	public static class DiscriminatorConditionBuilder<S, V, T> {
+	public MF enableSpeculativeArrayIndexResolution() {
+    	addColumnProperty(ConstantPredicate.truePredicate(), SpeculativeArrayIndexResolutionProperty.INSTANCE);
+		return (MF) this;
+	}
+
+    public static class DiscriminatorConditionBuilder<S, V, T> {
     	private final DiscriminatorBuilder<S, T> discriminatorBuilder;
     	private final Getter<? super S, ? extends V> getter;
 

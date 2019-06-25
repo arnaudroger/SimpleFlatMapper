@@ -6,8 +6,7 @@ import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.*;
-import org.simpleflatmapper.util.ConstantPredicate;
-import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.reflect.property.SpeculativeArrayIndexResolutionProperty;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class ArrayMetaDataTest {
         assertEquals("aa", meta0.getGetter().get(list));
 
         // index discovery
-        PropertyMeta<Object, Object> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
+        PropertyMeta<Object, Object> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false), new Object[] {SpeculativeArrayIndexResolutionProperty.INSTANCE}, (TypeAffinity)null, isValidPropertyMeta);
 
         assertTrue(bb instanceof ArrayElementPropertyMeta);
         ArrayElementPropertyMeta<Object, Object> meta = (ArrayElementPropertyMeta<Object, Object>) bb;

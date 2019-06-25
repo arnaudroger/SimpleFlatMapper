@@ -17,9 +17,17 @@ public class NonMappedPropertyMeta<T, P> extends PropertyMeta<T, P> {
 			ReflectionService reflectService,
 			Object[] defineProperties) {
 
-		super(name, ownerType, reflectService);
+		super(cleanUpName(name), ownerType, reflectService);
 		this.type = Object.class;
 		this.defineProperties = defineProperties;
+	}
+
+	private static String cleanUpName(String name) {
+		int i = 0;
+		while(i < name.length() && DefaultPropertyNameMatcher.isSeparatorChar(name.charAt(i)))
+			i++;
+
+		return i > 0 ? name.substring(i) : name;
 	}
 
 	@Override

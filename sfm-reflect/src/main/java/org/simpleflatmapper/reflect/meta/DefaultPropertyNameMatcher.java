@@ -136,7 +136,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		return !exactMatch && isSeparatorChar(charColumn);
 	}
 
-	private boolean isSeparatorChar(char charColumn) {
+	public static  boolean isSeparatorChar(char charColumn) {
 		return charColumn == '_' || charColumn == ' ' || charColumn == '.' || charColumn == '-';
 	}
 

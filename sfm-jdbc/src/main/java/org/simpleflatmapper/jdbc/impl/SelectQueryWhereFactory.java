@@ -4,8 +4,10 @@ import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -43,6 +45,13 @@ public class SelectQueryWhereFactory<T> {
 
     private <P> SelectQueryImpl<T, P> newSelectQuery(String whereClause, Type paramClass) {
         String query = sqlQuery(whereClause);
+        JdbcMapperFactory jdbcMapperFactory = this.jdbcMapperFactory;
+
+        if (TypeHelper.isArray(paramClass) || TypeHelper.isAssignable(List.class, paramClass)) {
+            jdbcMapperFactory = JdbcMapperFactory.newInstance(jdbcMapperFactory);
+            jdbcMapperFactory.enableSpeculativeArrayIndexResolution();
+        }
+
         QueryPreparer<P> queryPreparer = jdbcMapperFactory.<P>from(paramClass).to(NamedSqlQuery.parse(query));
         return new SelectQueryImpl<T, P>(queryPreparer, jdbcMapper);
     }

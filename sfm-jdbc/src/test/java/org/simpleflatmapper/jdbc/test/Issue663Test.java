@@ -5,6 +5,7 @@ import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.map.property.InferNullProperty;
 import org.simpleflatmapper.test.jdbc.DbHelper;
+import org.simpleflatmapper.util.ListCollector;
 
 import java.net.UnknownHostException;
 import java.sql.*;
@@ -17,7 +18,6 @@ public class Issue663Test {
 
 
 
-    //IFJAVA8_START
     @Test
     public void testIngerNullProperty() throws SQLException, UnknownHostException {
 
@@ -44,7 +44,7 @@ public class Issue663Test {
                     ")\n" +
                     "select * from t\n");
 
-            List<AResource> collect = mapper.stream(resultSet).collect(java.util.stream.Collectors.toList());
+            List<AResource> collect = mapper.forEach(resultSet, new ListCollector<AResource>()).getList();
 
             assertEquals(Arrays.asList("foo", "bar", "foo" ), collect.get(0).items);
             assertEquals(Arrays.asList(), collect.get(1).items);
@@ -61,6 +61,5 @@ public class Issue663Test {
 
 
 
-    //IFJAVA8_END
 
 }

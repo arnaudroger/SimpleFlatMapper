@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.meta.*;
+import org.simpleflatmapper.reflect.property.EligibleAsNonMappedProperty;
+import org.simpleflatmapper.reflect.property.OptionalProperty;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.tuple.Tuples;
@@ -156,6 +158,23 @@ public class PropertyFinderTest {
         PropertyMeta<O531, Object> property = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("is_enabled"), new Object[0], (TypeAffinity) null, predicate);
 
         assertNotNull(property);
+
+    }
+
+
+    @Test
+    public void testOptionalPropReturNotMappedProperty664() {
+        ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+
+        PropertyFinder<DbObject> finder = classMeta.newPropertyFinder();
+
+        PropertyMeta<DbObject, Object> id = finder.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
+        assertNotNull(id);
+
+        PropertyMeta<DbObject, Object> type = finder.findProperty(DefaultPropertyNameMatcher.of("type"), new Object[] { new OptionalProperty() {}, new EligibleAsNonMappedProperty() {}}, (TypeAffinity)null, isValidPropertyMeta);
+        assertNotNull(type);
+        assertTrue(type instanceof  NonMappedPropertyMeta);
+        assertEquals("type", type.getName());
 
     }
     

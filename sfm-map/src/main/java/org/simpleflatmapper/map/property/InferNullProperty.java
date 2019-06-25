@@ -5,6 +5,7 @@ import org.simpleflatmapper.map.impl.DiscriminatorPropertyFinder;
 import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
+import org.simpleflatmapper.reflect.property.EligibleAsNonMappedProperty;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.Predicate;
 
@@ -12,7 +13,7 @@ import java.lang.reflect.Type;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
-public class InferNullProperty {
+public class InferNullProperty implements EligibleAsNonMappedProperty {
 
     private static final Predicate<PropertyMeta<?, ?>> DEFAULT_PREDICATE = new Predicate<PropertyMeta<?, ?>>() {
         @Override

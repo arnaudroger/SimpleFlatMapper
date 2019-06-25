@@ -2,6 +2,8 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
+import org.simpleflatmapper.reflect.property.EligibleAsNonMappedProperty;
+import org.simpleflatmapper.reflect.property.OptionalProperty;
 import org.simpleflatmapper.util.BooleanProvider;
 import org.simpleflatmapper.util.Predicate;
 
@@ -52,19 +54,42 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			if (propertyFilter.testProperty(propertyMeta)) {
 				matchingProperties.found(propertyMeta,
 						selfPropertySelectionCallback(propName),
-						score.self(classMeta.getNumberOfProperties(), propName), typeAffinityScorer);
+						score.self(classMeta.getNumberOfProperties(), propName),
+						typeAffinityScorer);
 			}
 		}
+
+		if (isOptionalAndEligibleAsNonMappedProperty(properties)) {
+			NonMappedPropertyMeta meta = new NonMappedPropertyMeta(propertyNameMatcher.toString(), classMeta.getType(), classMeta.getReflectionService(), properties);
+			matchingProperties.found(
+					meta,
+					new Runnable() {
+						@Override
+						public void run() {
+						}
+					},
+					score.notMatch(),
+					typeAffinityScorer);
+		}
+	}
+
+	public static boolean isOptionalAndEligibleAsNonMappedProperty(Object[] properties) {
+		return containsProperty(properties, OptionalProperty.class) && containsProperty(properties, EligibleAsNonMappedProperty.class);
+	}
+
+	public static boolean containsProperty(Object[] properties, Class<?> propClass) {
+		for(Object p : properties) {
+			if (propClass.isAssignableFrom(p.getClass())) {
+				return true;
+			}
+		}
+		return false;
+
 	}
 
 	private boolean disallowSelfReference(Object[] properties) {
     	if (classMeta.getNumberOfProperties() <= 1) return false;
-    	for(Object p : properties) {
-    		if (p instanceof DisallowSelfReference) {
-    			return true;
-			}
-		}
-		return false;
+    	return containsProperty(properties, DisallowSelfReference.class);
 	}
 
 	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {

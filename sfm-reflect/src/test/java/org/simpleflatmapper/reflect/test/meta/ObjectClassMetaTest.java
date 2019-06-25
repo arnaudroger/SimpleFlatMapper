@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.*;
+import org.simpleflatmapper.reflect.property.OptionalProperty;
 import org.simpleflatmapper.reflect.test.KeyTest;
 import org.simpleflatmapper.reflect.test.KeyTestProperty;
 import org.simpleflatmapper.test.beans.DbFinalObject;
@@ -447,6 +448,5 @@ public class ObjectClassMetaTest {
 
         assertFalse(instantiatorDefinitions.isEmpty());
     }
-
 
 }

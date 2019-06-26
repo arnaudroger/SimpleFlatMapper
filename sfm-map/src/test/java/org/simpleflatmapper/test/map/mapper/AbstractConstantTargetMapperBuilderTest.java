@@ -4,15 +4,14 @@ import org.junit.Test;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.mapper.*;
+import org.simpleflatmapper.map.property.KeyProperty;
+import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.test.map.SampleFieldKey;
-import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
-import org.simpleflatmapper.map.mapper.ColumnDefinition;
-import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
-import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -59,6 +58,26 @@ public class AbstractConstantTargetMapperBuilderTest {
 
         assertEquals(list.get(0), dbObject.getId());
         assertEquals("blop", list.get(1));
+
+    }
+
+
+    @Test
+    public void testNonMappedValue() throws Exception {
+        ClassMeta<DbObject> classMeta = ReflectionService.newInstance().<DbObject>getClassMeta(DbObject.class);
+
+        Writerbuilder<DbObject> builder = new Writerbuilder<DbObject>(classMeta);
+        builder.addColumn("id");
+        builder.addColumn("blop", OptionalProperty.INSTANCE, KeyProperty.DEFAULT);
+
+        DbObject dbObject = DbObject.newInstance();
+        List<Object> list = new ArrayList<Object>();
+
+        ContextualSourceFieldMapperImpl<DbObject, List<Object>> mapper = builder.mapper();
+        mapper.mapTo(dbObject, list, MappingContext.EMPTY_CONTEXT);
+
+        assertEquals(1, list.size());
+        assertEquals(list.get(0), dbObject.getId());
 
     }
 

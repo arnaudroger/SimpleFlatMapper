@@ -709,7 +709,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 				if (t == null || isTargetForMapperFieldMapper(t)) return;
 				PropertyMeta<T, ?> meta = t.getPropertyMeta();
 				if (meta == null || (meta instanceof SelfPropertyMeta)) return;
-                 if (!meta.isConstructorProperty() && !isTargetForMapperFieldMapper(t)) {
+                 if (!meta.isConstructorProperty() && !isTargetForMapperFieldMapper(t) && !meta.isNonMapped()) {
 					fields.add(new PropertyFieldMeta(t));
 				}
 			}

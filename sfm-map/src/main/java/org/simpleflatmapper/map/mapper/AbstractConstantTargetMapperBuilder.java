@@ -112,6 +112,9 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
                 new ForEachCallBack<PropertyMapping<T, ?, K>>() {
                     @Override
                     public void handle(PropertyMapping<T, ?, K> pm) {
+
+                        if (pm.getPropertyMeta().isNonMapped()) return;
+
                         preFieldProcess(mappers, pm);
                         FieldMapper<T, S> fieldMapper =
                                 fieldAppenderFactory.newFieldMapper(

@@ -715,14 +715,21 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 			}
 		});
 
-        for(PropertyPerOwner e :
-                getSubPropertyPerOwner()) {
+        List<PropertyPerOwner> subPropertyPerOwner = getSubPropertyPerOwner();
+        for(PropertyPerOwner e : subPropertyPerOwner) {
             if (!e.owner.isConstructorProperty()) {
-                final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(e.owner, e.propertyMappings);
+                List<PropertyMapping<T, ?, K>> propertyMappings = filterNonMapped(e.propertyMappings);
+
+                if (propertyMappings.isEmpty()) { // non mapped property
+                    continue; // ignore no actual prop
+                }
 
                 final SourceMapper<S, ?> mapper;
-                if (e.propertyMappings.size() == 1 && JoinUtils.isArrayElement(e.propertyMappings.get(0).getPropertyMeta())) {
-                    mapper = getterPropertyMapper(e.owner, e.propertyMappings.get(0));
+                final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(e.owner, e.propertyMappings);
+
+
+                if (propertyMappings.size() == 1 && JoinUtils.isArrayElement(propertyMappings.get(0).getPropertyMeta())) {
+                    mapper = getterPropertyMapper(e.owner, propertyMappings.get(0));
                 } else {
                     mapper = subPropertyMapper(e.owner, e.propertyMappings, currentBuilder);
                 }
@@ -736,6 +743,20 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
 		return fields;
 	}
+
+    private List<PropertyMapping<T, ?, K>> filterNonMapped(List<PropertyMapping<T, ?, K>> propertyMappings) {
+        ArrayList<PropertyMapping<T, ?, K>> filtered = new ArrayList<PropertyMapping<T, ?, K>>(propertyMappings);
+
+        ListIterator<PropertyMapping<T, ?, K>> iterator = filtered.listIterator();
+        while(iterator.hasNext()) {
+            PropertyMapping<T, ?, K> pm = iterator.next();
+            if (pm.getPropertyMeta().isNonMapped()) {
+                iterator.remove();
+            }
+        }
+
+        return filtered;
+    }
 
     @Override
     public MappingContextFactory<? super S> contextFactory() {
@@ -889,7 +910,27 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     }
 
     private boolean isTargetForMapperFieldMapper(PropertyMapping pm) {
-        return pm.getPropertyMeta().isSubProperty() || (JoinUtils.isArrayElement(pm.getPropertyMeta()) && pm.getColumnDefinition().isKey());
+        return
+                pm.getPropertyMeta().isSubProperty() || (JoinUtils.isArrayElement(pm.getPropertyMeta()) && isKeyOrHasKey(pm));
+    }
+
+    private boolean isKeyOrHasKey(final PropertyMapping pm) {
+        if (pm.getColumnDefinition().isInferNull()) return true;
+
+        // looked for non mapped property with same owner
+        return propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K>>() {
+            boolean hasKey;
+            @Override
+            public void handle(PropertyMapping<T, ?, K> tkPropertyMapping) {
+                if (tkPropertyMapping.getPropertyMeta().isSubProperty()) {
+                    SubPropertyMeta subPropertyMeta = (SubPropertyMeta) tkPropertyMapping.getPropertyMeta();
+                    if (subPropertyMeta.getOwnerProperty().equals(pm.getPropertyMeta())) {
+                        hasKey |= tkPropertyMapping.getColumnDefinition().isInferNull();
+                    }
+                }
+            }
+        }).hasKey;
+
     }
 
 

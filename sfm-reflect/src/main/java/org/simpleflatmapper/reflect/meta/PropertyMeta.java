@@ -94,4 +94,8 @@ public abstract class PropertyMeta<O, P> {
 	public int typeAffinityScore(PropertyFinder.TypeAffinityScorer typeAffinityScorer) {
 		return typeAffinityScorer.score(getPropertyType());
 	}
+
+	public boolean isNonMapped() {
+		return false;
+	}
 }

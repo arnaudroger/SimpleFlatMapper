@@ -60,6 +60,9 @@ public class NonMappedPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		return defineProperties;
 	}
 
+	public boolean isNonMapped() {
+		return true;
+	}
 
 	@Override
     public String toString() {

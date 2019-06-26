@@ -78,6 +78,11 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 		return true;
 	}
 
+
+	public boolean isNonMapped() {
+		return subProperty.isNonMapped();
+	}
+
 	@Override
 	public boolean isValid() {
 		return subProperty.isValid();

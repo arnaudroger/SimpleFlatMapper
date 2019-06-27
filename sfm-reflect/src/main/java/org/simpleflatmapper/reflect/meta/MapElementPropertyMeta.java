@@ -14,6 +14,7 @@ public class MapElementPropertyMeta<T extends Map<K, V>, K, V> extends PropertyM
 	private final MapSetter<T, K, V> setter;
 	private final MapGetter<T, K, V> getter;
 
+
 	public MapElementPropertyMeta(PropertyNameMatcher propertyNameMatcher, Type ownerType, ReflectionService reflectService, ClassMeta<V> valueMetaData, K key) {
 		super(propertyNameMatcher.toString(), ownerType, reflectService);
 		this.valueMetaData = valueMetaData;
@@ -54,6 +55,11 @@ public class MapElementPropertyMeta<T extends Map<K, V>, K, V> extends PropertyM
 	@Override
 	public PropertyMeta<T, V> withReflectionService(ReflectionService reflectionService) {
 		return new MapElementPropertyMeta<T, K, V>(getName(), getOwnerType(), reflectionService, reflectionService.<V>getClassMeta(valueMetaData.getType()), key, setter, getter);
+	}
+
+	@Override
+	public PropertyMeta<T, V> toNonMapped() {
+		throw new UnsupportedOperationException();
 	}
 
 	public K getKey() {

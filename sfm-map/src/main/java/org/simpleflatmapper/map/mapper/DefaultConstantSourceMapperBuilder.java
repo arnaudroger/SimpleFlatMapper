@@ -718,7 +718,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         List<PropertyPerOwner> subPropertyPerOwner = getSubPropertyPerOwner();
         for(PropertyPerOwner e : subPropertyPerOwner) {
             if (!e.owner.isConstructorProperty()) {
-                List<PropertyMapping<T, ?, K>> propertyMappings = filterNonMapped(e.propertyMappings);
+                List<PropertyMapping<T, ?, K>> propertyMappings = filterNonMappedAndCompress(e.propertyMappings);
 
                 if (propertyMappings.isEmpty()) { // non mapped property
                     continue; // ignore no actual prop
@@ -744,7 +744,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 		return fields;
 	}
 
-    private List<PropertyMapping<T, ?, K>> filterNonMapped(List<PropertyMapping<T, ?, K>> propertyMappings) {
+    private List<PropertyMapping<T, ?, K>> filterNonMappedAndCompress(List<PropertyMapping<T, ?, K>> propertyMappings) {
         ArrayList<PropertyMapping<T, ?, K>> filtered = new ArrayList<PropertyMapping<T, ?, K>>(propertyMappings);
 
         ListIterator<PropertyMapping<T, ?, K>> iterator = filtered.listIterator();
@@ -752,7 +752,10 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             PropertyMapping<T, ?, K> pm = iterator.next();
             if (pm.getPropertyMeta().isNonMapped()) {
                 iterator.remove();
+            } else {
+                iterator.set(pm.compressSubSelf());
             }
+
         }
 
         return filtered;

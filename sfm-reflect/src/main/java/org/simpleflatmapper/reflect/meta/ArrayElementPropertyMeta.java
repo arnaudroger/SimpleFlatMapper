@@ -58,11 +58,33 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 	}
 
 	@Override
+	public PropertyMeta<T, E> toNonMapped() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
     public String toString() {
         return "ArrayElementPropertyMeta{" +
                 "index=" + index +
                 '}';
     }
-    
-    
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ArrayElementPropertyMeta<?, ?> that = (ArrayElementPropertyMeta<?, ?>) o;
+
+		if (index != that.index) return false;
+		return arrayMetaData != null ? arrayMetaData.equals(that.arrayMetaData) : that.arrayMetaData == null;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = index;
+		result = 31 * result + (arrayMetaData != null ? arrayMetaData.hashCode() : 0);
+		return result;
+	}
 }

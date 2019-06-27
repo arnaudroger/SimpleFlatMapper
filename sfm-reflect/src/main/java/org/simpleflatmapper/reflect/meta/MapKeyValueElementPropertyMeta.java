@@ -47,6 +47,11 @@ public class MapKeyValueElementPropertyMeta<T extends Map<K, V>, K, V> extends P
 		return new MapKeyValueElementPropertyMeta<T, K, V>(getOwnerType(), reflectionService, propertyType);
 	}
 
+	@Override
+	public PropertyMeta<T, KeyValue<K, V>> toNonMapped() {
+		throw new UnsupportedOperationException();
+	}
+
 
 	private static class MapSetter<T extends  Map<K, V>, K, V> implements Setter<T, KeyValue<K, V>> {
 		@Override

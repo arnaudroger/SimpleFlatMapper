@@ -98,4 +98,10 @@ public abstract class PropertyMeta<O, P> {
 	public boolean isNonMapped() {
 		return false;
 	}
+
+	public abstract PropertyMeta<O, P> toNonMapped();
+
+	public PropertyMeta<O, P> compressSubSelf() {
+		return this;
+	}
 }

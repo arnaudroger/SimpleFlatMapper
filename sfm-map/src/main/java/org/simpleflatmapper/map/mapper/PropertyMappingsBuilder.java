@@ -17,6 +17,7 @@ import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
+import org.simpleflatmapper.reflect.property.EligibleAsNonMappedProperty;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.ErrorDoc;
@@ -156,6 +157,8 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 				iterator.set(null);
 				if (!propertyMapping.getColumnDefinition().has(OptionalProperty.class)) {
 					invalidateKeys.add(propertyMapping.getColumnKey());
+				} else if (propertyMapping.getColumnDefinition().has(EligibleAsNonMappedProperty.class)) {
+					iterator.set(propertyMapping.toNonMapped());
 				}
 			}
 		}

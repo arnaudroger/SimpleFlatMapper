@@ -5,7 +5,6 @@ import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.property.EligibleAsNonMappedProperty;
 import org.simpleflatmapper.reflect.property.OptionalProperty;
 import org.simpleflatmapper.util.BooleanProvider;
-import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -50,7 +49,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 				public boolean getBoolean() {
 					return state != State.PROPERTIES;
 				}
-			}, classMeta);
+			}, properties, propertyNameMatcher.toString(), classMeta);
 			if (propertyFilter.testProperty(propertyMeta)) {
 				matchingProperties.found(propertyMeta,
 						selfPropertySelectionCallback(propName),

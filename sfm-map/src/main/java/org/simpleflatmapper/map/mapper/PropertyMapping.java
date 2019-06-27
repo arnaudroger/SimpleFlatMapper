@@ -42,4 +42,13 @@ public class PropertyMapping<T, P, K extends FieldKey<K>> {
                 ", columnDefinition=" + columnDefinition +
                 '}';
     }
+
+	public PropertyMapping<T, P, K> toNonMapped() {
+		return new PropertyMapping<T, P, K>(propertyMeta.toNonMapped(), columnKey, columnDefinition);
+
+	}
+
+	public PropertyMapping<T, ?, K> compressSubSelf() {
+		return new PropertyMapping<T, P, K>(propertyMeta.compressSubSelf(), columnKey, columnDefinition);
+	}
 }

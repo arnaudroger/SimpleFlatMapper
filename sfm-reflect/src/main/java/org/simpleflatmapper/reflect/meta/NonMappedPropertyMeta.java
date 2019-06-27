@@ -65,6 +65,11 @@ public class NonMappedPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	}
 
 	@Override
+	public PropertyMeta<T, P> toNonMapped() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
     public String toString() {
         return "NonMappedPropertyMeta{" +
                 "name="+ getName() +

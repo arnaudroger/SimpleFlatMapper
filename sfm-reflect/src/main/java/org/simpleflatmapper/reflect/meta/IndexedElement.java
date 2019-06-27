@@ -1,6 +1,5 @@
 package org.simpleflatmapper.reflect.meta;
 
-import org.simpleflatmapper.util.Predicate;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -150,6 +150,11 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
         public PropertyMeta<T, P> withReflectionService(ReflectionService reflectionService) {
             return new CustomProperty<T, P>(getOwnerType(), reflectionService, getName(), type, setter, getter);
         }
+
+        @Override
+        public PropertyMeta<T, P> toNonMapped() {
+            throw new UnsupportedOperationException();
+        }
     }
 
 

@@ -112,5 +112,10 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
         return new ConstructorPropertyMeta<T, P>(getName(), getOwnerType(), reflectionService, parameter, scoredGetter, scoredSetter, instantiatorDefinition, defineProperties);
     }
 
+    @Override
+    public PropertyMeta<T, P> toNonMapped() {
+        throw new UnsupportedOperationException();
+    }
+
 
 }

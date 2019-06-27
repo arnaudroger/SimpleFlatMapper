@@ -12,7 +12,9 @@ import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
 import org.simpleflatmapper.map.mapper.MapperCache;
 import org.simpleflatmapper.map.mapper.MapperKey;
+import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.property.SpeculativeArrayIndexResolutionProperty;
 
 public class DatastaxBinder<T> {
     private final MapperConfig<DatastaxColumnKey, ?> config;
@@ -44,8 +46,14 @@ public class DatastaxBinder<T> {
         BoundStatementMapper<T> mapper;
         SettableDataMapperBuilder<T> settableDataMapperBuilder = new SettableDataMapperBuilder<T>(classMeta, config,
                 ConstantTargetFieldMapperFactoryImpl.newInstance(new SettableDataSetterFactory(config, classMeta.getReflectionService()), SettableByIndexData.class));
+        Object[] properties;
+        if (classMeta instanceof ArrayClassMeta) {
+            properties = new Object[] {SpeculativeArrayIndexResolutionProperty.INSTANCE};
+        } else {
+            properties = new Object[0];
+        }
         for(DatastaxColumnKey columnKey : mapperKey.getColumns()) {
-            settableDataMapperBuilder.addColumn(columnKey);
+            settableDataMapperBuilder.addColumn(columnKey, properties);
         }
         mapper = new BoundStatementMapper<T>(settableDataMapperBuilder.mapper());
         cache.add(mapperKey, mapper);

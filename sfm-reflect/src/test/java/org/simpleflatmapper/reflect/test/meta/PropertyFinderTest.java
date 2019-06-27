@@ -32,7 +32,7 @@ public class PropertyFinderTest {
         Object[] properties = {SpeculativeArrayIndexResolutionProperty.INSTANCE};
 
         PropertyMeta<AA, ?> a = finder.findProperty(matcher("cols_a"), properties, (TypeAffinity)null, isValidPropertyMeta);
-        PropertyMeta<AA, ?> b = finder.findProperty(matcher("cols_b"), properties, (TypeAffinity)null, isValidPropertyMeta);
+        PropertyMeta<AA, ?> b = finder.findProperty(matcher("cols_b"), properties, (TypeAffinity)null, isValidPropertyMeta).compressSubSelf();
 
         assertEquals("cols[0].a", a.getPath());
         assertEquals("cols[1]", b.getPath());
@@ -92,7 +92,7 @@ public class PropertyFinderTest {
         assertNull(propEltId);
 
 
-        propEltId = propertyFinder.findProperty(matcher("notid"), properties, (TypeAffinity)null, isValidPropertyMeta); // will safe match
+        propEltId = propertyFinder.findProperty(matcher("notid"), properties, (TypeAffinity)null, isValidPropertyMeta).compressSubSelf(); // will safe match
         assertTrue(propEltId instanceof  ArrayElementPropertyMeta);
         assertEquals(4, ((ArrayElementPropertyMeta)propEltId).getIndex());
 

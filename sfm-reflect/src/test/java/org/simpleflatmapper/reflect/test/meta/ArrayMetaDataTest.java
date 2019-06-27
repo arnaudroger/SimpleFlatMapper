@@ -41,10 +41,10 @@ public class ArrayMetaDataTest {
         assertEquals("aa", meta0.getGetter().get(list));
 
         // index discovery
-        PropertyMeta<Object, Object> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false), new Object[] {SpeculativeArrayIndexResolutionProperty.INSTANCE}, (TypeAffinity)null, isValidPropertyMeta);
+        PropertyMeta<Object, Object> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false), new Object[] {SpeculativeArrayIndexResolutionProperty.INSTANCE}, (TypeAffinity)null, isValidPropertyMeta).compressSubSelf();
 
-        assertTrue(bb instanceof ArrayElementPropertyMeta);
-        ArrayElementPropertyMeta<Object, Object> meta = (ArrayElementPropertyMeta<Object, Object>) bb;
+        assertTrue(bb.compressSubSelf() instanceof ArrayElementPropertyMeta);
+        ArrayElementPropertyMeta<Object, Object> meta = (ArrayElementPropertyMeta<Object, Object>) bb.compressSubSelf();
         assertEquals(1, meta.getIndex());
 
 
@@ -95,7 +95,7 @@ public class ArrayMetaDataTest {
         assertTrue(classMeta instanceof ArrayClassMeta);
 
         PropertyFinder<String[]> propertyFinder = classMeta.newPropertyFinder();
-        PropertyMeta<String[], String> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
+        PropertyMeta<String[], ?> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false), new Object[0], (TypeAffinity)null, isValidPropertyMeta).compressSubSelf();
 
         assertTrue("expect ArrayElementPropertyMeta " + bb, bb instanceof ArrayElementPropertyMeta);
         ArrayElementPropertyMeta<String[], String> meta = (ArrayElementPropertyMeta<String[], String>) bb;

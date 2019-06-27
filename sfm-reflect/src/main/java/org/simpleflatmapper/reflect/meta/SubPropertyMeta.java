@@ -34,6 +34,9 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Setter<O, P> getSetter() {
+		if (subProperty.isSelf()) {
+			return (Setter<O, P>) ownerProperty.getSetter();
+		}
 		if (!NullSetter.isNull(subProperty.getSetter()) && !NullGetter.isNull(ownerProperty.getGetter())) {
 			return new Setter<O, P>() {
 				@Override
@@ -48,6 +51,7 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 
     @Override
     public Getter<O, P> getGetter() {
+		if (subProperty.isSelf()) return (Getter<O, P>) ownerProperty.getGetter();
 		return  new GetterOnGetter<O, I, P>(this.ownerProperty.getGetter(), subProperty.getGetter());
     }
 
@@ -101,6 +105,16 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 		return subProperty.getDefinedProperties();
 	}
 
+	@Override
+	public PropertyMeta<O, P> toNonMapped() {
+		return new SubPropertyMeta<O, I,  P>(reflectService, ownerProperty, subProperty.toNonMapped());
+	}
+
+	@Override
+	public PropertyMeta<O, P> compressSubSelf() {
+		if (subProperty.isSelf()) return (PropertyMeta<O, P>) ownerProperty;
+		return new SubPropertyMeta(reflectService, ownerProperty, subProperty.compressSubSelf());
+	}
 
 	@Override
     public String toString() {

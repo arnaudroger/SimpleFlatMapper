@@ -115,6 +115,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
 
                         if (pm.getPropertyMeta().isNonMapped()) return;
 
+                        pm = pm.compressSubSelf();
                         preFieldProcess(mappers, pm);
                         FieldMapper<T, S> fieldMapper =
                                 fieldAppenderFactory.newFieldMapper(

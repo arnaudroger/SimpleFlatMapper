@@ -35,6 +35,11 @@ public class ObjectPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		return new ObjectPropertyMeta<T, P>(getName(), getOwnerType(), reflectionService, type, getter, setter, defineProperties);
 	}
 
+	@Override
+	public PropertyMeta<T, P> toNonMapped() {
+		throw new UnsupportedOperationException();
+	}
+
 
 	public PropertyMeta<T, P> getterSetter(ScoredGetter<T, P> getter, ScoredSetter<T, P> setter, Object[] defineProperties) {
         return new ObjectPropertyMeta<T, P>(getName(), getOwnerType(), reflectService, type, this.getter.best(getter), this.setter.best(setter), concatenate(this.defineProperties, defineProperties));

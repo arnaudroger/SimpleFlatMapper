@@ -70,13 +70,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                         properties, new FoundProperty() {
                     @Override
                     public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
-                        PropertyMeta subProperty;
-                        if (propertyMeta.isSelf()) {
-                            subProperty = indexedElement.getPropertyMeta();
-                        } else {
-                            subProperty = new SubPropertyMeta(classMeta.getReflectionService(), indexedElement.getPropertyMeta(), propertyMeta);
-                        }
-
+                        PropertyMeta subProperty = new SubPropertyMeta(classMeta.getReflectionService(), indexedElement.getPropertyMeta(), propertyMeta);
                         matchingProperties.found(subProperty, new Runnable() {
                             @Override
                             public void run() {

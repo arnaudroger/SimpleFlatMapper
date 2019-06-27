@@ -4,7 +4,6 @@ import org.simpleflatmapper.converter.ContextFactory;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.reflect.property.MapTypeProperty;
-import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -121,11 +120,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                                 };
 
                                 if (keyProperty != null) {
-                                    if (propertyMeta instanceof SelfPropertyMeta) {
-                                        matchingProperties.found(keyProperty, sCallback, score.self(keyProperty.getPropertyClassMeta(), keyMatcher.toString()), typeAffinityScorer);
-                                    } else {
-                                        matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), sCallback, score.matches(keyMatcher), typeAffinityScorer);
-                                    }
+                                    matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), sCallback, score.matches(keyMatcher), typeAffinityScorer);
                                 }
                             }
                         },

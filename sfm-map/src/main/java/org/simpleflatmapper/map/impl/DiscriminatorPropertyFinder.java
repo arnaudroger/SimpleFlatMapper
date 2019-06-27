@@ -218,5 +218,10 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
             }
             return bestScore;
         }
+
+        @Override
+        public PropertyMeta<O, P> toNonMapped() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

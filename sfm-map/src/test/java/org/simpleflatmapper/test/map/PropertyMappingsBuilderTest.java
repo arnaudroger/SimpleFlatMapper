@@ -110,7 +110,7 @@ public class PropertyMappingsBuilderTest {
         SubPropertyMeta<AnonymousElement, ?, ?> subPropertyMeta = (SubPropertyMeta<AnonymousElement, ?, ?>) propertyMeta;
 
         assertTrue(TypeHelper.isAssignable(List.class, subPropertyMeta.getOwnerProperty().getPropertyType()));
-        assertTrue("expect ListElementPropertyMeta " + subPropertyMeta.getSubProperty(), subPropertyMeta.getSubProperty() instanceof ArrayElementPropertyMeta);
+        assertTrue("expect ListElementPropertyMeta " + ((SubPropertyMeta)subPropertyMeta.getSubProperty()).getOwnerProperty(), ((SubPropertyMeta)subPropertyMeta.getSubProperty()).getOwnerProperty() instanceof ArrayElementPropertyMeta);
     }
 
 

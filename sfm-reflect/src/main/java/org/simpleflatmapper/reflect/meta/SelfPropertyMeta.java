@@ -6,7 +6,6 @@ import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.getter.IdentityGetter;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BooleanProvider;
-import org.simpleflatmapper.util.Supplier;
 
 import java.lang.reflect.Type;
 
@@ -16,10 +15,15 @@ public class SelfPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
     private final BooleanProvider isValid;
     private final ClassMeta<E> classMeta;
+    private final Object[] defineProperties;
+    private final String originalName;
 
-    public SelfPropertyMeta(ReflectionService reflectService, Type type, BooleanProvider isValid, ClassMeta<E> classMeta) {
+
+    public SelfPropertyMeta(ReflectionService reflectService, Type type, BooleanProvider isValid, Object[] defineProperties, String originalName, ClassMeta<E> classMeta) {
         super("self", type, reflectService);
+        this.originalName = originalName;
         this.isValid = isValid;
+        this.defineProperties = defineProperties;
         this.classMeta = classMeta;
     }
 
@@ -31,7 +35,17 @@ public class SelfPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
     @Override
     public PropertyMeta<T, E> withReflectionService(ReflectionService reflectionService) {
-        return new SelfPropertyMeta<T, E>(reflectionService, getOwnerType(), isValid, classMeta);
+        return new SelfPropertyMeta<T, E>(reflectionService, getOwnerType(), isValid, defineProperties, originalName, classMeta);
+    }
+
+    @Override
+    public PropertyMeta<T, E> toNonMapped() {
+        return new NonMappedPropertyMeta<T, E>(getName(), getOwnerType(), reflectService, defineProperties);
+    }
+
+    @Override
+    public Object[] getDefinedProperties() {
+        return defineProperties;
     }
 
     @Override
@@ -73,5 +87,7 @@ public class SelfPropertyMeta<T, E> extends PropertyMeta<T, E> {
     public boolean isSelf() {
         return true;
     }
+
+
 
 }

@@ -6,6 +6,8 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.infra.Blackhole;
+import org.simpleflatmapper.lightningcsv.Row;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.Consumer;
 
 import java.io.File;

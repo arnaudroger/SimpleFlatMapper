@@ -76,15 +76,15 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
     }
 
     private ClassMeta<T> prepareClassMetaForDiscriminator(ClassMeta<T> classMeta, MapperConfig<K, ROW> mapperConfig) {
-        List<MapperConfig.Discriminator<ROW, ?>> discriminators = mapperConfig.getDiscriminators();
+        List<MapperConfig.Discriminator<ROW, K, ?>> discriminators = mapperConfig.getDiscriminators();
         
         if (discriminators.isEmpty()) {
             return classMeta;
         } else {
             Map<Class<?>, List<ClassMeta<?>>> discriminatorMap = new HashMap<Class<?>, List<ClassMeta<?>>>();
-            for(MapperConfig.Discriminator<?, ?> d : discriminators) {
+            for(MapperConfig.Discriminator<?, ?, ?> d : discriminators) {
                 List<ClassMeta<?>> implementations = new ArrayList<ClassMeta<?>>();
-                for(MapperConfig.DiscriminatorCase<?, ?> dc : d.cases) {
+                for(MapperConfig.DiscriminatorCase<?, ?, ?> dc : d.cases) {
                     implementations.add(dc.classMeta);
                 }
                 discriminatorMap.put(TypeHelper.toClass(d.type), implementations);

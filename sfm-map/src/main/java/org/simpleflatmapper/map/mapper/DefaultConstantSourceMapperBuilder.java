@@ -18,14 +18,10 @@ import org.simpleflatmapper.map.getter.NullContextualGetter;
 import org.simpleflatmapper.map.impl.DiscriminatorPropertyFinder;
 import org.simpleflatmapper.map.impl.GetterMapper;
 import org.simpleflatmapper.map.impl.JoinUtils;
-import org.simpleflatmapper.map.property.DefaultValueProperty;
-import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.property.FieldMapperProperty;
-import org.simpleflatmapper.map.property.GetterProperty;
+import org.simpleflatmapper.map.property.*;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactory;
 import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
-import org.simpleflatmapper.map.property.MandatoryProperty;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
@@ -403,6 +399,26 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
     public Type getTargetType() {
         return propertyMappingsBuilder.getClassMeta().getType();
+    }
+
+    public List<K> findAllDiscriminatorKeys() {
+        final List<K> keys = new ArrayList<>();
+        propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K>>() {
+            @Override
+            public void handle(PropertyMapping<T, ?, K> tkPropertyMapping) {
+                ColumnDefinition<K, ?> columnDefinition = tkPropertyMapping.getColumnDefinition();
+                if (columnDefinition.has(DiscriminatorColumnProperty.class)) {
+                    DiscriminatorColumnProperty[] properties = columnDefinition.lookForAll(DiscriminatorColumnProperty.class);
+                    for(DiscriminatorColumnProperty p : properties) {
+                        if (p.test(getTargetType())) {
+                            keys.add(tkPropertyMapping.getColumnKey());
+                            return;
+                        }
+                    }
+                }
+            }
+        });
+        return keys;
     }
 
     public static class GenericBuilderMapping<S, T, K extends FieldKey<K>> {
@@ -1126,7 +1142,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                     @Override
                     public void accept(Type type, PropertyMeta<?, ?> propertyMeta) {
                         if (!propertyMetaPredicate.test(propertyMeta)) {
-                            not.add(mapperConfig.getDiscriminator(dpm.getOwnerType()).getCase(type).predicate);
+                            not.add(mapperConfig.getDiscriminator(dpm.getOwnerType()).getCase(type).predicateFactory.apply(findAllDiscriminatorKeys()));
                         } else {
                             Predicate<? super S> p = buildKeyPredicate(propertyMeta, propertyMetaPredicate);
                             

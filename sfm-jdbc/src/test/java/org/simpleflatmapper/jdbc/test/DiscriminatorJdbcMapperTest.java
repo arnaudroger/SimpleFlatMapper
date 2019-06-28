@@ -56,9 +56,9 @@ public class DiscriminatorJdbcMapperTest {
                                     public String apply(ResultSet rs, String columnName) throws Exception {
                                         return rs.getString(columnName);
                                     }
-                                }, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object>>() {
+                                }, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Object>>() {
                                     @Override
-                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Object> builder) {
                                         builder
                                                 .when("student", StudentGS.class)
                                                 .when("professor", ProfessorGS.class);
@@ -74,9 +74,9 @@ public class DiscriminatorJdbcMapperTest {
         JdbcMapper<Person> mapper =
                 JdbcMapperFactoryHelper.asm()
                         .addKeys("id", "students_id")
-                        .discriminator(Person.class, "person_type", String.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object>>() {
+                        .discriminator(Person.class, "person_type", String.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Object>>() {
                                     @Override
-                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Object> builder) {
                                         builder
                                                 .when("student", StudentGS.class)
                                                 .when("professor", ProfessorGS.class);
@@ -92,9 +92,9 @@ public class DiscriminatorJdbcMapperTest {
         JdbcMapper<Person> mapper =
                 JdbcMapperFactoryHelper.noAsm()
                         .addKeys("id", "students_id")
-                        .discriminator(Person.class, "person_type", String.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object>>() {
+                        .discriminator(Person.class, "person_type", String.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Object>>() {
                                     @Override
-                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Object> builder) {
                                         builder
                                                 .when("student", StudentGS.class)
                                                 .when("professor", ProfessorGS.class);
@@ -117,9 +117,9 @@ public class DiscriminatorJdbcMapperTest {
             final JdbcMapper<Person> mapper =
                     JdbcMapperFactoryHelper.noAsm()
                             .addKeys("id", "students_id")
-                            .discriminator(Person.class, "person_type", String.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object>>() {
+                            .discriminator(Person.class, "person_type", String.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Object>>() {
                                         @Override
-                                        public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, Object> builder) {
+                                        public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Object> builder) {
                                             builder
                                                     .when("student", StudentGS.class)
                                                     .when("professor", ProfessorGS.class);

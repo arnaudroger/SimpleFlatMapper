@@ -7,11 +7,7 @@ import org.simpleflatmapper.map.impl.IdentityFieldMapperColumnDefinitionProvider
 import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.DefaultPropertyNameMatcherFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.util.Enumerable;
-import org.simpleflatmapper.util.Predicate;
-import org.simpleflatmapper.util.PredicatedEnumerable;
-import org.simpleflatmapper.util.TypeHelper;
-import org.simpleflatmapper.util.UnaryFactory;
+import org.simpleflatmapper.util.*;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -34,7 +30,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 NO_ASM_MAPPER_THRESHOLD,
                 RethrowFieldMapperErrorHandler.INSTANCE,
                 RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, 
-                false, Collections.<Discriminator<S, ?>>emptyList(), null, false);
+                false, Collections.<Discriminator<S, K, ?>>emptyList(), null, false);
     }
 
     public static <K extends FieldKey<K>, S> MapperConfig<K, S> config(ColumnDefinitionProvider<K> columnDefinitionProvider) {
@@ -45,7 +41,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 false,
                 NO_ASM_MAPPER_THRESHOLD,
                 RethrowFieldMapperErrorHandler.INSTANCE,
-                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false, Collections.<Discriminator<S, ?>>emptyList(), null, false);
+                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE, false, Collections.<Discriminator<S, K, ?>>emptyList(), null, false);
     }
 
     private final ColumnDefinitionProvider<K> columnDefinitions;
@@ -57,7 +53,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
     private final ConsumerErrorHandler consumerErrorHandler;
     private final int maxMethodSize;
     private final boolean assumeInjectionModifiesValues;
-    private final List<Discriminator<S, ?>> discriminators;
+    private final List<Discriminator<S, K, ?>> discriminators;
     private final Predicate<? super S> rowFilter;
     
     private final boolean unorderedJoin;
@@ -71,7 +67,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
             FieldMapperErrorHandler<? super K> fieldMapperErrorHandler,
             ConsumerErrorHandler consumerErrorHandler,
             int maxMethodSize, boolean assumeInjectionModifiesValues,
-            List<Discriminator<S, ?>> discriminators, Predicate<? super S> rowFilter, boolean unorderedJoin) {
+            List<Discriminator<S, K, ?>> discriminators, Predicate<? super S> rowFilter, boolean unorderedJoin) {
         this.columnDefinitions = columnDefinitions;
         this.propertyNameMatcherFactory = propertyNameMatcherFactory;
         this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
@@ -269,12 +265,12 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
-    public <T> MapperConfig<K, S> discriminator(Class<T> rootClass, DiscriminatorCase<S, T>... cases) {
+    public <T> MapperConfig<K, S> discriminator(Class<T> rootClass, DiscriminatorCase<S, K, T>... cases) {
         return discriminator((Type)rootClass, cases);
     }
-    public <T> MapperConfig<K, S> discriminator(Type rootClass, DiscriminatorCase<S, T>... cases) {
-        List<Discriminator<S, ?>> discriminators = new ArrayList<Discriminator<S, ?>>(this.discriminators);
-        discriminators.add(new Discriminator<S, T>(rootClass, cases));
+    public <T> MapperConfig<K, S> discriminator(Type rootClass, DiscriminatorCase<S, K, T>... cases) {
+        List<Discriminator<S, K, ?>> discriminators = new ArrayList<Discriminator<S, K, ?>>(this.discriminators);
+        discriminators.add(new Discriminator<S, K, T>(rootClass, cases));
         return new MapperConfig<K, S>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
@@ -285,27 +281,29 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 consumerErrorHandler,
                 maxMethodSize,
                 assumeInjectionModifiesValues,
-                discriminators, rowFilter, unorderedJoin);
+                discriminators,
+                rowFilter,
+                unorderedJoin);
     }
 
-    public <S, T> Discriminator<S, T> getDiscriminator(ClassMeta<T> classMeta) {
+    public <S, T> Discriminator<S, K, T> getDiscriminator(ClassMeta<T> classMeta) {
         return getDiscriminator(classMeta.getType());
     }
 
-    public <S, T> Discriminator<S, T> getDiscriminator(Type type) {
-        for(Discriminator<?, ?> d : discriminators) {
+    public <S, T> Discriminator<S,  K, T> getDiscriminator(Type type) {
+        for(Discriminator<?, ?, ?> d : discriminators) {
             if (TypeHelper.areEquals(type, d.type)) {
-                return (Discriminator<S, T>) d;
+                return (Discriminator<S,  K,T>) d;
             }
         }
         return null;
     }
 
-    public List<Discriminator<S, ?>> getDiscriminators() {
+    public List<Discriminator<S, K, ?>> getDiscriminators() {
         return discriminators;
     }
 
-    public MapperConfig<K, S> discriminators(List<Discriminator<S, ?>> discriminators) {
+    public MapperConfig<K, S> discriminators(List<Discriminator<S, K, ?>> discriminators) {
         return new MapperConfig<K, S>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
@@ -320,7 +318,7 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 rowFilter, unorderedJoin);
     }
 
-    public DiscriminatorCase<S, ?> getDiscriminatorCase(Type type) {
+    public DiscriminatorCase<S, K, ?> getDiscriminatorCase(Type type) {
         return null;
     }
 
@@ -337,27 +335,27 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
     }
 
 
-    public static final class DiscriminatorCase<ROW, T> {
-        public final Predicate<ROW> predicate;
+    public static final class DiscriminatorCase<ROW, K extends  FieldKey<K>, T> {
+        public final Function<List<K>, Predicate<ROW>> predicateFactory;
         public final ClassMeta<? extends T> classMeta;
 
-        public DiscriminatorCase(Predicate<ROW> predicate, ClassMeta<? extends T> classMeta) {
-            this.predicate = predicate;
+        public DiscriminatorCase(Function<List<K>, Predicate<ROW>> predicateFactory, ClassMeta<? extends T> classMeta) {
+            this.predicateFactory = predicateFactory;
             this.classMeta = classMeta;
         }
     }
     
-    public static final class Discriminator<ROW, T> {
+    public static final class Discriminator<ROW, K extends  FieldKey<K>, T> {
         public final Type type;
-        public final DiscriminatorCase<ROW, T>[] cases;
+        public final DiscriminatorCase<ROW, K, T>[] cases;
 
-        public Discriminator(Type type, DiscriminatorCase<ROW, T>[] cases) {
+        public Discriminator(Type type, DiscriminatorCase<ROW, K, T>[] cases) {
             this.type = type;
             this.cases = cases;
         }
 
-        public DiscriminatorCase<ROW, T> getCase(Type type) {
-            for(DiscriminatorCase<ROW, T> c : cases) {
+        public DiscriminatorCase<ROW, K, T> getCase(Type type) {
+            for(DiscriminatorCase<ROW, K, T> c : cases) {
                 if (TypeHelper.areEquals(type, c.classMeta.getType())) {
                     return c;
                 }

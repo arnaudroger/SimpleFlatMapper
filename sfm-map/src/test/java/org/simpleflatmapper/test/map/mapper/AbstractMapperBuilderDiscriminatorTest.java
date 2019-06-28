@@ -9,6 +9,7 @@ import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.util.Consumer;
 
 
@@ -32,9 +33,9 @@ public class AbstractMapperBuilderDiscriminatorTest {
                                 return (String) target[2];
                             }
                         },
-                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common>>() {
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], SampleFieldKey, String, Common>>() {
                             @Override
-                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common> builder) {
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], SampleFieldKey, String, Common> builder) {
                                 builder
                                         .when("1", A571_1.class)
                                         .when("2", A571_2.class)
@@ -48,9 +49,9 @@ public class AbstractMapperBuilderDiscriminatorTest {
                                 return (String) target[3];
                             }
                         },
-                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common>>() {
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], SampleFieldKey, String, Common>>() {
                             @Override
-                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common> builder) {
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], SampleFieldKey, String, Common> builder) {
                                 builder
                                         .when("1", B571_1.class)
                                         .when("2", B571_2.class)
@@ -126,9 +127,9 @@ public class AbstractMapperBuilderDiscriminatorTest {
                                 return (String) target[3];
                             }
                         },
-                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common>>() {
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], SampleFieldKey, String, Common>>() {
                             @Override
-                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common> builder) {
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], SampleFieldKey, String, Common> builder) {
                                 builder
                                         .when("a", C561_A.class)
                                         .when("b", C561_B.class)
@@ -182,9 +183,9 @@ public class AbstractMapperBuilderDiscriminatorTest {
                                 return (String) target[3];
                             }
                         },
-                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common>>() {
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], SampleFieldKey, String, Common>>() {
                             @Override
-                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common> builder) {
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], SampleFieldKey, String, Common> builder) {
                                 builder
                                         .when("a", C561_A.class)
                                         .when("b", C561_B.class)
@@ -369,9 +370,9 @@ public class AbstractMapperBuilderDiscriminatorTest {
                                 return (String) target[3];
                             }
                         },
-                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common>>() {
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], SampleFieldKey, String, Common>>() {
                     @Override
-                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], String, Common> builder) {
+                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<Object[], SampleFieldKey, String, Common> builder) {
                         builder
                             .when("str", StringValue.class).
                             when("int", IntegerValue.class);

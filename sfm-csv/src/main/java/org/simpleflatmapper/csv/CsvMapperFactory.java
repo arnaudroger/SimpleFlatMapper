@@ -15,7 +15,6 @@ import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.Result;
 import org.simpleflatmapper.map.ResultFieldMapperErrorHandler;
 import org.simpleflatmapper.map.SetRowMapper;
-import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFactory;
 import org.simpleflatmapper.map.mapper.DynamicSetRowMapper;
@@ -70,15 +69,13 @@ import java.util.stream.Stream;
 public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMapperFactory<CsvColumnKey, CsvMapperFactory, CsvRow> {
 
 
-	private static final ColumnNameGetterFactory<CsvRow> NAMED_GETTER = new ColumnNameGetterFactory<CsvRow>() {
+	private static final DiscriminatorNamedGetterFactory<CsvRow> NAMED_GETTER = new DiscriminatorNamedGetterFactory<CsvRow>() {
 		@Override
-		public <T> Getter<? super CsvRow, ? extends T> getGetter(final String discriminatorColumn, final Class<T> discriminatorType) {
-			
+		public <T> DiscriminatorNamedGetter<CsvRow, T> newGetter(final Class<T> discriminatorType) {
 			final Converter<? super String, ? extends T> converter = ConverterService.getInstance().findConverter(String.class, discriminatorType);
-			
-			return new Getter<CsvRow, T>() {
+			return new DiscriminatorNamedGetter<CsvRow, T>() {
 				@Override
-				public T get(CsvRow target) throws Exception {
+				public T get(CsvRow target, String discriminatorColumn) throws Exception {
 					int index = target.getIndex(discriminatorColumn);
 					if (index < 0) {
 						return null;

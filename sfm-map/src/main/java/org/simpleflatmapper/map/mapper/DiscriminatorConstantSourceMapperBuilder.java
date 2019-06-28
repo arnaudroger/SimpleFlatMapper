@@ -10,6 +10,7 @@ import org.simpleflatmapper.map.SourceFieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.impl.DiscriminatorPropertyFinder;
+import org.simpleflatmapper.map.property.DiscriminatorColumnProperty;
 import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Getter;
@@ -39,7 +40,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
     @SuppressWarnings("unchecked")
     public DiscriminatorConstantSourceMapperBuilder(
-            MapperConfig.Discriminator<? super S, T> discriminator,
+            MapperConfig.Discriminator<? super S, K, T> discriminator,
             final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
             final MapperConfig<K, ? extends S> mapperConfig,
@@ -54,7 +55,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         MapperConfig<K, ? extends S> kMapperConfig = mapperConfig.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
         
         for(int i = 0; i < discriminator.cases.length; i++) {
-            MapperConfig.DiscriminatorCase<? super S, ? extends T> discriminatorCase = discriminator.cases[i];
+            MapperConfig.DiscriminatorCase<? super S, K, ? extends T> discriminatorCase = discriminator.cases[i];
 
             PropertyFinder<T> subPropertyFinder = propertyFinder;
             
@@ -66,8 +67,8 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         }
     }
 
-    private <T> DiscriminatedBuilder<S, T, K> getDiscriminatedBuilder(MapperSource<? super S, K> mapperSource, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder, KeyFactory<K> keyFactory, PropertyFinder<T> propertyFinder, MapperConfig<K, ? extends S> kMapperConfig, MapperConfig.DiscriminatorCase<? super S, ? extends T> discrimnatorCase, ClassMeta<T> commonClassMeta) {
-        return new DiscriminatedBuilder<S, T, K>((MapperConfig.DiscriminatorCase<? super S, T>) discrimnatorCase, 
+    private <T> DiscriminatedBuilder<S, T, K> getDiscriminatedBuilder(MapperSource<? super S, K> mapperSource, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder, KeyFactory<K> keyFactory, PropertyFinder<T> propertyFinder, MapperConfig<K, ? extends S> kMapperConfig, MapperConfig.DiscriminatorCase<? super S,  K, ? extends T> discrimnatorCase, ClassMeta<T> commonClassMeta) {
+        return new DiscriminatedBuilder<S, T, K>((MapperConfig.DiscriminatorCase<? super S, K, T>) discrimnatorCase,
                 new DefaultConstantSourceMapperBuilder<S, T, K>(mapperSource, (ClassMeta<T>) discrimnatorCase.classMeta.withReflectionService(commonClassMeta.getReflectionService()), kMapperConfig, mappingContextFactoryBuilder, keyFactory, propertyFinder));
     }
 
@@ -142,7 +143,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         List<FieldMapper<S, T>> fieldMappers = new ArrayList<FieldMapper<S, T>>();
         for(int i = 0; i < builders.length; i++) {
             DiscriminatedBuilder<S, T, K> builder = builders[i];
-            final Predicate<? super S> predicate = builder.discrimnatorCase.predicate;
+            final Predicate<? super S> predicate = builder.discrimnatorCase.predicateFactory.apply(builder.findAllDiscriminatoryKeys());
             DefaultConstantSourceMapperBuilder.GenericBuilderMapping genericBuilderMapping = builder.builder.getGenericBuilderMapping();
             predicatedInstantiator[i] = new PredicatedInstantiator<S, T>(predicate, genericBuilderMapping.genericBuilderInstantiator);
 
@@ -211,12 +212,16 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
 
     private static class DiscriminatedBuilder<S, T, K extends FieldKey<K>> {
-        private final MapperConfig.DiscriminatorCase<? super S, T> discrimnatorCase;
+        private final MapperConfig.DiscriminatorCase<? super S, K, T> discrimnatorCase;
         private final DefaultConstantSourceMapperBuilder<S, T, K> builder;
 
-        private DiscriminatedBuilder(MapperConfig.DiscriminatorCase<? super S, T> discrimnatorCase, DefaultConstantSourceMapperBuilder<S, T, K> builder) {
+        private DiscriminatedBuilder(MapperConfig.DiscriminatorCase<? super S, K, T> discrimnatorCase, DefaultConstantSourceMapperBuilder<S, T, K> builder) {
             this.discrimnatorCase = discrimnatorCase;
             this.builder = builder;
+        }
+
+        public List<K> findAllDiscriminatoryKeys() {
+            return builder.findAllDiscriminatorKeys();
         }
     }
 

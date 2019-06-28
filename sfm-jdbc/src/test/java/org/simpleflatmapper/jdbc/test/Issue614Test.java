@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jdbc.test;
 
 import org.junit.Test;
+import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
@@ -34,9 +35,9 @@ public class Issue614Test {
                                 return resultSet.getString(columnLabel);
                             }
                         },
-                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, A>>() {
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, A>>() {
                             @Override
-                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, String, A> builder) {
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, A> builder) {
                                 builder.when("A1", A1.class)
                                         .when("A2", A2.class)
                                         .when(new Predicate<String>() {

@@ -17,13 +17,13 @@ public class SfmRecordMapperProviderFactory
         extends AbstractColumnNameDiscriminatorMapperFactory<JooqFieldKey, SfmRecordMapperProviderFactory, Record> {
 
 
-    private static final ColumnNameGetterFactory<Record> NAMED_GETTER = new ColumnNameGetterFactory<Record>() {
+    private static final DiscriminatorNamedGetterFactory<Record> NAMED_GETTER = new DiscriminatorNamedGetterFactory<Record>() {
         @Override
-        public <T> Getter<? super Record, ? extends T> getGetter(final String discriminatorColumn, final Class<T> discriminatorType) {
-            return new Getter<Record, T>() {
+        public <T> DiscriminatorNamedGetter<Record, T> newGetter(final Class<T> type) {
+            return new DiscriminatorNamedGetter<Record, T>() {
                 @Override
-                public T get(Record target) throws Exception {
-                    return target.<T>getValue(discriminatorColumn, discriminatorType);
+                public T get(Record record, String discriminatorColumn) throws Exception {
+                    return record.<T>getValue(discriminatorColumn, type);
                 }
             };
         }

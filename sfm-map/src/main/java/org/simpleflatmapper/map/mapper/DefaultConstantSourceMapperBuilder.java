@@ -402,7 +402,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     }
 
     public List<K> findAllDiscriminatorKeys() {
-        final List<K> keys = new ArrayList<>();
+        final List<K> keys = new ArrayList<K>();
         propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K>>() {
             @Override
             public void handle(PropertyMapping<T, ?, K> tkPropertyMapping) {

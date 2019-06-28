@@ -657,7 +657,7 @@ public abstract class AbstractMapperFactory<
 		}
 
 		/**
-		 * @deprecated use {@link #when(D, Type)} ()} instead.
+		 * @deprecated use {@link #when(Object, Type)}
 		 */
 		@Deprecated
 		public DiscriminatorConditionBuilder<S, K, D, T> discriminatorCase(D value, Type type) {
@@ -665,7 +665,7 @@ public abstract class AbstractMapperFactory<
 		}
 
 		/**
-		 * @deprecated use {@link #when(D, Class)} ()} instead.
+		 * @deprecated use {@link #when(Object, Class)} ()} instead.
 		 */
 		@Deprecated
 		public DiscriminatorConditionBuilder<S, K, D, T> discriminatorCase(D value, Class<T> type) {
@@ -673,7 +673,7 @@ public abstract class AbstractMapperFactory<
 		}
 
 		/**
-		 * @deprecated use {@link #when(D, ClassMeta)} ()} instead.
+		 * @deprecated use {@link #when(Object, ClassMeta)} ()} instead.
 		 */
 		@Deprecated
 		public DiscriminatorConditionBuilder<S, K, D, T> discriminatorCase(D value, ClassMeta<? extends T> classMeta) {

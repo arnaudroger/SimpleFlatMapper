@@ -558,7 +558,7 @@ public abstract class AbstractMapperFactory<
 		
 		consumer.accept(db);
 		
-		discriminators.add(new MapperConfig.Discriminator<S, K, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0])));
+		discriminators.add(new MapperConfig.Discriminator<S, K, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0]), ConstantPredicate.<K>truePredicate()));
     	
     	return (MF) this;
 	}
@@ -570,7 +570,7 @@ public abstract class AbstractMapperFactory<
 				return getter;
 			}
 		};
-		return _discriminator(commonType, getterFactory, consumer);
+		return _discriminator(commonType, getterFactory, consumer, ConstantPredicate.<K>truePredicate());
 	}
 
 	public <T> MF discriminator(Class<T> commonType, Consumer<DiscriminatorBuilder<S, K, T>> consumer) {
@@ -586,10 +586,10 @@ public abstract class AbstractMapperFactory<
 	}
 
 	public <T, V> MF discriminator(Type commonType, final String discriminatorColumn, final CheckedBiFunction<S, String, V> discriminatorFieldAccessor, Consumer<DiscriminatorConditionBuilder<S, K, V, T>> consumer) {
-		return discriminator(commonType, CaseInsensitiveFieldKeyNamePredicate.of(discriminatorColumn), discriminatorFieldAccessor, consumer);
+		return discriminatorOn(commonType, CaseInsensitiveFieldKeyNamePredicate.of(discriminatorColumn), discriminatorFieldAccessor, consumer);
 	}
 
-	public <T, V> MF discriminator(Type commonType, final Predicate<? super K> discriminatorColumnPredicate, final CheckedBiFunction<S, String, V> discriminatorFieldAccessor, Consumer<DiscriminatorConditionBuilder<S, K, V, T>> consumer) {
+	public <T, V> MF discriminatorOn(Type commonType, final Predicate<? super K> discriminatorColumnPredicate, final CheckedBiFunction<S, String, V> discriminatorFieldAccessor, Consumer<DiscriminatorConditionBuilder<S, K, V, T>> consumer) {
 		addColumnProperty(discriminatorColumnPredicate, OptionalProperty.INSTANCE, new DiscriminatorColumnProperty(commonType));
 		return _discriminator(commonType, new Function<List<K>, Getter<? super S, ? extends V>>() {
 			@Override
@@ -605,16 +605,16 @@ public abstract class AbstractMapperFactory<
 					}
 				};
 			}
-		}, consumer);
+		}, consumer, discriminatorColumnPredicate);
 	}
 
-	protected  <T, V> MF _discriminator(Type commonType, Function<List<K>, Getter<? super S, ? extends V>> getterFactory, Consumer<DiscriminatorConditionBuilder<S, K, V, T>> consumer) {
+	protected  <T, V> MF _discriminator(Type commonType, Function<List<K>, Getter<? super S, ? extends V>> getterFactory, Consumer<DiscriminatorConditionBuilder<S, K, V, T>> consumer, Predicate<? super K> discriminatorPredicate) {
 		DiscriminatorBuilder<S, K,  T> db = new DiscriminatorBuilder<S, K, T>(commonType, getReflectionService());
 		DiscriminatorConditionBuilder<S, K, V, T> dcb = new DiscriminatorConditionBuilder<S, K, V, T>(db, getterFactory);
 
 		consumer.accept(dcb);
 
-		discriminators.add(new MapperConfig.Discriminator<S, K, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0])));
+		discriminators.add(new MapperConfig.Discriminator<S, K, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0]), discriminatorPredicate));
 
 		return (MF) this;
 	}

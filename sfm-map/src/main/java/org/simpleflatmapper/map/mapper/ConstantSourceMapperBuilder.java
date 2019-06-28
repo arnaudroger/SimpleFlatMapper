@@ -51,8 +51,8 @@ public abstract class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>> {
             KeyFactory<K> keyFactory, 
             PropertyFinder<T> propertyFinder) {
         
-        MapperConfig.Discriminator<S, K, T> discriminator = config.getDiscriminator(classMeta);
-        if (discriminator == null) {
+        MapperConfig.Discriminator<S, K, T>[] discriminators = config.getDiscriminators(classMeta);
+        if (discriminators == null || discriminators.length == 0) {
             return new DefaultConstantSourceMapperBuilder<S, T, K>(
                     mapperSource,
                     classMeta,
@@ -62,7 +62,7 @@ public abstract class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>> {
                     propertyFinder);
         } else {
             return new DiscriminatorConstantSourceMapperBuilder<S, T, K>(
-              discriminator,
+              discriminators,
               mapperSource, 
               classMeta, 
               config, 

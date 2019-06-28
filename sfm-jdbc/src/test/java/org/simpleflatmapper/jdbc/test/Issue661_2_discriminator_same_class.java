@@ -29,7 +29,7 @@ public class Issue661_2_discriminator_same_class {
         JdbcMapper<Foo> mapper =
                 JdbcMapperFactoryHelper.noAsm()
                         .addKeys("id", "pFirst_id", "pSecond_id")
-                        .discriminator(Parent.class, CaseInsensitiveEndsWithPredicate.of("class_id"),
+                        .discriminatorOn(Parent.class, CaseInsensitiveEndsWithPredicate.of("class_id"),
                                 Integer.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object>>() {
                                     @Override
                                     public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object> builder) {
@@ -47,7 +47,7 @@ public class Issue661_2_discriminator_same_class {
 
     }
 
-//    @Test
+    @Test
     public void test2AssFieldWithSameTypeWithDifferentColumnAndDifferentType() throws Exception {
         JdbcMapper<Foo> mapper =
                 JdbcMapperFactoryHelper.noAsm()

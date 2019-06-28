@@ -265,12 +265,12 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
-    public <T> MapperConfig<K, S> discriminator(Class<T> rootClass, DiscriminatorCase<S, K, T>... cases) {
-        return discriminator((Type)rootClass, cases);
+    public <T> MapperConfig<K, S> discriminator(Class<T> rootClass, Predicate<? super K> discriminatorPredicate, DiscriminatorCase<S, K, T>... cases) {
+        return discriminator((Type)rootClass, discriminatorPredicate, cases);
     }
-    public <T> MapperConfig<K, S> discriminator(Type rootClass, DiscriminatorCase<S, K, T>... cases) {
+    public <T> MapperConfig<K, S> discriminator(Type rootClass, Predicate<? super K> discriminatorPredicate, DiscriminatorCase<S, K, T>... cases) {
         List<Discriminator<S, K, ?>> discriminators = new ArrayList<Discriminator<S, K, ?>>(this.discriminators);
-        discriminators.add(new Discriminator<S, K, T>(rootClass, cases));
+        discriminators.add(new Discriminator<S, K, T>(rootClass, cases, discriminatorPredicate));
         return new MapperConfig<K, S>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
@@ -286,17 +286,18 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 unorderedJoin);
     }
 
-    public <S, T> Discriminator<S, K, T> getDiscriminator(ClassMeta<T> classMeta) {
-        return getDiscriminator(classMeta.getType());
+    public <S, T> Discriminator<S, K, T>[] getDiscriminators(ClassMeta<T> classMeta) {
+        return getDiscriminators(classMeta.getType());
     }
 
-    public <S, T> Discriminator<S,  K, T> getDiscriminator(Type type) {
+    public <S, T> Discriminator<S,  K, T>[] getDiscriminators(Type type) {
+        List<Discriminator<S, K, T>> list = new ArrayList<Discriminator<S, K, T>>();
         for(Discriminator<?, ?, ?> d : discriminators) {
             if (TypeHelper.areEquals(type, d.type)) {
-                return (Discriminator<S,  K,T>) d;
+                list.add((Discriminator<S,  K,T>) d);
             }
         }
-        return null;
+        return list.toArray(new Discriminator[0]);
     }
 
     public List<Discriminator<S, K, ?>> getDiscriminators() {
@@ -348,10 +349,12 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
     public static final class Discriminator<ROW, K extends  FieldKey<K>, T> {
         public final Type type;
         public final DiscriminatorCase<ROW, K, T>[] cases;
+        public final Predicate<? super K> discriminatorPredicate;
 
-        public Discriminator(Type type, DiscriminatorCase<ROW, K, T>[] cases) {
+        public Discriminator(Type type, DiscriminatorCase<ROW, K, T>[] cases, Predicate<? super K> discriminatorPredicate) {
             this.type = type;
             this.cases = cases;
+            this.discriminatorPredicate = discriminatorPredicate;
         }
 
         public DiscriminatorCase<ROW, K, T> getCase(Type type) {
@@ -361,6 +364,14 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 }
             }
             throw new IllegalArgumentException("Not cases for type " + type);
+        }
+
+        public boolean isCompatibleWithKeys(List<K> allDiscriminatoryKeys) {
+            if (discriminatorPredicate == null) return true;
+            for(K k : allDiscriminatoryKeys) {
+                if (!discriminatorPredicate.test(k)) return false;
+            }
+            return true;
         }
     }
 

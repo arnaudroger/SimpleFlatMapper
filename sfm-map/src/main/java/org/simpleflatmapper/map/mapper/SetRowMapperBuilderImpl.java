@@ -77,17 +77,24 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
 
     private ClassMeta<T> prepareClassMetaForDiscriminator(ClassMeta<T> classMeta, MapperConfig<K, ROW> mapperConfig) {
         List<MapperConfig.Discriminator<ROW, K, ?>> discriminators = mapperConfig.getDiscriminators();
-        
+
         if (discriminators.isEmpty()) {
             return classMeta;
         } else {
             Map<Class<?>, List<ClassMeta<?>>> discriminatorMap = new HashMap<Class<?>, List<ClassMeta<?>>>();
             for(MapperConfig.Discriminator<?, ?, ?> d : discriminators) {
-                List<ClassMeta<?>> implementations = new ArrayList<ClassMeta<?>>();
+                Class<Object> clazz = TypeHelper.toClass(d.type);
+                List<ClassMeta<?>> implementations = discriminatorMap.get(clazz);
+
+                if (implementations == null) {
+                    implementations = new ArrayList<ClassMeta<?>>();
+                    discriminatorMap.put(clazz, implementations);
+                }
+
                 for(MapperConfig.DiscriminatorCase<?, ?, ?> dc : d.cases) {
                     implementations.add(dc.classMeta);
                 }
-                discriminatorMap.put(TypeHelper.toClass(d.type), implementations);
+
             }
             DiscriminatorReflectionService dfs = new DiscriminatorReflectionService(classMeta.getReflectionService(), discriminatorMap);
             return classMeta.withReflectionService(dfs);

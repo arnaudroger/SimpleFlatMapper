@@ -1142,7 +1142,10 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                     @Override
                     public void accept(Type type, PropertyMeta<?, ?> propertyMeta) {
                         if (!propertyMetaPredicate.test(propertyMeta)) {
-                            not.add(mapperConfig.getDiscriminator(dpm.getOwnerType()).getCase(type).predicateFactory.apply(findAllDiscriminatorKeys()));
+                            MapperConfig.Discriminator<Object, K, Object>[] discriminators = mapperConfig.getDiscriminators(dpm.getOwnerType());
+                            for (MapperConfig.Discriminator<Object, K, Object> discriminator : discriminators) {
+                                not.add(discriminator.getCase(type).predicateFactory.apply(findAllDiscriminatorKeys()));
+                            }
                         } else {
                             Predicate<? super S> p = buildKeyPredicate(propertyMeta, propertyMetaPredicate);
                             

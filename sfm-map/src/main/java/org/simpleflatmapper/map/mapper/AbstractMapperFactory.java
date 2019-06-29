@@ -1,11 +1,13 @@
 package org.simpleflatmapper.map.mapper;
 
+import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
 import org.simpleflatmapper.map.*;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.getter.ComposedContextualGetterFactory;
 import org.simpleflatmapper.map.getter.ContextualGetter;
+import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
 import org.simpleflatmapper.map.property.*;
 import org.simpleflatmapper.reflect.Getter;
@@ -17,6 +19,7 @@ import org.simpleflatmapper.util.*;
 
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
+import java.sql.ResultSet;
 import java.util.*;
 
 
@@ -34,7 +37,7 @@ public abstract class AbstractMapperFactory<
 
     private final AbstractColumnDefinitionProvider<K> columnDefinitions;
     private final List<TypedPredicatedPredicatedColumnPropertyFactory<K>> typedPredicatedPredicatedColunnPropertyFactories = new ArrayList<TypedPredicatedPredicatedColumnPropertyFactory<K>>();
-    private final List<MapperConfig.Discriminator<S, K, ?>> discriminators = new ArrayList<MapperConfig.Discriminator<S, K, ?>>();
+    protected final List<MapperConfig.Discriminator<S, K, ?>> discriminators = new ArrayList<MapperConfig.Discriminator<S, K, ?>>();
 	private final ColumnDefinition<K, ?> identity;
 
 	private boolean useAsm = true;
@@ -573,6 +576,10 @@ public abstract class AbstractMapperFactory<
 		return _discriminator(commonType, getterFactory, consumer, ConstantPredicate.<K>truePredicate());
 	}
 
+	public <T> DiscriminatorDSL<K, MF, S, T> discriminator(Type commonType) {
+    	return new DiscriminatorDSL<K, MF, S, T>((MF) this, commonType);
+	}
+
 	public <T> MF discriminator(Class<T> commonType, Consumer<DiscriminatorBuilder<S, K, T>> consumer) {
 		return discriminator((Type)commonType, consumer);
 	}
@@ -835,4 +842,67 @@ public abstract class AbstractMapperFactory<
 			this.predicatedColumnPropertyFactory = predicatedColumnPropertyFactory;
 		}
 	}
+
+
+	public static class DiscriminatorDSL<K extends FieldKey<K>, MF extends AbstractMapperFactory<K, MF, S>, S, T> {
+    	private final MF mapperFactory;
+    	private final Type commonType;
+
+		public DiscriminatorDSL(MF mapperFactory, Type commonType) {
+			this.mapperFactory = mapperFactory;
+			this.commonType = commonType;
+		}
+
+		public <KT> DiscriminatorOnColumnDSL<K, MF, S, T, KT> onColumn(Predicate<? super K> discriminatorColumnPredicate, Class<KT> discriminatorColunnType) {
+			return new DiscriminatorOnColumnDSL<K, MF, S, T, KT>(mapperFactory, commonType, discriminatorColumnPredicate, discriminatorColunnType);
+		}
+	}
+
+	public static class DiscriminatorOnColumnDSL<K extends FieldKey<K>, MF extends AbstractMapperFactory<K, MF, S>, S, T, KT> {
+		private final MF mapperFactory;
+		private final Type commonType;
+		private final Predicate<? super K> discriminatorColumnPredicate;
+		private final Class<KT> discriminatorColunnType;
+
+		public DiscriminatorOnColumnDSL(MF mapperFactory, Type commonType, Predicate<? super K> discriminatorColumnPredicate, Class<KT> discriminatorColunnType) {
+			this.mapperFactory = mapperFactory;
+			this.commonType = commonType;
+			this.discriminatorColumnPredicate = discriminatorColumnPredicate;
+			this.discriminatorColunnType = discriminatorColunnType;
+		}
+
+		public MF with(Consumer<DiscriminatorConditionBuilder<S, K, KT, T>> consumer) {
+			mapperFactory.addColumnProperty(discriminatorColumnPredicate, OptionalProperty.INSTANCE, new DiscriminatorColumnProperty(commonType));
+
+
+			Function<List<K>, Getter<? super S, ? extends KT>> getterFactory = new Function<List<K>, Getter<? super S, ? extends KT>>() {
+				@Override
+				public Getter<? super S, ? extends KT> apply(List<K> ks) {
+					if (ks.isEmpty()) throw new IllegalStateException("No discriminatory field found " + discriminatorColumnPredicate);
+					if (ks.size() != 1) throw new IllegalStateException("Found multiple discriminator field " + ks);
+					K k = ks.get(0);
+
+					final ContextualGetter<? super S, KT> getter = mapperFactory.getterFactory.newGetter(discriminatorColunnType, k, null);
+
+					return new Getter<S, KT>() {
+						@Override
+						public KT get(S target) throws Exception {
+							return getter.get(target, null);
+						}
+					};
+				}
+			};
+
+			DiscriminatorBuilder<S, K,  T> db = new DiscriminatorBuilder<S, K, T>(commonType, mapperFactory.getReflectionService());
+			DiscriminatorConditionBuilder<S, K, KT, T> dcb = new DiscriminatorConditionBuilder<S, K, KT, T>(db, getterFactory);
+
+			consumer.accept(dcb);
+
+			mapperFactory.discriminators.add(new MapperConfig.Discriminator<S, K, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0]), discriminatorColumnPredicate));
+
+			return mapperFactory;
+		}
+	}
+
+
 }

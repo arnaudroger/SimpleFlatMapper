@@ -24,6 +24,30 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class Issue661_2_discriminator_same_class {
+
+    @Test
+    public void test2AssFieldWithSameTypeDiscriminatorNoAsmDSL() throws Exception {
+        JdbcMapper<Foo> mapper =
+                JdbcMapperFactoryHelper.noAsm()
+                        .addKeys("id", "pFirst_id", "pSecond_id")
+                        .discriminator(Parent.class)
+                        .onColumn(CaseInsensitiveEndsWithPredicate.of("class_id"), Integer.class)
+                        .with(new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object>>() {
+                                    @Override
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object> builder) {
+                                        builder
+                                                .when(1, Parent.class)
+                                                .when(2, ChildA.class)
+                                                .when(3, ChildB.class);
+                                    }
+                                }
+                        )
+                        .newMapper(Foo.class);
+
+
+        validateMapper(mapper);
+
+    }
     @Test
     public void test2AssFieldWithSameTypeDiscriminatorNoAsm() throws Exception {
         JdbcMapper<Foo> mapper =

@@ -31,7 +31,7 @@ export GPG_TTY
 
 java7
 cp tmp/release.properties .
-mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
+mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -DskipTests -Dhttps.protocols=TLSv1.2" -Dhttps.protocols=TLSv1.2
 
 java9
 cp tmp/release.properties .

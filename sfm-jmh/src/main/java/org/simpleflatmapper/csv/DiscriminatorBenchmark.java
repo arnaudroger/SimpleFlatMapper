@@ -74,7 +74,7 @@ public class DiscriminatorBenchmark {
     public void testWithDiscriminator(Blackhole blackhole) throws IOException {
         CsvParser.mapWith(
                 CsvMapperFactory.newInstance()
-                        .discriminator(A.class, r -> r.getString(2), b -> {
+                        .discriminator(A.class).onGetter(r -> r.getString(2)).with( b -> {
                             for(int i = 1; i <= 40; i++) {
                                 try {
                                     b.when("typea" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$A" + i));
@@ -83,7 +83,7 @@ public class DiscriminatorBenchmark {
                                 }
                             }
                         })
-                        .discriminator(B.class, r -> r.getString(4), b -> {
+                        .discriminator(B.class).onGetter(r -> r.getString(4)).with(b -> {
                             for(int i = 1; i <= 20; i++) {
                                 try {
                                     b.when("typeb" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$B" + i));
@@ -103,7 +103,7 @@ public class DiscriminatorBenchmark {
     public void testWithDiscriminatorWithKeys(Blackhole blackhole) throws IOException {
         CsvParser.mapWith(
                 CsvMapperFactory.newInstance()
-                        .discriminator(A.class, r -> r.getString(2), b -> {
+                        .discriminator(A.class).onGetter(r -> r.getString(2)).with( b -> {
                             for(int i = 1; i <= 40; i++) {
                                 try {
                                     b.when("typea" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$A" + i));
@@ -112,7 +112,7 @@ public class DiscriminatorBenchmark {
                                 }
                             }
                         })
-                        .discriminator(B.class, r -> r.getString(4), b -> {
+                        .discriminator(B.class).onGetter(r -> r.getString(4)).with( b -> {
                             for(int i = 1; i <= 20; i++) {
                                 try {
                                     b.when("typeb" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$B" + i));
@@ -133,7 +133,7 @@ public class DiscriminatorBenchmark {
     public void testWithDiscriminatorWithPartialKeys(Blackhole blackhole) throws IOException {
         CsvParser.mapWith(
                 CsvMapperFactory.newInstance()
-                        .discriminator(A.class, r -> r.getString(2), b -> {
+                        .discriminator(A.class).onGetter(r -> r.getString(2)).with( b -> {
                             for(int i = 1; i <= 40; i++) {
                                 try {
                                     b.when("typea" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$A" + i));
@@ -142,7 +142,7 @@ public class DiscriminatorBenchmark {
                                 }
                             }
                         })
-                        .discriminator(B.class, r -> r.getString(4), b -> {
+                        .discriminator(B.class).onGetter(r -> r.getString(4)).with( b -> {
                             for(int i = 1; i <= 20; i++) {
                                 try {
                                     b.when("typeb" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$B" + i));
@@ -162,7 +162,7 @@ public class DiscriminatorBenchmark {
     public void withDiscriminatorWithKeys(Consumer<A> aConsumer) throws IOException {
         CsvParser.mapWith(
                 CsvMapperFactory.newInstance()
-                        .discriminator(A.class, r -> r.getString(2), b -> {
+                        .discriminator(A.class).onGetter(r -> r.getString(2)).with( b -> {
                             for(int i = 1; i <= 40; i++) {
                                 try {
                                     b.when("typea" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$A" + i));
@@ -171,7 +171,7 @@ public class DiscriminatorBenchmark {
                                 }
                             }
                         })
-                        .discriminator(B.class, r -> r.getString(4), b -> {
+                        .discriminator(B.class).onGetter(r -> r.getString(4)).with( b -> {
                             for(int i = 1; i <= 20; i++) {
                                 try {
                                     b.when("typeb" + i, Class.forName("org.simpleflatmapper.csv.DiscriminatorBenchmark$B" + i));

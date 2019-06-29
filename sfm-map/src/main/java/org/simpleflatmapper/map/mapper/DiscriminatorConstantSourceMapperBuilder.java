@@ -105,7 +105,7 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             DiscriminatorPropertyFinder.DiscriminatorPropertyMeta pm = (DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) prop;
             pm.forEachProperty(new BiConsumer<Type, PropertyMeta<?, ?>>() {
                 @Override
-                public void accept(Type type, PropertyMeta<?, ?> propertyMeta) {
+                public void accept(Type type, final PropertyMeta<?, ?> propertyMeta) {
                     forBuilderOfType(type, new Consumer<ConstantSourceMapperBuilder>() {
                         @Override
                         public void accept(ConstantSourceMapperBuilder constantSourceMapperBuilder) {

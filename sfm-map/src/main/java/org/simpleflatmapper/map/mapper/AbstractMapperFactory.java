@@ -846,7 +846,7 @@ public abstract class AbstractMapperFactory<
 			this.commonType = commonType;
 		}
 
-		public <KT> DiscriminatorOnColumnDSL<K, MF, S, T, KT> onColumn(Predicate<? super K> discriminatorColumnPredicate, Class<KT> discriminatorColunnType) {
+		public <KT> DiscriminatorOnColumnDSL<K, MF, S, T, KT> onColumn(final Predicate<? super K> discriminatorColumnPredicate, final Class<KT> discriminatorColunnType) {
 
 			Function<List<K>, Getter<? super S, ? extends KT>> getterFactory = new Function<List<K>, Getter<? super S, ? extends KT>>() {
 				@Override

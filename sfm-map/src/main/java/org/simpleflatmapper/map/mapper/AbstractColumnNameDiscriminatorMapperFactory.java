@@ -22,44 +22,34 @@ public class AbstractColumnNameDiscriminatorMapperFactory<
         super(columnDefinitions, identity, getterFactory);
         this.columnNameGetterFactory = columnNameGetterFactory;
     }
+
+    /**
+     * @deprecated use {@link AbstractMapperFactory#discriminator(Type)} dsl
+     */
+    @Deprecated
     public <T> MF discriminator(Class<T> commonType, String discriminatorColumn, Consumer<DiscriminatorConditionBuilder<S, K, Object, T>> consumer) {
         return discriminator((Type)commonType, discriminatorColumn, consumer);
     }
-    
+
+    /**
+     * @deprecated use {@link AbstractMapperFactory#discriminator(Type)} dsl
+     */
     public <T> MF discriminator(Type commonType, String discriminatorColumn, Consumer<DiscriminatorConditionBuilder<S, K, Object, T>> consumer) {
         return discriminator(commonType, discriminatorColumn, Object.class, consumer);
     }
-    
-    public <T, V> MF discriminator(Class<T> commonType, String discriminatorColumn, Class<V> discriminatorType, Consumer<DiscriminatorConditionBuilder<S, K, V, T>> consumer) {
+
+    /**
+     * @deprecated use {@link AbstractMapperFactory#discriminator(Type)} dsl
+     */
+    public <T, KT> MF discriminator(Class<T> commonType, String discriminatorColumn, Class<KT> discriminatorType, Consumer<DiscriminatorConditionBuilder<S, K, KT, T>> consumer) {
         return discriminator((Type)commonType, discriminatorColumn, discriminatorType, consumer);
     }
-    
-    public <T, V> MF discriminator(Type commonType, String discriminatorColumn, final Class<V> discriminatorType, Consumer<DiscriminatorConditionBuilder<S, K, V, T>> consumer) {
-        return discriminatorOn(commonType, CaseInsensitiveFieldKeyNamePredicate.of(discriminatorColumn), discriminatorType, consumer);
-    }
 
-
-    public <T> MF discriminatorOn(Class<T> commonType, Predicate<? super K> discriminatorColumnPredicate, Consumer<DiscriminatorConditionBuilder<S, K, Object, T>> consumer) {
-        return discriminatorOn((Type)commonType, discriminatorColumnPredicate, consumer);
-    }
-
-    public <T> MF discriminatorOn(Type commonType, Predicate<? super K> discriminatorColumnPredicate, Consumer<DiscriminatorConditionBuilder<S, K, Object, T>> consumer) {
-        return discriminatorOn(commonType, discriminatorColumnPredicate, Object.class, consumer);
-    }
-
-    public <T, V> MF discriminatorOn(Class<T> commonType, Predicate<? super K> discriminatorColumnPredicate, Class<V> discriminatorType, Consumer<DiscriminatorConditionBuilder<S, K, V, T>> consumer) {
-        return discriminatorOn((Type)commonType, discriminatorColumnPredicate, discriminatorType, consumer);
-    }
-
-    public <T, V> MF discriminatorOn(Type commonType, Predicate<? super K> discriminatorColumnPredicate, final Class<V> discriminatorType, Consumer<DiscriminatorConditionBuilder<S, K, V, T>> consumer) {
-        final DiscriminatorNamedGetter<S, V> getter = columnNameGetterFactory.newGetter(discriminatorType);
-        return discriminatorOn(commonType, discriminatorColumnPredicate, new CheckedBiFunction<S, String, V>() {
-            @Override
-            public V apply(S s, String discriminatorColumn) throws Exception {
-
-                return getter.get(s, discriminatorColumn);
-            }
-        }, consumer);
+    /**
+     * @deprecated use {@link AbstractMapperFactory#discriminator(Type)} dsl
+     */
+    public <T, KT> MF discriminator(Type commonType, String discriminatorColumn, final Class<KT> discriminatorType, Consumer<DiscriminatorConditionBuilder<S, K, KT, T>> consumer) {
+        return this.<T>discriminator(commonType).onColumn(discriminatorColumn, discriminatorType).with(consumer);
     }
 
 

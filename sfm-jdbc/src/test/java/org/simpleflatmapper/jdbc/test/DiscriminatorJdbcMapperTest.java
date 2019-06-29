@@ -8,6 +8,7 @@ import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.reflect.IndexedGetter;
 import org.simpleflatmapper.test.beans.Person;
 import org.simpleflatmapper.test.beans.Professor;
 import org.simpleflatmapper.test.beans.Student;
@@ -45,6 +46,70 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class DiscriminatorJdbcMapperTest {
+
+    @Test
+    public void testNewDiscriminatorFieldAccessorDSL() throws Exception {
+        JdbcMapper<Person> mapper =
+                JdbcMapperFactoryHelper.asm()
+                        .addKeys("id", "students_id")
+                        .discriminator(Person.class)
+                        .onColumn("person_type", String.class)
+                        .with(new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Person>>() {
+                            @Override
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Person> builder) {
+                                builder
+                                        .when("student", StudentGS.class)
+                                        .when("professor", ProfessorGS.class);
+                            }
+                        }
+                )
+                        .newMapper(Person.class);
+        validateMapper(mapper);
+    }
+    @Test
+    public void testNewDiscriminatorFieldAccessorDSLNamedGetter() throws Exception {
+        JdbcMapper<Person> mapper =
+                JdbcMapperFactoryHelper.asm()
+                        .addKeys("id", "students_id")
+                        .discriminator(Person.class).onColumnWithNamedGetter("person_type", new CheckedBiFunction<ResultSet, String, String>() {
+                                    @Override
+                                    public String apply(ResultSet rs, String columnName) throws Exception {
+                                        return rs.getString(columnName);
+                                    }
+                            }).with(new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Person>>() {
+                                    @Override
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Person> builder) {
+                                        builder
+                                                .when("student", StudentGS.class)
+                                                .when("professor", ProfessorGS.class);
+                                    }
+                                }
+                        )
+                        .newMapper(Person.class);
+        validateMapper(mapper);
+    }
+    @Test
+    public void testNewDiscriminatorFieldAccessorDSLIntGetter() throws Exception {
+        JdbcMapper<Person> mapper =
+                JdbcMapperFactoryHelper.asm()
+                        .addKeys("id", "students_id")
+                        .discriminator(Person.class).onColumnWithIndexedGetter("person_type", new IndexedGetter<ResultSet, String>() {
+                    @Override
+                    public String get(ResultSet rs, int columnIndex) throws Exception {
+                        return rs.getString(columnIndex);
+                    }
+                }).with(new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Person>>() {
+                            @Override
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, String, Person> builder) {
+                                builder
+                                        .when("student", StudentGS.class)
+                                        .when("professor", ProfessorGS.class);
+                            }
+                        }
+                )
+                        .newMapper(Person.class);
+        validateMapper(mapper);
+    }
 
     @Test
     public void testNewDiscriminatorFieldAccessor() throws Exception {

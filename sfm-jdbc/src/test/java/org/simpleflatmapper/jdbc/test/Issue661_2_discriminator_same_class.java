@@ -32,9 +32,9 @@ public class Issue661_2_discriminator_same_class {
                         .addKeys("id", "pFirst_id", "pSecond_id")
                         .discriminator(Parent.class)
                         .onColumn(CaseInsensitiveEndsWithPredicate.of("class_id"), Integer.class)
-                        .with(new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object>>() {
+                        .with(new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Parent>>() {
                                     @Override
-                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object> builder) {
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Parent> builder) {
                                         builder
                                                 .when(1, Parent.class)
                                                 .when(2, ChildA.class)
@@ -53,10 +53,11 @@ public class Issue661_2_discriminator_same_class {
         JdbcMapper<Foo> mapper =
                 JdbcMapperFactoryHelper.noAsm()
                         .addKeys("id", "pFirst_id", "pSecond_id")
-                        .discriminatorOn(Parent.class, CaseInsensitiveEndsWithPredicate.of("class_id"),
-                                Integer.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object>>() {
+                        .discriminator(Parent.class)
+                        .onColumn(CaseInsensitiveEndsWithPredicate.of("class_id"), Integer.class)
+                        .with(new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Parent>>() {
                                     @Override
-                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object> builder) {
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Parent> builder) {
                                         builder
                                                 .when(1, Parent.class)
                                                 .when(2, ChildA.class)

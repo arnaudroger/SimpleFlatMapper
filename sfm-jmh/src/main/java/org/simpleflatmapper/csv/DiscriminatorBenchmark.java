@@ -60,8 +60,8 @@ public class DiscriminatorBenchmark {
     public void testNoDiscriminator(Blackhole blackhole) throws IOException {
         CsvParser.mapWith(
                 CsvMapperFactory.newInstance()
-                    .discriminator(A.class, b -> b.discriminatorCase(s -> true, A1.class))
-                    .discriminator(B.class, b -> b.discriminatorCase(s -> true, B1.class))
+                    .discriminator(A.class).with(A1.class)
+                    .discriminator(B.class).with(B1.class)
                     .newMapper(A.class)
         ).stream(file, s -> {
             s.forEach(blackhole::consume);

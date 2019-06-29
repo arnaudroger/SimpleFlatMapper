@@ -793,7 +793,7 @@ public abstract class AbstractMapperFactory<
 		}
 
 		public DiscriminatorBuilder<S, K, T> defaultType(Type target) {
-			return discriminatorCase(ConstantPredicate.truePredicate(), target);
+			return discriminatorCase(ConstantPredicate.<S>truePredicate(), target);
 		}
 		
 		public DiscriminatorBuilder<S, K, T> discriminatorCase(final Predicate<S> predicate, ClassMeta<? extends T> classMeta) {

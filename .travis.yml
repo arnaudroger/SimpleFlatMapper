@@ -24,13 +24,13 @@ matrix:
       script:  mvn package javadoc:javadoc -B
       install: . ./.travis/install-jdk-7.sh
     - script:  mvn package -B -Pjdk19,dev9
-      install: . ./.travis/install-jdk-10.sh
-    - script:  mvn package -B -Pjdk19,dev9
       install: . ./.travis/install-jdk-11.sh
     - script:  mvn package -B -Pjdk19,dev9
       install: . ./.travis/install-jdk-12.sh
     - script:  mvn package -B -Pjdk19,dev9
       install: . ./.travis/install-jdk-13.sh
+    - script:  mvn package -B -Pjdk19,dev9
+      install: . ./.travis/install-jdk-14.sh
 
 env:
   - MAVEN_SKIP_RC=true TRAVISBUILD=true

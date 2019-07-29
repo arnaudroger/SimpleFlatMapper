@@ -17,9 +17,9 @@ function java6 {
 #exit
 java8
 rm release.properties
-REL=6.7.0
-DEV=6.7.1-SNAPSHOT
-REPOID=orgsimpleflatmapper-1657
+REL=7.0.0
+DEV=7.0.1-SNAPSHOT
+REPOID=orgsimpleflatmapper-1660
 mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
                  -DdevelopmentVersion=$DEV
@@ -31,7 +31,7 @@ export GPG_TTY
 
 java7
 cp tmp/release.properties .
-mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
+mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -DskipTests -Dhttps.protocols=TLSv1.2" -Dhttps.protocols=TLSv1.2
 
 java9
 cp tmp/release.properties .

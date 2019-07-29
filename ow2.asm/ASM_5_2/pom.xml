@@ -47,6 +47,9 @@
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <useDefaultManifestFile>true</useDefaultManifestFile>
+            <excludes>
+                <exclude>**/Dummy.class</exclude>
+            </excludes>
         </configuration>
       </plugin>
       <plugin>

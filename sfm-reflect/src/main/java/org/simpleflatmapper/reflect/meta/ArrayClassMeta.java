@@ -304,6 +304,10 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 		};
 	}
 
+	public boolean isIndexedAccessible() {
+		return TypeHelper.isAssignable(List.class, instInfo.intermediateType) || TypeHelper.isArray(type);
+	}
+
 
 	public static class InstantiatorDefinitionAndIntermediatType {
 		public final InstantiatorDefinition instantiatorDefinition;

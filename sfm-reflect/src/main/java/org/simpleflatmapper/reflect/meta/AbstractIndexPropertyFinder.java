@@ -47,6 +47,8 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
         final IndexedElement<T, ?> indexedElement = getIndexedElement(indexedColumn);
 
+        if (indexedElement == null) return;
+
         if (indexedColumn.getSubPropertyNameMatcher() == null) {
             matchingProperties.found(indexedElement.getPropertyMeta(), new Runnable() {
                 @Override

@@ -13,11 +13,15 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 
     @Override
     protected IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {
+        int sizeDiff = indexedColumn.getIndexValue() - elements.size();
+        if (sizeDiff > 4096 || (sizeDiff > 1  && !((ArrayClassMeta)classMeta).isIndexedAccessible())) {
+            // to many empty space ...
+            return null;
+        }
         while (elements.size() <= indexedColumn.getIndexValue()) {
             elements.add(new IndexedElement<T, E>(
                     newElementPropertyMeta(elements.size(), "element" + elements.size()), ((ArrayClassMeta<T, E>)classMeta).getElementClassMeta()));
         }
-
         return (IndexedElement<T, E>) elements.get(indexedColumn.getIndexValue());
 	}
 

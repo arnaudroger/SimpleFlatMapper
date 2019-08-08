@@ -3,6 +3,12 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.property.SpeculativeArrayIndexResolutionProperty;
 import org.simpleflatmapper.util.BooleanSupplier;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
+
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 
@@ -13,17 +19,21 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 
     @Override
     protected IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {
-        int sizeDiff = indexedColumn.getIndexValue() - elements.size();
-        if (sizeDiff > 4096 || (sizeDiff > 1  && !((ArrayClassMeta)classMeta).isIndexedAccessible())) {
-            // to many empty space ...
-            return null;
+        int indexValue = indexedColumn.getIndexValue();
+        return getIndexedElement(indexValue);
+    }
+
+    protected IndexedElement<T, E> getIndexedElement(int indexValue) {
+        IndexedElement<T, E> indexedElement = (IndexedElement<T, E>) elements.get(indexValue);
+
+        if (indexedElement == null) {
+            indexedElement = new IndexedElement<T, E>(
+                    newElementPropertyMeta(indexValue, "element" + indexValue), ((ArrayClassMeta<T, E>)classMeta).getElementClassMeta());
+            elements.put(indexValue, indexedElement);
         }
-        while (elements.size() <= indexedColumn.getIndexValue()) {
-            elements.add(new IndexedElement<T, E>(
-                    newElementPropertyMeta(elements.size(), "element" + elements.size()), ((ArrayClassMeta<T, E>)classMeta).getElementClassMeta()));
-        }
-        return (IndexedElement<T, E>) elements.get(indexedColumn.getIndexValue());
-	}
+
+        return indexedElement;
+    }
 
     private PropertyMeta<T, E> newElementPropertyMeta(int index, String name) {
         ArrayClassMeta<T, E> arrayClassMeta = (ArrayClassMeta<T, E>) classMeta;
@@ -53,30 +63,50 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 
         if (property != null) {
             if (ObjectPropertyFinder.containsProperty(properties, SpeculativeArrayIndexResolutionProperty.class)) {
-                for (int i = 0; i < elements.size(); i++) {
-                    IndexedElement element = elements.get(i);
+                List<Integer> keys = getKeys();
+                appendEmptySlot(keys);
+                for (Integer k : keys) {
+                    IndexedElement element = getIndexedElement(k);
                     ExtrapolateFoundProperty<T> matchingProperties = new ExtrapolateFoundProperty<T>(element, foundProperty);
-                    lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), properties, matchingProperties, score.speculativeArrayIndex(i), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                    lookForAgainstColumn(new IndexedColumn(k, propertyNameMatcher), properties, matchingProperties, score.speculativeArrayIndex(k), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
                     if (matchingProperties.hasFound()) {
                         return;
                     }
                 }
-
-                int index = elements.size();
-                lookForAgainstColumn(new IndexedColumn(index, propertyNameMatcher), properties, foundProperty, score.speculativeArrayIndex(index), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
             } else {
                 // only look for element 0
                 FoundProperty<T> fp = foundProperty;
                 if (!elements.isEmpty()) {
-                    IndexedElement element = elements.get(0);
-                    if (element != null) {
-                        fp = new ExtrapolateFoundProperty<T>(element, foundProperty);
-                    }
+                    IndexedElement element = getIndexedElement(0);
+                    fp = new ExtrapolateFoundProperty<T>(element, foundProperty);
                 }
                 lookForAgainstColumn(new IndexedColumn(0, propertyNameMatcher), properties, fp, score, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
             }
         }
 	}
+
+    private void appendEmptySlot(List<Integer> keys) {
+        if (keys.isEmpty()) {
+            keys.add(0);
+            return;
+        }
+
+        for(int i = 0; i + 1 < keys.size(); i++) {
+            int k1 = keys.get(i);
+            int k2 = keys.get(i + 1);
+            if (k2 - k1 > 1) {
+                keys.add(i + 1, k1 + 1);
+                return;
+            }
+        }
+        keys.add(keys.get(keys.size() -1) + 1);
+    }
+
+    private List<Integer> getKeys() {
+        ArrayList<Integer> keys = new ArrayList<Integer>(elements.keySet());
+        Collections.sort(keys);
+        return keys;
+    }
 
     @Override
     protected boolean indexMatches(PropertyMeta<T, ?> propertyMeta, PropertyMeta<?, ?> owner) {
@@ -111,8 +141,8 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
         private boolean found;
 
         public ExtrapolateFoundProperty(IndexedElement element, FoundProperty foundProperty) {
-            this.element = element;
-            this.foundProperty = foundProperty;
+            this.element = requireNonNull("element", element);
+            this.foundProperty = requireNonNull("foundProperty", foundProperty);
         }
 
         @Override

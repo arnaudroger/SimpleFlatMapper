@@ -12,9 +12,10 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
         super(tupleClassMeta, selfScoreFullName);
 
         tupleClassMeta.forEachProperties(new Consumer<PropertyMeta<T, ?>>() {
+            int i = 0;
             @Override
             public void accept(PropertyMeta<T, ?> propertyMeta) {
-                elements.add(newIndexedElement(tupleClassMeta, propertyMeta));
+                elements.put(i++, newIndexedElement(tupleClassMeta, propertyMeta));
             }
         });
     }

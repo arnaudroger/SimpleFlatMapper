@@ -4,16 +4,15 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     protected final ClassMeta<T> classMeta;
-    protected final List<IndexedElement<T, ?>> elements;
+    protected final Map<Integer, IndexedElement<T, ?>> elements;
 
     public AbstractIndexPropertyFinder(ClassMeta<T> classMeta, boolean selfScoreFullName) {
         super(selfScoreFullName);
-        this.elements = new ArrayList<IndexedElement<T, ?>>();
+        this.elements = new HashMap<Integer, IndexedElement<T, ?>>();
         this.classMeta = classMeta;
     }
 
@@ -120,7 +119,11 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     }
 
     private PropertyFinder<?> lookForPropertyFinder(PropertyMeta<?, ?> owner) {
-        for(IndexedElement<T, ?> ie : elements) {
+        ArrayList<Integer> indicies = new ArrayList<Integer>(elements.keySet());
+        Collections.sort(indicies);
+
+        for(Integer key : indicies) {
+            IndexedElement<T, ?> ie = elements.get(key);
             if (indexMatches(ie.getPropertyMeta(), owner)) {
                 return ie.getPropertyFinder();
             }

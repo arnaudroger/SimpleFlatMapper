@@ -27,7 +27,7 @@ questions.
 
     <groupId>org.simpleflatmapper</groupId>
     <artifactId>sfm-jmh</artifactId>
-    <version>7.0.2-SNAPSHOT</version>
+    <version>7.0.2</version>
     <packaging>jar</packaging>
 
     <name>SFM JMH benchmark</name>
@@ -52,13 +52,13 @@ questions.
         <dependency>
             <groupId>org.simpleflatmapper</groupId>
             <artifactId>sfm-jdbc</artifactId>
-            <version>7.0.2-SNAPSHOT</version>
+            <version>7.0.2</version>
             <classifier>${jar.classifier}</classifier>
         </dependency>
         <dependency>
             <groupId>org.simpleflatmapper</groupId>
             <artifactId>sfm-csv</artifactId>
-            <version>7.0.2-SNAPSHOT</version>
+            <version>7.0.2</version>
             <classifier>${jar.classifier}</classifier>
         </dependency>
     </dependencies>

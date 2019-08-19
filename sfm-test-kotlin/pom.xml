@@ -5,7 +5,7 @@
 	<artifactId>sfm-test-kotlin</artifactId>
 	<packaging>jar</packaging>
 
-	<version>7.0.3-SNAPSHOT</version>
+	<version>7.0.3</version>
 
 	<licenses>
 		<license>
@@ -53,13 +53,13 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
-			<version>7.0.3-SNAPSHOT</version>
+			<version>7.0.3</version>
 			<classifier>${jar.classifier}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-jdbc</artifactId>
-			<version>7.0.3-SNAPSHOT</version>
+			<version>7.0.3</version>
 			<classifier>${jar.classifier}</classifier>
 		</dependency>
 		<dependency>

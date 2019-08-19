@@ -15,6 +15,7 @@ import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
 import org.simpleflatmapper.map.getter.NullContextualGetter;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
+import org.simpleflatmapper.map.property.ConverterProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
@@ -98,7 +99,17 @@ public final class SqlParameterSourceBuilder<T> {
             final DefaultContextFactoryBuilder contextFactoryBuilder = new DefaultContextFactoryBuilder();
             Type propertyType = pm.getPropertyMeta().getPropertyType();
             Class<?> sqlType = JdbcTypeHelper.toJavaType(parameterType, propertyType);
-            if (!TypeHelper.isAssignable(sqlType, propertyType)) {
+
+            boolean findConverter = false;
+            for(ConverterProperty cp  : pm.getColumnDefinition().lookForAll(ConverterProperty.class)) {
+                if (TypeHelper.isAssignable(cp.inType, propertyType)) {
+                    getter = new FieldMapperGetterWithConverter(cp.function, getter);
+                    findConverter = true;
+                    break;
+                }
+            }
+
+            if (!findConverter && !TypeHelper.isAssignable(sqlType, propertyType)) {
                 ContextualConverter<? super Object, ?> converter = ConverterService.getInstance().findConverter(propertyType, sqlType, contextFactoryBuilder);
 
                 if (converter != null) {

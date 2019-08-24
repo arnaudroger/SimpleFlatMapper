@@ -89,6 +89,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		int indexColumn = from;
 		int indexProperty = 0;
 		boolean nextToUpperCase = false;
+		boolean prevSeparator = false;
 		do {
 			if (indexProperty < property.length()) {
 				char charProperty = property.charAt(indexProperty);
@@ -102,6 +103,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 					indexColumn ++;
 					
 					if (ignoreCharacter(charColumn)) {
+						prevSeparator = true;
 						if (ignoreCharacter(charProperty)) {
 							indexProperty++;
 						}
@@ -109,9 +111,15 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 							nextToUpperCase = true;
 						}
 					} else if (areDifferentCharacters(charProperty, charColumn)) {
-						return -1;
+						if (prevSeparator) {
+							int index = indexColumn - 2; // Capture: [abc]_def
+							return index > 0 ? index : -1;
+						} else {
+							return -1;
+						}
 					} else {
 						indexProperty++;
+						prevSeparator = false;
 					}
 				} else {
 					return -1;

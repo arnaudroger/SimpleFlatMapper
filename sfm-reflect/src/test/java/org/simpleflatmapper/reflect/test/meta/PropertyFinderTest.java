@@ -12,6 +12,7 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.tuple.Tuples;
 import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.TypeReference;
 
 import java.util.List;
 
@@ -350,5 +351,20 @@ public class PropertyFinderTest {
         public String endDate;
     }
 
+
+    @Test
+    public void testPrefixMatchScoring() {
+        ClassMeta<List<DbObject>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<List<DbObject>>() {}.getType());
+
+        PropertyFinder<List<DbObject>> finder = classMeta.newPropertyFinder();
+
+        PropertyMeta<List<DbObject>, Object> t1 = finder.findProperty(DefaultPropertyNameMatcher.of("type_name"), new Object[] {SpeculativeArrayIndexResolutionProperty.INSTANCE}, (TypeAffinity)null, isValidPropertyMeta);
+        assertNotNull(t1);
+        assertEquals("[0].typeName", t1.getPath());
+
+        PropertyMeta<List<DbObject>, Object> t2 = finder.findProperty(DefaultPropertyNameMatcher.of("type_name"), new Object[] { SpeculativeArrayIndexResolutionProperty.INSTANCE}, (TypeAffinity)null, isValidPropertyMeta);
+        assertNotNull(t2);
+        assertEquals("[1].typeName", t2.getPath());
+    }
 
 }

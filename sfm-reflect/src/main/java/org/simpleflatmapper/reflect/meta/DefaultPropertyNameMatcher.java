@@ -107,8 +107,9 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 
 			// next column char
 			if (indexColumn >= column.length()) { // run out of character
-				return (skipedIgnorablePropertyCharacter || Character.isUpperCase(charProperty)) // has a separator or current char is upper case
-						&& nbCharIncommon > 0 ? indexColumn -2 : -1;
+				if ((skipedIgnorablePropertyCharacter || Character.isUpperCase(charProperty)) && nbCharIncommon > 0) // end of column with prefix match
+					return indexColumn;
+				else return -1;
 			}
 			char charColumn = column.charAt(indexColumn ++);
 			boolean skipedIgnorableColumnCharacter = false;
@@ -125,9 +126,11 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 			}
 
 			if (areDifferentCharacters(charProperty, charColumn)) {
-				return skipedIgnorableColumnCharacter
-						&& (skipedIgnorablePropertyCharacter || Character.isUpperCase(charProperty)) // has a separator or current char is upper case
-						&& nbCharIncommon > 0 ? indexColumn -2 : -1;
+
+				if (skipedIgnorableColumnCharacter && (skipedIgnorablePropertyCharacter || Character.isUpperCase(charProperty)) && nbCharIncommon > 0)
+					return  indexColumn - 2;
+				else
+					return -1;
 			}
 
 			nbCharIncommon++;
@@ -156,19 +159,31 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	public PropertyNameMatch partialMatch(final CharSequence property) {
 		int index = _partialMatch(property);
 		if (index != -1) {
-			return new PropertyNameMatch(column.substring(from, index), new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive));
+			int meaningfulCharProperty = meaningfulChar(property, 0, property.length());
+			int meaningfulCharColumn = meaningfulChar(column, from, index);
+
+			int score = Math.max((2 * meaningfulCharColumn) - meaningfulCharProperty, 0);
+			return new PropertyNameMatch(column.substring(from, index), new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive), score);
 		} else {
 			return null;
 		}
 	}
 
-    @Override
+	private int meaningfulChar(CharSequence cs, int from, int to) {
+		int s= 0;
+		for(int i = from; i < to; i++) {
+			if (!ignoreCharacter(cs.charAt(i))) s++;
+		}
+		return s;
+	}
+
+	@Override
     public PropertyNameMatch speculativeMatch() {
 
         int index = _speculativeMatch();
 
         if (index != -1) {
-            return new PropertyNameMatch(column.substring(from, index), new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive));
+            return new PropertyNameMatch(column.substring(from, index), new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive), index - from);
         } else {
             return null;
         }

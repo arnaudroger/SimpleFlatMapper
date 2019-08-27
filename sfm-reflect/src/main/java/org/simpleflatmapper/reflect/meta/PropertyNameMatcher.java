@@ -9,7 +9,6 @@ import java.util.List;
  */
 public interface PropertyNameMatcher {
 
-
     boolean matches(CharSequence property);
 
     IndexedColumn matchIndex();

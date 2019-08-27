@@ -47,15 +47,25 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
                 verticalDepth, this.horizontalDepth + 1, selfScoreFullName, notMatched);
     }
 
+    public PropertyMatchingScore matches(PropertyNameMatch property) {
+        return matches(property.score);
+    }
+
     public PropertyMatchingScore matches(PropertyNameMatcher property) {
         return matches(property.toString());
     }
     public PropertyMatchingScore matches(String property) {
+        int score = property.length();
+        return matches(score);
+    }
+
+    public PropertyMatchingScore matches(int score) {
         return new PropertyMatchingScore(
-                this.selfNumberOfProperties, 
-                this.nbMatch + property.length(),
+                this.selfNumberOfProperties,
+                this.nbMatch + score,
                 verticalDepth, this.horizontalDepth + 1, selfScoreFullName, notMatched);
     }
+
 
     @Override
     public String toString() {

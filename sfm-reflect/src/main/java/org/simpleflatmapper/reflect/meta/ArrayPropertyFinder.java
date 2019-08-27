@@ -69,9 +69,6 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
                     IndexedElement element = getIndexedElement(k);
                     ExtrapolateFoundProperty<T> matchingProperties = new ExtrapolateFoundProperty<T>(element, foundProperty);
                     lookForAgainstColumn(new IndexedColumn(k, propertyNameMatcher), properties, matchingProperties, score.speculativeArrayIndex(k), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
-                    if (matchingProperties.hasFound()) {
-                        return;
-                    }
                 }
             } else {
                 // only look for element 0

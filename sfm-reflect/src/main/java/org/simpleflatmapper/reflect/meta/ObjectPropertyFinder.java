@@ -112,7 +112,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 										new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
 										propertiesDelegateAndRemoveNonMatchingCallBack(selectionCallback, prop), score, typeAffinityScorer);
 							}
-						}, score.matches(partialMatch.getProperty()), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+						}, score.matches(partialMatch), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
 					}
 				}
 			}
@@ -141,7 +141,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 									matchingProperties.found(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
 											propertiesDelegateCallBack(selectionCallback), score, typeAffinityScorer);
 								}
-							}, score.matches(subPropMatch.getProperty()),
+							}, score.matches(subPropMatch),
 							propertyFinderTransformer, typeAffinityScorer, propertyFilter);
 				}
 			}

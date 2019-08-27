@@ -4,10 +4,12 @@ public class PropertyNameMatch {
 
     private final String property;
     private final PropertyNameMatcher leftOverMatcher;
+    public final int score;
 
-    public PropertyNameMatch(String property, PropertyNameMatcher leftOverMatcher) {
+    public PropertyNameMatch(String property, PropertyNameMatcher leftOverMatcher, int score) {
         this.property = property;
         this.leftOverMatcher = leftOverMatcher;
+        this.score = score;
     }
 
     public String getProperty() {

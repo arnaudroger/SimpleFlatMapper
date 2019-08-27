@@ -269,7 +269,7 @@ public class PropertyFinderTest {
         PropertyMeta<DbObject, Object> id = finder.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(id);
 
-        PropertyMeta<DbObject, Object> type = finder.findProperty(DefaultPropertyNameMatcher.of("type"), new Object[] { new OptionalProperty() {}, new EligibleAsNonMappedProperty() {}}, (TypeAffinity)null, isValidPropertyMeta);
+        PropertyMeta<DbObject, Object> type = finder.findProperty(DefaultPropertyNameMatcher.of("typo"), new Object[] { new OptionalProperty() {}, new EligibleAsNonMappedProperty() {}}, (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(type);
         assertTrue(type.isNonMapped());
 

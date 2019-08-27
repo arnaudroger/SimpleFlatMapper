@@ -270,8 +270,7 @@ public class PropertyFinderTest {
 
         PropertyMeta<DbObject, Object> type = finder.findProperty(DefaultPropertyNameMatcher.of("type"), new Object[] { new OptionalProperty() {}, new EligibleAsNonMappedProperty() {}}, (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(type);
-        assertTrue(type instanceof  NonMappedPropertyMeta);
-        assertEquals("type", type.getName());
+        assertTrue(type.isNonMapped());
 
     }
 
@@ -331,6 +330,25 @@ public class PropertyFinderTest {
         public List<String> items;
     }
 
+
+    @Test
+    public void testPR678() {
+        ClassMeta<Entity> classMeta = ReflectionService.newInstance().getClassMeta(Entity.class);
+
+        PropertyFinder<Entity> finder = classMeta.newPropertyFinder();
+
+        PropertyMeta<Entity, Object> start = finder.findProperty(DefaultPropertyNameMatcher.of("scheduled_start_date"), new Object[] { }, (TypeAffinity)null, isValidPropertyMeta);
+        PropertyMeta<Entity, Object> end = finder.findProperty(DefaultPropertyNameMatcher.of("scheduled_end_date"), new Object[]{}, (TypeAffinity) null, isValidPropertyMeta);
+        assertEquals("scheduledDate.startDate", start.getPath());
+        assertEquals("scheduledDate.endDate", end.getPath());
+    }
+    public static class Entity {
+        public DateRange scheduledDate;
+    }
+    public static class DateRange {
+        public String startDate;
+        public String endDate;
+    }
 
 
 }

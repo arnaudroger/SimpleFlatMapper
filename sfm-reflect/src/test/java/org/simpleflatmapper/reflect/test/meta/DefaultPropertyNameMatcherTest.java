@@ -15,7 +15,7 @@ public class DefaultPropertyNameMatcherTest {
 		assertTrue(matcher.matches("my_Col"));
 		assertTrue(matcher.matches("my Col"));
 		assertFalse(matcher.matches("myCo"));
-		assertFalse(matcher.matches("my__Col"));
+		assertTrue(matcher.matches("my__Col"));
 		assertFalse(matcher.matches("myCol2"));
 	}
 
@@ -37,11 +37,19 @@ public class DefaultPropertyNameMatcherTest {
 	@Test
 	public void testStartOf() {
 		PropertyNameMatcher matcher = new DefaultPropertyNameMatcher("my_Col_top_bottom", 0, false, false);
+		assertNull(matcher.partialMatch("myCo2"));
 		assertTrue(matcher.partialMatch("myCol").getLeftOverMatcher().partialMatch("top").getLeftOverMatcher().matches("bottom"));
 		assertTrue(matcher.partialMatch("my_Col").getLeftOverMatcher().partialMatch("tOp").getLeftOverMatcher().matches("bottom"));
 		assertTrue(matcher.partialMatch("my Col").getLeftOverMatcher().partialMatch("tOp").getLeftOverMatcher().matches("bottom"));
-		assertNull(matcher.partialMatch("my__Col"));
-		assertNull(matcher.partialMatch("myCol2"));
+		assertTrue(matcher.partialMatch("my__Col").getLeftOverMatcher().partialMatch("tOp").getLeftOverMatcher().matches("bottom"));
+	}
+
+	@Test
+	public void testStartOfPartial() {
+		PropertyNameMatcher matcher = new DefaultPropertyNameMatcher("_id", 0, false, false);
+		assertNotNull(matcher.partialMatch("idTest"));
+		assertNull(matcher.partialMatch("object"));
+		assertNull(matcher.partialMatch("idtest"));
 	}
 	
 	@Test

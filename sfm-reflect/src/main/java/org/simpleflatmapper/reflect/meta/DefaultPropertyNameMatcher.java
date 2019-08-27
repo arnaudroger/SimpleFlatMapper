@@ -88,46 +88,50 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		if (property == null) return -1;
 		int indexColumn = from;
 		int indexProperty = 0;
-		boolean nextToUpperCase = false;
-		boolean prevSeparator = false;
+		int nbCharIncommon = 0;
 		do {
-			if (indexProperty < property.length()) {
-				char charProperty = property.charAt(indexProperty);
-				
-				if (indexColumn < column.length()) {
-					char charColumn = column.charAt(indexColumn);
-					if (nextToUpperCase) {
-						charColumn = Character.toUpperCase(charColumn);
-						nextToUpperCase = false;
-					}
-					indexColumn ++;
-					
-					if (ignoreCharacter(charColumn)) {
-						prevSeparator = true;
-						if (ignoreCharacter(charProperty)) {
-							indexProperty++;
-						}
-						if (caseSensitive) {
-							nextToUpperCase = true;
-						}
-					} else if (areDifferentCharacters(charProperty, charColumn)) {
-						if (prevSeparator) {
-							int index = indexColumn - 2; // Capture: [abc]_def
-							return index > 0 ? index : -1;
-						} else {
-							return -1;
-						}
-					} else {
-						indexProperty++;
-						prevSeparator = false;
-					}
-				} else {
+
+			// next property char
+			if (indexProperty >= property.length()) {
+				return indexColumn; // not more to match
+			}
+			char charProperty = property.charAt(indexProperty++);
+			boolean skipedIgnorablePropertyCharacter = false;
+			while(ignoreCharacter(charProperty)) {
+				if (indexProperty >= property.length()) {
+					return indexColumn; // not more to match
+				}
+				charProperty = property.charAt(indexProperty++);
+				skipedIgnorablePropertyCharacter = true;
+			}
+
+			// next column char
+			if (indexColumn >= column.length()) { // run out of character
+				return (skipedIgnorablePropertyCharacter || Character.isUpperCase(charProperty)) // has a separator or current char is upper case
+						&& nbCharIncommon > 0 ? indexColumn -2 : -1;
+			}
+			char charColumn = column.charAt(indexColumn ++);
+			boolean skipedIgnorableColumnCharacter = false;
+			while(ignoreCharacter(charColumn)) {
+				if (indexColumn >= column.length()) { // run out of character
 					return -1;
 				}
-			} else {
-				// partial match
-				return indexColumn;
+				charColumn = column.charAt(indexColumn ++);
+				skipedIgnorableColumnCharacter = true;
 			}
+
+			if (caseSensitive && skipedIgnorableColumnCharacter) {
+				charColumn = Character.toUpperCase(charColumn);
+			}
+
+			if (areDifferentCharacters(charProperty, charColumn)) {
+				return skipedIgnorableColumnCharacter
+						&& (skipedIgnorablePropertyCharacter || Character.isUpperCase(charProperty)) // has a separator or current char is upper case
+						&& nbCharIncommon > 0 ? indexColumn -2 : -1;
+			}
+
+			nbCharIncommon++;
+
 		}
 		while(true);
 	}

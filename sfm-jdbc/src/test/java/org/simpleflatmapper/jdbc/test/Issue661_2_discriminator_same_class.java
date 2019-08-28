@@ -5,6 +5,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapper;
+import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
 import org.simpleflatmapper.map.CaseInsensitiveEndsWithPredicate;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.util.Consumer;
@@ -268,4 +269,42 @@ public class Issue661_2_discriminator_same_class {
         }
 
     }
+
+
+    @Test
+    public void test2AddFieldWithSameTypeWithDifferentColumnAndDifferentTypeBuilder() throws Exception {
+        JdbcMapperBuilder<Foo> builder =
+                JdbcMapperFactoryHelper.noAsm()
+                        .addKeys("id", "pFirst_id", "pSecond_id")
+                        .discriminator(Parent.class, "pFirst_class_id",
+                                Integer.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object>>() {
+                                    @Override
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object> builder) {
+                                        builder
+                                                .when(1, Parent.class)
+                                                .when(2, ChildA.class)
+                                                .when(3, ChildB.class);
+                                    }
+                                }
+                        )
+                        .discriminator(Parent.class, "pSecond_class_id",
+                                Integer.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object>>() {
+                                    @Override
+                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object> builder) {
+                                        builder
+                                                .when(1, Parent.class)
+                                                .when(2, ChildC.class)
+                                                .when(3, ChildD.class);
+                                    }
+                                }
+                        )
+                        .newBuilder(Foo.class);
+
+        builder.addMapping("id");
+        builder.addMapping("pFirst_class_id");
+
+        JdbcMapper<Foo> mapper = builder.mapper();
+
+    }
+
 }

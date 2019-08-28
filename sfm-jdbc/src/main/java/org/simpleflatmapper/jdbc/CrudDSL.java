@@ -116,7 +116,7 @@ public class CrudDSL<T, K> {
             try {
                 while(tables.next()) {
                     String tableName = tables.getString("TABLE_NAME");
-                    if (DefaultPropertyNameMatcher.of(tableName).matches(className)) {
+                    if (DefaultPropertyNameMatcher.of(tableName).matches(className) != null) {
                         sb.append(tableName);
                         return sb.toString();
                     }

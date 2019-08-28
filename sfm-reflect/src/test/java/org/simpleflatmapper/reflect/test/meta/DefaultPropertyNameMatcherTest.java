@@ -11,37 +11,37 @@ public class DefaultPropertyNameMatcherTest {
 	@Test
 	public void testFullMatch() {
 		PropertyNameMatcher matcher = new DefaultPropertyNameMatcher("my_Col", 0, false, false);
-		assertTrue(matcher.matches("myCol"));
-		assertTrue(matcher.matches("my_Col"));
-		assertTrue(matcher.matches("my Col"));
-		assertFalse(matcher.matches("myCo"));
-		assertTrue(matcher.matches("my__Col"));
-		assertFalse(matcher.matches("myCol2"));
+		assertNotNull(matcher.matches("myCol"));
+		assertNotNull(matcher.matches("my_Col"));
+		assertNotNull(matcher.matches("my Col"));
+		assertNull(matcher.matches("myCo"));
+		assertNotNull(matcher.matches("my__Col"));
+		assertNull(matcher.matches("myCol2"));
 	}
 
 	@Test
 	public void testFullMatchCaseSensitive() {
 		PropertyNameMatcher matcher = new DefaultPropertyNameMatcher("my_col", 0, false, true);
-		assertTrue(matcher.matches("myCol"));
-		assertFalse(matcher.matches("mycol"));
+		assertNotNull(matcher.matches("myCol"));
+		assertNull(matcher.matches("mycol"));
 	}
 
 	@Test
 	public void testFullMatchExactMath() {
 		PropertyNameMatcher matcher = new DefaultPropertyNameMatcher("my_col", 0, true, false);
-		assertTrue(matcher.matches("my_col"));
-		assertTrue(matcher.matches("my_COL"));
-		assertFalse(matcher.matches("myCol"));
+		assertNotNull(matcher.matches("my_col"));
+		assertNotNull(matcher.matches("my_COL"));
+		assertNull(matcher.matches("myCol"));
 	}
 	
 	@Test
 	public void testStartOf() {
 		PropertyNameMatcher matcher = new DefaultPropertyNameMatcher("my_Col_top_bottom", 0, false, false);
 		assertNull(matcher.partialMatch("myCo2"));
-		assertTrue(matcher.partialMatch("myCol").getLeftOverMatcher().partialMatch("top").getLeftOverMatcher().matches("bottom"));
-		assertTrue(matcher.partialMatch("my_Col").getLeftOverMatcher().partialMatch("tOp").getLeftOverMatcher().matches("bottom"));
-		assertTrue(matcher.partialMatch("my Col").getLeftOverMatcher().partialMatch("tOp").getLeftOverMatcher().matches("bottom"));
-		assertTrue(matcher.partialMatch("my__Col").getLeftOverMatcher().partialMatch("tOp").getLeftOverMatcher().matches("bottom"));
+		assertNotNull(matcher.partialMatch("myCol").getLeftOverMatcher().partialMatch("top").getLeftOverMatcher().matches("bottom"));
+		assertNotNull(matcher.partialMatch("my_Col").getLeftOverMatcher().partialMatch("tOp").getLeftOverMatcher().matches("bottom"));
+		assertNotNull(matcher.partialMatch("my Col").getLeftOverMatcher().partialMatch("tOp").getLeftOverMatcher().matches("bottom"));
+		assertNotNull(matcher.partialMatch("my__Col").getLeftOverMatcher().partialMatch("tOp").getLeftOverMatcher().matches("bottom"));
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class DefaultPropertyNameMatcherTest {
 	
 	@Test
 	public void test577() {
-		assertTrue(new DefaultPropertyNameMatcher("start_date  ", 0, false, false).matches("startDate"));
+		assertNotNull(new DefaultPropertyNameMatcher("start_date  ", 0, false, false).matches("startDate"));
 	}
 	
 

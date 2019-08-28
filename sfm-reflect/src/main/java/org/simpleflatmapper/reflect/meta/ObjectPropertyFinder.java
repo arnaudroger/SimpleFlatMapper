@@ -95,10 +95,11 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		if (classMeta.getConstructorProperties() != null) {
 			for (final ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				final String columnName = getColumnName(prop);
-				if (propertyNameMatcher.matches(columnName)
+				PropertyNameMatch matches = propertyNameMatcher.matches(columnName);
+				if (matches != null
 						&& hasConstructorMatching(prop.getParameter())) {
 					if (propertyFilter.testProperty(prop)) {
-						matchingProperties.found(prop, propertiesRemoveNonMatchingCallBack(prop), score.matches(propertyNameMatcher), typeAffinityScorer);
+						matchingProperties.found(prop, propertiesRemoveNonMatchingCallBack(prop), score.matches(matches), typeAffinityScorer);
 					}
 				}
 				if (propertyFilter.testPath(prop)) {
@@ -126,9 +127,10 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 					hasAlias(properties)
 							? prop.getName()
 							: getColumnName(prop);
-			if (propertyNameMatcher.matches(columnName)) {
+			PropertyNameMatch matches = propertyNameMatcher.matches(columnName);
+			if (matches != null) {
 				if (propertyFilter.testProperty(prop)) {
-					matchingProperties.found(prop, propertiesCallBack(), score.matches(propertyNameMatcher.toString()), typeAffinityScorer);
+					matchingProperties.found(prop, propertiesCallBack(), score.matches(matches), typeAffinityScorer);
 				}
 			}
 			if (propertyFilter.testPath(prop)) {

@@ -47,7 +47,7 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
     @Override
     public void lookForProperties(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final boolean allowSelfReference, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
         for (CustomProperty<?, ?> property : customProperties) {
-            if (property.isApplicable(delegate.getOwnerType()) && propertyNameMatcher.matches(property.getName())) {
+            if (property.isApplicable(delegate.getOwnerType()) && propertyNameMatcher.matches(property.getName()) != null) {
                 matchingProperties.found((CustomProperty<T, ?>) property, EMPTY_CALLBACK, score.matches(propertyNameMatcher), typeAffinityScorer);
             }
         }

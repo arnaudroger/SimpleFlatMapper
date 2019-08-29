@@ -24,11 +24,11 @@ function release {
 
   GPG_TTY=$(tty)
   export GPG_TTY
+  git reset --hard
 
   if [ $javaversion == "8" ]
   then
     java8
-    git reset --hard
     mvn --batch-mode -Dtag=sfm-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
                  -DdevelopmentVersion=$DEV
@@ -36,7 +36,6 @@ function release {
   elif [ $javaversion == "9" ]
   then
     java9
-    git reset --hard
     export MAVEN_OPTS="--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED "
     mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL-jre9 \
@@ -47,7 +46,6 @@ function release {
   elif [ $javaversion == "7" ]
   then
     java7
-    git reset --hard
     mvn --batch-mode -Dtag=sfm-parent-$REL release:prepare \
                  -DreleaseVersion=$REL-jre6 \
                  -Dtag=sfm-$REL-jre6 \

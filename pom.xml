@@ -41,7 +41,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.classifier>sources</source.classifier>
         <javadoc.classifier>javadoc</javadoc.classifier>
-        <jar.classifier />
     </properties>
 
 
@@ -229,9 +228,8 @@
                 <jdk>1.6</jdk>
             </activation>
             <properties>
-                <source.classifier>jdk16-sources</source.classifier>
+                <source.classifier>-sources</source.classifier>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
-                <jar.classifier>jdk16</jar.classifier>
             </properties>
 
             <build>
@@ -350,9 +348,8 @@
                 <jdk>1.7</jdk>
             </activation>
             <properties>
-                <source.classifier>jdk16-sources</source.classifier>
+                <source.classifier>-sources</source.classifier>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
-                <jar.classifier>jdk16</jar.classifier>
             </properties>
 
             <modules>
@@ -506,10 +503,8 @@
                 <jdk>[9,12]</jdk>
             </activation>
             <properties>
-                <source.classifier>jdk9-sources</source.classifier>
-                <jar.classifier>jdk9</jar.classifier>
-                <!--<maven.javadoc.skip>true</maven.javadoc.skip>-->
-                <javadoc.classifier>javadoc-jdk9</javadoc.classifier>
+                <source.classifier>-sources</source.classifier>
+                <javadoc.classifier>javadoc</javadoc.classifier>
             </properties>
 
             <modules>

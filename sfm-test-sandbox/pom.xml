@@ -63,14 +63,12 @@
 					<groupId>org.simpleflatmapper</groupId>
 					<artifactId>sfm-csv</artifactId>
 					<version>7.0.4-SNAPSHOT</version>
-					<classifier>jdk9</classifier>
 				</dependency>
 
 				<dependency>
 					<groupId>org.simpleflatmapper</groupId>
 					<artifactId>sfm-jdbc</artifactId>
 					<version>7.0.4-SNAPSHOT</version>
-					<classifier>jdk9</classifier>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -85,14 +83,12 @@
 					<groupId>org.simpleflatmapper</groupId>
 					<artifactId>sfm-csv</artifactId>
 					<version>7.0.4-SNAPSHOT</version>
-					<classifier />
 				</dependency>
 
 				<dependency>
 					<groupId>org.simpleflatmapper</groupId>
 					<artifactId>sfm-jdbc</artifactId>
 					<version>7.0.4-SNAPSHOT</version>
-					<classifier />
 				</dependency>
 			</dependencies>
 			<build>

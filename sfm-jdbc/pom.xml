@@ -34,7 +34,6 @@
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-map</artifactId>
 			<version>7.0.4-SNAPSHOT</version>
-			<classifier>${jar.classifier}</classifier>
 		</dependency>
 
 		<dependency>
@@ -53,7 +52,6 @@
 			<artifactId>sfm-test</artifactId>
 			<version>7.0.4-SNAPSHOT</version>
 			<scope>test</scope>
-			<classifier>${jar.classifier}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
@@ -67,14 +65,12 @@
 			<artifactId>sfm-tuples</artifactId>
 			<version>7.0.4-SNAPSHOT</version>
 			<scope>test</scope>
-			<classifier>${jar.classifier}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter-joda-time</artifactId>
 			<version>7.0.4-SNAPSHOT</version>
 			<scope>test</scope>
-			<classifier>${jar.classifier}</classifier>
 		</dependency>
 
 <!--		<dependency>-->
@@ -95,7 +91,6 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<classifier>${jar.classifier}</classifier>
 					<instructions>
 						<Export-Package>org.simpleflatmapper.jdbc,org.simpleflatmapper.jdbc.named</Export-Package>
 						<Import-Package>com.mysql;resolution:=optional,org.simpleflatmapper.*</Import-Package>

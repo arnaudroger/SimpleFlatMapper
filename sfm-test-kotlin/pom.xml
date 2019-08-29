@@ -16,7 +16,6 @@
 	</licenses>
 
 	<properties>
-		<jar.classifier />
 	    <kotlin.version>1.2.21</kotlin.version>
 		<junit.version>4.12</junit.version>
 
@@ -54,13 +53,11 @@
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
 			<version>7.0.4-SNAPSHOT</version>
-			<classifier>${jar.classifier}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-jdbc</artifactId>
 			<version>7.0.4-SNAPSHOT</version>
-			<classifier>${jar.classifier}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -105,7 +102,6 @@
 				<jdk>1.6</jdk>
 			</activation>
 			<properties>
-				<jar.classifier>jdk16</jar.classifier>
 			</properties>
 		</profile>
 		<profile>
@@ -114,7 +110,6 @@
 				<jdk>1.7</jdk>
 			</activation>
 			<properties>
-				<jar.classifier>jdk16</jar.classifier>
 			</properties>
 		</profile>
 
@@ -124,7 +119,6 @@
 				<jdk>[9,12]</jdk>
 			</activation>
 			<properties>
-				<jar.classifier>jdk9</jar.classifier>
 			</properties>
 			<build>
 				<plugins>

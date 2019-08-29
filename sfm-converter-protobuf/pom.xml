@@ -38,7 +38,6 @@
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter</artifactId>
 			<version>7.0.4-SNAPSHOT</version>
-			<classifier>${jar.classifier}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
@@ -56,7 +55,6 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<classifier>${jar.classifier}</classifier>
 					<instructions>
 						<Import-Package>org.simpleflatmapper.*,com.google.protobuf.*</Import-Package>
 					</instructions>

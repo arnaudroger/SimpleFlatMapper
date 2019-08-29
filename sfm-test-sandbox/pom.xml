@@ -5,7 +5,7 @@
 	<artifactId>sfm-test-sandbox</artifactId>
 	<packaging>jar</packaging>
 
-	<version>8.0.0-jre9</version>
+	<version>8.0.1-SNAPSHOT</version>
 
 	<licenses>
 		<license>
@@ -62,13 +62,13 @@
 				<dependency>
 					<groupId>org.simpleflatmapper</groupId>
 					<artifactId>sfm-csv</artifactId>
-					<version>8.0.0-jre9</version>
+					<version>8.0.1-SNAPSHOT</version>
 				</dependency>
 
 				<dependency>
 					<groupId>org.simpleflatmapper</groupId>
 					<artifactId>sfm-jdbc</artifactId>
-					<version>8.0.0-jre9</version>
+					<version>8.0.1-SNAPSHOT</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -82,13 +82,13 @@
 				<dependency>
 					<groupId>org.simpleflatmapper</groupId>
 					<artifactId>sfm-csv</artifactId>
-					<version>8.0.0-jre9</version>
+					<version>8.0.1-SNAPSHOT</version>
 				</dependency>
 
 				<dependency>
 					<groupId>org.simpleflatmapper</groupId>
 					<artifactId>sfm-jdbc</artifactId>
-					<version>8.0.0-jre9</version>
+					<version>8.0.1-SNAPSHOT</version>
 				</dependency>
 			</dependencies>
 			<build>

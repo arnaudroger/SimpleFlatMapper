@@ -40,7 +40,7 @@ function release {
     export MAVEN_OPTS="--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED "
     mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL.jre9 \
-                 -tag=sfm-parent-$REL-jre9 \
+                 -Dtag=sfm-parent-$REL-jre9 \
                  -DdevelopmentVersion=$DEV
     mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
     unset MAVEN_OPTS
@@ -50,7 +50,7 @@ function release {
     git reset --hard
     mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL.jre6 \
-                 -tag=sfm-parent-$REL-jre6 \
+                 -Dtag=sfm-parent-$REL-jre6 \
                  -DdevelopmentVersion=$DEV
     mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -DskipTests -Dhttps.protocols=TLSv1.2" -Dhttps.protocols=TLSv1.2
   else

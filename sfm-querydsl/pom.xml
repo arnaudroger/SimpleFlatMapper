@@ -123,6 +123,9 @@
 				<jdk>[9,12]</jdk>
 			</activation>
 
+			<properties>
+				<javadoc.skip>true</javadoc.skip>
+			</properties>
 
 		</profile>
 	</profiles>

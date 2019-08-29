@@ -103,10 +103,10 @@
                 <artifactId>flatten-maven-plugin</artifactId>
                 <version>1.1.0</version>
                 <configuration>
+                    <embedBuildProfileDependencies>true</embedBuildProfileDependencies>
                     <flattenMode>defaults</flattenMode>
                     <pomElements>
 <!--                        <dependencies>interpolate</dependencies>-->
-                        <profiles>remove</profiles>
                         <build>remove</build>
                         <repositories>remove</repositories>
                     </pomElements>

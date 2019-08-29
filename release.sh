@@ -48,7 +48,7 @@ function release {
   then
     java7
     git reset --hard
-    mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
+    mvn --batch-mode -Dtag=sfm-parent-$REL release:prepare \
                  -DreleaseVersion=$REL.jre6 \
                  -Dtag=sfm-parent-$REL-jre6 \
                  -DdevelopmentVersion=$DEV

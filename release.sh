@@ -13,35 +13,61 @@ function java6 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-6-oracle/jre/bin/java;export JAVA_HOME=/usr/lib/jvm/java-6-oracle
 }
 
+function release {
+  javaversion=$1
+  REL=$2
+  DEV=$3
+  REPOID=$4
+
+  rm release.properties
+  unset MAVEN_OPTS
+
+  GPG_TTY=$(tty)
+  export GPG_TTY
+
+  if [ $javaversion == "8" ]
+  then
+    java8
+    git reset --hard
+    mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
+                 -DreleaseVersion=$REL \
+                 -DdevelopmentVersion=$DEV
+    mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
+  elif [ $javaversion == "9" ]
+  then
+    java9
+    git reset --hard
+    export MAVEN_OPTS="--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED "
+    mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
+                 -DreleaseVersion=$REL.jre9 \
+                 -DdevelopmentVersion=$DEV
+    mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
+    unset MAVEN_OPTS
+  elif [ $javaversion == "7" ]
+  then
+    java7
+    git reset --hard
+    mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
+                 -DreleaseVersion=$REL.jre6 \
+                 -DdevelopmentVersion=$DEV
+    mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -DskipTests -Dhttps.protocols=TLSv1.2" -Dhttps.protocols=TLSv1.2
+  else
+    echo ERROR: Invalid java version $javaversion
+    exit 1
+  fi
+
+
+}
+
 #echo "change versions"
 #exit
-java8
-rm release.properties
 REL=7.0.3
 DEV=7.0.4-SNAPSHOT
 REPOID=orgsimpleflatmapper-1669
-mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
-                 -DreleaseVersion=$REL \
-                 -DdevelopmentVersion=$DEV
-cp release.properties tmp/release.properties
 
-GPG_TTY=$(tty)
-export GPG_TTY
+release 7 $REL $DEV $REPOID
+release 8 $REL $DEV $REPOID
+release 9 $REL $DEV $REPOID
 
-
-java7
-cp tmp/release.properties .
-mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -DskipTests -Dhttps.protocols=TLSv1.2" -Dhttps.protocols=TLSv1.2
-
-java9
-cp tmp/release.properties .
-export MAVEN_OPTS="--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED "
-mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
-unset MAVEN_OPTS
-
-
-java8
-cp tmp/release.properties .
-mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
 
 

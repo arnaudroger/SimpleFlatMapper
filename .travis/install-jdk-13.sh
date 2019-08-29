@@ -16,7 +16,9 @@ JDK_ARCHIVE=openjdk-13_linux-x64_bin.tar.gz
 #wget --no-check-certificate https://download.java.net/java/early_access/jdk${JDK_FEATURE}/${JDK_BUILD}/GPL/${JDK_ARCHIVE}
 wget --no-check-certificate https://download.java.net/java/GA/jdk13/5b8a42f3905b406298b72d750b6919f6/33/GPL/openjdk-13_linux-x64_bin.tar.gz
 tar -xzf ${JDK_ARCHIVE}
+ls -al .
 export JAVA_HOME=~/jdk-${JDK_FEATURE}
+echo $JAVA_HOME
 export PATH=${JAVA_HOME}/bin:$PATH
 cd -
 echo check java version

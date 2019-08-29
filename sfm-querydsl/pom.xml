@@ -124,7 +124,7 @@
 			</activation>
 
 			<properties>
-				<javadoc.skip>true</javadoc.skip>
+				<maven.javadoc.skip>true</maven.javadoc.skip>
 			</properties>
 
 		</profile>

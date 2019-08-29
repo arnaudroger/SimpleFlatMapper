@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 function java9 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-9-oracle/bin/java;export JAVA_HOME=/usr/lib/jvm/java-9-oracle

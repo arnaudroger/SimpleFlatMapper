@@ -33,7 +33,7 @@ function release {
     mvn --batch-mode -Dtag=sfm-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
                  -DdevelopmentVersion=$DEV
-    mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
+    mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -Drelease"
   elif [ $javaversion == "9" ]
   then
     java9
@@ -42,7 +42,7 @@ function release {
                  -DreleaseVersion=$REL-jre9 \
                  -Dtag=sfm-$REL-jre9 \
                  -DdevelopmentVersion=$DEV
-    mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
+    mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -Drelease"
     unset MAVEN_OPTS
   elif [ $javaversion == "7" ]
   then
@@ -51,7 +51,7 @@ function release {
                  -DreleaseVersion=$REL-jre6 \
                  -Dtag=sfm-$REL-jre6 \
                  -DdevelopmentVersion=$DEV
-    mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -DskipTests -Dhttps.protocols=TLSv1.2" -Dhttps.protocols=TLSv1.2
+    mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -Drelease -DskipTests -Dhttps.protocols=TLSv1.2" -Dhttps.protocols=TLSv1.2
   else
     echo ERROR: Invalid java version $javaversion
     exit 1

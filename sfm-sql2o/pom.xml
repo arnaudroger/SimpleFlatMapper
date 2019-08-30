@@ -10,6 +10,7 @@
 		<version>8.0.1-SNAPSHOT</version>
 	</parent>
 
+	<name>sfm-sql2o</name>
 	<description>Sql2o supports.</description>
 
 	<licenses>

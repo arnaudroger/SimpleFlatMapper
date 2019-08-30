@@ -10,6 +10,7 @@
 		<version>8.0.1-SNAPSHOT</version>
 	</parent>
 
+	<name>sfm-datastax</name>
 	<description>Cassandra Datastax SFM supports.</description>
 
 

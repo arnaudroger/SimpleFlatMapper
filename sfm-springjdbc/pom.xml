@@ -5,6 +5,7 @@
 	<packaging>bundle</packaging>
 
 	<description>SpringJdbc supports.</description>
+	<name>sfm-springjdbc</name>
 
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>

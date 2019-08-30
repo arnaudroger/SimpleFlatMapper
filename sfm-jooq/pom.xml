@@ -11,6 +11,7 @@
 		<version>8.0.1-SNAPSHOT</version>
 	</parent>
 
+	<name>sfm-jooq</name>
 	<description>jOOQ supports.</description>
 
 	<licenses>

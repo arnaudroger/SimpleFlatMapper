@@ -11,6 +11,7 @@
 		<version>8.0.1-SNAPSHOT</version>
 	</parent>
 
+	<name>sfm-map</name>
 	<description>Java library to map flat record - ResultSet, csv - to java object with minimum configuration and low footprint.</description>
 
 	<developers>

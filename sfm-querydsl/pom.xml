@@ -10,6 +10,7 @@
 		<artifactId>sfm-parent</artifactId>
 	</parent>
 
+	<name>sfm-querydsl</name>
 	<description>QueryDSL supports.</description>
 
 	<licenses>

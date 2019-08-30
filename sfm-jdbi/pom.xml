@@ -4,6 +4,7 @@
 	<artifactId>sfm-jdbi</artifactId>
 	<packaging>bundle</packaging>
 
+	<name>sfm-jdbi</name>
 	<description>Jdbi supports.</description>
 
 	<parent>

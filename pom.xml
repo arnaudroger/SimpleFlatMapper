@@ -66,7 +66,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.1</version>
+                    <version>3.0.0-M3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -436,6 +436,11 @@
                         <artifactId>maven-bundle-plugin</artifactId>
                         <extensions>true</extensions>
                         <version>3.5.1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.22.1</version>
                     </plugin>
                 </plugins>
                 </pluginManagement>

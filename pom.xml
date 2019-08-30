@@ -104,12 +104,11 @@
                 <version>1.1.0</version>
                 <configuration>
                     <embedBuildProfileDependencies>true</embedBuildProfileDependencies>
-                    <flattenMode>defaults</flattenMode>
+                    <flattenMode>oss</flattenMode>
                     <pomElements>
 <!--                        <dependencies>interpolate</dependencies>-->
                         <build>remove</build>
                         <repositories>remove</repositories>
-                        <scm>keep</scm>
                     </pomElements>
                 </configuration>
                 <executions>

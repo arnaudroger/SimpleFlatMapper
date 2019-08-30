@@ -109,6 +109,7 @@
 <!--                        <dependencies>interpolate</dependencies>-->
                         <build>remove</build>
                         <repositories>remove</repositories>
+                        <scm>keep</scm>
                     </pomElements>
                 </configuration>
                 <executions>

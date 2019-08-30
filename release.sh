@@ -20,7 +20,7 @@ function release {
   DEV=$3
   REPOID=$4
 
-  rm release.properties
+  rm -f release.properties
   unset MAVEN_OPTS
 
   GPG_TTY=$(tty)

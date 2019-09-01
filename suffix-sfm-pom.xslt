@@ -7,7 +7,10 @@
     <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
     <xsl:param name="suffix" />
-    <xsl:template match="node()[name() ='artifactId' and preceding-sibling::node()[name() = 'groupId' and text() = 'org.simpleflatmapper'] and text() != 'ow2asm']">
+    <xsl:template match="
+            node()[name() ='artifactId'
+            and ((preceding-sibling::node()[name() = 'groupId' and text() = 'org.simpleflatmapper'])
+            or (parent::node()[name() = 'project'])) and text() != 'ow2asm']">
         <artifactId><xsl:value-of select="text()" />-<xsl:value-of select="$suffix" /></artifactId>
     </xsl:template>
 

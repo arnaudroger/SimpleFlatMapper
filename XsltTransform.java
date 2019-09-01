@@ -23,9 +23,9 @@ public class XsltTransform {
             Source xmlInput = new StreamSource(f);
             Result xmlOutput = new StreamResult(t);
 
+            transformer.transform(xmlInput, xmlOutput);
 	    f.delete(); t.renameTo(f);
 
-            transformer.transform(xmlInput, xmlOutput);
         }
     }
 }

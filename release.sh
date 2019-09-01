@@ -67,7 +67,7 @@ function release {
     git checkout master
     git reset --hard
     git pull
-    git checkout -b fm-$REL-jre6-branch
+    git checkout -b sfm-$REL-jre6-branch
     rm -f XsltTransform.class
     $JAVA_HOME/bin/javac XsltTransform.java
     find ./ -name 'pom.xml' | xargs java XsltTransform jre6

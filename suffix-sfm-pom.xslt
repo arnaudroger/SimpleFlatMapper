@@ -10,7 +10,7 @@
     <xsl:template match="
             node()[name() ='artifactId'
             and ((preceding-sibling::node()[name() = 'groupId' and text() = 'org.simpleflatmapper'])
-            or (parent::node()[name() = 'project'])) and text() != 'ow2asm']">
+            or (parent::node()[name() = 'project'])) and text() != 'ow2-asm']">
         <artifactId><xsl:value-of select="text()" />-<xsl:value-of select="$suffix" /></artifactId>
     </xsl:template>
 

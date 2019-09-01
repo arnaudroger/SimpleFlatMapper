@@ -18,10 +18,14 @@ public class XsltTransform {
         transformer.setParameter("suffix", suffix);
 
         for(int i = 1; i < args.length; i++ ) {
-            Source xmlInput = new StreamSource(new File(args[i]));
-            Result xmlOutput = new StreamResult(new File(args[i] + ".tmp"));
+	    File f = new File(args[i]);
+            File t = new File(args[i] + "~");
+            Source xmlInput = new StreamSource(f);
+            Result xmlOutput = new StreamResult(t);
 
             transformer.transform(xmlInput, xmlOutput);
+	    f.delete(); t.renameTo(f);
+
         }
     }
 }

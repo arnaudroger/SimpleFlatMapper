@@ -43,12 +43,12 @@ function release {
     git checkout master
     git reset --hard
     git pull
-    git checkout -b fm-$REL-jre9-branch
+    git checkout -b sfm-$REL-jre9-branch
     rm -f XsltTransform.class
-    javac XsltTransform.java
+    $JAVA_HOME/bin/javac XsltTransform.java
     find ./ -name 'pom.xml' | xargs java XsltTransform jre9
     git commit -a -m "update artifactid"
-    git push --set-upstream origin fm-$REL-jre9-branch
+    git push --set-upstream origin sfm-$REL-jre9-branch
     export MAVEN_OPTS="--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED "
     mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
@@ -57,8 +57,8 @@ function release {
     mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -Drelease"
     git reset --hard
     git checkout master
-    git push --delete origin fm-$REL-jre9-branch
-    git branch -d fm-$REL-jre9-branch
+    git push --delete origin sfm-$REL-jre9-branch
+    git branch -D sfm-$REL-jre9-branch
     echo build $REL for jre9 done
     unset MAVEN_OPTS
   elif [ $javaversion == "7" ]
@@ -67,12 +67,12 @@ function release {
     git checkout master
     git reset --hard
     git pull
-    git checkout -b fm-$REL-jre6-branch
+    git checkout -b sfm-$REL-jre6-branch
     rm -f XsltTransform.class
-    javac XsltTransform.java
+    $JAVA_HOME/bin/javac XsltTransform.java
     find ./ -name 'pom.xml' | xargs java XsltTransform jre6
     git commit -a -m "update artifactid"
-    git push --set-upstream origin fm-$REL-jre6-branch
+    git push --set-upstream origin sfm-$REL-jre6-branch
     mvn --batch-mode -Dtag=sfm-parent-$REL release:prepare \
                  -DreleaseVersion=$REL \
                  -Dtag=sfm-$REL-jre6 \
@@ -80,8 +80,8 @@ function release {
     mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -Drelease -DskipTests -Dhttps.protocols=TLSv1.2" -Dhttps.protocols=TLSv1.2
     git reset --hard
     git checkout master
-    git push --delete origin fm-$REL-jre6-branch
-    git branch -d fm-$REL-jre6-branch
+    git push --delete origin sfm-$REL-jre6-branch
+    git branch -D sfm-$REL-jre6-branch
     echo build $REL for jre6 done
   else
     echo ERROR: Invalid java version $javaversion
@@ -95,7 +95,7 @@ function release {
 #exit
 REL=8.0.0
 DEV=8.0.1-SNAPSHOT
-REPOID=orgsimpleflatmapper-1675
+REPOID=orgsimpleflatmapper-1676
 
 release 7 $REL $DEV $REPOID
 release 8 $REL $DEV $REPOID

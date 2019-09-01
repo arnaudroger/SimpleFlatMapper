@@ -45,7 +45,7 @@ function release {
     git pull
     git checkout -b sfm-$REL-jre9-branch
     rm -f XsltTransform.class
-    javac XsltTransform.java
+    $JAVA_HOME/bin/javac XsltTransform.java
     find ./ -name 'pom.xml' | xargs java XsltTransform jre9
     git commit -a -m "update artifactid"
     git push --set-upstream origin sfm-$REL-jre9-branch
@@ -69,7 +69,7 @@ function release {
     git pull
     git checkout -b fm-$REL-jre6-branch
     rm -f XsltTransform.class
-    javac XsltTransform.java
+    $JAVA_HOME/bin/javac XsltTransform.java
     find ./ -name 'pom.xml' | xargs java XsltTransform jre6
     git commit -a -m "update artifactid"
     git push --set-upstream origin sfm-$REL-jre6-branch

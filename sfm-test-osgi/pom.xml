@@ -8,7 +8,7 @@
     	
     <packaging>jar</packaging>
     	
-    <version>8.0.2-SNAPSHOT</version>
+    <version>8.0.1</version>
     	
     <licenses>
         		
@@ -82,7 +82,7 @@
             			
             <artifactId>sfm-csv-jre9</artifactId>
             			
-            <version>8.0.2-SNAPSHOT</version>
+            <version>8.0.1</version>
             		
         </dependency>
         		
@@ -102,7 +102,7 @@
             			
             <artifactId>sfm-jdbc-jre9</artifactId>
             			
-            <version>8.0.2-SNAPSHOT</version>
+            <version>8.0.1</version>
             		
         </dependency>
         		
@@ -112,7 +112,7 @@
             			
             <artifactId>sfm-poi-jre9</artifactId>
             			
-            <version>8.0.2-SNAPSHOT</version>
+            <version>8.0.1</version>
             		
         </dependency>
         		

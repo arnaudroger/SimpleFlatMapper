@@ -12,7 +12,7 @@
         		
         <artifactId>sfm-parent-jre9</artifactId>
         		
-        <version>8.0.2-SNAPSHOT</version>
+        <version>8.0.1</version>
         	
     </parent>
     	
@@ -106,7 +106,7 @@
             			
             <artifactId>sfm-map-jre9</artifactId>
             			
-            <version>8.0.2-SNAPSHOT</version>
+            <version>8.0.1</version>
             		
         </dependency>
         		
@@ -116,7 +116,7 @@
             			
             <artifactId>sfm-tuples-jre9</artifactId>
             			
-            <version>8.0.2-SNAPSHOT</version>
+            <version>8.0.1</version>
             		
         </dependency>
         		
@@ -138,7 +138,7 @@
             			
             <artifactId>sfm-map-jre9</artifactId>
             			
-            <version>8.0.2-SNAPSHOT</version>
+            <version>8.0.1</version>
             			
             <type>test-jar</type>
             			
@@ -152,7 +152,7 @@
             			
             <artifactId>sfm-test-jre9</artifactId>
             			
-            <version>8.0.2-SNAPSHOT</version>
+            <version>8.0.1</version>
             			
             <scope>test</scope>
             		
@@ -164,7 +164,7 @@
             			
             <artifactId>sfm-converter-joda-time-jre9</artifactId>
             			
-            <version>8.0.2-SNAPSHOT</version>
+            <version>8.0.1</version>
             			
             <scope>test</scope>
             		

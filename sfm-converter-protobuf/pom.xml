@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent</artifactId>
-		<version>8.0.1</version>
+		<version>8.0.2-SNAPSHOT</version>
 	</parent>
 
 	<name>sfm-converter-protobof</name>
@@ -38,12 +38,12 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter</artifactId>
-			<version>8.0.1</version>
+			<version>8.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter</artifactId>
-			<version>8.0.1</version>
+			<version>8.0.2-SNAPSHOT</version>
 			<scope>test</scope>
 			<type>test-jar</type>
 		</dependency>

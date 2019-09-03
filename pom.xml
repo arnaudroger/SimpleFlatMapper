@@ -712,11 +712,11 @@
                         <version>1.2.0-arnaudroger</version>
                         <configuration>
                             <embedBuildProfileDependencies>true</embedBuildProfileDependencies>
+                            <embedAllProfileDependencies>true</embedAllProfileDependencies>
                             <flattenMode>oss</flattenMode>
                             <pomElements>
                                 <build>remove</build>
                                 <repositories>remove</repositories>
-                                <profiles>remove</profiles>
                             </pomElements>
                         </configuration>
                         <executions>

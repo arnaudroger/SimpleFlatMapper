@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent-jre6</artifactId>
-		<version>8.0.1-SNAPSHOT</version>
+		<version>8.0.1</version>
 	</parent>
 
 	<name>sfm-reflect</name>
@@ -38,23 +38,23 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-util-jre6</artifactId>
-			<version>8.0.1-SNAPSHOT</version>
+			<version>8.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter-jre6</artifactId>
-			<version>8.0.1-SNAPSHOT</version>
+			<version>8.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-test-jre6</artifactId>
-			<version>8.0.1-SNAPSHOT</version>
+			<version>8.0.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-tuples-jre6</artifactId>
-			<version>8.0.1-SNAPSHOT</version>
+			<version>8.0.1</version>
 			<scope>test</scope>
 		</dependency>
 

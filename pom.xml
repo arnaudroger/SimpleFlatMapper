@@ -3,7 +3,7 @@
 
     <groupId>org.simpleflatmapper</groupId>
     <artifactId>sfm-parent-jre6</artifactId>
-    <version>8.0.1-SNAPSHOT</version>
+    <version>8.0.1</version>
     <packaging>pom</packaging>
 
     <name>sfm-parent</name>
@@ -33,7 +33,7 @@
         <url>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</url>
         <connection>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</connection>
         <developerConnection>scm:git:git@github.com:arnaudroger/SimpleFlatMapper.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>sfm-8.0.1-jre6</tag>
     </scm>
 
     <properties>
@@ -557,8 +557,8 @@
                 </property>
             </activation>
             <properties>
-                <staging.repository/>
-                <release.arguments/>
+                <staging.repository />
+                <release.arguments />
             </properties>
             <build>
                 <plugins>

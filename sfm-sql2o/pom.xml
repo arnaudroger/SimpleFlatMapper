@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent-jre6</artifactId>
-		<version>8.0.1-SNAPSHOT</version>
+		<version>8.0.1</version>
 	</parent>
 
 	<name>sfm-sql2o</name>
@@ -51,12 +51,12 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-jdbc-jre6</artifactId>
-			<version>8.0.1-SNAPSHOT</version>
+			<version>8.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-test-jre6</artifactId>
-			<version>8.0.1-SNAPSHOT</version>
+			<version>8.0.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

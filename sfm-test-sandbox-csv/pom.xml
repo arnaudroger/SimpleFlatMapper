@@ -1,115 +1,191 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>org.simpleflatmapper</groupId>
-	<artifactId>sfm-test-sandbox-csv</artifactId>
-	<packaging>jar</packaging>
-
-	<version>8.0.2-SNAPSHOT</version>
-
-	<licenses>
-		<license>
-			<name>The MIT License (MIT)</name>
-			<url>http://opensource.org/licenses/MIT</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
-				<configuration>
-					<source>9</source>
-					<target>9</target>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.ow2.asm</groupId>
-						<artifactId>asm</artifactId>
-						<version>6.1.1</version>
-					</dependency>
-				</dependencies>
-
-			</plugin>
-		</plugins>
-	</build>
-
-	<dependencies>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-
-
-	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>jdk19</id>
-			<activation>
-				<jdk>[9,12]</jdk>
-			</activation>
-
-			<dependencies>
-				<dependency>
-					<groupId>org.simpleflatmapper</groupId>
-					<artifactId>sfm-csv</artifactId>
-					<version>8.0.2-SNAPSHOT</version>
-				</dependency>
-
-			</dependencies>
-		</profile>
-		<profile>
-			<id>jdk18</id>
-			<activation>
-				<jdk>1.8</jdk>
-			</activation>
-
-			<dependencies>
-				<dependency>
-					<groupId>org.simpleflatmapper</groupId>
-					<artifactId>sfm-csv</artifactId>
-					<version>8.0.2-SNAPSHOT</version>
-				</dependency>
-
-			</dependencies>
-			<build>
-				<plugins>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<configuration>
-							<source>8</source>
-							<target>8</target>
-						</configuration>
-
-
-						<executions>
-							<execution>
-								<id>default-testCompile</id>
-								<phase>test-compile</phase>
-								<configuration>
-									<testExcludes>
-										<exclude>**/module-info.java</exclude>
-									</testExcludes>
-								</configuration>
-								<goals>
-									<goal>testCompile</goal>
-								</goals>
-							</execution>
-						</executions>
-
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-	</profiles>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    	
+    <modelVersion>4.0.0</modelVersion>
+    	
+    <groupId>org.simpleflatmapper</groupId>
+    	
+    <artifactId>sfm-test-sandbox-csv-jre9</artifactId>
+    	
+    <packaging>jar</packaging>
+    	
+    <version>8.0.2-SNAPSHOT</version>
+    	
+    <licenses>
+        		
+        <license>
+            			
+            <name>The MIT License (MIT)</name>
+            			
+            <url>http://opensource.org/licenses/MIT</url>
+            			
+            <distribution>repo</distribution>
+            		
+        </license>
+        	
+    </licenses>
+    	
+    <build>
+        		
+        <plugins>
+            			
+            <plugin>
+                				
+                <groupId>org.apache.maven.plugins</groupId>
+                				
+                <artifactId>maven-compiler-plugin</artifactId>
+                				
+                <version>3.8.0</version>
+                				
+                <configuration>
+                    					
+                    <source>9</source>
+                    					
+                    <target>9</target>
+                    				
+                </configuration>
+                				
+                <dependencies>
+                    					
+                    <dependency>
+                        						
+                        <groupId>org.ow2.asm</groupId>
+                        						
+                        <artifactId>asm</artifactId>
+                        						
+                        <version>6.1.1</version>
+                        					
+                    </dependency>
+                    				
+                </dependencies>
+                			
+            </plugin>
+            		
+        </plugins>
+        	
+    </build>
+    	
+    <dependencies>
+        		
+        <dependency>
+            			
+            <groupId>junit</groupId>
+            			
+            <artifactId>junit</artifactId>
+            			
+            <version>4.12</version>
+            			
+            <scope>test</scope>
+            		
+        </dependency>
+        	
+    </dependencies>
+    	
+    <profiles>
+        		
+        <profile>
+            			
+            <id>jdk19</id>
+            			
+            <activation>
+                				
+                <jdk>[9,12]</jdk>
+                			
+            </activation>
+            			
+            <dependencies>
+                				
+                <dependency>
+                    					
+                    <groupId>org.simpleflatmapper</groupId>
+                    					
+                    <artifactId>sfm-csv-jre9</artifactId>
+                    					
+                    <version>8.0.2-SNAPSHOT</version>
+                    				
+                </dependency>
+                			
+            </dependencies>
+            		
+        </profile>
+        		
+        <profile>
+            			
+            <id>jdk18</id>
+            			
+            <activation>
+                				
+                <jdk>1.8</jdk>
+                			
+            </activation>
+            			
+            <dependencies>
+                				
+                <dependency>
+                    					
+                    <groupId>org.simpleflatmapper</groupId>
+                    					
+                    <artifactId>sfm-csv-jre9</artifactId>
+                    					
+                    <version>8.0.2-SNAPSHOT</version>
+                    				
+                </dependency>
+                			
+            </dependencies>
+            			
+            <build>
+                				
+                <plugins>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.apache.maven.plugins</groupId>
+                        						
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        						
+                        <configuration>
+                            							
+                            <source>8</source>
+                            							
+                            <target>8</target>
+                            						
+                        </configuration>
+                        						
+                        <executions>
+                            							
+                            <execution>
+                                								
+                                <id>default-testCompile</id>
+                                								
+                                <phase>test-compile</phase>
+                                								
+                                <configuration>
+                                    									
+                                    <testExcludes>
+                                        										
+                                        <exclude>**/module-info.java</exclude>
+                                        									
+                                    </testExcludes>
+                                    								
+                                </configuration>
+                                								
+                                <goals>
+                                    									
+                                    <goal>testCompile</goal>
+                                    								
+                                </goals>
+                                							
+                            </execution>
+                            						
+                        </executions>
+                        					
+                    </plugin>
+                    				
+                </plugins>
+                			
+            </build>
+            		
+        </profile>
+        	
+    </profiles>
+    
 </project>

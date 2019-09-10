@@ -26,4 +26,6 @@ public interface ClassMeta<T> {
     boolean needTransformer();
     
     ClassMeta<T> withReflectionService(ReflectionService reflectionService);
+
+
 }

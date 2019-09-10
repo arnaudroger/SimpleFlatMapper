@@ -53,7 +53,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			if (propertyFilter.testProperty(propertyMeta)) {
 				matchingProperties.found(propertyMeta,
 						selfPropertySelectionCallback(propName),
-						score.self(classMeta.getNumberOfProperties(), propName),
+						score.self(classMeta, propName),
 						typeAffinityScorer);
 			}
 		}

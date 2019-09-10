@@ -6,14 +6,14 @@ public class PropertyNameMatch {
     private final String column;
     private final PropertyNameMatcher leftOverMatcher;
     public final int score;
-    public final int skippedLater;
+    public final int skippedLetters;
 
-    public PropertyNameMatch(String property, String column, PropertyNameMatcher leftOverMatcher, int score, int skippedLater) {
+    public PropertyNameMatch(String property, String column, PropertyNameMatcher leftOverMatcher, int score, int skippedLetters) {
         this.property = property;
         this.column = column;
         this.leftOverMatcher = leftOverMatcher;
         this.score = score;
-        this.skippedLater = skippedLater;
+        this.skippedLetters = skippedLetters;
     }
 
     public String getProperty() {

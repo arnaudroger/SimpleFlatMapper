@@ -35,9 +35,8 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 			int meaningfulCharColumn = meaningfulChar(column, from, endIndex);
 
 			int score =  meaningfulCharProperty;
-			int skippedLater = meaningfulCharColumn - meaningfulCharProperty;
-			if (skippedLater != 0) score = skippedLater;
-			return new PropertyNameMatch(property.toString(), column.substring(from, endIndex), null, score, skippedLater);
+			int skippedLetters = meaningfulCharProperty - meaningfulCharColumn;
+			return new PropertyNameMatch(property.toString(), column.substring(from, endIndex), null, score, skippedLetters);
 		} else {
 			return null;
 		}
@@ -176,8 +175,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 			int meaningfulCharColumn = meaningfulChar(column, from, index);
 
 			int score =  meaningfulCharProperty;
-			int skippedLater = meaningfulCharColumn - meaningfulCharProperty;
-			if (skippedLater != 0) score = skippedLater;
+			int skippedLater = meaningfulCharProperty - meaningfulCharColumn;
 			return new PropertyNameMatch(property.toString(), column.substring(from, index), new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive), score, skippedLater);
 		} else {
 			return null;

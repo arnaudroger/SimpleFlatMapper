@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class Issue366 {
+public class Issue366Test {
 
     @Test
     public void testBreakDetector() throws Exception {

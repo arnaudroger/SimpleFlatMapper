@@ -260,7 +260,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-exports=org.simpleflatmapper.map/org.simpleflatmapper.test.map.mapper=org.simpleflatmapper.reflect --add-exports=org.simpleflatmapper.map/org.simpleflatmapper.test.map.impl=org.simpleflatmapper.reflect</argLine>
+							<argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-exports=org.simpleflatmapper.map/org.simpleflatmapper.test.map.issue=org.simpleflatmapper.reflect --add-exports=org.simpleflatmapper.map/org.simpleflatmapper.test.map.mapper=org.simpleflatmapper.reflect --add-exports=org.simpleflatmapper.map/org.simpleflatmapper.test.map.impl=org.simpleflatmapper.reflect</argLine>
 						</configuration>
 					</plugin>
 				</plugins>

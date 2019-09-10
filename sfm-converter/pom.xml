@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent-jre6</artifactId>
-		<version>8.0.2-SNAPSHOT</version>
+		<version>8.0.2</version>
 	</parent>
 
 	<name>sfm-converter</name>
@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-util-jre6</artifactId>
-			<version>8.0.2-SNAPSHOT</version>
+			<version>8.0.2</version>
 		</dependency>
 	</dependencies>
 

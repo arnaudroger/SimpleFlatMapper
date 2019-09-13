@@ -68,6 +68,7 @@ public class Issue670CaseSensitiveListTest {
 
     private void testMapper(JdbcMapper<Root> mapper) throws SQLException {
       Connection conn = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
+	if (conn == null) return;
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();

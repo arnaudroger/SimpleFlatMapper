@@ -22,6 +22,7 @@ public class Issue668ListIndexTest {
                 "with t (foos_bar1_id, foos_bar2_id ) as (values('c', 'd')) select * from t";
 
         Connection conn = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
+	if (conn == null) return;
         try {
 
             PreparedStatement stmt = conn.prepareStatement(query);

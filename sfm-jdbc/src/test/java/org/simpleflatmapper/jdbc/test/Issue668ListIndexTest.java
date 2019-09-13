@@ -27,7 +27,8 @@ public class Issue668ListIndexTest {
                 "select * from t"
         );
 
-        try (Connection conn = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL)) {
+        Connection conn = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
+        try {
 
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
@@ -48,6 +49,8 @@ public class Issue668ListIndexTest {
             assertEquals(1, found.foos.size());
             assertEquals("c", found.foos.get(0).bar1.id);
             assertEquals("d", found.foos.get(0).bar2.id);
+        } finally {
+            conn.close();
         }
     }
 

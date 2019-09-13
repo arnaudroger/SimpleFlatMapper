@@ -6,6 +6,7 @@ import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.reflect.property.EligibleAsNonMappedProperty;
+import org.simpleflatmapper.reflect.property.ArrayIndexStartAtProperty;
 import org.simpleflatmapper.reflect.property.OptionalProperty;
 import org.simpleflatmapper.reflect.property.SpeculativeArrayIndexResolutionProperty;
 import org.simpleflatmapper.test.beans.DbObject;
@@ -60,7 +61,18 @@ public class PropertyFinderTest {
     public static class BB {
         public String a;
     }
+    @Test
+    public void testTestArrayStartAt1() {
 
+        ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getClassMeta(DbObject[].class);
+
+        PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder();
+        Object[] properties = {ArrayIndexStartAtProperty.ONE};
+
+        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("elt1_id"), properties, (TypeAffinity) null, isValidPropertyMeta);
+        assertNotNull(propEltId);
+        assertEquals("[0].id", propEltId.getPath());
+    }
     @Test
     public void testFindElementOnArraySpeculative() {
 

@@ -29,4 +29,9 @@ public class IndexedColumn {
     public String getIndexProperty() {
         return indexProperty;
     }
+
+    public IndexedColumn alignTo(int firstElementOffset) {
+        if (firstElementOffset == 0) return this;
+        return new IndexedColumn(indexValue - firstElementOffset, indexProperty, subPropertyNameMatcher, partial);
+    }
 }

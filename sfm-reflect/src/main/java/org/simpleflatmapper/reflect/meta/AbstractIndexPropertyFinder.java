@@ -1,7 +1,7 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.reflect.property.ArrayIndexStartAtProperty;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -28,6 +28,14 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
         IndexedColumn indexedColumn = propertyNameMatcher.matchIndex();
         if (indexedColumn != null) {
+            int startIndex = 0;
+            for(Object prop : properties) {
+                if (prop instanceof ArrayIndexStartAtProperty) {
+                    startIndex = ((ArrayIndexStartAtProperty)prop).startIndex;
+                    break;
+                }
+            }
+            indexedColumn = indexedColumn.alignTo(startIndex);
             lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.arrayIndex(indexedColumn.getIndexValue()), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
         }
         if (indexedColumn == null || indexedColumn.partial) {

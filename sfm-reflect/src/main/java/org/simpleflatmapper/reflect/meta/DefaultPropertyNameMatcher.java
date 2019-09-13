@@ -62,6 +62,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		
 		
 		boolean encounterSeparator = false;
+		int effectivePropertyStart = listIndexStart;
 		while(listIndexStart < column.length()) {
 			char ch = column.charAt(listIndexStart);
 			if (Character.isDigit(ch)) {
@@ -93,7 +94,9 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 			subPropertyNameMatcher = new DefaultPropertyNameMatcher(column, listIndexEnd, exactMatch, caseSensitive );
 		}
 
-		return new IndexedColumn(index, column.substring(listIndexStart, listIndexEnd), subPropertyNameMatcher);
+		return new IndexedColumn(index, column.substring(listIndexStart, listIndexEnd), subPropertyNameMatcher,
+				(listIndexStart != effectivePropertyStart || (listIndexEnd < column.length() && isSeparatorChar(column.charAt(listIndexEnd)))) // has text at the start or at the ends
+		);
 	}
 
 	private int _partialMatch(final CharSequence property) {

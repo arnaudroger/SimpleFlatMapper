@@ -5,14 +5,17 @@ public class IndexedColumn {
     private final int indexValue;
     private final String indexProperty;
     private final PropertyNameMatcher subPropertyNameMatcher;
+    public final boolean partial;
+
     public IndexedColumn(int indexValue, PropertyNameMatcher subPropertyNameMatcher) {
-        this(indexValue, "", subPropertyNameMatcher);
+        this(indexValue, "", subPropertyNameMatcher, false);
     }
 
-    public IndexedColumn(int indexValue, String indexProperty, PropertyNameMatcher subPropertyNameMatcher) {
+    public IndexedColumn(int indexValue, String indexProperty, PropertyNameMatcher subPropertyNameMatcher, boolean partial) {
         this.indexValue = indexValue;
         this.indexProperty = indexProperty;
         this.subPropertyNameMatcher = subPropertyNameMatcher;
+        this.partial = partial;
     }
 
     public int getIndexValue() {

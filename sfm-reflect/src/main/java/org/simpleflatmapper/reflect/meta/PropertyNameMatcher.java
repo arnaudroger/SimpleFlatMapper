@@ -18,4 +18,7 @@ public interface PropertyNameMatcher {
     PropertyNameMatch speculativeMatch();
 
     List<PropertyNameMatcherKeyValuePair> keyValuePairs();
+
+    int asScore();
+
 }

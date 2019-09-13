@@ -25,6 +25,8 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		this.effectiveEndIndex = lastNonIgnorableChar(column) + 1;
 	}
 
+
+
 	@Override
 	public PropertyNameMatch matches(final CharSequence property) {
 		if (property == null) return null;
@@ -230,10 +232,15 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		return keyValuePairs;
 	}
 
+	@Override
+	public int asScore() {
+		return toScore(column, from);
+	}
+
 	private int _speculativeMatch() {
         for(int i = from; i < column.length(); i++) {
             char c = column.charAt(i);
-            if (c == '_' || c == '.') {
+            if (c == '_' || c == '.' || c == ' ' || c == '-') {
                 return i;
             }
         }
@@ -243,6 +250,18 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	@Override
 	public String toString() {
 		return column.substring(from, column.length());
+	}
+
+	public static int toScore(String property) {
+		return toScore(property, 0);
+	}
+
+	public static int toScore(String property, int from) {
+		int s = 0;
+		for(int i = from; i < property.length(); i++) {
+			if (!isSeparatorChar(property.charAt(i))) s++;
+		}
+		return s;
 	}
 
 	public static PropertyNameMatcher of(String value) {

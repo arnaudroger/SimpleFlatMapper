@@ -35,9 +35,6 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
         if (nbPartialMatch < o.nbPartialMatch) return -1;
         if (nbPartialMatch > o.nbPartialMatch) return 1;
 
-        if (selfNumberOfProperties < o.selfNumberOfProperties) return -1;
-        if (selfNumberOfProperties > o.selfNumberOfProperties) return 1;
-
         if (nbMatch < o.nbMatch) return 1;
         if (nbMatch > o.nbMatch) return -1;
 
@@ -46,7 +43,10 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
 
         if (horizontalDepth < o.horizontalDepth) return -1;
         if (horizontalDepth > o.horizontalDepth) return 1;
-        
+
+        if (selfNumberOfProperties < o.selfNumberOfProperties) return -1;
+        if (selfNumberOfProperties > o.selfNumberOfProperties) return 1;
+
         return 0;
     }
 
@@ -62,10 +62,10 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
     }
 
     public PropertyMatchingScore matches(PropertyNameMatcher property) {
-        return matches(property.toString());
+        return matches(property.asScore());
     }
     public PropertyMatchingScore matches(String property) {
-        int score = property.length();
+        int score = DefaultPropertyNameMatcher.toScore(property);
         return matches(score);
     }
 

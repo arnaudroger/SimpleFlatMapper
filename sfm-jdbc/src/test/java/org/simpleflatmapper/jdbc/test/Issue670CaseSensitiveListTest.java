@@ -14,15 +14,8 @@ import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 
 public class Issue670CaseSensitiveListTest {
-    private static final String query = String.join("\n",
-            "with t (",
-            "id, linkBList_id, linkBList_linkc_id, linkBList_linkC_id",
-            " ) as ( values",
-            "('aa', 'bb', 'cc', 'cc'",
-            ")",
-            ")",
-            "select * from t"
-    );
+    private static final String query =
+            "with t (id, linkBList_id, linkBList_linkc_id, linkBList_linkC_id ) as (values('aa', 'bb', 'cc', 'cc')) select * from t";
 
     @Test
     public void minimalTest() throws Exception {

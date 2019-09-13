@@ -40,7 +40,7 @@ public class TupleValueSettableDataSetter implements Setter<SettableByIndexData,
         SettableDataMapperBuilder<T> builder = newFieldMapperBuilder(config, reflectionService, target);
         List<DataType> componentTypes = tt.getComponentTypes();
         for(int i = 0; i < componentTypes.size(); i++) {
-            builder.addColumn(new DatastaxColumnKey("elt" + i, i, componentTypes.get(i)));
+            builder.addColumn(new DatastaxColumnKey(String.valueOf(i), i, componentTypes.get(i)));
         }
         return builder.mapper();
     }

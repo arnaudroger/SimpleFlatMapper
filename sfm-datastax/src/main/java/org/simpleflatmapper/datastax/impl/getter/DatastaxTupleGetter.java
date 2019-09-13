@@ -41,7 +41,7 @@ public class DatastaxTupleGetter<T extends Tuple2<?, ?>> implements Getter<Getta
         List<DataType> componentTypes = tt.getComponentTypes();
         for(int i = 0; i < componentTypes.size(); i++) {
             FieldMapperColumnDefinition<DatastaxColumnKey> identity = FieldMapperColumnDefinition.identity();
-            builder.addMapping(new DatastaxColumnKey("elt" + i, i, componentTypes.get(i)),
+            builder.addMapping(new DatastaxColumnKey(String.valueOf( i), i, componentTypes.get(i)),
                     identity);
         }
 

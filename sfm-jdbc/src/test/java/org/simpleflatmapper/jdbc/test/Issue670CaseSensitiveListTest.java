@@ -1,6 +1,5 @@
 package org.simpleflatmapper.jdbc.test;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;

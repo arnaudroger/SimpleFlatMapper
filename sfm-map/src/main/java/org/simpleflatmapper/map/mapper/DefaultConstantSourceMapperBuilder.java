@@ -635,8 +635,11 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 getSubPropertyPerOwner()) {
             if (e.owner.isConstructorProperty()) {
                 ConstructorPropertyMeta<T, ?> meta = (ConstructorPropertyMeta<T, ?>) e.owner;
-                injectionParams.add(new SubPropertyParam(meta.getParameter(), meta, e.propertyMappings, this));
-                parameters.add(meta.getParameter());
+                // ignore if no mapped properties
+                if (hasMappedProperties(e.propertyMappings)) {
+                    injectionParams.add(new SubPropertyParam(meta.getParameter(), meta, e.propertyMappings, this));
+                    parameters.add(meta.getParameter());
+                }
 
             }
         }
@@ -645,6 +648,13 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
         return injectionParams;
 	}
+
+    private boolean hasMappedProperties(List<PropertyMapping<T, ?, K>> propertyMappings) {
+        for(PropertyMapping<T, ?, K> pm : propertyMappings) {
+            if (!pm.getPropertyMeta().isNonMapped()) return true;
+        }
+        return false;
+    }
 
     private void addContextParam(List<InjectionParam> injectionParams, Set<Parameter> parameters) {
         Parameter mappingContext = null;
@@ -964,7 +974,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             public void handle(PropertyMapping<T, ?, K> t) {
                 if (t == null) return;
                 PropertyMeta<T, ?> meta = t.getPropertyMeta();
-                if (meta == null || meta.isNonMapped()) return;
+                if (meta == null) return;
                 if (isTargetForMapperFieldMapper(t)) {
                     addSubProperty(t, meta, t.getColumnKey());
                 }
@@ -1230,6 +1240,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         public abstract boolean needTransformer();
 
         boolean needTransformer(PropertyMeta<T, ?> propertyMeta) {
+            if (propertyMeta.isNonMapped()) return false;
             if (propertyMeta.isSubProperty()) {
                 SubPropertyMeta sb = (SubPropertyMeta) propertyMeta;
                 return needTransformer(sb.getOwnerProperty()) || needTransformer(sb.getSubProperty());

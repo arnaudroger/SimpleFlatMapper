@@ -148,16 +148,20 @@ public class ConverterService {
                             List<ScoredConverterFactory> tailConverters = findConverterFactories(tailFactoryInType, outType, params, subLoopDetectors);
                             if (!tailConverters.isEmpty()) {
                                 for(ScoredConverterFactory hf : headConverters) {
-                                    if (hf.converterFactory.newConverter(new ConvertingTypes(inType, tailFactoryInType), new DefaultContextFactoryBuilder(), params) != null) {
-                                        for(ScoredConverterFactory tf : tailConverters) {
-                                            if (hf.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, outType), new DefaultContextFactoryBuilder(), params) != null) {
-                                                ComposedConverterFactory composedConverterFactory = new ComposedConverterFactory(hf.converterFactory, tf.converterFactory, tailFactoryInType);
-                                                int score = composedConverterFactory.score(new ConvertingTypes(inType, outType)).getScore();
-                                                potentials.add(new ScoredConverterFactory(score, composedConverterFactory));
-                                                break;
+                                    try {
+                                        if (hf.converterFactory.newConverter(new ConvertingTypes(inType, tailFactoryInType), new DefaultContextFactoryBuilder(), params) != null) {
+                                            for (ScoredConverterFactory tf : tailConverters) {
+                                                if (hf.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, outType), new DefaultContextFactoryBuilder(), params) != null) {
+                                                    ComposedConverterFactory composedConverterFactory = new ComposedConverterFactory(hf.converterFactory, tf.converterFactory, tailFactoryInType);
+                                                    int score = composedConverterFactory.score(new ConvertingTypes(inType, outType)).getScore();
+                                                    potentials.add(new ScoredConverterFactory(score, composedConverterFactory));
+                                                    break;
+                                                }
                                             }
+                                            break;
                                         }
-                                        break;
+                                    } catch (IllegalStateException e) {
+                                        // ignore no format
                                     }
                                 }
                             }

@@ -622,7 +622,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             @SuppressWarnings("unchecked")
 			@Override
 			public void handle(PropertyMapping<T, ?, K> propertyMapping) {
-                if (!isTargetForMapperFieldMapper(propertyMapping)) {
+                if (!isTargetForMapperFieldMapper(propertyMapping) && ! propertyMapping.getPropertyMeta().isNonMapped()) {
                     PropertyMeta<T, ?> pm = propertyMapping.getPropertyMeta();
                     ConstructorPropertyMeta<T, ?> cProp = (ConstructorPropertyMeta<T, ?>) pm;
                     injectionParams.add(new ConstructorParam(cProp.getParameter(), cProp, propertyMapping));
@@ -964,7 +964,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             public void handle(PropertyMapping<T, ?, K> t) {
                 if (t == null) return;
                 PropertyMeta<T, ?> meta = t.getPropertyMeta();
-                if (meta == null) return;
+                if (meta == null || meta.isNonMapped()) return;
                 if (isTargetForMapperFieldMapper(t)) {
                     addSubProperty(t, meta, t.getColumnKey());
                 }

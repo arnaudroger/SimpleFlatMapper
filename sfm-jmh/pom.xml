@@ -29,7 +29,7 @@ questions.
         
     <artifactId>sfm-jmh-jre9</artifactId>
         
-    <version>8.0.4-SNAPSHOT</version>
+    <version>8.0.3</version>
         
     <packaging>jar</packaging>
         
@@ -71,7 +71,7 @@ questions.
                         
             <artifactId>sfm-jdbc-jre9</artifactId>
                         
-            <version>8.0.4-SNAPSHOT</version>
+            <version>8.0.3</version>
                     
         </dependency>
                 
@@ -81,7 +81,7 @@ questions.
                         
             <artifactId>sfm-csv-jre9</artifactId>
                         
-            <version>8.0.4-SNAPSHOT</version>
+            <version>8.0.3</version>
                     
         </dependency>
             

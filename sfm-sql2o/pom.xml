@@ -12,7 +12,7 @@
         		
         <artifactId>sfm-parent-jre9</artifactId>
         		
-        <version>8.0.4-SNAPSHOT</version>
+        <version>8.0.3</version>
         	
     </parent>
     	
@@ -94,7 +94,7 @@
             			
             <artifactId>sfm-jdbc-jre9</artifactId>
             			
-            <version>8.0.4-SNAPSHOT</version>
+            <version>8.0.3</version>
             		
         </dependency>
         		
@@ -104,7 +104,7 @@
             			
             <artifactId>sfm-test-jre9</artifactId>
             			
-            <version>8.0.4-SNAPSHOT</version>
+            <version>8.0.3</version>
             			
             <scope>test</scope>
             		

@@ -12,7 +12,7 @@
         		
         <artifactId>sfm-parent-jre9</artifactId>
         		
-        <version>8.0.4-SNAPSHOT</version>
+        <version>8.0.3</version>
         	
     </parent>
     	
@@ -64,7 +64,7 @@
             			
             <artifactId>sfm-converter-jre9</artifactId>
             			
-            <version>8.0.4-SNAPSHOT</version>
+            <version>8.0.3</version>
             		
         </dependency>
                 
@@ -74,7 +74,7 @@
                         
             <artifactId>sfm-util-jre9</artifactId>
             			
-            <version>8.0.4-SNAPSHOT</version>
+            <version>8.0.3</version>
             		
         </dependency>
         		
@@ -84,7 +84,7 @@
             			
             <artifactId>sfm-converter-jre9</artifactId>
             			
-            <version>8.0.4-SNAPSHOT</version>
+            <version>8.0.3</version>
             			
             <scope>test</scope>
             			

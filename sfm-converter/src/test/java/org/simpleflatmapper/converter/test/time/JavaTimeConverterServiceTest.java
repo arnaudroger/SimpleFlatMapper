@@ -24,7 +24,9 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -32,16 +34,18 @@ import static org.simpleflatmapper.converter.test.ConverterServiceTestHelper.tes
 
 
 public class JavaTimeConverterServiceTest {
+    
+    public static final ZoneId ZONE_ID = UTC;
 
     @Test
     public void testJavaTimeToDate() throws Exception {
         long time = System.currentTimeMillis();
         final Date date = new Date(time);
-        final LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
-        final ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+        final LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZONE_ID);
+        final ZonedDateTime zonedDateTime = localDateTime.atZone(ZONE_ID);
         testConverter(localDateTime, date);
         testConverter(localDateTime.toLocalTime(), date);
-        testConverter(localDateTime.toLocalDate(), trunc(date));
+        testConverter(localDateTime.toLocalDate(), trunc(date, ZoneId.systemDefault().getId()));
         testConverter(date.toInstant(), date);
         testConverter(zonedDateTime, date);
         testConverter(zonedDateTime.toOffsetDateTime(), date);
@@ -55,15 +59,14 @@ public class JavaTimeConverterServiceTest {
 
     @Test
     public void testDateToJavaTime() throws Exception {
-        long time = System.currentTimeMillis();
-        final Date date = new Date(time);
+        final Date date = new Date();
         final LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
         final ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
         testConverter(date, localDateTime);
         testConverter(date, localDateTime.toLocalTime());
         testConverter(trunc(date), localDateTime.toLocalDate());
         testConverter(date, date.toInstant());
-        testConverter(date, zonedDateTime);
+        testConverter(date, zonedDateTime, ZoneId.systemDefault());
         testConverter(date, zonedDateTime.toOffsetDateTime());
         testConverter(date, zonedDateTime.toOffsetDateTime().toOffsetTime());
         testConverter(new SimpleDateFormat("yyyyMMdd").parse("20160201"),
@@ -77,7 +80,7 @@ public class JavaTimeConverterServiceTest {
 
     @Test
     public void testObjectToInstant() throws Exception {
-        ZoneId zoneId = ZoneId.systemDefault();
+        ZoneId zoneId = ZONE_ID;
         Instant instant = Instant.now();
 
 
@@ -99,12 +102,12 @@ public class JavaTimeConverterServiceTest {
     }
 
     private void testObjectToInstant(Object in, Instant out) throws Exception {
-        testConverter(in, out, Object.class, Instant.class);
+        testConverter(in, out, Object.class, Instant.class, ZONE_ID);
     }
 
     @Test
     public void testObjectToLocalDate() throws Exception {
-        ZoneId zoneId = ZoneId.systemDefault();
+        ZoneId zoneId = ZONE_ID;
         LocalDate localDate = LocalDate.now(zoneId);
 
         testObjectToLocalDate(null, null);
@@ -124,12 +127,12 @@ public class JavaTimeConverterServiceTest {
     }
 
     private void testObjectToLocalDate(Object in, LocalDate out) throws Exception {
-        testConverter(in, out, Object.class, LocalDate.class);
+        testConverter(in, out, Object.class, LocalDate.class, ZONE_ID);
     }
 
     @Test
     public void testObjectToLocalDateTime() throws Exception {
-        ZoneId zoneId = ZoneId.systemDefault();
+        ZoneId zoneId = ZONE_ID;
         LocalDateTime localDateTime = LocalDateTime.now(zoneId);
 
         testObjectToLocalDateTime(null, null);
@@ -149,12 +152,12 @@ public class JavaTimeConverterServiceTest {
     }
 
     private void testObjectToLocalDateTime(Object in, LocalDateTime out) throws Exception {
-        testConverter(in, out, Object.class, LocalDateTime.class);
+        testConverter(in, out, Object.class, LocalDateTime.class, ZONE_ID);
     }
 
     @Test
     public void testObjectToLocalTime() throws Exception {
-        ZoneId zoneId = ZoneId.systemDefault();
+        ZoneId zoneId = ZONE_ID;
         LocalTime localTime = LocalTime.now(zoneId);
         ZoneOffset offset = zoneId.getRules().getOffset(localTime.atDate(LocalDate.now()));
 
@@ -177,12 +180,12 @@ public class JavaTimeConverterServiceTest {
     }
 
     private void testObjectToLocalTime(Object in, LocalTime out) throws Exception {
-        testConverter(in, out, Object.class, LocalTime.class);
+        testConverter(in, out, Object.class, LocalTime.class, ZONE_ID);
     }
 
     @Test
     public void testObjectToOffsetDateTime() throws Exception {
-        ZoneId zoneId = ZoneId.systemDefault();
+        ZoneId zoneId = ZONE_ID;
         OffsetDateTime offsetDateTime = OffsetDateTime.now(zoneId);
 
         testObjectToOffsetDateTime(null, null);
@@ -205,12 +208,12 @@ public class JavaTimeConverterServiceTest {
     }
 
     private void testObjectToOffsetDateTime(Object in, OffsetDateTime out) throws Exception {
-        testConverter(in, out, Object.class, OffsetDateTime.class);
+        testConverter(in, out, Object.class, OffsetDateTime.class, ZONE_ID);
     }
 
     @Test
     public void testObjectToOffsetTime() throws Exception {
-        ZoneId zoneId = ZoneId.systemDefault();
+        ZoneId zoneId = ZONE_ID;
         OffsetTime offsetTime = OffsetTime.now(zoneId);
 
         testObjectToOffsetTime(null, null);
@@ -232,12 +235,12 @@ public class JavaTimeConverterServiceTest {
     }
 
     private void testObjectToOffsetTime(Object in, OffsetTime out) throws Exception {
-        testConverter(in, out, Object.class, OffsetTime.class);
+        testConverter(in, out, Object.class, OffsetTime.class, ZONE_ID);
     }
 
     @Test
     public void testObjectToYear() throws Exception {
-        ZoneId zoneId = ZoneId.systemDefault();
+        ZoneId zoneId = ZONE_ID;
         Date now = new Date();
         Year year = Year.from(now.toInstant().atZone(zoneId));
 
@@ -256,19 +259,18 @@ public class JavaTimeConverterServiceTest {
     }
 
     private void testObjectToYear(Object in, Year out) throws Exception {
-        testConverter(in, out, Object.class, Year.class);
+        testConverter(in, out, Object.class, Year.class, ZONE_ID);
     }
 
     @Test
     public void testObjectToYearMonth() throws Exception {
-        ZoneId zoneId = ZoneId.systemDefault();
         Date now = new Date();
-        YearMonth yearMonth = YearMonth.from(now.toInstant().atZone(zoneId));
+        YearMonth yearMonth = YearMonth.from(now.toInstant().atZone(ZONE_ID));
 
         testObjectToYearMonth(null, null);
         testObjectToYearMonth(yearMonth, yearMonth);
 
-        testObjectToYearMonth(yearMonth.atEndOfMonth().atTime(1, 0).atZone(zoneId), yearMonth);
+        testObjectToYearMonth(yearMonth.atEndOfMonth().atTime(1, 0).atZone(ZONE_ID), yearMonth);
         testObjectToYearMonth(now, yearMonth);
         testObjectToYearMonth(yearMonth.getYear() * 100 + yearMonth.getMonthValue(), yearMonth);
 
@@ -281,13 +283,12 @@ public class JavaTimeConverterServiceTest {
     }
 
     private void testObjectToYearMonth(Object in, YearMonth out) throws Exception {
-        testConverter(in, out, Object.class, YearMonth.class);
+        testConverter(in, out, Object.class, YearMonth.class, ZONE_ID);
     }
 
     @Test
     public void testObjectToZonedDateTime() throws Exception {
-        ZoneId zoneId = ZoneId.systemDefault();
-        ZonedDateTime zonedDateTime = ZonedDateTime.now(zoneId);
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(ZONE_ID);
 
         testObjectToZonedDateTime(null, null);
         testObjectToZonedDateTime(zonedDateTime, zonedDateTime);
@@ -306,7 +307,7 @@ public class JavaTimeConverterServiceTest {
     }
 
     private void testObjectToZonedDateTime(Object in, ZonedDateTime out) throws Exception {
-        testConverter(in, out, Object.class, ZonedDateTime.class);
+        testConverter(in, out, Object.class, ZonedDateTime.class, ZONE_ID);
     }
 
 
@@ -359,8 +360,10 @@ public class JavaTimeConverterServiceTest {
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
         assertEquals(zonedDateTime.toString(), converter.convert(zonedDateTime, null));
     }
-
     private Date trunc(Date date) {
+        return trunc(date, "UTC");
+    }
+    private Date trunc(Date date, String tz) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 
@@ -368,6 +371,7 @@ public class JavaTimeConverterServiceTest {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.setTimeZone(TimeZone.getTimeZone(tz));
 
         return cal.getTime();
     }

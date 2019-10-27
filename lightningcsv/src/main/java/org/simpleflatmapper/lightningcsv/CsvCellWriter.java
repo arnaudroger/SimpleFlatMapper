@@ -1,12 +1,20 @@
 package org.simpleflatmapper.lightningcsv;
 
 
+import org.simpleflatmapper.util.CharSequenceImpl;
+
 import java.io.IOException;
 import java.util.Iterator;
 
 public final class CsvCellWriter implements CellWriter {
 
-    public static final CsvCellWriter DEFAULT_WRITER = new CsvCellWriter(',', '"', '"', false, "\r\n");
+    public static final char DEFAULT_SEPARATOR = ',';
+    public static final char DEFAULT_QUOTE = '"';
+    public static final char DEFAULT_ESCAPE = '"';
+    public static final boolean DEFAULT_ALWAYS_ESCAPE = false;
+    public static final String DEFAULT_END_OF_LINE = "\r\n";
+
+    public static final CsvCellWriter DEFAULT_WRITER = new CsvCellWriter(DEFAULT_SEPARATOR, DEFAULT_QUOTE, DEFAULT_ESCAPE, DEFAULT_ALWAYS_ESCAPE, DEFAULT_END_OF_LINE);
 
     private final boolean alwaysEscape;
     private final char separator;
@@ -59,16 +67,30 @@ public final class CsvCellWriter implements CellWriter {
 
     @Override
     public void writeValue(CharSequence sequence, Appendable appendable) throws IOException {
-        if (alwaysEscape || needsEscaping(sequence)) {
-            escapeCharSequence(sequence, appendable);
-        } else {
-            appendable.append(sequence);
+        writeValue(sequence, 0, sequence.length(), appendable);
+    }
+
+    @Override
+    public void writeValue(CharSequence sequence, int start, int end, Appendable appendable) throws IOException {
+        if (sequence != null) {
+            if (alwaysEscape || needsEscaping(sequence, start, end)) {
+                escapeCharSequence(sequence, start, end, appendable);
+            } else {
+                appendable.append(sequence, start, end);
+            }
         }
     }
 
-    private boolean needsEscaping(CharSequence sequence) {
+    @Override
+    public void writeValue(char[] chars, int start, int end, Appendable appendable) throws IOException {
+        if (chars != null) {
+            writeValue(new CharSequenceImpl(chars, start, end), appendable);
+        }
+    }
+
+    private boolean needsEscaping(CharSequence sequence, int start, int end) {
         char[] specialCharacters = this.specialCharacters;
-        for(int i = 0; i < sequence.length(); i++) {
+        for(int i = start; i < end; i++) {
             char c = sequence.charAt(i);
             for(int j = 0; j < specialCharacters.length; j++) {
                 char s = specialCharacters[j];
@@ -78,10 +100,10 @@ public final class CsvCellWriter implements CellWriter {
         return false;
     }
 
-    private void escapeCharSequence(CharSequence sequence, Appendable appendable) throws IOException {
+    private void escapeCharSequence(CharSequence sequence, int start, int end, Appendable appendable) throws IOException {
         char quote = this.quote;
         appendable.append(quote);
-        for(int i = 0; i < sequence.length(); i++) {
+        for(int i = start; i < end; i++) {
             char c = sequence.charAt(i);
             if (c == quote) {
                 appendable.append(escape);

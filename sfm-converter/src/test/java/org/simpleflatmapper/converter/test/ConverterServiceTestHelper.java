@@ -6,10 +6,9 @@ import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.converter.DefaultContextFactoryBuilder;
 
 
-import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.TimeZone;
 
-import static java.time.ZoneOffset.UTC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -25,7 +24,7 @@ public class ConverterServiceTestHelper {
 
         if (hasZoneId(params)) {
             params = Arrays.copyOf(params, params.length + 1);
-            params[params.length - 1] = UTC;
+            params[params.length - 1] = TimeZone.getTimeZone("UTC");
         }
         DefaultContextFactoryBuilder defaultContextFactoryBuilder = new DefaultContextFactoryBuilder();
         final ContextualConverter<? super I, ? extends O> converter = ConverterService.getInstance().findConverter(classi, classo, defaultContextFactoryBuilder, params);
@@ -37,7 +36,7 @@ public class ConverterServiceTestHelper {
 
     private static boolean hasZoneId(Object[] params) {
         for(Object o : params) {
-            if (o instanceof ZoneId) return true;
+            if (o instanceof TimeZone || o.getClass().getSimpleName().equals("ZoneId")) return true;
         }
         return false;
     }

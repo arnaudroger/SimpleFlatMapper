@@ -1,15 +1,17 @@
 package org.simpleflatmapper.lightningcsv;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+
+//IFJAVA8_START
 import java.nio.file.Files;
 import java.nio.file.Path;
+//IFJAVA8_END
 import java.util.Iterator;
 
 public class CsvWriter {
+
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
 
     private final CellWriter cellWriter;
     private final Appendable appendable;
@@ -119,26 +121,34 @@ public class CsvWriter {
         }
 
 
+        //IFJAVA8_START
         public ClosableCsvWriter to(Path path) throws IOException {
-            return to(path, StandardCharsets.UTF_8);
+            return to(path, UTF_8);
         }
-
-        public ClosableCsvWriter to(File file) throws IOException {
-            return to(file, StandardCharsets.UTF_8);
-        }
-
-        public ClosableCsvWriter to(File file, Charset charset) throws IOException {
-            return to(file.toPath(), charset);
-        }
-
         public ClosableCsvWriter to(Path path, Charset charset) throws IOException {
             return new ClosableCsvWriter(new CsvCellWriter(separator, quote, escape, alwaysEscape, endOfLine), getWriter(path, charset));
         }
-
         private Writer getWriter(Path path, Charset charset) throws IOException {
             return Files.newBufferedWriter(path, charset);
         }
+        //IFJAVA8_END
 
+        public ClosableCsvWriter to(File file) throws IOException {
+            return to(file, UTF_8);
+        }
+
+        public ClosableCsvWriter to(File file, Charset charset) throws IOException {
+            return new ClosableCsvWriter(new CsvCellWriter(separator, quote, escape, alwaysEscape, endOfLine), getWriter(file, charset));
+        }
+
+        private Writer getWriter(File file, Charset charset) throws IOException {
+            //IFJAVA8_START
+            if (true) {
+                return getWriter(file.toPath(), charset);
+            }
+            //IFJAVA8_END
+            return new OutputStreamWriter(new FileOutputStream(file), charset);
+        }
 
         public CsvWriter to(Appendable appendable) {
             return new CsvWriter(new CsvCellWriter(separator, quote, escape, alwaysEscape, endOfLine), appendable);

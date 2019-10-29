@@ -1,7 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.jdbc.impl.getter.BigDecimalFromStringResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.BigIntegerFromStringResultSetGetter;
+import org.simpleflatmapper.jdbc.impl.getter.*;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
@@ -24,38 +23,9 @@ import java.sql.*;
 import java.util.Date;
 import java.util.UUID;
 
-import org.simpleflatmapper.jdbc.impl.getter.BigDecimalResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.BigIntegerResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.BlobResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.BooleanResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.ByteArrayResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.ByteResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.CalendarResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.CharacterResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.ClobResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.DateResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.DoubleResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.FloatResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.InputStreamResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.IntResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.LongResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.NClobResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.NReaderResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.NStringResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.ObjectResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.ReaderResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.RefResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.RowIdResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.SQLXMLResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.ShortResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.SqlArrayResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.StringResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.TimeResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.TimestampResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.UndefinedDateResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.UrlFromStringResultSetGetter;
-import org.simpleflatmapper.jdbc.impl.getter.UrlResultSetGetter;
 import org.simpleflatmapper.util.TypeHelper;
+
+import static org.simpleflatmapper.jdbc.impl.getter.ArrayResultSetGetter.VALUE_INDEX;
 
 public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>, ContextualGetterFactory<ResultSet, JdbcColumnKey> {
 	public static final ResultSetGetterFactory INSTANCE = new ResultSetGetterFactory();
@@ -411,11 +381,19 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		if (Object.class.equals(clazz)) {
 			return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
 		}
+		Getter<ResultSet, P> getter = null;
+		if (clazz.isArray() && (key.getSqlType(properties) == Types.ARRAY || key.getSqlType(properties) == JdbcColumnKey.UNDEFINED_TYPE)) {
+
+			getter = (Getter<ResultSet, P>) newArrayGetter(clazz.getComponentType(), key, properties);
+			if (getter != null) {
+				return getter;
+			}
+		}
 
 		GetterFactory<ResultSet, JdbcColumnKey> getterFactory =
 				factoryRegistry.findFactoryFor(clazz);
 
-		Getter<ResultSet, P> getter = null;
+
 		if (getterFactory != null) {
 			getter = (Getter<ResultSet, P>) getterFactory.newGetter(genericType, key, properties);
 		}
@@ -432,5 +410,33 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		}
 
 		return getter;
+	}
+
+	private Getter newArrayGetter(Class<?> componentType, JdbcColumnKey key, Object[] properties) {
+		if (componentType.isPrimitive()) {
+			if (boolean.class.equals(componentType)) {
+				return new ArrayBooleanResultSetGetter(key.getIndex());
+			} else if (byte.class.equals(componentType)) {
+				return new ArrayByteResultSetGetter(key.getIndex());
+			} else if (char.class.equals(componentType)) {
+				return new ArrayCharacterResultSetGetter(key.getIndex());
+			}else if (short.class.equals(componentType)) {
+				return new ArrayShortResultSetGetter(key.getIndex());
+			}else if (int.class.equals(componentType)) {
+				return new ArrayIntegerResultSetGetter(key.getIndex());
+			}else if (long.class.equals(componentType)) {
+				return new ArrayLongResultSetGetter(key.getIndex());
+			}else if (float.class.equals(componentType)) {
+				return new ArrayFloatResultSetGetter(key.getIndex());
+			}else if (double.class.equals(componentType)) {
+				return new ArrayDoubleResultSetGetter(key.getIndex());
+			}
+		} else {
+			Getter getter = newGetter(componentType, new JdbcColumnKey("val", VALUE_INDEX), properties);
+			if (getter != null) {
+				return new ArrayResultSetGetter(componentType, getter, key.getIndex());
+			}
+		}
+		return null;
 	}
 }

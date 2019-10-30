@@ -2,13 +2,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>sfm-map-jre6</artifactId>
-  <version>8.0.4-SNAPSHOT</version>
+  <version>8.1.0</version>
 	<packaging>bundle</packaging>
 
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent-jre6</artifactId>
-		<version>8.0.4-SNAPSHOT</version>
+		<version>8.1.0</version>
 	</parent>
 
 	<name>sfm-map</name>
@@ -34,18 +34,18 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-reflect-jre6</artifactId>
-			<version>8.0.4-SNAPSHOT</version>
+			<version>8.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-test-jre6</artifactId>
-			<version>8.0.4-SNAPSHOT</version>
+			<version>8.1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-tuples-jre6</artifactId>
-			<version>8.0.4-SNAPSHOT</version>
+			<version>8.1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter-joda-time-jre6</artifactId>
-			<version>8.0.4-SNAPSHOT</version>
+			<version>8.1.0</version>
 			<scope>test</scope>
 		</dependency>
 

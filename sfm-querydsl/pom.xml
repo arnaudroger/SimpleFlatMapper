@@ -6,7 +6,7 @@
 
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
-		<version>8.0.4-SNAPSHOT</version>
+		<version>8.1.0</version>
 		<artifactId>sfm-parent-jre6</artifactId>
 	</parent>
 
@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-jdbc-jre6</artifactId>
-			<version>8.0.4-SNAPSHOT</version>
+			<version>8.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mysema.querydsl</groupId>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-test-jre6</artifactId>
-			<version>8.0.4-SNAPSHOT</version>
+			<version>8.1.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

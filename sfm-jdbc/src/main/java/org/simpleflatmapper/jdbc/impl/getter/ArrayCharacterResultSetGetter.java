@@ -8,6 +8,8 @@ import java.sql.Array;
 import java.sql.ResultSet;
 import java.util.Arrays;
 
+import static org.simpleflatmapper.jdbc.impl.getter.ArrayResultSetGetter.VALUE_INDEX;
+
 public class ArrayCharacterResultSetGetter implements Getter<ResultSet, char[]>, ContextualGetter<ResultSet, char[]> {
     private static final char[] INIT = new char[0];
     private final int index;
@@ -38,7 +40,7 @@ public class ArrayCharacterResultSetGetter implements Getter<ResultSet, char[]>,
                         array = Arrays.copyOf(array, newCapacity);
                         capacity = newCapacity;
                     }
-                    array[size++] = (char) rs.getInt(1);
+                    array[size++] = (char) rs.getInt(VALUE_INDEX);
                 }
             } finally {
                 rs.close();

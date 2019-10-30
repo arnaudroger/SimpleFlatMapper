@@ -16,6 +16,9 @@ public class CsvWriter {
     private final CellWriter cellWriter;
     private final Appendable appendable;
 
+
+    private boolean rowHasData = false;
+
     public CsvWriter(CellWriter cellWriter, Appendable appendable) {
         this.cellWriter = cellWriter;
         this.appendable = appendable;
@@ -27,20 +30,39 @@ public class CsvWriter {
 
     public final CsvWriter appendCell(CharSequence charSequence, int start, int end) throws IOException {
         CellWriter cellWriter = this.cellWriter;
+        Appendable appendable = this.appendable;
+
+        if (rowHasData) {
+            cellWriter.nextCell(appendable);
+        }
+
         cellWriter.writeValue(charSequence, start, end, appendable);
-        cellWriter.nextCell(appendable);
+        rowHasData = true;
+
         return this;
+    }
+
+    public final CsvWriter appendCell(char[] chars) throws IOException {
+        return appendCell(chars, 0, chars.length);
     }
 
     public final CsvWriter appendCell(char[] chars, int start, int end) throws IOException {
         CellWriter cellWriter = this.cellWriter;
+        Appendable appendable = this.appendable;
+
+        if (rowHasData) {
+            cellWriter.nextCell(appendable);
+        }
+
         cellWriter.writeValue(chars, start, end, appendable);
-        cellWriter.nextCell(appendable);
+        rowHasData = true;
+
         return this;
     }
 
     public final CsvWriter endOfRow() throws IOException {
         cellWriter.endOfRow(appendable);
+        rowHasData = false;
         return this;
     }
 
@@ -49,6 +71,9 @@ public class CsvWriter {
         Appendable appendable = this.appendable;
         if (values != null) {
             if (values.length > 0) {
+                if (rowHasData) {
+                    cellWriter.nextCell(appendable);
+                }
                 cellWriter.writeValue(values[0], appendable);
                 for(int i = 1; i < values.length; i++) {
                     cellWriter.nextCell(appendable);
@@ -57,6 +82,7 @@ public class CsvWriter {
             }
         }
         cellWriter.endOfRow(appendable);
+        rowHasData = false;
         return this;
     }
 
@@ -66,6 +92,9 @@ public class CsvWriter {
         if (values != null) {
             Iterator<? extends CharSequence> iterator = values.iterator();
             if (iterator.hasNext()) {
+                if (rowHasData) {
+                    cellWriter.nextCell(appendable);
+                }
                 cellWriter.writeValue(iterator.next(), appendable);
 
                 while(iterator.hasNext()) {
@@ -76,6 +105,7 @@ public class CsvWriter {
             }
         }
         cellWriter.endOfRow(appendable);
+        rowHasData = false;
         return this;
     }
 

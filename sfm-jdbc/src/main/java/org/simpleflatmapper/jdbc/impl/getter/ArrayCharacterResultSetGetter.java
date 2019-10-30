@@ -30,15 +30,18 @@ public class ArrayCharacterResultSetGetter implements Getter<ResultSet, char[]>,
             int capacity = 0;
             int size = 0;
 
-            try (ResultSet rs = sqlArray.getResultSet()) {
-                while(rs.next()) {
+            ResultSet rs = sqlArray.getResultSet();
+            try {
+                while (rs.next()) {
                     if (size >= capacity) {
-                        int newCapacity = Math.max(Math.max(capacity+ 1, capacity + (capacity >> 1)), 10);
+                        int newCapacity = Math.max(Math.max(capacity + 1, capacity + (capacity >> 1)), 10);
                         array = Arrays.copyOf(array, newCapacity);
                         capacity = newCapacity;
                     }
                     array[size++] = (char) rs.getInt(1);
                 }
+            } finally {
+                rs.close();
             }
 
             return Arrays.copyOf(array, size);

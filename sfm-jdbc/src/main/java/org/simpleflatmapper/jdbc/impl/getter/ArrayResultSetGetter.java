@@ -34,10 +34,13 @@ public class ArrayResultSetGetter<T> implements Getter<ResultSet, T[]>, Contextu
 
         if (sqlArray != null) {
             List<T> list = new ArrayList<T>();
-            try (ResultSet rs = sqlArray.getResultSet()) {
-                while(rs.next()) {
+            ResultSet rs = sqlArray.getResultSet();
+            try {
+                while (rs.next()) {
                     list.add(getter.get(rs));
                 }
+            } finally {
+                rs.close();
             }
             return list.toArray(emptyArray);
         }

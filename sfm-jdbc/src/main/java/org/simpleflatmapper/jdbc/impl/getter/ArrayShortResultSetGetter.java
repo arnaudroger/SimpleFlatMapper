@@ -35,7 +35,8 @@ public class ArrayShortResultSetGetter implements Getter<ResultSet, short[]>, Co
             int capacity = 0;
             int size = 0;
 
-            try (ResultSet rs = sqlArray.getResultSet()) {
+            ResultSet rs = sqlArray.getResultSet();
+            try  {
                 while(rs.next()) {
                     if (size >= capacity) {
                         int newCapacity = Math.max(Math.max(capacity+ 1, capacity + (capacity >> 1)), 10);
@@ -44,6 +45,8 @@ public class ArrayShortResultSetGetter implements Getter<ResultSet, short[]>, Co
                     }
                     array[size++] = rs.getShort(VALUE_INDEX);
                 }
+            } finally {
+                rs.close();
             }
 
             return Arrays.copyOf(array, size);

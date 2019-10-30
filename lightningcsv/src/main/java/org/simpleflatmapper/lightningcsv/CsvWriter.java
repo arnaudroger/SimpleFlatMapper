@@ -44,7 +44,7 @@ public class CsvWriter {
         return this;
     }
 
-    public final CsvWriter appendRow(CharSequence[] values) throws IOException {
+    public final CsvWriter appendRow(CharSequence... values) throws IOException {
         CellWriter cellWriter = this.cellWriter;
         Appendable appendable = this.appendable;
         if (values != null) {

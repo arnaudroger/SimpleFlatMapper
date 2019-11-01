@@ -6,6 +6,7 @@ import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.test.map.mapper.AbstractMapperBuilderTest;
 
 import java.util.Arrays;
@@ -20,7 +21,7 @@ public class Issue667Test {
         ClassMeta<Root> classMeta = ReflectionService.newInstance().getClassMeta(Root.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<Root> builder =
-                new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, MapperConfig.fieldMapperConfig());
+                new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig());
 
 
         builder.addKey("id");

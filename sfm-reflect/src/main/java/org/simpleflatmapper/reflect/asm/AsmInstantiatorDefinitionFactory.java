@@ -62,15 +62,20 @@ public class AsmInstantiatorDefinitionFactory {
                             && (isConstructor
                             || ((Opcodes.ACC_STATIC & access) == Opcodes.ACC_STATIC
                                 && !desc.endsWith("V")))) {
-                        final List<String> descTypes = AsmUtils.extractTypeNamesFromSignature(desc);
 
+
+                        final List<String> descTypes = AsmUtils.extractTypeNamesFromSignature(desc);
                         final List<String> genericTypes;
                         final List<String> names = new ArrayList<String>();
                         if (signature != null) {
                             genericTypes = AsmUtils.extractTypeNamesFromSignature(signature);
+                            if (targetClass.isMemberClass()) { // add outer class param
+                                genericTypes.add(0, descTypes.get(0));
+                            }
                         } else {
                             genericTypes = descTypes;
                         }
+
 
                         if (!isConstructor) {
                             if (descTypes.size() > 0) {

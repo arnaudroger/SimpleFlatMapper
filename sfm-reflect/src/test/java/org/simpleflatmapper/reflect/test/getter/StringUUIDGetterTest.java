@@ -20,5 +20,10 @@ public class StringUUIDGetterTest {
 
         getter.toString();
 
+
+        getter = new StringUUIDGetter<Object>(new ConstantGetter<Object, String>(null));
+
+        assertNull(getter.get(null));
+
     }
 }

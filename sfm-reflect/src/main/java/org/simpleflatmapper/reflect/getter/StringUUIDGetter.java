@@ -15,6 +15,7 @@ public final class StringUUIDGetter<R> implements Getter<R, UUID> {
 	@Override
 	public UUID get(final R target) throws Exception {
 		final String o = stringGetter.get(target);
+		if (o == null) return null;
 		return UUID.fromString(o);
 	}
 

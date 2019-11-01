@@ -54,6 +54,22 @@ public class Issue667Test {
             this.foos = foos;
         }
 
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public List<Foo> getFoos() {
+            return foos;
+        }
+
+        public void setFoos(List<Foo> foos) {
+            this.foos = foos;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -78,6 +94,14 @@ public class Issue667Test {
 
         public Foo() {}
         public Foo(final String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
             this.id = id;
         }
 

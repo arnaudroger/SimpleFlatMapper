@@ -14,6 +14,7 @@ import org.simpleflatmapper.util.TypeHelper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Member;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,7 +70,7 @@ public class AsmInstantiatorDefinitionFactory {
                         final List<String> names = new ArrayList<String>();
                         if (signature != null) {
                             genericTypes = AsmUtils.extractTypeNamesFromSignature(signature);
-                            if (targetClass.isMemberClass() && isConstructor) { // add outer class param
+                            if (targetClass.isMemberClass() && isConstructor && !Modifier.isStatic(targetClass.getModifiers())) { // add outer class param
                                 genericTypes.add(0, descTypes.get(0));
                             }
                         } else {

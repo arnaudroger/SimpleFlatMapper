@@ -36,7 +36,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                 }
             }
             indexedColumn = indexedColumn.alignTo(startIndex);
-            lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.arrayIndex(indexedColumn.getIndexValue()), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+            lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.arrayIndex(indexedColumn), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
         }
         if (indexedColumn == null || indexedColumn.partial) {
             extrapolateIndex(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter);

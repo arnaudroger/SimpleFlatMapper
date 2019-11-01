@@ -97,7 +97,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		}
 
 		return new IndexedColumn(index, column.substring(listIndexStart, listIndexEnd), subPropertyNameMatcher,
-				(listIndexStart != effectivePropertyStart || (listIndexEnd < column.length() && !isSeparatorChar(column.charAt(listIndexEnd)))) // has text at the start or at the ends
+                listIndexStart - effectivePropertyStart, (listIndexStart != effectivePropertyStart || (listIndexEnd < column.length() && !isSeparatorChar(column.charAt(listIndexEnd)))) // has text at the start or at the ends
 		);
 	}
 

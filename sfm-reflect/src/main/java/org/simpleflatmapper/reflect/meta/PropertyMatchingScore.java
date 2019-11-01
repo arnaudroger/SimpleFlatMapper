@@ -9,8 +9,9 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
     private final int horizontalDepth;
     private final boolean selfScoreFullName;
     private final boolean notMatched;
+    private final boolean self;
 
-    private PropertyMatchingScore(int selfNumberOfProperties, int nbMatch, int nbPartialMatch, int verticalDepth, int horizontalDepth, boolean selfScoreFullName, boolean notMatched) {
+    public PropertyMatchingScore(int selfNumberOfProperties, int nbMatch, int nbPartialMatch, int verticalDepth, int horizontalDepth, boolean selfScoreFullName, boolean notMatched, boolean self) {
         this.nbMatch = nbMatch;
         this.selfNumberOfProperties = selfNumberOfProperties;
         this.nbPartialMatch = nbPartialMatch;
@@ -18,6 +19,7 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
         this.horizontalDepth = horizontalDepth;
         this.selfScoreFullName = selfScoreFullName;
         this.notMatched = notMatched;
+        this.self = self;
     }
 
 
@@ -41,6 +43,9 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
         if (verticalDepth < o.verticalDepth) return -1;
         if (verticalDepth > o.verticalDepth) return 1;
 
+//        if (self && !o.self) return 1;
+//        if (!self && o.self) return -1;
+
         if (horizontalDepth < o.horizontalDepth) return -1;
         if (horizontalDepth > o.horizontalDepth) return 1;
 
@@ -54,7 +59,7 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
         return new PropertyMatchingScore(
                 this.selfNumberOfProperties,
                 this.nbMatch,
-                nbPartialMatch, verticalDepth, this.horizontalDepth + 1, selfScoreFullName, notMatched);
+                nbPartialMatch, verticalDepth, this.horizontalDepth + 1, selfScoreFullName, notMatched, self);
     }
 
     public PropertyMatchingScore matches(PropertyNameMatch property) {
@@ -73,13 +78,17 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
         return new PropertyMatchingScore(
                 this.selfNumberOfProperties,
                 this.nbMatch + score,
-                nbPartialMatch, verticalDepth, this.horizontalDepth + 1, selfScoreFullName, notMatched);
+                nbPartialMatch, verticalDepth,
+                this.horizontalDepth + 1,
+                selfScoreFullName, notMatched, self);
     }
     public PropertyMatchingScore partialMatch(int score, int pScore) {
         return new PropertyMatchingScore(
                 this.selfNumberOfProperties,
                 this.nbMatch + score,
-                nbPartialMatch + pScore, verticalDepth, this.horizontalDepth + 1, selfScoreFullName, notMatched);
+                nbPartialMatch + pScore,
+                verticalDepth, this.horizontalDepth + 1,
+                selfScoreFullName, notMatched, self);
     }
 
     @Override
@@ -92,46 +101,56 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
                 ", horizontalDepth=" + horizontalDepth +
                 ", selfScoreFullName=" + selfScoreFullName +
                 ", notMatched=" + notMatched +
+                ", self=" + self +
                 '}';
     }
 
-    public PropertyMatchingScore arrayIndex(int i) {
+    public PropertyMatchingScore arrayIndex(IndexedColumn i) {
         return new PropertyMatchingScore(
                 this.selfNumberOfProperties,
-                this.nbMatch,
-                nbPartialMatch, verticalDepth, this.horizontalDepth  + i, selfScoreFullName, notMatched);
+                this.nbMatch + (selfScoreFullName ? i.getScore() : 0),
+                nbPartialMatch, verticalDepth,
+                this.horizontalDepth  + i.getIndexValue(), selfScoreFullName, notMatched, self);
     }
 
     public PropertyMatchingScore speculativeArrayIndex(int i) {
         return new PropertyMatchingScore(
                 this.selfNumberOfProperties,
                 this.nbMatch,
-                nbPartialMatch, verticalDepth + i, this.horizontalDepth, selfScoreFullName, notMatched);
+                nbPartialMatch, verticalDepth + i, this.horizontalDepth + i, selfScoreFullName, notMatched, self);
     }
     public PropertyMatchingScore tupleIndex(int i) {
         return new PropertyMatchingScore(
                 this.selfNumberOfProperties,
                 this.nbMatch,
-                nbPartialMatch, verticalDepth, this.horizontalDepth + i, selfScoreFullName, notMatched);
+                nbPartialMatch, verticalDepth, this.horizontalDepth + i, selfScoreFullName, notMatched, self);
     }
 
     public PropertyMatchingScore self(int numberOfProperties, String propName) {
-        return new PropertyMatchingScore(this.selfNumberOfProperties + numberOfProperties, this.nbMatch + selfNbMatch(numberOfProperties, propName), nbPartialMatch, verticalDepth, this.horizontalDepth + 1, selfScoreFullName, notMatched);
+        return new PropertyMatchingScore(this.selfNumberOfProperties + numberOfProperties, this.nbMatch + selfNbMatch(numberOfProperties, propName), nbPartialMatch, verticalDepth, this.horizontalDepth + 1, selfScoreFullName, notMatched, true);
     }
 
     private int selfNbMatch(int numberOfProperties, String propName) {
-        return selfScoreFullName && numberOfProperties == 0  ? propName.length() : 0;
+        return selfScoreFullName && numberOfProperties == 0  ? effectiveLength(propName) : 0;
+    }
+
+    private int effectiveLength(String propName) {
+        int s = 0;
+        for(int i = 0; i < propName.length(); i++) {
+            if (!DefaultPropertyNameMatcher.isSeparatorChar(propName.charAt(i))) s++;
+        }
+        return s;
     }
 
     public PropertyMatchingScore self(ClassMeta propertyMeta, String propName) {
         return self(propertyMeta.getNumberOfProperties(), propName);
     }
     public PropertyMatchingScore notMatch() {
-        return new PropertyMatchingScore(this.selfNumberOfProperties, this.nbMatch, nbPartialMatch, verticalDepth, this.horizontalDepth + 1, selfScoreFullName, true);
+        return new PropertyMatchingScore(this.selfNumberOfProperties, this.nbMatch, nbPartialMatch, verticalDepth, this.horizontalDepth + 1, selfScoreFullName, true, self);
     }
 
     public static PropertyMatchingScore newInstance(boolean selfScoreFullName) {
-        return new PropertyMatchingScore(0, 0, 0, 0, 0, selfScoreFullName, false);
+        return new PropertyMatchingScore(0, 0, 0, 0, 0, selfScoreFullName, false, false);
     }
 
 }

@@ -5,16 +5,18 @@ public class IndexedColumn {
     private final int indexValue;
     private final String indexProperty;
     private final PropertyNameMatcher subPropertyNameMatcher;
+    private final int score;
     public final boolean partial;
 
-    public IndexedColumn(int indexValue, PropertyNameMatcher subPropertyNameMatcher) {
-        this(indexValue, "", subPropertyNameMatcher, false);
+    public IndexedColumn(int indexValue, PropertyNameMatcher subPropertyNameMatcher, int score) {
+        this(indexValue, "", subPropertyNameMatcher, score, false);
     }
 
-    public IndexedColumn(int indexValue, String indexProperty, PropertyNameMatcher subPropertyNameMatcher, boolean partial) {
+    public IndexedColumn(int indexValue, String indexProperty, PropertyNameMatcher subPropertyNameMatcher, int score, boolean partial) {
         this.indexValue = indexValue;
         this.indexProperty = indexProperty;
         this.subPropertyNameMatcher = subPropertyNameMatcher;
+        this.score = score;
         this.partial = partial;
     }
 
@@ -32,6 +34,10 @@ public class IndexedColumn {
 
     public IndexedColumn alignTo(int firstElementOffset) {
         if (firstElementOffset == 0) return this;
-        return new IndexedColumn(indexValue - firstElementOffset, indexProperty, subPropertyNameMatcher, partial);
+        return new IndexedColumn(indexValue - firstElementOffset, indexProperty, subPropertyNameMatcher, score, partial);
+    }
+
+    public int getScore() {
+        return score;
     }
 }

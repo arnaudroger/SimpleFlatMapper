@@ -68,7 +68,7 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
                 for (Integer k : keys) {
                     IndexedElement element = getIndexedElement(k);
                     ExtrapolateFoundProperty<T> matchingProperties = new ExtrapolateFoundProperty<T>(element, foundProperty);
-                    lookForAgainstColumn(new IndexedColumn(k, propertyNameMatcher), properties, matchingProperties, score.speculativeArrayIndex(k), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                    lookForAgainstColumn(new IndexedColumn(k, propertyNameMatcher, 0), properties, matchingProperties, score.speculativeArrayIndex(k), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
                 }
             } else {
                 // only look for element 0
@@ -77,7 +77,7 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
                     IndexedElement element = getIndexedElement(0);
                     fp = new ExtrapolateFoundProperty<T>(element, foundProperty);
                 }
-                lookForAgainstColumn(new IndexedColumn(0, propertyNameMatcher), properties, fp, score, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                lookForAgainstColumn(new IndexedColumn(0, propertyNameMatcher, 0), properties, fp, score, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
             }
         }
 	}
@@ -120,7 +120,7 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
         
         if (ownerProperty instanceof  ArrayElementPropertyMeta) {
             ArrayElementPropertyMeta arrayElementPropertyMeta = (ArrayElementPropertyMeta) ownerProperty;
-            IndexedElement<T, E> indexedElement = getIndexedElement(new IndexedColumn(arrayElementPropertyMeta.getIndex(), null));
+            IndexedElement<T, E> indexedElement = getIndexedElement(new IndexedColumn(arrayElementPropertyMeta.getIndex(), null, 0));
             return indexedElement.getPropertyFinder();
         }
         

@@ -69,7 +69,7 @@ public class AsmInstantiatorDefinitionFactory {
                         final List<String> names = new ArrayList<String>();
                         if (signature != null) {
                             genericTypes = AsmUtils.extractTypeNamesFromSignature(signature);
-                            if (targetClass.isMemberClass()) { // add outer class param
+                            if (targetClass.isMemberClass() && isConstructor) { // add outer class param
                                 genericTypes.add(0, descTypes.get(0));
                             }
                         } else {

@@ -1,7 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>sfm-springjdbc</artifactId>
+	<artifactId>sfm-springjdbc-jre6</artifactId>
 	<packaging>bundle</packaging>
 
 	<description>SpringJdbc supports.</description>
@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<version>8.1.0-SNAPSHOT</version>
-		<artifactId>sfm-parent</artifactId>
+		<artifactId>sfm-parent-jre6</artifactId>
 	</parent>
 
 	<licenses>
@@ -50,12 +50,12 @@
 
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-jdbc</artifactId>
+			<artifactId>sfm-jdbc-jre6</artifactId>
 			<version>8.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-test</artifactId>
+			<artifactId>sfm-test-jre6</artifactId>
 			<version>8.1.0-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>

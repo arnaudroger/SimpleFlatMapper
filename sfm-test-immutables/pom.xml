@@ -1,69 +1,120 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>org.simpleflatmapper</groupId>
-	<artifactId>sfm-test-immutables</artifactId>
-	<packaging>jar</packaging>
-
-	<version>8.1.2-SNAPSHOT</version>
-
-	<licenses>
-		<license>
-			<name>The MIT License (MIT)</name>
-			<url>http://opensource.org/licenses/MIT</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<useIncrementalCompilation>false</useIncrementalCompilation>
-				</configuration>
-			</plugin>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    	
+    <modelVersion>4.0.0</modelVersion>
+    	
+    <groupId>org.simpleflatmapper</groupId>
+    	
+    <artifactId>sfm-test-immutables-jre9</artifactId>
+    	
+    <packaging>jar</packaging>
+    	
+    <version>8.1.2-SNAPSHOT</version>
+    	
+    <licenses>
+        		
+        <license>
+            			
+            <name>The MIT License (MIT)</name>
+            			
+            <url>http://opensource.org/licenses/MIT</url>
+            			
+            <distribution>repo</distribution>
+            		
+        </license>
+        	
+    </licenses>
+    	
+    <build>
+        		
+        <plugins>
+            			
+            <plugin>
+                				
+                <groupId>org.apache.maven.plugins</groupId>
+                				
+                <artifactId>maven-compiler-plugin</artifactId>
+                				
+                <version>3.5.1</version>
+                				
+                <configuration>
+                    					
+                    <source>1.8</source>
+                    					
+                    <target>1.8</target>
+                    					
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    				
+                </configuration>
+                			
+            </plugin>
+            			
 			
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<systemPropertyVariables>
-						<asm.dump.target.dir>target/asm</asm.dump.target.dir>
-					</systemPropertyVariables>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-csv</artifactId>
-			<version>8.1.2-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-jdbc</artifactId>
-			<version>8.1.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.immutables</groupId>
-			<artifactId>value</artifactId>
-			<version>2.7.1</version>
-			<scope>provided</scope>
-		</dependency>
-
-	</dependencies>
+            <plugin>
+                				
+                <artifactId>maven-surefire-plugin</artifactId>
+                				
+                <configuration>
+                    					
+                    <systemPropertyVariables>
+                        						
+                        <asm.dump.target.dir>target/asm</asm.dump.target.dir>
+                        					
+                    </systemPropertyVariables>
+                    				
+                </configuration>
+                			
+            </plugin>
+            		
+        </plugins>
+        	
+    </build>
+    	
+    <dependencies>
+        		
+        <dependency>
+            			
+            <groupId>org.simpleflatmapper</groupId>
+            			
+            <artifactId>sfm-csv-jre9</artifactId>
+            			
+            <version>8.1.2-SNAPSHOT</version>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>org.simpleflatmapper</groupId>
+            			
+            <artifactId>sfm-jdbc-jre9</artifactId>
+            			
+            <version>8.1.2-SNAPSHOT</version>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>junit</groupId>
+            			
+            <artifactId>junit</artifactId>
+            			
+            <version>4.12</version>
+            			
+            <scope>test</scope>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>org.immutables</groupId>
+            			
+            <artifactId>value</artifactId>
+            			
+            <version>2.7.1</version>
+            			
+            <scope>provided</scope>
+            		
+        </dependency>
+        	
+    </dependencies>
+    
 </project>

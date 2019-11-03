@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent-jre6</artifactId>
-		<version>8.1.0-SNAPSHOT</version>
+		<version>8.1.1</version>
 	</parent>
 
 	<name>sfm-converter-joda-time</name>
@@ -37,17 +37,17 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter-jre6</artifactId>
-			<version>8.1.0-SNAPSHOT</version>
+			<version>8.1.1</version>
 		</dependency>
         <dependency>
             <groupId>org.simpleflatmapper</groupId>
             <artifactId>sfm-util-jre6</artifactId>
-			<version>8.1.0-SNAPSHOT</version>
+			<version>8.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter-jre6</artifactId>
-			<version>8.1.0-SNAPSHOT</version>
+			<version>8.1.1</version>
 			<scope>test</scope>
 			<type>test-jar</type>
 		</dependency>

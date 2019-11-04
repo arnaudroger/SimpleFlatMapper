@@ -123,8 +123,8 @@ public class DiscriminatorConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 @Override
                 public void accept(DiscriminatorPropertyFinder.DiscriminatorMatch dm) {
 
-                    Type type = dm.type;
-                    PropertyMeta<?, ?> propertyMeta = dm.matchedProperty.getPropertyMeta();
+                    final Type type = dm.type;
+                    final PropertyMeta<?, ?> propertyMeta = dm.matchedProperty.getPropertyMeta();
 
                     forBuilderOfType(type, dm.discriminatorId, new Consumer<ConstantSourceMapperBuilder>() {
                         @Override

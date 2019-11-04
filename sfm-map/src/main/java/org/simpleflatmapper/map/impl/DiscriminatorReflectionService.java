@@ -6,6 +6,7 @@ import org.simpleflatmapper.reflect.ObjectGetterFactory;
 import org.simpleflatmapper.reflect.ObjectSetterFactory;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.ClassMetaWithDiscriminatorId;
 import org.simpleflatmapper.reflect.meta.AliasProvider;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.TypeHelper;
@@ -26,10 +27,10 @@ import static org.simpleflatmapper.util.Asserts.requireNonNull;
 public class DiscriminatorReflectionService extends ReflectionService {
     
     private final ReflectionService delegate;
-    private final Map<Class<?>, List<ClassMeta<?>>> discriminators;
+    private final Map<Class<?>, List<ClassMetaWithDiscriminatorId<?>>> discriminators;
     private final ConcurrentMap<Type, ClassMeta<?>> metaCache = new ConcurrentHashMap<Type, ClassMeta<?>>();
 
-    public DiscriminatorReflectionService(ReflectionService delegate, Map<Class<?>, List<ClassMeta<?>>> discriminators) {
+    public DiscriminatorReflectionService(ReflectionService delegate, Map<Class<?>, List<ClassMetaWithDiscriminatorId<?>>> discriminators) {
         this.delegate = delegate;
         this.discriminators = discriminators;
     }
@@ -73,7 +74,7 @@ public class DiscriminatorReflectionService extends ReflectionService {
     }
         
     private <T> ClassMeta<T> newClassMeta(Type target) {
-        List<ClassMeta<?>> implementations = discriminators.get(TypeHelper.toClass(target)); 
+        List<ClassMetaWithDiscriminatorId<?>> implementations = discriminators.get(TypeHelper.toClass(target));
         if (implementations == null || implementations.isEmpty()) {
             ClassMeta<T> classMeta = delegate.getClassMeta(target);
             return classMeta.withReflectionService(this);
@@ -84,9 +85,9 @@ public class DiscriminatorReflectionService extends ReflectionService {
             return (ClassMeta<T>) implementations.get(0).withReflectionService(this);
         }
         
-        List<ClassMeta<?>> reassignedImplementations = new ArrayList<ClassMeta<?>>();
+        List<ClassMetaWithDiscriminatorId<?>> reassignedImplementations = new ArrayList<ClassMetaWithDiscriminatorId<?>>();
         
-        for(ClassMeta<?> cm : implementations) {
+        for(ClassMetaWithDiscriminatorId<?> cm : implementations) {
             reassignedImplementations.add(cm.withReflectionService(this));
         }
         

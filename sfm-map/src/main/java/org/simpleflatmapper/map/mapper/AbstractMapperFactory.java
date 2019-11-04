@@ -840,6 +840,7 @@ public abstract class AbstractMapperFactory<
 	public static class DiscriminatorDSL<K extends FieldKey<K>, MF extends AbstractMapperFactory<K, MF, S>, S, T> {
     	private final MF mapperFactory;
     	private final Type commonType;
+    	private final Object discriminatorId = new Object();
 
 		public DiscriminatorDSL(MF mapperFactory, Type commonType) {
 			this.mapperFactory = mapperFactory;
@@ -847,25 +848,8 @@ public abstract class AbstractMapperFactory<
 		}
 
 		public <KT> DiscriminatorOnColumnDSL<K, MF, S, T, KT> onColumn(final Predicate<? super K> discriminatorColumnPredicate, final Class<KT> discriminatorColunnType) {
-
-			Function<List<K>, Getter<? super S, ? extends KT>> getterFactory = new Function<List<K>, Getter<? super S, ? extends KT>>() {
-				@Override
-				public Getter<? super S, ? extends KT> apply(List<K> ks) {
-					if (ks.isEmpty()) throw new IllegalStateException("No discriminatory field found " + discriminatorColumnPredicate);
-					if (ks.size() != 1) throw new IllegalStateException("Found multiple discriminator field " + ks);
-					K k = ks.get(0);
-
-					final ContextualGetter<? super S, KT> getter = mapperFactory.getterFactory.newGetter(discriminatorColunnType, k, null);
-
-					return new Getter<S, KT>() {
-						@Override
-						public KT get(S target) throws Exception {
-							return getter.get(target, null);
-						}
-					};
-				}
-			};
-			return new DiscriminatorOnColumnDSL<K, MF, S, T, KT>(mapperFactory, commonType, discriminatorColumnPredicate, getterFactory);
+			Function<List<K>, Getter<? super S, ? extends KT>> getterFactory = new DiscriminatorColumnValueFactory<KT>(discriminatorColumnPredicate, discriminatorColunnType);
+			return new DiscriminatorOnColumnDSL<K, MF, S, T, KT>(mapperFactory, commonType, discriminatorColumnPredicate, getterFactory, discriminatorId);
 		}
 		public <KT> DiscriminatorOnColumnDSL<K, MF, S, T, KT> onColumn(String columnName, Class<KT> discriminatorColunnType) {
 			return onColumn(CaseInsensitiveFieldKeyNamePredicate.of(columnName), discriminatorColunnType);
@@ -876,24 +860,8 @@ public abstract class AbstractMapperFactory<
 		}
 
 		public <KT> DiscriminatorOnColumnDSL<K, MF, S, T, KT> onColumnWithNamedGetter(final Predicate<? super K> discriminatorColumnPredicate, final CheckedBiFunction<S, String, KT> getter) {
-			Function<List<K>, Getter<? super S, ? extends KT>> getterFactory = new Function<List<K>, Getter<? super S, ? extends KT>>() {
-				@Override
-				public Getter<? super S, ? extends KT> apply(List<K> ks) {
-					if (ks.isEmpty()) throw new IllegalStateException("No discriminatory field found " + discriminatorColumnPredicate);
-					if (ks.size() != 1) throw new IllegalStateException("Found multiple discriminator field " + ks);
-					K k = ks.get(0);
-
-					final String columnName = k.getName();
-
-					return new Getter<S, KT>() {
-						@Override
-						public KT get(S target) throws Exception {
-							return getter.apply(target, columnName);
-						}
-					};
-				}
-			};
-			return new DiscriminatorOnColumnDSL<K, MF, S, T, KT>(mapperFactory, commonType, discriminatorColumnPredicate, getterFactory);
+			Function<List<K>, Getter<? super S, ? extends KT>> getterFactory = new DiscriminatorNamedColumnValueFactory<KT>(discriminatorColumnPredicate, getter);
+			return new DiscriminatorOnColumnDSL<K, MF, S, T, KT>(mapperFactory, commonType, discriminatorColumnPredicate, getterFactory, discriminatorId);
 
 		}
 
@@ -920,7 +888,7 @@ public abstract class AbstractMapperFactory<
 					};
 				}
 			};
-			return new DiscriminatorOnColumnDSL<K, MF, S, T, KT>(mapperFactory, commonType, discriminatorColumnPredicate, getterFactory);
+			return new DiscriminatorOnColumnDSL<K, MF, S, T, KT>(mapperFactory, commonType, discriminatorColumnPredicate, getterFactory, discriminatorId);
 
 		}
 
@@ -932,7 +900,7 @@ public abstract class AbstractMapperFactory<
 					return getter;
 				}
 			};
-			return new DiscriminatorOnColumnDSL<K, MF, S, T, KT>(mapperFactory, commonType, ConstantPredicate.falsePredicate(), getterFactory);
+			return new DiscriminatorOnColumnDSL<K, MF, S, T, KT>(mapperFactory, commonType, null, getterFactory, discriminatorId);
 		}
 
 		public MF with(Class<? extends T> implementation) {
@@ -942,7 +910,7 @@ public abstract class AbstractMapperFactory<
 		public MF with(Type implementation) {
 			DiscriminatorBuilder<S, K, T> db = new DiscriminatorBuilder<S, K, T>(commonType, mapperFactory.getReflectionService());
 			db.defaultType(implementation);
-			mapperFactory.discriminators.add(new MapperConfig.Discriminator<S, K, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0]), ConstantPredicate.<K>truePredicate()));
+			mapperFactory.discriminators.add(new MapperConfig.Discriminator<S, K, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0]), ConstantPredicate.<K>truePredicate(), discriminatorId));
 			return mapperFactory;
 		}
 
@@ -952,8 +920,60 @@ public abstract class AbstractMapperFactory<
 		private MF _with(Consumer<DiscriminatorBuilder<S, K, T>> consumer) {
 			DiscriminatorBuilder<S, K, T> db = new DiscriminatorBuilder<S, K, T>(commonType, mapperFactory.getReflectionService());
 			consumer.accept(db);
-			mapperFactory.discriminators.add(new MapperConfig.Discriminator<S, K, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0]), ConstantPredicate.<K>truePredicate()));
+			mapperFactory.discriminators.add(new MapperConfig.Discriminator<S, K, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0]), ConstantPredicate.<K>truePredicate(), discriminatorId));
 			return mapperFactory;
+		}
+
+		private class DiscriminatorColumnValueFactory<KT> implements Function<List<K>, Getter<? super S, ? extends KT>> {
+			private final Predicate<? super K> discriminatorColumnPredicate;
+			private final Class<KT> discriminatorColunnType;
+
+			public DiscriminatorColumnValueFactory(Predicate<? super K> discriminatorColumnPredicate, Class<KT> discriminatorColunnType) {
+				this.discriminatorColumnPredicate = discriminatorColumnPredicate;
+				this.discriminatorColunnType = discriminatorColunnType;
+			}
+
+			@Override
+			public Getter<? super S, ? extends KT> apply(List<K> ks) {
+				if (ks.isEmpty()) throw new IllegalStateException("No discriminatory field found " + discriminatorColumnPredicate);
+				if (ks.size() != 1) throw new IllegalStateException("Found multiple discriminator field " + ks);
+				K k = ks.get(0);
+
+				final ContextualGetter<? super S, KT> getter = mapperFactory.getterFactory.newGetter(discriminatorColunnType, k, null);
+
+				return new Getter<S, KT>() {
+					@Override
+					public KT get(S target) throws Exception {
+						return getter.get(target, null);
+					}
+				};
+			}
+		}
+
+		private class DiscriminatorNamedColumnValueFactory<KT> implements Function<List<K>, Getter<? super S, ? extends KT>> {
+			private final Predicate<? super K> discriminatorColumnPredicate;
+			private final CheckedBiFunction<S, String, KT> getter;
+
+			public DiscriminatorNamedColumnValueFactory(Predicate<? super K> discriminatorColumnPredicate, CheckedBiFunction<S, String, KT> getter) {
+				this.discriminatorColumnPredicate = discriminatorColumnPredicate;
+				this.getter = getter;
+			}
+
+			@Override
+			public Getter<? super S, ? extends KT> apply(List<K> ks) {
+				if (ks.isEmpty()) throw new IllegalStateException("No discriminatory field found " + discriminatorColumnPredicate);
+				if (ks.size() != 1) throw new IllegalStateException("Found multiple discriminator field " + ks);
+				K k = ks.get(0);
+
+				final String columnName = k.getName();
+
+				return new Getter<S, KT>() {
+					@Override
+					public KT get(S target) throws Exception {
+						return getter.apply(target, columnName);
+					}
+				};
+			}
 		}
 	}
 
@@ -962,23 +982,27 @@ public abstract class AbstractMapperFactory<
 		private final Type commonType;
 		private final Predicate<? super K> discriminatorColumnPredicate;
 		private final Function<List<K>, Getter<? super S, ? extends KT>> getterFactory;
+		private final Object discriminatorId;
 
-		public DiscriminatorOnColumnDSL(MF mapperFactory, Type commonType, Predicate<? super K> discriminatorColumnPredicate, Function<List<K>, Getter<? super S, ? extends KT>> getterFactory) {
+		public DiscriminatorOnColumnDSL(MF mapperFactory, Type commonType, Predicate<? super K> discriminatorColumnPredicate, Function<List<K>, Getter<? super S, ? extends KT>> getterFactory, Object discriminatorId) {
 			this.mapperFactory = mapperFactory;
 			this.commonType = commonType;
 			this.discriminatorColumnPredicate = discriminatorColumnPredicate;
 			this.getterFactory = getterFactory;
+			this.discriminatorId = discriminatorId;
 		}
 
 		public MF with(Consumer<DiscriminatorConditionBuilder<S, K, KT, T>> consumer) {
-			mapperFactory.addColumnProperty(discriminatorColumnPredicate, OptionalProperty.INSTANCE, new DiscriminatorColumnProperty(commonType));
+			if (discriminatorColumnPredicate != null) {
+				mapperFactory.addColumnProperty(discriminatorColumnPredicate, OptionalProperty.INSTANCE, new DiscriminatorColumnProperty(commonType, discriminatorId));
+			}
 
 			DiscriminatorBuilder<S, K,  T> db = new DiscriminatorBuilder<S, K, T>(commonType, mapperFactory.getReflectionService());
 			DiscriminatorConditionBuilder<S, K, KT, T> dcb = new DiscriminatorConditionBuilder<S, K, KT, T>(db, getterFactory);
 
 			consumer.accept(dcb);
 
-			mapperFactory.discriminators.add(new MapperConfig.Discriminator<S, K, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0]), discriminatorColumnPredicate));
+			mapperFactory.discriminators.add(new MapperConfig.Discriminator<S, K, T>(commonType, db.cases.toArray(new MapperConfig.DiscriminatorCase[0]), discriminatorColumnPredicate, discriminatorId));
 
 			return mapperFactory;
 		}

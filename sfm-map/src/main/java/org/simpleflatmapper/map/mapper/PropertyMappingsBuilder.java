@@ -169,6 +169,11 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 	}
 
 	public <P> PropertyMapping<T, P, K> addProperty(final K key, final ColumnDefinition<K, ?> columnDefinition, final PropertyMeta<T, P> prop) {
+
+//		for(PropertyMapping pm :properties) {
+//			if (pm.getColumnKey().equals(key)) throw new IllegalStateException();
+//		}
+
 		if (columnDefinition.hasCustomSourceFrom(prop.getOwnerType())) {
 			try {
 				Type type = prop.getPropertyType();

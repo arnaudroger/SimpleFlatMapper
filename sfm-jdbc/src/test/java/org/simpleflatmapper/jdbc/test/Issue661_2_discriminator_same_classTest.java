@@ -19,12 +19,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class Issue661_2_discriminator_same_class {
+public class Issue661_2_discriminator_same_classTest {
 
     @Test
     public void test2AssFieldWithSameTypeDiscriminatorNoAsmDSL() throws Exception {
@@ -73,6 +74,47 @@ public class Issue661_2_discriminator_same_class {
 
     }
 
+
+    @Test
+    public void test2AddFieldWithSameTypeWithDifferentColumnAndDifferentTypeBuilder2() throws Exception {
+        JdbcMapperBuilder<Foo> builder =
+                JdbcMapperFactoryHelper.noAsm()
+                        .addKeys("id", "pFirst_id", "pSecond_id")
+                        .discriminator(Parent.class).onColumn("pFirst_class_id", Integer.class).with(
+                        new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Parent>>() {
+                            @Override
+                            public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Parent> builder) {
+                                builder
+                                        .when(1, Parent.class)
+                                        .when(2, ChildA.class)
+                                        .when(3, ChildB.class);
+                            }
+                        }
+                )
+                        .discriminator(Parent.class).onColumn( "pSecond_class_id",
+                        Integer.class).with(new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Parent>>() {
+                                                @Override
+                                                public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Parent> builder) {
+                                                    builder
+                                                            .when(1, Parent.class)
+                                                            .when(2, ChildC.class)
+                                                            .when(3, ChildD.class);
+                                                }
+                                            }
+                )
+                        .newBuilder(Foo.class);
+
+        final String[] columns = new String[] { "id", "pFirst_id", "pFirst_class_id", "pFirst_a_string", "pFirst_b_string", "pSecond_id", "pSecond_class_id", "pSecond_a_string", "pSecond_b_string",};
+
+        for(String col : columns) {
+            builder.addMapping(col);
+        }
+//        builder.addMapping("id");
+//        builder.addMapping("pFirst_class_id");
+
+        JdbcMapper<Foo> mapper = builder.mapper();
+
+    }
     @Test
     public void test2AssFieldWithSameTypeWithDifferentColumnAndDifferentType() throws Exception {
         JdbcMapper<Foo> mapper =
@@ -105,24 +147,55 @@ public class Issue661_2_discriminator_same_class {
 
         validateMapper2(mapper);
 
+        /*
+                final String[] columns = new String[]
+                { "id", "pFirst_id", "pFirst_class_id", "pFirst_a_string", "pFirst_b_string", "pSecond_id", "pSecond_class_id", "pSecond_a_string", "pSecond_b_string",};
+                {  1,    1,           2, ChildA           "aString",         null,              2,             3, ChildD           null,              "bString"},
+                {  2,    1,           2, ChildA           "aString",         null,              3,             1, Parent           null,               null}
+                assertTrue(is.get(0).pFirst instanceof ChildC);
+        assertTrue(is.get(0).pSecond instanceof ChildD);
+
+        assertTrue(is.get(1).pFirst instanceof ChildC);
+        assertTrue(is.get(1).pSecond instanceof Parent);
+         */
+
     }
 
     private void validateMapper(JdbcMapper<Foo> mapper) throws Exception {
         List<Foo> is = mapper.forEach(setUpResultSetMock(), new ListCollector<Foo>()).getList();
         assertTrue(is.get(0).pFirst instanceof ChildA);
+        assertEquals(1, is.get(0).pFirst.id);
+        assertEquals("ab", ((ChildA)is.get(0).pFirst).aString);
+
         assertTrue(is.get(0).pSecond instanceof ChildB);
+        assertEquals(2, is.get(0).pSecond.id);
+        assertEquals("kl", ((ChildB)is.get(0).pSecond).bString);
 
         assertTrue(is.get(1).pFirst instanceof ChildA);
+        assertEquals(1, is.get(1).pFirst.id);
+        assertEquals("ef", ((ChildA)is.get(1).pFirst).aString);
+
         assertTrue(is.get(1).pSecond instanceof Parent);
+        assertEquals(3, is.get(1).pSecond.id);
     }
 
     private void validateMapper2(JdbcMapper<Foo> mapper) throws Exception {
         List<Foo> is = mapper.forEach(setUpResultSetMock(), new ListCollector<Foo>()).getList();
-        assertTrue(is.get(0).pFirst instanceof ChildC);
-        assertTrue(is.get(0).pSecond instanceof ChildD);
+        assertTrue(is.get(0).pFirst instanceof ChildA);
+        assertEquals(1, is.get(0).pFirst.id);
+        assertEquals("ab", ((ChildA)is.get(0).pFirst).aString);
 
-        assertTrue(is.get(1).pFirst instanceof ChildC);
+
+        assertTrue(is.get(0).pSecond instanceof ChildD);
+        assertEquals(2, is.get(0).pSecond.id);
+        assertEquals("kl", ((ChildD)is.get(0).pSecond).bString);
+
+        assertTrue(is.get(1).pFirst instanceof ChildA);
+        assertEquals(1, is.get(1).pFirst.id);
+        assertEquals("ef", ((ChildA)is.get(1).pFirst).aString);
+
         assertTrue(is.get(1).pSecond instanceof Parent);
+        assertEquals(3, is.get(1).pSecond.id);
     }
 
     private ResultSet setUpResultSetMock() throws SQLException {
@@ -146,8 +219,8 @@ public class Issue661_2_discriminator_same_class {
         final AtomicInteger ai = new AtomicInteger();
 
         final Object[][] rows = new Object[][]{
-                {1, 1, 2, "aString", null, 2, 3, null, "bString"},
-                {2, 1, 2, "aString", null, 3, 1, null, null}
+                {1, 1, 2, "ab", "cd", 2, 3, "ij", "kl"},
+                {2, 1, 2, "ef", "gh", 3, 1, "mn", "op"}
         };
 
         when(rs.next()).then(new Answer<Boolean>() {
@@ -267,43 +340,6 @@ public class Issue661_2_discriminator_same_class {
         public void setpSecond(Parent pSecond) {
             this.pSecond = pSecond;
         }
-
-    }
-
-
-    @Test
-    public void test2AddFieldWithSameTypeWithDifferentColumnAndDifferentTypeBuilder() throws Exception {
-        JdbcMapperBuilder<Foo> builder =
-                JdbcMapperFactoryHelper.noAsm()
-                        .addKeys("id", "pFirst_id", "pSecond_id")
-                        .discriminator(Parent.class, "pFirst_class_id",
-                                Integer.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object>>() {
-                                    @Override
-                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object> builder) {
-                                        builder
-                                                .when(1, Parent.class)
-                                                .when(2, ChildA.class)
-                                                .when(3, ChildB.class);
-                                    }
-                                }
-                        )
-                        .discriminator(Parent.class, "pSecond_class_id",
-                                Integer.class, new Consumer<AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object>>() {
-                                    @Override
-                                    public void accept(AbstractMapperFactory.DiscriminatorConditionBuilder<ResultSet, JdbcColumnKey, Integer, Object> builder) {
-                                        builder
-                                                .when(1, Parent.class)
-                                                .when(2, ChildC.class)
-                                                .when(3, ChildD.class);
-                                    }
-                                }
-                        )
-                        .newBuilder(Foo.class);
-
-        builder.addMapping("id");
-        builder.addMapping("pFirst_class_id");
-
-        JdbcMapper<Foo> mapper = builder.mapper();
 
     }
 

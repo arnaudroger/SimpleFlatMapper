@@ -11,6 +11,7 @@ import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.impl.DiscriminatorReflectionService;
 import org.simpleflatmapper.map.property.IgnoreRowIfNullProperty;
+import org.simpleflatmapper.reflect.ClassMetaWithDiscriminatorId;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;
@@ -22,7 +23,6 @@ import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,18 +81,18 @@ public class SetRowMapperBuilderImpl<M extends SetRowMapper<ROW, SET, T, E>, ROW
         if (discriminators.isEmpty()) {
             return classMeta;
         } else {
-            Map<Class<?>, List<ClassMeta<?>>> discriminatorMap = new HashMap<Class<?>, List<ClassMeta<?>>>();
+            Map<Class<?>, List<ClassMetaWithDiscriminatorId<?>>> discriminatorMap = new HashMap<Class<?>, List<ClassMetaWithDiscriminatorId<?>>>();
             for(MapperConfig.Discriminator<?, ?, ?> d : discriminators) {
                 Class<Object> clazz = TypeHelper.toClass(d.type);
-                List<ClassMeta<?>> implementations = discriminatorMap.get(clazz);
+                List<ClassMetaWithDiscriminatorId<?>> implementations = discriminatorMap.get(clazz);
 
                 if (implementations == null) {
-                    implementations = new ArrayList<ClassMeta<?>>();
+                    implementations = new ArrayList<ClassMetaWithDiscriminatorId<?>>();
                     discriminatorMap.put(clazz, implementations);
                 }
 
                 for(MapperConfig.DiscriminatorCase<?, ?, ?> dc : d.cases) {
-                    implementations.add(dc.classMeta);
+                    implementations.add(new ClassMetaWithDiscriminatorId(dc.classMeta, d.discriminatorId));
                 }
 
             }

@@ -7,6 +7,7 @@ import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.reflect.property.EligibleAsNonMappedProperty;
 import org.simpleflatmapper.util.BiConsumer;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
@@ -27,10 +28,11 @@ public class InferNullProperty implements EligibleAsNonMappedProperty {
             // what if we have conflicting result
             if (propertyMeta instanceof DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) {
                 DiscriminatorPropertyFinder.DiscriminatorPropertyMeta<?, ?> dpm = (DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) propertyMeta;
-                return dpm.forEachProperty(new BiConsumer<Type, PropertyMeta<?, ?>>() {
+                return dpm.forEachProperty(new Consumer<DiscriminatorPropertyFinder.DiscriminatorMatch>() {
                     boolean valid = false;
                     @Override
-                    public void accept(Type type, PropertyMeta<?, ?> propertyMeta) {
+                    public void accept(DiscriminatorPropertyFinder.DiscriminatorMatch dm) {
+                        PropertyMeta<?, ?> propertyMeta = dm.matchedProperty.getPropertyMeta();
                         if (!valid && test(propertyMeta)) {
                             valid = true;
                         }

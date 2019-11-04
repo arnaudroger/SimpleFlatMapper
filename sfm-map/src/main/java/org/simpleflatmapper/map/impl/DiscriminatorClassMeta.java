@@ -2,6 +2,7 @@ package org.simpleflatmapper.map.impl;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.ClassMetaWithDiscriminatorId;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
@@ -12,10 +13,10 @@ import java.util.List;
 
 public class DiscriminatorClassMeta<T> implements ClassMeta<T> {
     private final ReflectionService reflectionService;
-    private final List<ClassMeta<?>> discriminator;
+    private final List<ClassMetaWithDiscriminatorId<?>> discriminator;
     private final Type commonType;
 
-    public DiscriminatorClassMeta(Type commonType, List<ClassMeta<?>> discriminator, ReflectionService reflectionService) {
+    public DiscriminatorClassMeta(Type commonType, List<ClassMetaWithDiscriminatorId<?>> discriminator, ReflectionService reflectionService) {
         this.discriminator = discriminator;
         this.reflectionService = reflectionService;
         this.commonType = commonType;

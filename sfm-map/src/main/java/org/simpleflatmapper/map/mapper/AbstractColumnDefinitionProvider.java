@@ -28,6 +28,7 @@ public abstract class AbstractColumnDefinitionProvider<K extends FieldKey<K>> im
     }
 
     public void addColumnDefinition(Predicate<? super K> predicate, ColumnDefinition<K, ?> definition) {
+        if (predicate == null) throw new NullPointerException();
         for(Object prop : definition.properties()) {
             addColumnProperty(predicate, newFactory(prop));
         }
@@ -44,6 +45,7 @@ public abstract class AbstractColumnDefinitionProvider<K extends FieldKey<K>> im
     }
 
     public void addColumnProperty(Predicate<? super K> predicate, Object property) {
+        if (predicate == null) throw new NullPointerException();
         addColumnProperty(predicate, newFactory(property));
     }
 
@@ -121,6 +123,7 @@ public abstract class AbstractColumnDefinitionProvider<K extends FieldKey<K>> im
         private final UnaryFactory<? super K, Object> columnPropertyFactory;
 
         public PredicatedColumnPropertyFactory(Predicate<? super K> predicate, UnaryFactory<? super K, Object> columnPropertyFactory) {
+            if (predicate == null) throw new NullPointerException();
             this.predicate = predicate;
             this.columnPropertyFactory = columnPropertyFactory;
         }

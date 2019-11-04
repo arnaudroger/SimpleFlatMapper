@@ -9,15 +9,21 @@ import java.lang.reflect.Type;
 public class DiscriminatorColumnProperty implements Predicate<Type>, EligibleAsNonMappedProperty {
 
     private final Type commonType;
+    private final Object discriminatorId;
 
 
-    public DiscriminatorColumnProperty(Type commonType) {
+    public DiscriminatorColumnProperty(Type commonType, Object discriminatorId) {
         this.commonType = commonType;
+        this.discriminatorId = discriminatorId;
     }
 
 
     @Override
     public boolean test(Type type) {
         return TypeHelper.isAssignable(commonType, type);
+    }
+
+    public Object getDiscriminatorId() {
+        return discriminatorId;
     }
 }

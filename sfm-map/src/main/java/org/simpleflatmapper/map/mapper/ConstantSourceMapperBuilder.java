@@ -46,7 +46,29 @@ public abstract class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>> {
 
     public static <S, T, K extends FieldKey<K>> ConstantSourceMapperBuilder<S, T, K> newConstantSourceMapperBuilder(
             MapperSource<? super S, K> mapperSource,
-            ClassMeta<T> classMeta, MapperConfig<K, ? extends S> config, 
+            ClassMeta<T> classMeta,
+            MapperConfig<K, ? extends S> config,
+            MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder,
+            KeyFactory<K> keyFactory,
+            PropertyFinder<T> propertyFinder) {
+        return newConstantSourceMapperBuilder(mapperSource, null, classMeta, config, mappingContextFactoryBuilder, keyFactory, propertyFinder);
+    }
+
+    public static <S, T, K extends FieldKey<K>> ConstantSourceMapperBuilder<S, T, K> newConstantSourceMapperBuilder(
+            MapperSource<? super S, K> mapperSource,
+            PropertyMeta<?, T> owner,
+            MapperConfig<K, ? extends S> config,
+            MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder,
+            KeyFactory<K> keyFactory,
+            PropertyFinder<T> propertyFinder) {
+        return newConstantSourceMapperBuilder(mapperSource, owner, owner.getPropertyClassMeta(), config, mappingContextFactoryBuilder, keyFactory, propertyFinder);
+    }
+
+    private static <S, T, K extends FieldKey<K>> ConstantSourceMapperBuilder<S, T, K> newConstantSourceMapperBuilder(
+            MapperSource<? super S, K> mapperSource,
+            PropertyMeta<? , T> owner,
+            ClassMeta<T> classMeta,
+            MapperConfig<K, ? extends S> config,
             MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder, 
             KeyFactory<K> keyFactory, 
             PropertyFinder<T> propertyFinder) {
@@ -63,7 +85,8 @@ public abstract class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>> {
         } else {
             return new DiscriminatorConstantSourceMapperBuilder<S, T, K>(
               discriminators,
-              mapperSource, 
+              mapperSource,
+              owner,
               classMeta, 
               config, 
               mappingContextFactoryBuilder,
@@ -72,5 +95,6 @@ public abstract class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>> {
             );
         }
     }
+
 
 }

@@ -265,12 +265,15 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
                 maxMethodSize, assumeInjectionModifiesValues, discriminators, rowFilter, unorderedJoin);
     }
 
+
+    @Deprecated
     public <T> MapperConfig<K, S> discriminator(Class<T> rootClass, Predicate<? super K> discriminatorPredicate, DiscriminatorCase<S, K, T>... cases) {
         return discriminator((Type)rootClass, discriminatorPredicate, cases);
     }
+    @Deprecated
     public <T> MapperConfig<K, S> discriminator(Type rootClass, Predicate<? super K> discriminatorPredicate, DiscriminatorCase<S, K, T>... cases) {
         List<Discriminator<S, K, ?>> discriminators = new ArrayList<Discriminator<S, K, ?>>(this.discriminators);
-        discriminators.add(new Discriminator<S, K, T>(rootClass, cases, discriminatorPredicate));
+        discriminators.add(new Discriminator<S, K, T>(rootClass, cases, discriminatorPredicate, null));
         return new MapperConfig<K, S>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
@@ -350,12 +353,15 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
         public final Type type;
         public final DiscriminatorCase<ROW, K, T>[] cases;
         public final Predicate<? super K> discriminatorPredicate;
+        public final Object discriminatorId;
 
-        public Discriminator(Type type, DiscriminatorCase<ROW, K, T>[] cases, Predicate<? super K> discriminatorPredicate) {
+        public Discriminator(Type type, DiscriminatorCase<ROW, K, T>[] cases, Predicate<? super K> discriminatorPredicate, Object discriminatorId) {
             this.type = type;
             this.cases = cases;
             this.discriminatorPredicate = discriminatorPredicate;
+            this.discriminatorId = discriminatorId;
         }
+
 
         public DiscriminatorCase<ROW, K, T> getCase(Type type) {
             for(DiscriminatorCase<ROW, K, T> c : cases) {
@@ -371,8 +377,13 @@ public final class MapperConfig<K extends FieldKey<K>, S> {
             for(K k : allDiscriminatoryKeys) {
                 if (!discriminatorPredicate.test(k)) return false;
             }
-            return true;
+            return !allDiscriminatoryKeys.isEmpty();
         }
     }
+
+    public static boolean sameDiscriminatorId(Object discriminatorId, Object discriminatorId1) {
+        return  (discriminatorId == null) || (discriminatorId1 == null) || discriminatorId == discriminatorId1;
+    }
+
 
 }

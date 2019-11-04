@@ -42,16 +42,7 @@ import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.reflect.setter.NullSetter;
-import org.simpleflatmapper.util.BiConsumer;
-import org.simpleflatmapper.util.BiFunction;
-import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.ForEachCallBack;
-import org.simpleflatmapper.util.Function;
-import org.simpleflatmapper.util.Named;
-import org.simpleflatmapper.util.Predicate;
-import org.simpleflatmapper.util.Supplier;
-import org.simpleflatmapper.util.TypeHelper;
-import org.simpleflatmapper.util.UnaryFactory;
+import org.simpleflatmapper.util.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -401,7 +392,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         return propertyMappingsBuilder.getClassMeta().getType();
     }
 
-    public List<K> findAllDiscriminatorKeys() {
+    public List<K> findAllDiscriminatorKeys(Object discriminatorId) {
         final List<K> keys = new ArrayList<K>();
         propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K>>() {
             @Override
@@ -410,7 +401,8 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                 if (columnDefinition.has(DiscriminatorColumnProperty.class)) {
                     DiscriminatorColumnProperty[] properties = columnDefinition.lookForAll(DiscriminatorColumnProperty.class);
                     for(DiscriminatorColumnProperty p : properties) {
-                        if (p.test(getTargetType())) {
+                        if (MapperConfig.sameDiscriminatorId(discriminatorId , p.getDiscriminatorId())  &&
+                                p.test(getTargetType())) {
                             keys.add(tkPropertyMapping.getColumnKey());
                             return;
                         }
@@ -1012,7 +1004,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     @SuppressWarnings("unchecked")
     private <P> SourceMapper<S, P> subPropertyMapper(PropertyMeta<T, P> owner, List<PropertyMapping<T, ?, K>> properties, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
         final ConstantSourceMapperBuilder<S, P, K> builder =
-                newSubBuilder(owner.getPropertyClassMeta(),
+                newSubBuilder(owner,
                         mappingContextFactoryBuilder,
                         (PropertyFinder<P>) propertyMappingsBuilder.getPropertyFinder().getSubPropertyFinder(owner));
 
@@ -1059,13 +1051,15 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 		additionalMappers.add(mapper);
 	}
 
+
+
     private <ST> ConstantSourceMapperBuilder<S, ST, K> newSubBuilder(
-            ClassMeta<ST> classMeta,
+            PropertyMeta<?, ST> propertyMeta,
             MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder,
             PropertyFinder<ST> propertyFinder) {
         return ConstantSourceMapperBuilder.<S, ST, K>newConstantSourceMapperBuilder(
                 mapperSource,
-                classMeta,
+                propertyMeta,
                 mapperConfig,
                 mappingContextFactoryBuilder,
                 keyFactory,
@@ -1147,14 +1141,20 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             final DiscriminatorPropertyFinder.DiscriminatorPropertyMeta<?, ?> dpm = (DiscriminatorPropertyFinder.DiscriminatorPropertyMeta<?, ?>) propertyMeta;
 
             final List<Predicate<? super S>> not =
-                dpm.forEachProperty(new BiConsumer<Type, PropertyMeta<?, ?>>() {
+                dpm.forEachProperty(new Consumer<DiscriminatorPropertyFinder.DiscriminatorMatch>() {
                     List<Predicate<? super S>> not = new ArrayList<Predicate<? super S>>();
                     @Override
-                    public void accept(Type type, PropertyMeta<?, ?> propertyMeta) {
+                    public void accept(DiscriminatorPropertyFinder.DiscriminatorMatch dm) {
+
+                        Type type = dm.type;
+                        PropertyMeta<?, ?> propertyMeta = dm.matchedProperty.getPropertyMeta();
+
                         if (!propertyMetaPredicate.test(propertyMeta)) {
                             MapperConfig.Discriminator<Object, K, Object>[] discriminators = mapperConfig.getDiscriminators(dpm.getOwnerType());
                             for (MapperConfig.Discriminator<Object, K, Object> discriminator : discriminators) {
-                                not.add(discriminator.getCase(type).predicateFactory.apply(findAllDiscriminatorKeys()));
+                                if (MapperConfig.sameDiscriminatorId(dm.discriminatorId, discriminator.discriminatorId)) {
+                                    not.add(discriminator.getCase(type).predicateFactory.apply(findAllDiscriminatorKeys(discriminator.discriminatorId)));
+                                }
                             }
                         } else {
                             Predicate<? super S> p = buildKeyPredicate(propertyMeta, propertyMetaPredicate);

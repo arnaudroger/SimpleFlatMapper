@@ -64,7 +64,7 @@ public class DefaultReflectionService extends ReflectionService {
 				asmFactory != null,
 				defaultAsmFactortyPerClassLoader(asmFactory),
 				AliasProviderService.getAliasProvider(),
-				true, false);
+				true);
 	}
 
 	private static Map<ClassLoader, AsmFactory> defaultAsmFactortyPerClassLoader(AsmFactory asmFactory) {

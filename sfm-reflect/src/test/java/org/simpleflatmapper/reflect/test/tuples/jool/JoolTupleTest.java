@@ -12,6 +12,7 @@ import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.reflect.test.meta.TestPropertyFinderProbe;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Predicate;
@@ -53,7 +54,7 @@ public class JoolTupleTest {
 
         PropertyFinder<List<? extends Tuple2<DbObject, Long>>> propertyFinder2 = cm2.newPropertyFinder();
 
-        PropertyMeta<List<? extends Tuple2<DbObject, Long>>, Object> prop2 = propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("elt0_elt0_id"), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter());
+        PropertyMeta<List<? extends Tuple2<DbObject, Long>>, Object> prop2 = propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("elt0_elt0_id"), new Object[0], (TypeAffinity)null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
 
         System.out.println("prop2 = " + prop2.getPath());
 
@@ -66,7 +67,7 @@ public class JoolTupleTest {
 
         PropertyFinder<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>> propertyFinder = cm.newPropertyFinder();
 
-        PropertyMeta<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>, Object> prop = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("elt1_elt0_elt0_id"), new Object[0], (TypeAffinity)null, PropertyFinder.PropertyFilter.trueFilter());
+        PropertyMeta<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>, Object> prop = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("elt1_elt0_elt0_id"), new Object[0], (TypeAffinity)null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
 
         System.out.println("prop = " + prop.getPath());
         assertEquals("element1[0].element0.id", prop.getPath());

@@ -8,6 +8,7 @@ import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMatchingScore;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.reflect.test.meta.TestPropertyFinderProbe;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.TypeReference;
 
@@ -18,21 +19,6 @@ import static org.junit.Assert.assertEquals;
 public class Issue450Test {
 
     public static final PropertyFinder.PropertyFilter TRUE_PREDICATE = PropertyFinder.PropertyFilter.trueFilter();
-
-    private PropertyFinder.PropertyFinderProbe prob = new PropertyFinder.PropertyFinderProbe() {
-        @Override
-        public void found(PropertyMeta propertyMeta, PropertyMatchingScore score) {
-            System.out.println("PropertyFinder for  - found " + score + " " + propertyMeta.getPath());
-
-        }
-
-        @Override
-        public void select(PropertyMeta propertyMeta) {
-            System.out.println("PropertyFinder for  - select " + propertyMeta.getPath());
-
-        }
-    };
-
 
     @Test
     public void testTupleIntegerFooUnOrderedSpeculative() {
@@ -111,6 +97,25 @@ public class Issue450Test {
     }
 
 
+    @Test
+    public void testPrivilege() {
+        ClassMeta<Tuple2<Integer, List<Privilege>>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple2<Integer, List<Privilege>>>() {}.getType());
+
+        PropertyFinder<?> finder = classMeta.newPropertyFinder();
+
+        assertEquals("element1[0].id", getPathFor(finder, "id"));
+        assertEquals("element1[0].name", getPathFor(finder, "name"));
+        assertEquals("element0", getPathFor(finder, "resource_id"));
+    }
+    //new TypeReference<Tuple2<Integer, List<Privilege>>>() {}
+    //privilege.id, privilege.name, resource_privileges.resource_id
+    public static class Privilege {
+        public int id;
+        public String name;
+    }
+
+
+
 
     @Test
     public void testBar2() {
@@ -133,7 +138,7 @@ public class Issue450Test {
 
     private String getPathFor(PropertyFinder<?> finder, String prop) {
         return finder
-                .findProperty(DefaultPropertyNameMatcher.of(prop), new Object[0], (TypeAffinity)null, prob, TRUE_PREDICATE).getPath();
+                .findProperty(DefaultPropertyNameMatcher.of(prop), new Object[0], (TypeAffinity)null, TestPropertyFinderProbe.INSTANCE, TRUE_PREDICATE).getPath();
     }
 
     private PropertyFinder<?> getTuple2IntegerFooPropertyFinder() {
@@ -142,7 +147,7 @@ public class Issue450Test {
     }
 
     private PropertyFinder<?> getPropertyFinder(TypeReference<?> typeReference) {
-        ClassMeta<Tuple2<Integer, Foo>> classMeta = ReflectionService.newInstance().withSelfScoreFullName(true).getClassMeta(typeReference.getType());
+        ClassMeta<Tuple2<Integer, Foo>> classMeta = ReflectionService.newInstance().getClassMeta(typeReference.getType());
 
         return classMeta.newPropertyFinder();
     }

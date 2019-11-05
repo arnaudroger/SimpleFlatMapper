@@ -14,8 +14,12 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
     private final PropertyFinder<T> propertyFinder;
     private final ClassMeta<T> innerMeta;
 
+    @Deprecated
     public OptionalPropertyFinder(OptionalClassMeta<T> optionalClassMeta, boolean selfScoreFullName) {
-        super(selfScoreFullName);
+        this(optionalClassMeta);
+    }
+    public OptionalPropertyFinder(OptionalClassMeta<T> optionalClassMeta) {
+        super();
         this.optionalClassMeta = optionalClassMeta;
         innerMeta = optionalClassMeta.getInnerMeta();
         this.propertyFinder = innerMeta != null ? innerMeta.newPropertyFinder() : null;

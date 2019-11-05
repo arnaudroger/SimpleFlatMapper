@@ -4,11 +4,7 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
-import org.simpleflatmapper.reflect.meta.PropertyFinder;
-import org.simpleflatmapper.reflect.meta.PropertyMatchingScore;
-import org.simpleflatmapper.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
-import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
+import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
@@ -38,7 +34,7 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
                                 List<CustomProperty<?, ?>> customProperties,
                                 Function<PropertyFinderTransformer, 
                                 PropertyFinderTransformer> transformerFunction) {
-        super(delegate.selfScoreFullName());
+        super();
         this.delegate = delegate;
         this.customProperties = customProperties;
         this.transformerFunction = transformerFunction;
@@ -48,7 +44,7 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
     public void lookForProperties(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final boolean allowSelfReference, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
         for (CustomProperty<?, ?> property : customProperties) {
             if (property.isApplicable(delegate.getOwnerType()) && propertyNameMatcher.matches(property.getName()) != null) {
-                matchingProperties.found((CustomProperty<T, ?>) property, EMPTY_CALLBACK, score.matches(propertyNameMatcher), typeAffinityScorer);
+                matchingProperties.found((CustomProperty<T, ?>) property, EMPTY_CALLBACK, score.matches(null, propertyNameMatcher, new PropertyNameMatch(property.getName(), property.getName(), null, propertyNameMatcher.asScore(), 0)), typeAffinityScorer);
             }
         }
 
@@ -58,7 +54,7 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
                 .lookForProperties(
                         propertyNameMatcher,
                         properties, matchingProperties,
-                        score.tupleIndex(1),
+                        score.arrayIndex(new IndexedColumn(1, propertyNameMatcher, 0), false), // move laterally ?,
                         allowSelfReference,
                         newTransformer, typeAffinityScorer, propertyFilter);
     }

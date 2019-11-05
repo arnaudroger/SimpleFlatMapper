@@ -27,8 +27,8 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
     private final List<PropertyFinderWithDiscriminatorId<T>> implementationPropertyFinders;
     private final ReflectionService reflectionService;
 
-    protected DiscriminatorPropertyFinder(boolean selfScoreFullName, Type ownerType, List<ClassMetaWithDiscriminatorId<?>> implementations, ReflectionService reflectionService) {
-        super( selfScoreFullName);
+    protected DiscriminatorPropertyFinder(Type ownerType, List<ClassMetaWithDiscriminatorId<?>> implementations, ReflectionService reflectionService) {
+        super( );
         this.ownerType = ownerType;
         this.reflectionService = reflectionService;
         implementationPropertyFinders = new ArrayList<PropertyFinderWithDiscriminatorId<T>>();

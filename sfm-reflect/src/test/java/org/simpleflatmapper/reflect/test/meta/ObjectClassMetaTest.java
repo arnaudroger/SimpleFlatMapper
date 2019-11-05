@@ -167,11 +167,19 @@ public class ObjectClassMetaTest {
 
         ClassMeta<CompatibleGetter> meta = ReflectionService.newInstance().getClassMeta(CompatibleGetter.class);
 
-        PropertyMeta<CompatibleGetter, Object> pm = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null, propertyFilter);
+        PropertyMeta<CompatibleGetter, Object> pm =
+                meta
+                        .newPropertyFinder()
+                        .findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0], (TypeAffinity)null, TestPropertyFinderProbe.INSTANCE, propertyFilter);
+
+        assertEquals("value", pm.getPath());
 
         assertEquals(Arrays.asList("aa"), pm.getGetter().get(target));
 
-        PropertyMeta<CompatibleGetter, Object> pm2 = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value2"), new Object[0], (TypeAffinity)null, propertyFilter);
+        PropertyMeta<CompatibleGetter, Object> pm2 = meta
+                .newPropertyFinder()
+                .findProperty(DefaultPropertyNameMatcher.of("value2"), new Object[0], (TypeAffinity)null, propertyFilter);
+        assertEquals("value2", pm2.getPath());
 
         assertEquals(2, pm2.getGetter().get(target));
 

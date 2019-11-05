@@ -13,8 +13,12 @@ public class PassThroughPropertyFinder<T, V> extends PropertyFinder<T> {
     private final PropertyFinder<V> propertyFinder;
     private final ClassMeta<V> innerMeta;
 
+    @Deprecated
     public PassThroughPropertyFinder(PassThroughClassMeta<T, V> passThroughClassMeta, boolean selfScoreFullName) {
-        super(selfScoreFullName);
+        this(passThroughClassMeta);
+    }
+    public PassThroughPropertyFinder(PassThroughClassMeta<T, V> passThroughClassMeta) {
+        super();
         this.passThroughClassMeta = passThroughClassMeta;
         innerMeta = passThroughClassMeta.getInnerMeta();
         this.propertyFinder = innerMeta != null ? innerMeta.newPropertyFinder() : null;

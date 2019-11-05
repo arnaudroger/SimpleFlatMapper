@@ -130,8 +130,9 @@ public class DiscriminatorReflectionService extends ReflectionService {
     }
 
     @Override
+    @Deprecated
     public DiscriminatorReflectionService withSelfScoreFullName(boolean selfScoreFullName) {
-        return new DiscriminatorReflectionService(delegate.withSelfScoreFullName(selfScoreFullName), discriminators);
+        return this;
     }
 
     @Override

@@ -30,8 +30,12 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
 
     private int keyValueMode = NONE;
 
+    @Deprecated
     public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, ContextualConverter<? super CharSequence, ? extends K> keyConverter, ContextFactory keyContextFactory, boolean selfScoreFullName) {
-        super(selfScoreFullName);
+        this(mapMeta, valueMetaData, keyConverter, keyContextFactory);
+    }
+    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, ContextualConverter<? super CharSequence, ? extends K> keyConverter, ContextFactory keyContextFactory) {
+        super();
         this.mapMeta = mapMeta;
         this.valueMetaData = valueMetaData;
         this.keyConverter = keyConverter;
@@ -89,7 +93,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                                 }
                             };
 
-                            matchingProperties.found(new SubPropertyMeta(propertyMeta.getReflectService(), elementPropertyMeta, propertyMeta), sCallback, score.matches(propertyNameMatcher), typeAffinityScorer);
+                            matchingProperties.found(new SubPropertyMeta(propertyMeta.getReflectService(), elementPropertyMeta, propertyMeta), sCallback, score.matches(elementPropertyMeta, propertyNameMatcher, new PropertyNameMatch("key", "key", null, propertyNameMatcher.asScore(), 0 )), typeAffinityScorer);
                         }
                     },
                     score,
@@ -120,7 +124,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                                 };
 
                                 if (keyProperty != null) {
-                                    matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), sCallback, score.matches(keyMatcher), typeAffinityScorer);
+                                    matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), sCallback, score.matches(propertyMeta, propertyNameMatcher, new PropertyNameMatch("key", "key", null, propertyNameMatcher.asScore(), 0 )), typeAffinityScorer);
                                 }
                             }
                         },

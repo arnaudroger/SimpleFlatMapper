@@ -11,14 +11,11 @@ import org.simpleflatmapper.util.TypeHelper;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class PropertyFinder<T> {
-	private final boolean selfScoreFullName;
 
-	protected PropertyFinder(boolean selfScoreFullName) {
-		this.selfScoreFullName = selfScoreFullName;
-	}
 
 	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity, PropertyFilter propertyFilter) {
 		return findProperty(propertyNameMatcher, properties, toTypeAffinityScorer(typeAffinity), propertyFilter);
@@ -33,7 +30,7 @@ public abstract class PropertyFinder<T> {
 		@SuppressWarnings("unchecked")
 	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity, PropertyFinderProbe propertyFinderProbe, PropertyFilter propertyFilter) {
 		MatchingProperties matchingProperties = new MatchingProperties(propertyFinderProbe);
-		lookForProperties(propertyNameMatcher, properties, matchingProperties, PropertyMatchingScore.newInstance(selfScoreFullName), true, IDENTITY_TRANSFORMER,  typeAffinity, propertyFilter);
+		lookForProperties(propertyNameMatcher, properties, matchingProperties, PropertyMatchingScore.newInstance(), true, IDENTITY_TRANSFORMER,  typeAffinity, propertyFilter);
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
 	}
 
@@ -59,8 +56,9 @@ public abstract class PropertyFinder<T> {
 
 	public abstract Type getOwnerType();
 
+	@Deprecated
 	public boolean selfScoreFullName() {
-		return selfScoreFullName;
+		return false;
 	}
 
 	protected static class MatchingProperties<T> implements FoundProperty<T> {
@@ -81,12 +79,22 @@ public abstract class PropertyFinder<T> {
 
 		public PropertyMeta<T, ?> selectBestMatch() {
 			if (matchedProperties.isEmpty()) return null;
-			Collections.sort(matchedProperties);
-			MatchedProperty<T, ?> selectedMatchedProperty = matchedProperties.get(0);
-			selectedMatchedProperty.select();
+
+			Iterator<MatchedProperty<T, ?>> iterator = matchedProperties.iterator();
+
+			MatchedProperty<T, ?> highestCore = iterator.next();
+
+			while(iterator.hasNext()) {
+				MatchedProperty<T, ?> next = iterator.next();
+				if (next.compareTo(highestCore) < 0) {
+					highestCore = next;
+				}
+			}
+
+			highestCore.select();
 			
-			propertyFinderProbe.select(selectedMatchedProperty.propertyMeta);
-			return selectedMatchedProperty.propertyMeta;
+			propertyFinderProbe.select(highestCore.propertyMeta);
+			return highestCore.propertyMeta;
 			
 		}
 	}

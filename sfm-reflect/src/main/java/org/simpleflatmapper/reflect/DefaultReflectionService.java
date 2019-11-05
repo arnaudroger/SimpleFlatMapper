@@ -53,7 +53,6 @@ public class DefaultReflectionService extends ReflectionService {
 
 	private final AliasProvider aliasProvider;
 	private final boolean builderIgnoresNullValues;
-	private final boolean selfScoreFullName;
 
 	private final ConcurrentMap<Type, ClassMeta<?>> metaCache = new ConcurrentHashMap<Type, ClassMeta<?>>();
 	private final ConcurrentMap<String,  UnaryFactory<Type, Member>> builderMethods = new ConcurrentHashMap<String,  UnaryFactory<Type, Member>>();
@@ -79,14 +78,12 @@ public class DefaultReflectionService extends ReflectionService {
 	private DefaultReflectionService(boolean isAsmActivated,
 									 Map<ClassLoader,  AsmFactory> asmFactoryPerClassLoader,
                                      AliasProvider aliasProvider,
-                                     boolean builderIgnoresNullValues,
-                                     boolean selfScoreFullName) {
+                                     boolean builderIgnoresNullValues) {
 
 		this.isAsmActivated = isAsmActivated;
 		this.asmFactoryPerClassLoader = asmFactoryPerClassLoader;
 		this.aliasProvider = aliasProvider;
 		this.builderIgnoresNullValues = builderIgnoresNullValues;
-		this.selfScoreFullName = selfScoreFullName;
 		initPredefined();
 	}
 
@@ -395,21 +392,23 @@ public class DefaultReflectionService extends ReflectionService {
 	public DefaultReflectionService withAliasProvider(AliasProvider aliasProvider) {
 		return new DefaultReflectionService(
 				isAsmActivated, asmFactoryPerClassLoader,
-				aliasProvider, builderIgnoresNullValues, selfScoreFullName);
+				aliasProvider, builderIgnoresNullValues);
 	}
 
 	@Override
 	public DefaultReflectionService withBuilderIgnoresNullValues(boolean builderIgnoresNullValues) {
 		return new DefaultReflectionService(
 				isAsmActivated, asmFactoryPerClassLoader,
-				aliasProvider, builderIgnoresNullValues, selfScoreFullName);
+				aliasProvider, builderIgnoresNullValues);
 	}
 
 	@Override
+	@Deprecated
+	/**
+ 	 * No effect anymore
+	 */
 	public DefaultReflectionService withSelfScoreFullName(boolean selfScoreFullName) {
-		return new DefaultReflectionService(
-				isAsmActivated, asmFactoryPerClassLoader,
-				aliasProvider, builderIgnoresNullValues, selfScoreFullName);
+		return this;
 	}
 
 	@Override
@@ -418,8 +417,9 @@ public class DefaultReflectionService extends ReflectionService {
 	}
 
 	@Override
+	@Deprecated
 	public boolean selfScoreFullName() {
-		return selfScoreFullName;
+		return false;
 	}
 
 	@Override

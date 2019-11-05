@@ -24,7 +24,7 @@ public class SubPropertyMetaTest {
         PropertyFinder.PropertyFilter predicate = PropertyFinder.PropertyFilter.trueFilter();
         PropertyMeta<Db1DeepObject, String> property = classMeta
                 .newPropertyFinder()
-                .findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false), new Object[0], (TypeAffinity)null, predicate);
+                .findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false), new Object[0], (TypeAffinity)null, TestPropertyFinderProbe.INSTANCE, predicate);
 
         assertTrue(property instanceof SubPropertyMeta);
         assertTrue(property.isSubProperty());

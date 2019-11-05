@@ -53,9 +53,13 @@ public abstract class ReflectionService implements AsmFactoryProvider {
 
 	public abstract ReflectionService withAliasProvider(AliasProvider aliasProvider);
 	public abstract ReflectionService withBuilderIgnoresNullValues(boolean builderIgnoresNullValues);
+
+	@Deprecated
 	public abstract ReflectionService withSelfScoreFullName(boolean selfScoreFullName);
 
 	public abstract boolean builderIgnoresNullValues();
+
+	@Deprecated
 	public abstract boolean selfScoreFullName();
 
 	public abstract void registerBuilder(String name, DefaultBuilderSupplier defaultBuilderSupplier);

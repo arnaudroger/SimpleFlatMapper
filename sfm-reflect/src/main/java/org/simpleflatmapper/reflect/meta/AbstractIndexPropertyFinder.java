@@ -11,7 +11,10 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     protected final Map<Integer, IndexedElement<T, ?>> elements;
 
     public AbstractIndexPropertyFinder(ClassMeta<T> classMeta, boolean selfScoreFullName) {
-        super(selfScoreFullName);
+            this(classMeta);
+    }
+    public AbstractIndexPropertyFinder(ClassMeta<T> classMeta) {
+        super();
         this.elements = new HashMap<Integer, IndexedElement<T, ?>>();
         this.classMeta = classMeta;
     }
@@ -36,12 +39,16 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                 }
             }
             indexedColumn = indexedColumn.alignTo(startIndex);
-            lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.arrayIndex(indexedColumn), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+            lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.arrayIndex(indexedColumn, scoreFullName()), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
         }
         if (indexedColumn == null || indexedColumn.partial) {
             extrapolateIndex(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
             speculativeMatching(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
         }
+    }
+
+    protected boolean scoreFullName() {
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -65,7 +72,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                         indexedElement.addProperty(SelfPropertyMeta.PROPERTY_PATH);
                     }
                 }
-            }, score.self(indexedElement.getElementClassMeta(), indexedColumn.getIndexProperty()), typeAffinityScorer);
+            }, score.self(indexedElement.getPropertyMeta(), null, ""), typeAffinityScorer);
             return ;
         }
 
@@ -89,7 +96,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                             }
                         }, score, typeAffinityScorer);
                     }
-                }, score.matches(indexedColumn.getIndexProperty()), true, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                }, score.matches(indexedElement.getPropertyMeta(), indexedColumn.getSubPropertyNameMatcher(),new PropertyNameMatch(indexedColumn.getIndexProperty(), indexedColumn.getIndexProperty(), indexedColumn.getSubPropertyNameMatcher(),0,0 ) ), true, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
     }
 
 

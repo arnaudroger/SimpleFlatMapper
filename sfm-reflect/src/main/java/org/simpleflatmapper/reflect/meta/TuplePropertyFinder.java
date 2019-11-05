@@ -64,10 +64,15 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
                             }, score, typeAffinityScorer);
                         }
                     }
-                }, score.tupleIndex(i), true, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                }, score.tupleIndex(element.getPropertyMeta(),propertyNameMatcher, new IndexedColumn(i, null, 0)), true, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
 
             }
         }
+    }
+
+    @Override
+    protected boolean scoreFullName() {
+        return true;
     }
 
     @Override

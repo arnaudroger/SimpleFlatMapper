@@ -29,7 +29,7 @@ public class DiscriminatorClassMeta<T> implements ClassMeta<T> {
 
     @Override
     public PropertyFinder<T> newPropertyFinder() {
-        return new DiscriminatorPropertyFinder<T>(reflectionService.selfScoreFullName(), commonType, discriminator, reflectionService);
+        return new DiscriminatorPropertyFinder<T>(commonType, discriminator, reflectionService);
     }
 
     @Override

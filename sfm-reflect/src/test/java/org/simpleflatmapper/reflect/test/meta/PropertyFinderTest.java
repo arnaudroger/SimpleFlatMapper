@@ -158,14 +158,14 @@ public class PropertyFinderTest {
 
         PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder();
 
-        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("element2_id"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
-        assertNotNull(propEltId);
+        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("element2_id"), new Object[0], (TypeAffinity)null,  isValidPropertyMeta);
+        assertEquals("element2.id", propEltId.getPath());
 
         propEltId = propertyFinder.findProperty(matcher("element1"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
-        assertNotNull(propEltId);
+        assertEquals("element1", propEltId.getPath());
 
         propEltId = propertyFinder.findProperty(matcher("elt1"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
-        assertNotNull(propEltId);
+        assertEquals("element1", propEltId.getPath());
 
         propEltId = propertyFinder.findProperty(matcher("1"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
@@ -182,7 +182,7 @@ public class PropertyFinderTest {
 
 
         propEltId = propertyFinder.findProperty(matcher("elt0"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
-        assertNotNull(propEltId);
+        assertEquals("element0", propEltId.getPath());
 
         propEltId = propertyFinder.findProperty(matcher("notid"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
         assertNull(propEltId);
@@ -350,9 +350,11 @@ public class PropertyFinderTest {
 
         PropertyFinder<Entity> finder = classMeta.newPropertyFinder();
 
-        PropertyMeta<Entity, Object> start = finder.findProperty(DefaultPropertyNameMatcher.of("scheduled_start_date"), new Object[] { }, (TypeAffinity)null, isValidPropertyMeta);
-        PropertyMeta<Entity, Object> end = finder.findProperty(DefaultPropertyNameMatcher.of("scheduled_end_date"), new Object[]{}, (TypeAffinity) null, isValidPropertyMeta);
+        PropertyMeta<Entity, Object> start = finder.findProperty(DefaultPropertyNameMatcher.of("scheduled_start_date"), new Object[] { }, (TypeAffinity)null, TestPropertyFinderProbe.INSTANCE, isValidPropertyMeta);
         assertEquals("scheduledDate.startDate", start.getPath());
+
+
+        PropertyMeta<Entity, Object> end = finder.findProperty(DefaultPropertyNameMatcher.of("scheduled_end_date"), new Object[]{}, (TypeAffinity) null, isValidPropertyMeta);
         assertEquals("scheduledDate.endDate", end.getPath());
     }
     public static class Entity {
@@ -370,13 +372,89 @@ public class PropertyFinderTest {
 
         PropertyFinder<List<DbObject>> finder = classMeta.newPropertyFinder();
 
-        PropertyMeta<List<DbObject>, Object> t1 = finder.findProperty(DefaultPropertyNameMatcher.of("type_name"), new Object[] {SpeculativeArrayIndexResolutionProperty.INSTANCE}, (TypeAffinity)null, isValidPropertyMeta);
+        PropertyMeta<List<DbObject>, Object> t1 = finder
+                .findProperty(DefaultPropertyNameMatcher.of("type_name"), new Object[] {SpeculativeArrayIndexResolutionProperty.INSTANCE}, (TypeAffinity)null, TestPropertyFinderProbe.INSTANCE, isValidPropertyMeta);
         assertNotNull(t1);
         assertEquals("[0].typeName", t1.getPath());
 
-        PropertyMeta<List<DbObject>, Object> t2 = finder.findProperty(DefaultPropertyNameMatcher.of("type_name"), new Object[] { SpeculativeArrayIndexResolutionProperty.INSTANCE}, (TypeAffinity)null, isValidPropertyMeta);
+        PropertyMeta<List<DbObject>, Object> t2 = finder.findProperty(DefaultPropertyNameMatcher.of("type_name"), new Object[] { SpeculativeArrayIndexResolutionProperty.INSTANCE}, (TypeAffinity)null, TestPropertyFinderProbe.INSTANCE, isValidPropertyMeta);
         assertNotNull(t2);
         assertEquals("[1].typeName", t2.getPath());
+    }
+
+    @Test
+    public void testPartialMatch() {
+        ClassMeta<PatialMatch> classMeta = ReflectionService.newInstance().getClassMeta(PatialMatch.class);
+
+        PropertyMeta<PatialMatch, Object> localDate = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("localDate"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+
+        assertEquals("localDate", localDate.getPath());
+    }
+
+
+    public static class PatialMatch {
+        public String localDate;
+        public String localDateTime;
+    }
+
+
+
+    @Test
+    public void test668() {
+
+        ClassMeta<Root> classMeta = ReflectionService.newInstance().getClassMeta(Root.class);
+
+
+        PropertyFinder<Root> rootPropertyFinder = classMeta.newPropertyFinder();
+
+        PropertyMeta<Root, Object> bar1 = rootPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("foos_bar1_id"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+        assertEquals("foos[0].bar1.id", bar1.getPath());
+
+        PropertyMeta<Root, Object> bar2 = rootPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("foos_bar2_id"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+        assertEquals("foos[0].bar2.id", bar2.getPath());
+
+    }
+
+
+    public static class Root {
+        private String id;
+        private String name;
+        private List<Foo> foos;
+
+        public Root() {
+        }
+
+        public Root(final String id, final String name, final List<Foo> foos) {
+            this.id = id;
+            this.name = name;
+            this.foos = foos;
+        }
+    }
+
+    public static class Foo {
+        private String id;
+        private Bar bar1;
+        private Bar bar2;
+
+        public Foo() {
+        }
+
+        public Foo(final String id, final Bar bar1, final Bar bar2) {
+            this.id = id;
+            this.bar1 = bar1;
+            this.bar2 = bar2;
+        }
+    }
+
+    public static class Bar {
+        private String id;
+
+        public Bar() {
+        }
+
+        public Bar(final String id) {
+            this.id = id;
+        }
     }
 
 }

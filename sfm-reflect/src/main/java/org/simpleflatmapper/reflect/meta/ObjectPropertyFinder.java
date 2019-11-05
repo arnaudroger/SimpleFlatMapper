@@ -21,10 +21,12 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	private State state = State.NONE;
 	private String selfName;
 
+	ObjectPropertyFinder(ObjectClassMeta<T> classMeta, boolean selfScoreFullName) {
+		this(classMeta);
+	}
 
-
-    ObjectPropertyFinder(ObjectClassMeta<T> classMeta, boolean selfScoreFullName) {
-        super(selfScoreFullName);
+    ObjectPropertyFinder(ObjectClassMeta<T> classMeta) {
+        super();
         this.classMeta = classMeta;
 		this.eligibleInstantiatorDefinitions = classMeta.getInstantiatorDefinitions() != null ? new ArrayList<InstantiatorDefinition>(classMeta.getInstantiatorDefinitions()) : null;
 	}
@@ -53,7 +55,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			if (propertyFilter.testProperty(propertyMeta)) {
 				matchingProperties.found(propertyMeta,
 						selfPropertySelectionCallback(propName),
-						score.self(classMeta, propName),
+						score.self(propertyMeta, propertyNameMatcher, propName),
 						typeAffinityScorer);
 			}
 		}
@@ -67,7 +69,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 						public void run() {
 						}
 					},
-					score.notMatch(),
+					score.nonMappedProperty(meta, propertyNameMatcher),
 					typeAffinityScorer);
 		}
 	}
@@ -99,7 +101,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 				if (matches != null
 						&& hasConstructorMatching(prop.getParameter())) {
 					if (propertyFilter.testProperty(prop)) {
-						matchingProperties.found(prop, propertiesRemoveNonMatchingCallBack(prop), score.matches(matches), typeAffinityScorer);
+						matchingProperties.found(prop, propertiesRemoveNonMatchingCallBack(prop), score.matches(prop, propertyNameMatcher, matches), typeAffinityScorer);
 					}
 				}
 				if (propertyFilter.testPath(prop)) {
@@ -113,7 +115,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 										new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
 										propertiesDelegateAndRemoveNonMatchingCallBack(selectionCallback, prop), score, typeAffinityScorer);
 							}
-						}, score.matches(partialMatch), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+						}, score.matches(prop, propertyNameMatcher, partialMatch), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
 					}
 				}
 			}
@@ -130,7 +132,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			PropertyNameMatch matches = propertyNameMatcher.matches(columnName);
 			if (matches != null) {
 				if (propertyFilter.testProperty(prop)) {
-					matchingProperties.found(prop, propertiesCallBack(), score.matches(matches), typeAffinityScorer);
+					matchingProperties.found(prop, propertiesCallBack(), score.matches(prop, propertyNameMatcher, matches), typeAffinityScorer);
 				}
 			}
 			if (propertyFilter.testPath(prop)) {
@@ -143,7 +145,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 									matchingProperties.found(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
 											propertiesDelegateCallBack(selectionCallback), score, typeAffinityScorer);
 								}
-							}, score.matches(subPropMatch),
+							}, score.matches(prop, propertyNameMatcher, subPropMatch),
 							propertyFinderTransformer, typeAffinityScorer, propertyFilter);
 				}
 			}

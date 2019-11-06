@@ -253,7 +253,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 				}, score, false, propertyFinderTransformer, typeAffinityScorer, subPropertyFilter(prop, propertyFilter), shortCircuiter);
 	}
 
-	private PropertyFilter subPropertyFilter(PropertyMeta<T, ?> prop, PropertyFilter propertyFilter) {
+	private PropertyFilter subPropertyFilter(final PropertyMeta<T, ?> prop, final PropertyFilter propertyFilter) {
 		return new PropertyFilter(new Predicate<PropertyMeta<?, ?>>() {
 			@Override
 			public boolean test(PropertyMeta<?, ?> propertyMeta) {

@@ -75,8 +75,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     public void lookForProperties(
             final PropertyNameMatcher propertyNameMatcher,
             Object[] properties, final FoundProperty<T> matchingProperties,
-            final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
-
+            final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
 
         if (isKeyValueEnabled(properties)) {
             propertyFinderTransformer.apply(keyValuePropertyFinder).lookForProperties(propertyNameMatcher,
@@ -97,7 +96,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                         }
                     },
                     score,
-                    false, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                    false, propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
         }
         if (isColunnKeyEnabled(properties)) {
             // classic keys set
@@ -129,7 +128,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                             }
                         },
                         score,
-                        true, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                        true, propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
             }
         }
 

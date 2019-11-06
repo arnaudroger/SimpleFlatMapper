@@ -5,6 +5,8 @@ import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.property.EligibleAsNonMappedProperty;
 import org.simpleflatmapper.reflect.property.OptionalProperty;
 import org.simpleflatmapper.util.BooleanProvider;
+import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -34,13 +36,25 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void lookForProperties(final PropertyNameMatcher propertyNameMatcher,
-								  Object[] properties, FoundProperty<T> matchingProperties,
+								  Object[] properties,
+								  FoundProperty<T> matchingProperties,
 								  PropertyMatchingScore score,
 								  boolean allowSelfReference,
 								  PropertyFinderTransformer propertyFinderTransform,
-								  TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
-		lookForConstructor(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter);
-		lookForProperty(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter);
+								  TypeAffinityScorer typeAffinityScorer,
+								  PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
+
+		CountNumberOfMatchedProperties<T> countMatchingProperties = new CountNumberOfMatchedProperties(matchingProperties);
+
+		lookForConstructor(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+		lookForProperty(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+
+
+		// has not match speculative
+		if (countMatchingProperties.nbFound == 0) {
+			lookForConstructorSpeculative(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+			lookForPropertySpeculative(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+		}
 
 		final String propName = propertyNameMatcher.toString();
 		if (allowSelfReference 
@@ -93,20 +107,20 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
     	return containsProperty(properties, DisallowSelfReference.class);
 	}
 
-	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
+	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (final ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				final String columnName = getColumnName(prop);
 				PropertyNameMatch matches = propertyNameMatcher.matches(columnName);
-				if (matches != null
-						&& hasConstructorMatching(prop.getParameter())) {
+				boolean hasConstructor = hasConstructorMatching(prop.getParameter());
+				if (matches != null && hasConstructor) {
 					if (propertyFilter.testProperty(prop)) {
 						matchingProperties.found(prop, propertiesRemoveNonMatchingCallBack(prop), score.matches(prop, propertyNameMatcher, matches), typeAffinityScorer);
 					}
 				}
 				if (propertyFilter.testPath(prop)) {
 					PropertyNameMatch partialMatch = propertyNameMatcher.partialMatch(columnName);
-					if (partialMatch != null && hasConstructorMatching(prop.getParameter())) {
+					if (partialMatch != null && hasConstructor) {
 						PropertyNameMatcher subPropMatcher = partialMatch.getLeftOverMatcher();
 						lookForSubProperty(subPropMatcher, properties, prop, new FoundProperty() {
 							@Override
@@ -115,7 +129,29 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 										new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
 										propertiesDelegateAndRemoveNonMatchingCallBack(selectionCallback, prop), score, typeAffinityScorer);
 							}
-						}, score.matches(prop, propertyNameMatcher, partialMatch), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+						}, score.matches(prop, propertyNameMatcher, partialMatch), propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
+					}
+				}
+			}
+		}
+	}
+
+	private void lookForConstructorSpeculative(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
+		if (classMeta.getConstructorProperties() != null) {
+			for (final ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
+				final String columnName = getColumnName(prop);
+				if (propertyFilter.testPath(prop) && !excludeSpeculation(prop)) {
+					shortCircuiter = shortCircuiter.eval(propertyNameMatcher, prop.getPropertyClassMeta());
+					if (!shortCircuiter.shortCircuit()) {
+
+						lookForSubProperty(propertyNameMatcher, properties, prop, new FoundProperty() {
+							@Override
+							public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
+								matchingProperties.found(
+										new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
+										propertiesDelegateAndRemoveNonMatchingCallBack(selectionCallback, prop), score, typeAffinityScorer);
+							}
+						}, score.speculative(prop, propertyNameMatcher), propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
 					}
 				}
 			}
@@ -123,7 +159,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 
 
-	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
+	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
 		for (final PropertyMeta<T, ?> prop : classMeta.getProperties()) {
 			final String columnName =
 					hasAlias(properties)
@@ -146,10 +182,36 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 											propertiesDelegateCallBack(selectionCallback), score, typeAffinityScorer);
 								}
 							}, score.matches(prop, propertyNameMatcher, subPropMatch),
-							propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+							propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
 				}
 			}
 		}
+	}
+
+	private void lookForPropertySpeculative(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
+		for (final PropertyMeta<T, ?> prop : classMeta.getProperties()) {
+			if (propertyFilter.testPath(prop) && !excludeSpeculation(prop)) {
+				shortCircuiter = shortCircuiter.eval(propertyNameMatcher, prop.getPropertyClassMeta());
+				if (!shortCircuiter.shortCircuit()) {
+					lookForSubProperty(propertyNameMatcher, properties, prop, new FoundProperty() {
+								@Override
+								public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
+									matchingProperties.found(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
+											propertiesDelegateCallBack(selectionCallback), score, typeAffinityScorer);
+								}
+							}, score.speculative(prop, propertyNameMatcher),
+							propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
+				}
+			}
+		}
+	}
+
+	private boolean excludeSpeculation(PropertyMeta<T, ?> prop) {
+		Type propertyType = prop.getPropertyType();
+		String type = propertyType.getTypeName();
+		return type.startsWith("java.")
+				|| TypeHelper.isEnum(propertyType)
+				|| TypeHelper.isPrimitive(propertyType);
 	}
 
 	private boolean hasAlias(Object[] properties) {
@@ -165,7 +227,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			Object[] properties, final PropertyMeta<T, ?> prop,
 			final FoundProperty foundProperty,
 			final PropertyMatchingScore score,
-			final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
+			final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
 
     	PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(prop);
 
@@ -188,10 +250,24 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 						}
 						foundProperty.found(propertyMeta, selectionCallback, score, typeAffinityScorer);
 					}
-				}, score, false, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+				}, score, false, propertyFinderTransformer, typeAffinityScorer, subPropertyFilter(prop, propertyFilter), shortCircuiter);
 	}
 
-    private String getColumnName(PropertyMeta<T, ?> prop) {
+	private PropertyFilter subPropertyFilter(PropertyMeta<T, ?> prop, PropertyFilter propertyFilter) {
+		return new PropertyFilter(new Predicate<PropertyMeta<?, ?>>() {
+			@Override
+			public boolean test(PropertyMeta<?, ?> propertyMeta) {
+				return propertyFilter.testProperty(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta));
+			}
+		}, new Predicate<PropertyMeta<?, ?>>() {
+			@Override
+			public boolean test(PropertyMeta<?, ?> propertyMeta) {
+				return propertyFilter.testPath(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta));
+			}
+		});
+	}
+
+	private String getColumnName(PropertyMeta<T, ?> prop) {
         return this.classMeta.getAlias(prop.getName());
     }
 

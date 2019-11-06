@@ -30,13 +30,13 @@ public class PassThroughPropertyFinder<T, V> extends PropertyFinder<T> {
     public void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
             Object[] properties, final FoundProperty<T> matchingProperties,
-            PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter){
+            PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
         propertyFinderTransformer.apply(propertyFinder).lookForProperties(propertyNameMatcher, properties, new FoundProperty<V>() {
             @Override
             public <P extends PropertyMeta<V, ?>> void found(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
                 matchingProperties.found(getSubPropertyMeta(propertyMeta), selectionCallback, score, typeAffinityScorer);
             }
-        }, score, allowSelfReference, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+        }, score, allowSelfReference, propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
     }
 
     @SuppressWarnings("unchecked")

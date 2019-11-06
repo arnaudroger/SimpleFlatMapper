@@ -2,7 +2,6 @@ package org.simpleflatmapper.reflect.meta;
 
 
 import org.simpleflatmapper.util.Consumer;
-import org.simpleflatmapper.util.Predicate;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
@@ -36,7 +35,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
     }
 
     @Override
-    protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
+    protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
         for (int i = 0; i < elements.size(); i++) {
             final IndexedElement element = elements.get(i);
 
@@ -64,7 +63,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
                             }, score, typeAffinityScorer);
                         }
                     }
-                }, score.tupleIndex(element.getPropertyMeta(),propertyNameMatcher, new IndexedColumn(i, null, 0)), true, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                }, score.tupleIndex(element.getPropertyMeta(),propertyNameMatcher, new IndexedColumn(i, null, 0)), true, propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
 
             }
         }

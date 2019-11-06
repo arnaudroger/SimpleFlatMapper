@@ -45,12 +45,27 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
         if (oEffectiveMatch > effectiveMatch) return 1;
 
         // least lateral move first
-        int firstSpeculativeNode = firstSpeculativeNode();
-        int oFirstSpeculativeNode = o.firstSpeculativeNode();
-        if (firstSpeculativeNode > oFirstSpeculativeNode) return -1;
-        if (oFirstSpeculativeNode > firstSpeculativeNode) return 1;
+//        int firstSpeculativeNode = firstSpeculativeNode();
+//        int oFirstSpeculativeNode = o.firstSpeculativeNode();
+//        if (firstSpeculativeNode > oFirstSpeculativeNode) return -1;
+//        if (oFirstSpeculativeNode > firstSpeculativeNode) return 1;
 
         int maxDepth = Math.min(o.depth(), depth());
+        for(int i = 0; i < maxDepth; i++) {
+
+            boolean speculative = scores[i].isSpeculative();
+            boolean ospeculative = o.scores[i].isSpeculative();
+
+            if (speculative) {
+                if (!ospeculative) {
+                    return 1;
+                }
+
+            } else if (ospeculative) {
+                return -1;
+            }
+        }
+
         for(int i = 0; i < maxDepth; i++) {
             int c = scores[i].compareTo(o.scores[i]);
             if (c != 0) return c;
@@ -107,7 +122,10 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
 
 
     public PropertyMatchingScore speculative() {
-        return with(NodeScore.speculative());
+        return with(NodeScore.speculative(null, null));
+    }
+    public PropertyMatchingScore speculative(PropertyMeta<?, ?> propertyMeta, PropertyNameMatcher propertyNameMatcher) {
+        return with(NodeScore.speculative(propertyMeta, propertyNameMatcher));
     }
     public PropertyMatchingScore tupleIndex(PropertyMeta<?, ?> propertyMeta, PropertyNameMatcher propertyNameMatcher,IndexedColumn ic) {
         return with(NodeScore.tupleIndex(propertyMeta, propertyNameMatcher, ic));
@@ -190,7 +208,7 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
     public static PropertyMatchingScore newInstance() {
         return new PropertyMatchingScore();
     }
-
+    
 
     private static class NodeScore  implements  Comparable<NodeScore> {
         private final PropertyMeta<?, ?> propertyMeta;
@@ -237,8 +255,8 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
             return new NodeScore(propertyMeta, propertyNameMatcher, TUPLE, 0, ic.getScore(), 0, ic.getIndexValue());
         }
 
-        public static NodeScore speculative() {
-            return new NodeScore(null, null, SPECULATIVE, 0, 0, 0, 0);
+        public static NodeScore speculative(PropertyMeta<?, ?> propertyMeta, PropertyNameMatcher propertyNameMatcher) {
+            return new NodeScore(propertyMeta, propertyNameMatcher, SPECULATIVE, 0, 0, 0, 0);
         }
 
 

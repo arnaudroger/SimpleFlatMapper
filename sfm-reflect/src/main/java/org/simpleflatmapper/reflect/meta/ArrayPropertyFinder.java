@@ -2,10 +2,9 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.property.SpeculativeArrayIndexResolutionProperty;
 import org.simpleflatmapper.util.BooleanSupplier;
+import org.simpleflatmapper.util.Predicate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
@@ -40,9 +39,14 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
         BooleanSupplier appendSetter = new BooleanSupplier() {
             @Override
             public boolean getAsBoolean() {
-                for(int i = 1; i < elements.size(); i++) {
-                    if (elements.get(i).hasAnyProperty()) {
-                        return false;
+                Iterator<Map.Entry<Integer, IndexedElement<T, ?>>> iterator = elements.entrySet().iterator();
+                while(iterator.hasNext()) {
+                    Map.Entry<Integer, IndexedElement<T, ?>> e = iterator.next();
+                    if (e.getKey() > 0) {
+                        IndexedElement<T, ?> tIndexedElement = e.getValue();
+                        if (tIndexedElement.hasAnyProperty()) {
+                            return false;
+                        }
                     }
                 }
                 return true;
@@ -54,12 +58,12 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
     }
 
     @Override
-    protected void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
+    protected void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
         final ClassMeta<E> elementClassMeta = ((ArrayClassMeta)classMeta).getElementClassMeta();
 
         // all element has same type so check if can find any property matching
         PropertyMeta<E, ?> property =
-                elementClassMeta.newPropertyFinder().findProperty(propertyNameMatcher, properties, typeAffinityScorer, propertyFilter);
+                elementClassMeta.newPropertyFinder().findProperty(propertyNameMatcher, properties, typeAffinityScorer, propertyFilter, shortCircuiter);
 
         if (property != null) {
             if (ObjectPropertyFinder.containsProperty(properties, SpeculativeArrayIndexResolutionProperty.class)) {
@@ -68,16 +72,18 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
                 for (Integer k : keys) {
                     IndexedElement element = getIndexedElement(k);
                     ExtrapolateFoundProperty<T> matchingProperties = new ExtrapolateFoundProperty<T>(element, foundProperty);
-                    lookForAgainstColumn(new IndexedColumn(k, propertyNameMatcher, 0), properties, matchingProperties, score.speculative().arrayIndex(new IndexedColumn(k, propertyNameMatcher, 0), false), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                    lookForAgainstColumn(new IndexedColumn(k, propertyNameMatcher, 0), properties, matchingProperties, score.speculative().arrayIndex(new IndexedColumn(k, propertyNameMatcher, 0), false), propertyFinderTransformer, typeAffinityScorer, matchingProperties.propertyFilter(propertyFilter), shortCircuiter);
                 }
             } else {
                 // only look for element 0
                 FoundProperty<T> fp = foundProperty;
+                PropertyFilter pf = propertyFilter;
                 if (!elements.isEmpty()) {
                     IndexedElement element = getIndexedElement(0);
                     fp = new ExtrapolateFoundProperty<T>(element, foundProperty);
+                    pf = ((ExtrapolateFoundProperty)fp).propertyFilter(propertyFilter);
                 }
-                lookForAgainstColumn(new IndexedColumn(0, propertyNameMatcher, 0), properties, fp, score, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                lookForAgainstColumn(new IndexedColumn(0, propertyNameMatcher, 0), properties, fp, score, propertyFinderTransformer, typeAffinityScorer, pf, shortCircuiter);
             }
         }
 	}
@@ -144,6 +150,14 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 
         @Override
         public <P extends PropertyMeta<T, ?>> void found(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
+            boolean isNotPresent = isNotPresent(propertyMeta);
+            if (isNotPresent) {
+                foundProperty.found(propertyMeta, selectionCallback, score, typeAffinityScorer);
+                this.found = true;
+            }
+        }
+
+         boolean isNotPresent(PropertyMeta<?, ?> propertyMeta) {
             String pathCheck;
 
             if (propertyMeta instanceof ArrayElementPropertyMeta) {
@@ -154,14 +168,30 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
                 throw new IllegalArgumentException("Excepted match " + propertyMeta);
             }
 
-            if (!element.hasProperty(pathCheck)) {
-                foundProperty.found(propertyMeta, selectionCallback, score, typeAffinityScorer);
-                this.found = true;
-            }
+            return !element.hasProperty(pathCheck);
+        }
+
+        boolean isNotPresentFilter(PropertyMeta<?, ?> propertyMeta) {
+            String pathCheck = propertyMeta.getPath();
+            return !element.hasProperty(pathCheck);
         }
 
         public boolean hasFound() {
             return found;
+        }
+
+        public PropertyFilter propertyFilter(PropertyFilter propertyFilter) {
+            return new PropertyFilter(new Predicate<PropertyMeta<?, ?>>() {
+                @Override
+                public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                    return propertyFilter.testProperty(propertyMeta) && isNotPresentFilter(propertyMeta);
+                }
+            }, new Predicate<PropertyMeta<?, ?>>() {
+                @Override
+                public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                    return propertyFilter.testPath(propertyMeta);
+                }
+            });
         }
     }
 }

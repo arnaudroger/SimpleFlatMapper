@@ -16,6 +16,11 @@ import java.util.List;
 
 public abstract class PropertyFinder<T> {
 
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
+		MatchingProperties matchingProperties = new MatchingProperties(new DefaultPropertyFinderProbe(propertyNameMatcher));
+		lookForProperties(propertyNameMatcher, properties, matchingProperties, PropertyMatchingScore.newInstance(), true, IDENTITY_TRANSFORMER,  typeAffinity, propertyFilter, shortCircuiter);
+		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
+	}
 
 	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity, PropertyFilter propertyFilter) {
 		return findProperty(propertyNameMatcher, properties, toTypeAffinityScorer(typeAffinity), propertyFilter);
@@ -38,7 +43,7 @@ public abstract class PropertyFinder<T> {
 		return new TypeAffinityScorer(typeAffinity);
 	}
 
-	public abstract void lookForProperties(
+	public final void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
             Object[] properties,
             FoundProperty<T> matchingProperties,
@@ -46,7 +51,21 @@ public abstract class PropertyFinder<T> {
             boolean allowSelfReference,
             PropertyFinderTransformer propertyFinderTransformer,
             TypeAffinityScorer typeAffinityScorer,
-			PropertyFilter propertyFilter);
+			PropertyFilter propertyFilter) {
+		lookForProperties(propertyNameMatcher, properties, matchingProperties, score, allowSelfReference, propertyFinderTransformer, typeAffinityScorer, propertyFilter, new ShortCircuiter());
+	}
+
+
+	public abstract void lookForProperties(
+			PropertyNameMatcher propertyNameMatcher,
+			Object[] properties,
+			FoundProperty<T> matchingProperties,
+			PropertyMatchingScore score,
+			boolean allowSelfReference,
+			PropertyFinderTransformer propertyFinderTransformer,
+			TypeAffinityScorer typeAffinityScorer,
+			PropertyFilter propertyFilter,
+			ShortCircuiter shortcircuiter);
 
 
 	public abstract List<InstantiatorDefinition> getEligibleInstantiatorDefinitions();
@@ -165,11 +184,19 @@ public abstract class PropertyFinder<T> {
 
 		private int nbGetterSetter(PropertyMeta<?, ?> p) {
 			int c = 0;
-			if (!NullGetter.isNull(p.getGetter())) {
-				c++;
-			}
-			if (!NullSetter.isNull(p.getSetter())) {
-				c++;
+
+			try {
+				if (!NullGetter.isNull(p.getGetter())) {
+					c++;
+				}
+			} catch (UnsupportedOperationException e) {}
+
+			try {
+				if (!NullSetter.isNull(p.getSetter())) {
+					c++;
+				}
+			} catch (UnsupportedOperationException e) {
+
 			}
 			return c;
 		}
@@ -221,7 +248,7 @@ public abstract class PropertyFinder<T> {
 												   Runnable selectionCallback,
 												   PropertyMatchingScore score,
 												   TypeAffinityScorer typeAffinityScorer);
-    }
+	}
 
 
 	public void manualMatch(PropertyMeta<?, ?> prop) {

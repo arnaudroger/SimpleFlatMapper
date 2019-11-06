@@ -26,8 +26,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
             Object[] properties, FoundProperty<T> matchingProperties,
             PropertyMatchingScore score,
             boolean allowSelfReference,
-            PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
-
+            PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
 
         IndexedColumn indexedColumn = propertyNameMatcher.matchIndex();
         if (indexedColumn != null) {
@@ -39,11 +38,11 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                 }
             }
             indexedColumn = indexedColumn.alignTo(startIndex);
-            lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.arrayIndex(indexedColumn, scoreFullName()), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+            lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.arrayIndex(indexedColumn, scoreFullName()), propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
         }
         if (indexedColumn == null || indexedColumn.partial) {
-            extrapolateIndex(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
-            speculativeMatching(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+            extrapolateIndex(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
+            speculativeMatching(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
         }
     }
 
@@ -53,7 +52,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
     @SuppressWarnings("unchecked")
     protected void lookForAgainstColumn(IndexedColumn indexedColumn, Object[] properties, final FoundProperty<T> matchingProperties, PropertyMatchingScore score,
-                                        PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
+                                        PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
 
         if (indexedColumn == null || !isValidIndex(indexedColumn)) {
             // no index found
@@ -96,16 +95,16 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                             }
                         }, score, typeAffinityScorer);
                     }
-                }, score.matches(indexedElement.getPropertyMeta(), indexedColumn.getSubPropertyNameMatcher(),new PropertyNameMatch(indexedColumn.getIndexProperty(), indexedColumn.getIndexProperty(), indexedColumn.getSubPropertyNameMatcher(),0,0 ) ), true, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                }, score.matches(indexedElement.getPropertyMeta(), indexedColumn.getSubPropertyNameMatcher(),new PropertyNameMatch(indexedColumn.getIndexProperty(), indexedColumn.getIndexProperty(), indexedColumn.getSubPropertyNameMatcher(),0,0 ) ), true, propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
     }
 
 
-    private void speculativeMatching(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
+    private void speculativeMatching(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
         // try to match against prefix
         PropertyNameMatch speculativeMatch = propertyNameMatcher.speculativeMatch();
 
         if (speculativeMatch != null) {
-                extrapolateIndex(speculativeMatch.getLeftOverMatcher(), properties, foundProperty, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                extrapolateIndex(speculativeMatch.getLeftOverMatcher(), properties, foundProperty, score.speculative(), propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
         }
     }
 
@@ -113,7 +112,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
     protected abstract <E> IndexedElement<T,?> getIndexedElement(IndexedColumn indexedColumn);
 
-    protected abstract void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter);
+    protected abstract void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty<T> foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter);
 
     @Override
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {

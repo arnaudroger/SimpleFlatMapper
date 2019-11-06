@@ -68,23 +68,26 @@ public class InstantiatorFactory {
 		
 		if (asmFactory != null  && useAsmIfEnabled) {
 			ClassLoader targetClassLoader = BiInstantiatorKey.getDeclaringClass(instantiatorDefinition).getClassLoader();
-			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
-				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
-				Member executable = executableInstantiatorDefinition.getExecutable();
-				if (Modifier.isPublic(executable.getModifiers())) {
+			AsmFactory asmFactory = this.asmFactory.getAsmFactory(targetClassLoader);
+			if (asmFactory != null) {
+				if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
+					ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
+					Member executable = executableInstantiatorDefinition.getExecutable();
+					if (Modifier.isPublic(executable.getModifiers())) {
+						try {
+							return asmFactory.createBiInstantiator(s1, s2, executableInstantiatorDefinition, injections, builderIgnoresNullValues);
+						} catch (Exception e) {
+							// fall back on reflection
+							if (failOnAsmError) ErrorHelper.rethrow(e);
+						}
+					}
+				} else {
 					try {
-						return asmFactory.getAsmFactory(targetClassLoader).createBiInstantiator(s1, s2, executableInstantiatorDefinition, injections, builderIgnoresNullValues);
+						return asmFactory.createBiInstantiator(s1, s2, (BuilderInstantiatorDefinition) instantiatorDefinition, injections, builderIgnoresNullValues);
 					} catch (Exception e) {
 						// fall back on reflection
 						if (failOnAsmError) ErrorHelper.rethrow(e);
 					}
-				}
-			} else {
-				try {
-					return asmFactory.getAsmFactory(targetClassLoader).createBiInstantiator(s1, s2, (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
-				} catch (Exception e) {
-					// fall back on reflection
-					if (failOnAsmError) ErrorHelper.rethrow(e);
 				}
 			}
 		}
@@ -131,23 +134,27 @@ public class InstantiatorFactory {
 		
 		if (asmFactory != null  && useAsmIfEnabled) {
 			ClassLoader targetClassLoader = InstantiatorKey.getDeclaringClass(instantiatorDefinition).getClassLoader();
-			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
-				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
-				Member executable = executableInstantiatorDefinition.getExecutable();
-				if (Modifier.isPublic(executable.getModifiers())) {
+			AsmFactory asmFactory = this.asmFactory.getAsmFactory(targetClassLoader);
+			if (asmFactory != null) {
+				if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
+					ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
+					Member executable = executableInstantiatorDefinition.getExecutable();
+					if (Modifier.isPublic(executable.getModifiers())) {
+						try {
+							return asmFactory.createInstantiator(source, executableInstantiatorDefinition, injections, builderIgnoresNullValues);
+						} catch (Exception e) {
+							e.printStackTrace();
+							// fall back on reflection
+							if (failOnAsmError) ErrorHelper.rethrow(e);
+						}
+					}
+				} else {
 					try {
-						return asmFactory.getAsmFactory(targetClassLoader).createInstantiator(source, executableInstantiatorDefinition, injections, builderIgnoresNullValues);
+						return asmFactory.createInstantiator(source, (BuilderInstantiatorDefinition) instantiatorDefinition, injections, builderIgnoresNullValues);
 					} catch (Exception e) {
 						// fall back on reflection
 						if (failOnAsmError) ErrorHelper.rethrow(e);
 					}
-				}
-			} else {
-				try {
-					return asmFactory.getAsmFactory(targetClassLoader).createInstantiator(source, (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
-				} catch (Exception e) {
-					// fall back on reflection
-					if (failOnAsmError) ErrorHelper.rethrow(e);
 				}
 			}
 		}

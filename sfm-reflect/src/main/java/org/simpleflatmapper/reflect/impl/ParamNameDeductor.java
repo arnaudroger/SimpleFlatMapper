@@ -184,5 +184,13 @@ public class ParamNameDeductor<T> {
             this.getter = getter;
             this.name = name;
         }
+
+        @Override
+        public String toString() {
+            return "Accessor{" +
+                    "getter=" + getter +
+                    ", name='" + name + '\'' +
+                    '}';
+        }
     }
 }

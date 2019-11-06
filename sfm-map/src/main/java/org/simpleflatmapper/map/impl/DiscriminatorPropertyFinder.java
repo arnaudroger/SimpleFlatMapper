@@ -6,11 +6,7 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.ClassMetaWithDiscriminatorId;
-import org.simpleflatmapper.reflect.meta.PropertyFinder;
-import org.simpleflatmapper.reflect.meta.PropertyMatchingScore;
-import org.simpleflatmapper.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
-import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
+import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -38,7 +34,7 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
     }
 
     @Override
-    public void lookForProperties(PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter) {
+    public void lookForProperties(PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
         
         final List<DiscriminatorMatch> matches = new ArrayList<DiscriminatorMatch>();
 
@@ -54,7 +50,7 @@ public class DiscriminatorPropertyFinder<T> extends PropertyFinder<T> {
                             matchedProperties.add(new MatchedProperty(propertyMeta, selectionCallback, score, typeAffinityScorer.score(propertyMeta.getPropertyType())));  
                         }
                     }
-                    , score, false, propertyFinderTransformer, typeAffinityScorer, propertyFilter);
+                    , score, false, propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
             
             if (!matchedProperties.isEmpty()) {
                 Collections.sort(matchedProperties);

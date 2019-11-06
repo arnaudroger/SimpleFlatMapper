@@ -113,6 +113,21 @@ public class PropertyFinderTest {
     }
 
     @Test
+    public void testFindElementOnArrayNonSpeculative__() {
+
+        ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getClassMeta(DbObject[].class);
+
+        PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder();
+        Object[] properties = {};
+
+        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("elt0_id"), properties, (TypeAffinity)null, isValidPropertyMeta);
+        assertNotNull(propEltId);
+        propEltId = propertyFinder.findProperty(matcher("id"), properties, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, isValidPropertyMeta);
+        assertNotNull(propEltId);
+        assertEquals("[0].object.id", propEltId.getPath());
+    }
+
+    @Test
     public void testFindElementOnArrayNonSpeculative() {
 
         ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getClassMeta(DbObject[].class);
@@ -126,7 +141,10 @@ public class PropertyFinderTest {
         propEltId = propertyFinder.findProperty(matcher("2_id"), properties, (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
 
+        propEltId = propertyFinder.findProperty(matcher("id"), properties, (TypeAffinity)null,TestPropertyFinderProbe.INSTANCE, isValidPropertyMeta);
+        assertEquals("[0].object.id", propEltId.getPath());
         propEltId = propertyFinder.findProperty(matcher("id"), properties, (TypeAffinity)null, isValidPropertyMeta);
+//        System.out.println("propEltId = " + propEltId.getPath());
         assertNull(propEltId);
 
 

@@ -153,6 +153,7 @@ public class DefaultReflectionService extends ReflectionService {
 
 	@SuppressWarnings("unchecked")
 	private <T> ClassMeta<T> newClassMeta(Type target) {
+
 		Class<T> clazz = TypeHelper.toClass(target);
 
 		if (target instanceof WildcardType) {

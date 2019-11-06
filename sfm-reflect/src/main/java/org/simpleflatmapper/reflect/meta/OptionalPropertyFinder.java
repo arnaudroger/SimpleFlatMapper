@@ -35,13 +35,14 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
             PropertyMatchingScore score, boolean allowSelfReference, 
             PropertyFinderTransformer propertyFinderTransformer, 
             TypeAffinityScorer typeAffinityScorer, 
-            PropertyFilter propertyFilter){
+            PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
+
         propertyFinderTransformer.apply(propertyFinder).lookForProperties(propertyNameMatcher, properties, new FoundProperty<T>() {
             @Override
             public <P extends PropertyMeta<T, ?>> void found(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
                 matchingProperties.found(getSubPropertyMeta(propertyMeta), selectionCallback, score, typeAffinityScorer);
             }
-        }, score, allowSelfReference, propertyFinderTransformer, typeAffinityScorer,  propertyFilter);
+        }, score, allowSelfReference, propertyFinderTransformer, typeAffinityScorer,  propertyFilter, shortCircuiter);
     }
 
     @SuppressWarnings("unchecked")

@@ -208,7 +208,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 
 	private boolean excludeSpeculation(PropertyMeta<T, ?> prop) {
 		Type propertyType = prop.getPropertyType();
-		String type = propertyType.getTypeName();
+		String type = TypeHelper.toClass(propertyType).getName();
 		return type.startsWith("java.")
 				|| TypeHelper.isEnum(propertyType)
 				|| TypeHelper.isPrimitive(propertyType);

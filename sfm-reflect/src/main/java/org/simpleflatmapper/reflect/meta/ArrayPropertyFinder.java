@@ -180,7 +180,7 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
             return found;
         }
 
-        public PropertyFilter propertyFilter(PropertyFilter propertyFilter) {
+        public PropertyFilter propertyFilter(final PropertyFilter propertyFilter) {
             return new PropertyFilter(new Predicate<PropertyMeta<?, ?>>() {
                 @Override
                 public boolean test(PropertyMeta<?, ?> propertyMeta) {

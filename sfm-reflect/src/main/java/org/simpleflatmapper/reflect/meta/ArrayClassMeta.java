@@ -393,6 +393,29 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 		intermediatTypeFactories.add(new InstantiatorDefinitionAndIntermediatTypeFactory() {
 			@Override
 			public boolean supports(Type type) {
+				return "com.google.protobuf.ProtocolStringList".equals(TypeHelper.toClass(type).getName());
+			}
+			@Override
+			public InstantiatorDefinitionAndIntermediatType newTypeInfo(Type type) {
+				try {
+					Class clazz = TypeHelper.toClass(type).getClassLoader().loadClass("com.google.protobuf.LazyStringArrayList");
+					return new InstantiatorDefinitionAndIntermediatType(getConstructor(clazz), clazz, false);
+
+//					return new InstantiatorDefinitionAndIntermediatType(
+//							new BuilderInstantiatorDefinition(getConstructor(clazz),
+//									new HashMap<org.simpleflatmapper.reflect.Parameter, java.lang.reflect.Method>(),
+//									clazz.getMethod("toImmutable")),
+//							clazz, true);
+				} catch (ClassNotFoundException e) {
+					return ErrorHelper.rethrow(e);
+				}
+
+			}
+		});
+
+		intermediatTypeFactories.add(new InstantiatorDefinitionAndIntermediatTypeFactory() {
+			@Override
+			public boolean supports(Type type) {
 				return "org.eclipse.collections.api.list.ImmutableList".equals(TypeHelper.toClass(type).getName());
 			}
 			@Override

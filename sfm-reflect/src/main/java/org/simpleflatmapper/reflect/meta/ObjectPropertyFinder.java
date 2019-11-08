@@ -20,6 +20,8 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	private final List<InstantiatorDefinition> eligibleInstantiatorDefinitions;
 	private final ObjectClassMeta<T> classMeta;
 	private final Map<PropertyMeta<?, ?>, PropertyFinder<?>> subPropertyFinders = new HashMap<PropertyMeta<?, ?>, PropertyFinder<?>>();
+
+	private final Set<String> pathTakens = new HashSet<String>();
 	private State state = State.NONE;
 	private String selfName;
 
@@ -46,14 +48,22 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 
 		CountNumberOfMatchedProperties<T> countMatchingProperties = new CountNumberOfMatchedProperties(matchingProperties);
 
-		lookForConstructor(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
-		lookForProperty(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+		PropertyFilter excludedMatchedPathPropertyFilter = excludeAlreadyMatched(propertyFilter);
+
+		lookForConstructor(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
+		lookForProperty(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
 
 
 		// has not match speculative
 		if (countMatchingProperties.nbFound == 0) {
-			lookForConstructorSpeculative(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
-			lookForPropertySpeculative(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+			lookForConstructorSpeculative(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
+			lookForPropertySpeculative(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
+
+			// still no match do a strict lookup including already match path
+			if (countMatchingProperties.nbFound == 0) {
+				lookForConstructor(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+				lookForProperty(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+			}
 		}
 
 		final String propName = propertyNameMatcher.toString();
@@ -86,6 +96,20 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 					score.nonMappedProperty(meta, propertyNameMatcher),
 					typeAffinityScorer);
 		}
+	}
+
+	private PropertyFilter excludeAlreadyMatched(final PropertyFilter propertyFilter) {
+		return new PropertyFilter(new Predicate<PropertyMeta<?, ?>>() {
+			@Override
+			public boolean test(PropertyMeta<?, ?> propertyMeta) {
+				return !pathTakens.contains(propertyMeta.getPath()) && propertyFilter.testProperty(propertyMeta);
+			}
+		}, new Predicate<PropertyMeta<?, ?>>() {
+			@Override
+			public boolean test(PropertyMeta<?, ?> propertyMeta) {
+				return propertyFilter.testPath(propertyMeta);
+			}
+		});
 	}
 
 	public static boolean isOptionalAndEligibleAsNonMappedProperty(Object[] properties) {
@@ -168,7 +192,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			PropertyNameMatch matches = propertyNameMatcher.matches(columnName);
 			if (matches != null) {
 				if (propertyFilter.testProperty(prop)) {
-					matchingProperties.found(prop, propertiesCallBack(), score.matches(prop, propertyNameMatcher, matches), typeAffinityScorer);
+					matchingProperties.found(prop, propertiesCallBack(prop), score.matches(prop, propertyNameMatcher, matches), typeAffinityScorer);
 				}
 			}
 			if (propertyFilter.testPath(prop)) {
@@ -178,8 +202,9 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 					lookForSubProperty(subPropMatcher, properties, prop, new FoundProperty() {
 								@Override
 								public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
-									matchingProperties.found(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
-											propertiesDelegateCallBack(selectionCallback), score, typeAffinityScorer);
+									SubPropertyMeta subProp = new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta);
+									matchingProperties.found(subProp,
+											propertiesDelegateCallBack(selectionCallback, subProp), score, typeAffinityScorer);
 								}
 							}, score.matches(prop, propertyNameMatcher, subPropMatch),
 							propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
@@ -196,8 +221,9 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 					lookForSubProperty(propertyNameMatcher, properties, prop, new FoundProperty() {
 								@Override
 								public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
-									matchingProperties.found(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
-											propertiesDelegateCallBack(selectionCallback), score, typeAffinityScorer);
+									SubPropertyMeta subProp = new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta);
+									matchingProperties.found(subProp,
+											propertiesDelegateCallBack(selectionCallback, subProp), score, typeAffinityScorer);
 								}
 							}, score.speculative(prop, propertyNameMatcher),
 							propertyFinderTransformer, typeAffinityScorer, propertyFilter, shortCircuiter);
@@ -306,7 +332,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 
 	private Runnable propertiesRemoveNonMatchingCallBack(final ConstructorPropertyMeta<T, ?> prop) {
-		return compose(removeNonMatchingCallBack(prop), propertiesCallBack());
+		return compose(removeNonMatchingCallBack(prop), propertiesCallBack(prop));
 	}
 
 	private Runnable removeNonMatchingCallBack(final ConstructorPropertyMeta<T, ?> prop) {
@@ -318,16 +344,17 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		};
 	}
 
-	private Runnable propertiesDelegateCallBack(final Runnable selectionCallback) {
-		return compose(selectionCallback, propertiesCallBack());
+	private Runnable propertiesDelegateCallBack(final Runnable selectionCallback, PropertyMeta<?, ?> propertyMeta) {
+		return compose(selectionCallback, propertiesCallBack(propertyMeta));
 	}
 
 
-	private Runnable propertiesCallBack() {
+	private Runnable propertiesCallBack(final PropertyMeta<?, ?> propertyMeta) {
 		return new Runnable() {
 			@Override
 			public void run() {
 				state = State.PROPERTIES;
+				pathTakens.add(propertyMeta.getPath());
 			}
 		};
 	}

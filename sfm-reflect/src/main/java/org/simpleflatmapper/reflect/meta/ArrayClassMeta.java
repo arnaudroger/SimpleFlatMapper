@@ -400,12 +400,6 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 				try {
 					Class clazz = TypeHelper.toClass(type).getClassLoader().loadClass("com.google.protobuf.LazyStringArrayList");
 					return new InstantiatorDefinitionAndIntermediatType(getConstructor(clazz), clazz, false);
-
-//					return new InstantiatorDefinitionAndIntermediatType(
-//							new BuilderInstantiatorDefinition(getConstructor(clazz),
-//									new HashMap<org.simpleflatmapper.reflect.Parameter, java.lang.reflect.Method>(),
-//									clazz.getMethod("toImmutable")),
-//							clazz, true);
 				} catch (ClassNotFoundException e) {
 					return ErrorHelper.rethrow(e);
 				}

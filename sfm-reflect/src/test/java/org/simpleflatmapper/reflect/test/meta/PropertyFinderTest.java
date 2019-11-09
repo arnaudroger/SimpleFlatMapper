@@ -543,4 +543,22 @@ public class PropertyFinderTest {
 
     }
 
+
+    @Test
+    public void testPlural() {
+        ClassMeta<P> classMeta = ReflectionService.newInstance().getClassMeta(P.class);
+
+        PropertyMeta<P, Object> prop = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value_v"), new Object[]{}, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+
+        assertEquals("values[0].{this}", prop.getPath());
+
+    }
+
+    public static class P {
+        public final List<String> values;
+
+        public P(List<String> values) {
+            this.values = values;
+        }
+    }
 }

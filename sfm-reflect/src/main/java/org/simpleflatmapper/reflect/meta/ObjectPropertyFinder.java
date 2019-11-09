@@ -217,7 +217,8 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 
 	private boolean tryPlural(PropertyMeta<T, ?> prop) {
-		return false;
+		Type propertyType = prop.getPropertyType();
+		return TypeHelper.isArray(propertyType) || TypeHelper.isAssignable(Iterable.class, propertyType);
 	}
 
 	private void lookForPropertySpeculative(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {

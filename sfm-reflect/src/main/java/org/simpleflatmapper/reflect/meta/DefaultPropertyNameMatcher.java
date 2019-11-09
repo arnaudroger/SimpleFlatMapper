@@ -227,13 +227,14 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 				//es
 				//s, -ss, -sh, -ch, -x, or -z
 				// analysis -> analyses
+				// tomato tomatoes
 				if (areEqualsCI(lastChar, 'e') && areEqualsCI(property.charAt(indexProperty + 1), 's')) {
 					if (isEndOfWord(property, indexProperty + 2)) {
 						// if column endup with is add 2
 						if (indexColumn + 2 < column.length()) {
 							if (areEqualsCI(column.charAt(indexColumn + 1) , 'i') && areEqualsCI(column.charAt(indexColumn + 2) , 's')) return indexColumn + 3;
 						}
-						if (endWiths(column, from, indexColumn,new char[] { 's'}, new char[]{'s', 's'}, new char[]{ 's', 'h' }, new char[]{ 'c', 'h' },new char[] {'x' },new char[] {'z' } ))
+						if (endWiths(column, from, indexColumn,new char[] { 's'}, new char[]{'s', 's'}, new char[]{ 's', 'h' }, new char[]{ 'c', 'h' },new char[] {'x' },new char[] {'z' }, new char[] {'o'} ))
 						{
 							return indexColumn;
 						}

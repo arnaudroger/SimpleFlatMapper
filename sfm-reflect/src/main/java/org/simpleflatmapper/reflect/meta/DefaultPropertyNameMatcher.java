@@ -25,13 +25,16 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		this.effectiveEndIndex = lastNonIgnorableChar(column) + 1;
 	}
 
-
-
 	@Override
 	public PropertyNameMatch matches(final CharSequence property) {
+		return matches(property, false);
+	}
+
+	@Override
+	public PropertyNameMatch matches(final CharSequence property, boolean tryPlural) {
 		if (property == null) return null;
 
-		int endIndex = _partialMatch(property);
+		int endIndex = _partialMatch(property, tryPlural);
 		if  (endIndex == effectiveEndIndex) {
 			int meaningfulCharProperty = meaningfulChar(property, 0, property.length());
 			int meaningfulCharColumn = meaningfulChar(column, from, endIndex);
@@ -39,6 +42,26 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 			int score =  meaningfulCharColumn;
 			int skippedLetters = meaningfulCharProperty - meaningfulCharColumn;
 			return new PropertyNameMatch(property.toString(), column.substring(from, endIndex), null, score, skippedLetters);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public PropertyNameMatch partialMatch(final CharSequence property) {
+		return partialMatch(property, false);
+	}
+
+	@Override
+	public PropertyNameMatch partialMatch(final CharSequence property, boolean tryPlural) {
+		int index = _partialMatch(property, tryPlural);
+		if (index != -1) {
+			int meaningfulCharProperty = meaningfulChar(property, 0, property.length());
+			int meaningfulCharColumn = meaningfulChar(column, from, index);
+
+			int score =  meaningfulCharColumn;
+			int skippedLater = meaningfulCharProperty - meaningfulCharColumn;
+			return new PropertyNameMatch(property.toString(), column.substring(from, index), new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive), score, skippedLater);
 		} else {
 			return null;
 		}
@@ -107,14 +130,16 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		);
 	}
 
-	private int _partialMatch(final CharSequence property) {
+	private int _partialMatch(final CharSequence property, boolean tryPlural) {
 		if (property == null) return -1;
 		int indexColumn = from;
 		int indexProperty = 0;
 		int nbCharIncommon = 0;
 		do {
 
-			// next property char
+			/*
+				-- First skip non meaningful chars in property name
+			 */
 			if (indexProperty >= property.length()) {
 				return indexColumn; // not more to match
 			}
@@ -130,10 +155,18 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 
 			// next column char
 			if (indexColumn >= column.length()) { // run out of character
-				if ((skipedIgnorablePropertyCharacter || Character.isUpperCase(charProperty)) && nbCharIncommon > 0) // end of column with prefix match
-					return indexColumn;
-				else return -1;
+				if (nbCharIncommon > 0){
+					if (endOfPropertyWord(charProperty, skipedIgnorablePropertyCharacter)) {
+						return indexColumn;
+					}
+					return isPluralEnd(property, indexProperty -1, column, from, indexColumn, tryPlural); // end of column with prefix match
+				}
+				return -1;
 			}
+
+			/*
+				-- Second skip non meaningful chars in column name
+			 */
 			char charColumn = column.charAt(indexColumn ++);
 			boolean skipedIgnorableColumnCharacter = false;
 			while(ignoreCharacter(charColumn)) {
@@ -144,22 +177,144 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 				skipedIgnorableColumnCharacter = true;
 			}
 
+			/*
+			    if case sensitive makes first char of column char is upper case ?
+			 */
 			if (caseSensitive && skipedIgnorableColumnCharacter) {
 				charColumn = Character.toUpperCase(charColumn);
 			}
 
 			if (areDifferentCharacters(charProperty, charColumn)) {
 
-				if (skipedIgnorableColumnCharacter && (skipedIgnorablePropertyCharacter || Character.isUpperCase(charProperty)) && nbCharIncommon > 0)
-					return  indexColumn - 2;
-				else
-					return -1;
+				if (nbCharIncommon > 0){
+					if (skipedIgnorableColumnCharacter && endOfPropertyWord(charProperty, skipedIgnorablePropertyCharacter)) {
+						return indexColumn - 2;
+					}
+					return isPluralEnd(property, indexProperty - 1, column, from, indexColumn - 2, tryPlural); // end of column with prefix match
+				}
+				return -1;
 			}
 
 			nbCharIncommon++;
 
 		}
 		while(true);
+	}
+
+	private boolean endOfPropertyWord(char charProperty, boolean skipedIgnorablePropertyCharacter) {
+		return (skipedIgnorablePropertyCharacter || Character.isUpperCase(charProperty));
+	}
+
+	private int isPluralEnd(CharSequence property,  int indexProperty, CharSequence column, int fromColumn, int indexColumn,  boolean tryPlural) {
+		if (!tryPlural) return -1;
+		return  isPlural(property, indexProperty, column, fromColumn, indexColumn);
+	}
+
+
+	//https://www.grammarly.com/blog/plural-nouns/
+	private int isPlural(CharSequence property,  int indexProperty, CharSequence column, int fromColumn, int indexColumn) {
+
+		// either mismatch or end of column
+		if (indexProperty < property.length()) {
+			char lastChar = property.charAt(indexProperty);
+			if (areEqualsCI(lastChar, 's')) {
+				if (isEndOfWord(property, indexProperty + 1)) {
+					return indexColumn;
+				};
+			}
+
+			if (indexProperty + 1 < property.length()) {
+				//es
+				//s, -ss, -sh, -ch, -x, or -z
+				// analysis -> analyses
+				if (areEqualsCI(lastChar, 'e') && areEqualsCI(property.charAt(indexProperty + 1), 's')) {
+					if (isEndOfWord(property, indexProperty + 2)) {
+						// if column endup with is add 2
+						if (indexColumn + 2 < column.length()) {
+							if (areEqualsCI(column.charAt(indexColumn + 1) , 'i') && areEqualsCI(column.charAt(indexColumn + 2) , 's')) return indexColumn + 3;
+						}
+						if (endWiths(column, from, indexColumn,new char[] { 's'}, new char[]{'s', 's'}, new char[]{ 's', 'h' }, new char[]{ 'c', 'h' },new char[] {'x' },new char[] {'z' } ))
+						{
+							return indexColumn;
+						}
+					}
+				}
+
+				if (indexProperty + 2 < property.length()) {
+					// city cities
+					if (areEqualsCI(lastChar , 'i') && areEqualsCI(property.charAt(indexProperty + 1), 'e') && areEqualsCI(property.charAt(indexProperty + 2), 's')) {
+
+						if (isEndOfWord(property, indexProperty + 3)) {
+							// if column endup with is add 2
+							if (indexColumn +1  < column.length() && areEqualsCI(column.charAt(indexColumn + 1) , 'y')) {
+								 return indexColumn + 2;
+							}
+						}
+					}
+
+					// fez fezzes
+					if (areEqualsCI(lastChar , 'z') && areEqualsCI(property.charAt(indexProperty + 1) , 'e') && areEqualsCI(property.charAt(indexProperty + 2), 's')) {
+
+						//s, -ss, -sh, -ch, -x, or -z
+						if (isEndOfWord(property, indexProperty + 3)) {
+							// if column endup with is add 2
+							if (indexColumn  -1 < column.length() && areEqualsCI(column.charAt(indexColumn -1) , 'z')) {
+								return indexColumn;
+							}
+						}
+					}
+
+					// gas gasses
+					if (areEqualsCI(lastChar , 's') && areEqualsCI(property.charAt(indexProperty + 1), 'e') && areEqualsCI(property.charAt(indexProperty + 2), 's')) {
+						if (isEndOfWord(property, indexProperty + 3)) {
+							// if column endup with is add 2
+							if (indexColumn  -1 < column.length() && areEqualsCI(column.charAt(indexColumn -1), 's')) {
+								return indexColumn;
+							}
+						}
+					}
+
+
+					// wolf wolves
+					if (areEqualsCI(lastChar, 'v') && areEqualsCI(property.charAt(indexProperty + 1), 'e') && areEqualsCI(property.charAt(indexProperty + 2), 's')) {
+						if (isEndOfWord(property, indexProperty + 3)) {
+							// if column endup with is add 2
+							if (indexColumn +1  < column.length() && areEqualsCI(column.charAt(indexColumn + 1), 'f')) {
+								return indexColumn + 2;
+							}
+						}
+					}
+
+
+				}
+
+
+			}
+		}
+		return -1;
+	}
+
+	private boolean areEqualsCI(char c1, char c2) {
+		return c1 == c2 || Character.toUpperCase(c1) == Character.toUpperCase(c2) || Character.toLowerCase(c1) == Character.toLowerCase(c2);
+	}
+
+	private boolean endWiths(CharSequence column, int from, int indexColumn, char[]... chars) {
+		nextChars:
+		for(int i = 0; i < chars.length; i++) {
+			char[] cs = chars[i];
+			int offset = indexColumn - cs.length;
+			if (offset > from) {
+				for (int j = 0; j < cs.length; j++) {
+					if (!areEqualsCI(cs[j], column.charAt(offset + j))) continue nextChars;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isEndOfWord(CharSequence property, int nextIndexProperty) {
+		return nextIndexProperty >= property.length() || Character.isUpperCase(property.charAt(nextIndexProperty)) || isSeparatorChar(property.charAt(nextIndexProperty));
 	}
 
 	private boolean areDifferentCharacters(char c1, char c2) {
@@ -178,20 +333,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		return charColumn == '_' || charColumn == ' ' || charColumn == '.' || charColumn == '-';
 	}
 
-	@Override
-	public PropertyNameMatch partialMatch(final CharSequence property) {
-		int index = _partialMatch(property);
-		if (index != -1) {
-			int meaningfulCharProperty = meaningfulChar(property, 0, property.length());
-			int meaningfulCharColumn = meaningfulChar(column, from, index);
 
-			int score =  meaningfulCharColumn;
-			int skippedLater = meaningfulCharProperty - meaningfulCharColumn;
-			return new PropertyNameMatch(property.toString(), column.substring(from, index), new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive), score, skippedLater);
-		} else {
-			return null;
-		}
-	}
 
 	private int meaningfulChar(CharSequence cs, int from, int to) {
 		int s= 0;

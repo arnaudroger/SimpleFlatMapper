@@ -134,8 +134,9 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (final ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
-				final String columnName = getColumnName(prop);
-				PropertyNameMatch matches = propertyNameMatcher.matches(columnName);
+				final String propertyName = getPropertyName(prop);
+				boolean tryPlural = tryPlural(prop);
+				PropertyNameMatch matches = propertyNameMatcher.matches(propertyName, tryPlural);
 				boolean hasConstructor = hasConstructorMatching(prop.getParameter());
 				if (matches != null && hasConstructor) {
 					if (propertyFilter.testProperty(prop)) {
@@ -143,7 +144,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 					}
 				}
 				if (propertyFilter.testPath(prop)) {
-					PropertyNameMatch partialMatch = propertyNameMatcher.partialMatch(columnName);
+					PropertyNameMatch partialMatch = propertyNameMatcher.partialMatch(propertyName, tryPlural);
 					if (partialMatch != null && hasConstructor) {
 						PropertyNameMatcher subPropMatcher = partialMatch.getLeftOverMatcher();
 						lookForSubProperty(subPropMatcher, properties, prop, new FoundProperty() {
@@ -163,7 +164,6 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	private void lookForConstructorSpeculative(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (final ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
-				final String columnName = getColumnName(prop);
 				if (propertyFilter.testPath(prop) && !excludeSpeculation(prop)) {
 					shortCircuiter = shortCircuiter.eval(propertyNameMatcher, prop.getPropertyClassMeta());
 					if (!shortCircuiter.shortCircuit()) {
@@ -188,15 +188,18 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			final String columnName =
 					hasAlias(properties)
 							? prop.getName()
-							: getColumnName(prop);
-			PropertyNameMatch matches = propertyNameMatcher.matches(columnName);
+							: getPropertyName(prop);
+			boolean tryPlural = tryPlural(prop);
+			PropertyNameMatch matches = propertyNameMatcher.matches(columnName, tryPlural);
+
+
 			if (matches != null) {
 				if (propertyFilter.testProperty(prop)) {
 					matchingProperties.found(prop, propertiesCallBack(prop), score.matches(prop, propertyNameMatcher, matches), typeAffinityScorer);
 				}
 			}
 			if (propertyFilter.testPath(prop)) {
-				final PropertyNameMatch subPropMatch = propertyNameMatcher.partialMatch(columnName);
+				final PropertyNameMatch subPropMatch = propertyNameMatcher.partialMatch(columnName, tryPlural);
 				if (subPropMatch != null) {
 					final PropertyNameMatcher subPropMatcher = subPropMatch.getLeftOverMatcher();
 					lookForSubProperty(subPropMatcher, properties, prop, new FoundProperty() {
@@ -211,6 +214,10 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 				}
 			}
 		}
+	}
+
+	private boolean tryPlural(PropertyMeta<T, ?> prop) {
+		return false;
 	}
 
 	private void lookForPropertySpeculative(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer, PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
@@ -293,7 +300,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		});
 	}
 
-	private String getColumnName(PropertyMeta<T, ?> prop) {
+	private String getPropertyName(PropertyMeta<T, ?> prop) {
         return this.classMeta.getAlias(prop.getName());
     }
 

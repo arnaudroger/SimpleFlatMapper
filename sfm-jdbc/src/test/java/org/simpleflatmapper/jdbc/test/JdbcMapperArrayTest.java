@@ -1,19 +1,25 @@
 package org.simpleflatmapper.jdbc.test;
 
 import org.junit.Test;
+import org.simpleflatmapper.jdbc.DynamicJdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
+import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.test.beans.DbArrayObject;
 import org.simpleflatmapper.test.beans.DbArrayOfString;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class JdbcMapperArrayTest {
 	
@@ -147,5 +153,73 @@ public class JdbcMapperArrayTest {
 	@Test
 	public void testMapTestArrayObjectAsm() throws Exception {
 		DbHelper.testQuery(new TestArrayObject(true), QUERY_LIST);
+	}
+
+	@Test
+	public void testPlurals() throws Exception {
+		DynamicJdbcMapper<Plural> mapper = JdbcMapperFactory.newInstance().addKeys("id").newMapper(Plural.class);
+		Connection dbConnection = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
+
+		if (dbConnection == null) return;
+
+		try {
+			Statement statement = dbConnection.createStatement();
+			try {
+				ResultSet rs = statement.executeQuery("WITH vals (id, label) AS (VALUES (1,'l1'), (1, 'l2'), (2, 'l3')) SELECT * FROM vals");
+
+				Iterator<Plural> iterator = mapper.iterator(rs);
+
+				assertTrue(iterator.hasNext());
+				assertEquals(new Plural(1, Arrays.asList("l1", "l2")), iterator.next());
+
+				assertTrue(iterator.hasNext());
+				assertEquals(new Plural(2, Arrays.asList("l3")), iterator.next());
+
+				assertFalse(iterator.hasNext());
+
+			} finally {
+				statement.close();
+			}
+
+		} finally {
+
+			dbConnection.close();
+		}
+	}
+
+	public static class Plural {
+		public final long id;
+		public final List<String> labels;
+
+		public Plural(long id, List<String> labels) {
+			this.id = id;
+			this.labels = labels;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Plural plural = (Plural) o;
+
+			if (id != plural.id) return false;
+			return labels != null ? labels.equals(plural.labels) : plural.labels == null;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = (int) (id ^ (id >>> 32));
+			result = 31 * result + (labels != null ? labels.hashCode() : 0);
+			return result;
+		}
+
+		@Override
+		public String toString() {
+			return "Plural{" +
+					"id=" + id +
+					", labels=" + labels +
+					'}';
+		}
 	}
 }

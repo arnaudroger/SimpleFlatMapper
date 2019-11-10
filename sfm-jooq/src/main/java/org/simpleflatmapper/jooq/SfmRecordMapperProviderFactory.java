@@ -59,4 +59,17 @@ public class SfmRecordMapperProviderFactory
         }, getReflectionService());
     }
 
+    public SfmRecordMapperProvider newRecordMapperProvider() {
+        return newProvider();
+    }
+
+//    public SfmRecordUnmapperProvider newRecordUnapperProvider() {
+//        return new SfmRecordUnmapperProvider(new Function<Type, MapperConfig<JooqFieldKey, Record>>() {
+//            @Override
+//            public MapperConfig<JooqFieldKey, Record> apply(Type type) {
+//                return mapperConfig(type);
+//            }
+//        }, getReflectionService());
+//    }
+
 }

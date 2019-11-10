@@ -45,7 +45,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
 
     protected final ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory;
     protected final ClassMeta<T> classMeta;
-    private final Class<S> sourceClass;
+    protected final Class<S> sourceClass;
 
     private int currentIndex = getStartingIndex();
 

@@ -4,6 +4,7 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.property.EligibleAsNonMappedProperty;
 import org.simpleflatmapper.reflect.property.OptionalProperty;
+import org.simpleflatmapper.reflect.property.SpeculativeObjectLookUpProperty;
 import org.simpleflatmapper.util.BooleanProvider;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
@@ -46,24 +47,29 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 								  TypeAffinityScorer typeAffinityScorer,
 								  PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
 
-		CountNumberOfMatchedProperties<T> countMatchingProperties = new CountNumberOfMatchedProperties(matchingProperties);
+		if (isSpeculativeEnabled(properties)) {
+			CountNumberOfMatchedProperties<T> countMatchingProperties = new CountNumberOfMatchedProperties(matchingProperties);
 
-		PropertyFilter excludedMatchedPathPropertyFilter = excludeAlreadyMatched(propertyFilter);
+			PropertyFilter excludedMatchedPathPropertyFilter = excludeAlreadyMatched(propertyFilter);
 
-		lookForConstructor(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
-		lookForProperty(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
+			lookForConstructor(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
+			lookForProperty(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
 
 
-		// has not match speculative
-		if (countMatchingProperties.nbFound == 0) {
-			lookForConstructorSpeculative(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
-			lookForPropertySpeculative(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
-
-			// still no match do a strict lookup including already match path
+			// has not match speculative
 			if (countMatchingProperties.nbFound == 0) {
-				lookForConstructor(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
-				lookForProperty(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+				lookForConstructorSpeculative(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
+				lookForPropertySpeculative(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
+
+				// still no match do a strict lookup including already match path
+				if (countMatchingProperties.nbFound == 0) {
+					lookForConstructor(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+					lookForProperty(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+				}
 			}
+		} else {
+			lookForConstructor(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+			lookForProperty(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
 		}
 
 		final String propName = propertyNameMatcher.toString();
@@ -96,6 +102,13 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 					score.nonMappedProperty(meta, propertyNameMatcher),
 					typeAffinityScorer);
 		}
+	}
+
+	private boolean isSpeculativeEnabled(Object[] properties) {
+		for(Object o : properties) {
+			if (o == SpeculativeObjectLookUpProperty.INSTANCE) return true;
+		}
+		return false;
 	}
 
 	private PropertyFilter excludeAlreadyMatched(final PropertyFilter propertyFilter) {

@@ -5,10 +5,7 @@ import org.junit.Test;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.meta.*;
-import org.simpleflatmapper.reflect.property.EligibleAsNonMappedProperty;
-import org.simpleflatmapper.reflect.property.ArrayIndexStartAtProperty;
-import org.simpleflatmapper.reflect.property.OptionalProperty;
-import org.simpleflatmapper.reflect.property.SpeculativeArrayIndexResolutionProperty;
+import org.simpleflatmapper.reflect.property.*;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.tuple.Tuples;
@@ -123,8 +120,7 @@ public class PropertyFinderTest {
         PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("elt0_id"), properties, (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
         propEltId = propertyFinder.findProperty(matcher("id"), properties, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, isValidPropertyMeta);
-        assertNotNull(propEltId);
-        assertEquals("[0].object.id", propEltId.getPath());
+        assertNull(propEltId);
     }
 
     @Test
@@ -133,18 +129,15 @@ public class PropertyFinderTest {
         ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getClassMeta(DbObject[].class);
 
         PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder();
+        Object[] properties = {};
 
-        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("elt0_id"), new Object[0], (TypeAffinity)null, isValidPropertyMeta);
+        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("elt0_id"), properties, (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
 
-        Object[] properties = {};
         propEltId = propertyFinder.findProperty(matcher("2_id"), properties, (TypeAffinity)null, isValidPropertyMeta);
         assertNotNull(propEltId);
 
         propEltId = propertyFinder.findProperty(matcher("id"), properties, (TypeAffinity)null,TestPropertyFinderProbe.INSTANCE, isValidPropertyMeta);
-        assertEquals("[0].object.id", propEltId.getPath());
-        propEltId = propertyFinder.findProperty(matcher("id"), properties, (TypeAffinity)null, isValidPropertyMeta);
-//        System.out.println("propEltId = " + propEltId.getPath());
         assertNull(propEltId);
 
 
@@ -483,38 +476,39 @@ public class PropertyFinderTest {
 
         PropertyFinder<S1> pf = classMeta.newPropertyFinder();
 
-        PropertyMeta<S1, Object> pm = pf.findProperty(DefaultPropertyNameMatcher.of("foo"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+        Object[] properties = new Object[] {SpeculativeObjectLookUpProperty.INSTANCE};
+        PropertyMeta<S1, Object> pm = pf.findProperty(DefaultPropertyNameMatcher.of("foo"), properties, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
         assertNotNull(pm);
         assertEquals("s2.s3.foo", pm.getPath());
 
-        pm = pf.findProperty(DefaultPropertyNameMatcher.of("bar"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+        pm = pf.findProperty(DefaultPropertyNameMatcher.of("bar"), properties, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
         assertNotNull(pm);
         assertEquals("s2.s4.bar", pm.getPath());
 
-        pm = pf.findProperty(DefaultPropertyNameMatcher.of("foo"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+        pm = pf.findProperty(DefaultPropertyNameMatcher.of("foo"), properties, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
         assertNull(pm);
 
-        pm = pf.findProperty(DefaultPropertyNameMatcher.of("bar"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+        pm = pf.findProperty(DefaultPropertyNameMatcher.of("bar"), properties, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
         assertNull(pm);
 
 
-        pm = pf.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+        pm = pf.findProperty(DefaultPropertyNameMatcher.of("id"), properties, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
         assertNotNull(pm);
         assertEquals("id", pm.getPath());
 
-        pm = pf.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+        pm = pf.findProperty(DefaultPropertyNameMatcher.of("id"), properties, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
         assertNotNull(pm);
         assertEquals("s2.id", pm.getPath());
 
-        pm = pf.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+        pm = pf.findProperty(DefaultPropertyNameMatcher.of("id"), properties, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
         assertNotNull(pm);
         assertEquals("s2.s3.id", pm.getPath());
 
-        pm = pf.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+        pm = pf.findProperty(DefaultPropertyNameMatcher.of("id"), properties, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
         assertNotNull(pm);
         assertEquals("s2.s4.id", pm.getPath());
 
-        pm = pf.findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0], (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
+        pm = pf.findProperty(DefaultPropertyNameMatcher.of("id"), properties, (TypeAffinity) null, TestPropertyFinderProbe.INSTANCE, PropertyFinder.PropertyFilter.trueFilter());
         assertNotNull(pm);
         assertEquals("id", pm.getPath());
 

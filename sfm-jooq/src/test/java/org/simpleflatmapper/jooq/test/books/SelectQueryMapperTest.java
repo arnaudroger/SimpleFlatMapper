@@ -62,11 +62,12 @@ public class SelectQueryMapperTest {
 	public void testBooks() throws Exception {
 
 		DataSource dataSource = DbHelper.getHsqlDataSource();
-		SelectQueryMapper<Author> authorMapper = SelectQueryMapperFactory.newInstance().newMapper(Author.class);
 
 		try (Connection connection = dataSource.getConnection()) {
 
 			initBookDb(connection);
+
+			SelectQueryMapper<Author> authorMapper = SelectQueryMapperFactory.newInstance().newMapper(Author.class);
 
 			List<Author> authors = authorMapper.asList(DSL.using(connection)
 					.select(AUTHOR.ID, AUTHOR.FIRST_NAME, AUTHOR.LAST_NAME, AUTHOR.DATE_OF_BIRTH,

@@ -1,5 +1,6 @@
 package org.simpleflatmapper.map.getter;
 
+import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 
 import java.lang.reflect.Type;
@@ -13,7 +14,7 @@ public class ComposedContextualGetterFactory<T, K>  implements ContextualGetterF
     }
 
     @Override
-    public <P> ContextualGetter<T, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
+    public <P> ContextualGetter<T, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder, Object... properties) {
         ContextualGetterFactory[] factories = this.factories;
 
         for(int i = 0; i < factories.length; i++) {

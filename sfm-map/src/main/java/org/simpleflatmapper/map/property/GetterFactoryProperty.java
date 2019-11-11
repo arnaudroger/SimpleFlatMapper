@@ -61,7 +61,7 @@ public class GetterFactoryProperty {
     public static <S, K extends FieldKey<K>, T> GetterFactoryProperty forType(final Type type, final IndexedGetter<S, T> getter) {
         ContextualGetterFactory<S, K> getterFactory = new ContextualGetterFactory<S, K>() {
             @Override
-            public <P> ContextualGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
+            public <P> ContextualGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder, Object... properties) {
                 if (TypeHelper.areEquals(type, target)) {
                     final int index = key.getIndex();
                     return (ContextualGetter<S, P>) new IndexedGetterAdapter<S, T>(getter, index);

@@ -402,7 +402,7 @@ public abstract class AbstractMapperFactory<
 	public MF addGetterForType(final Predicate<Type> typePredicate, final Function<K, ContextualGetter<S, ?>> getterFactory) {
 		return addGetterFactory(new ContextualGetterFactory<S, K>() {
 			@Override
-			public <P> ContextualGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
+			public <P> ContextualGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder, Object... properties) {
 				if (typePredicate.test(target)) {
 					return (ContextualGetter<S, P>) getterFactory.apply(key);
 				}
@@ -414,7 +414,7 @@ public abstract class AbstractMapperFactory<
 	public MF addGetterForType(final Predicate<Type> typePredicate, final ContextualGetterFactory<S, K> getterFactory) {
 		return addGetterFactory(new ContextualGetterFactory<S, K>() {
 			@Override
-			public <P> ContextualGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
+			public <P> ContextualGetter<S, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder, Object... properties) {
 				if (typePredicate.test(target)) {
 					return getterFactory.newGetter(target, key, mappingContextFactoryBuilder, properties);
 				}

@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.jdbc.impl.getter.*;
+import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterAdapter;
@@ -53,7 +54,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 	};
 
 	@Override
-	public <P> ContextualGetter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, MappingContextFactoryBuilder<?, JdbcColumnKey> mappingContextFactoryBuilder, Object... properties) {
+	public <P> ContextualGetter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder, Object... properties) {
 		Getter<ResultSet, Object> getter = newGetter(target, key, properties);
 		if (getter == null) return null;
 		if (getter instanceof ContextualGetter){

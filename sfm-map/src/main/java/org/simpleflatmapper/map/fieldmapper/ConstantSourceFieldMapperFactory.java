@@ -23,6 +23,6 @@ public interface ConstantSourceFieldMapperFactory<S, K extends FieldKey<K>> {
 			Type propertyType,
 			ColumnDefinition<K, ?> columnDefinition,
 			Supplier<ClassMeta<P>> propertyClassMetaSupplier,
-			MappingContextFactoryBuilder<?, K> contextFactoryBuilder
+			MappingContextFactoryBuilder<?, ? extends FieldKey<?>> contextFactoryBuilder
 			);
 }

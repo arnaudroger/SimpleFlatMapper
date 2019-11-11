@@ -216,7 +216,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 	}
 
 	@Override
-	public <P> ContextualGetter<? super S, ? extends P> getGetterFromSource(K columnKey, Type propertyType, ColumnDefinition<K, ?> columnDefinition, Supplier<ClassMeta<P>> propertyClassMetaSupplier, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder) {
+	public <P> ContextualGetter<? super S, ? extends P> getGetterFromSource(K columnKey, Type propertyType, ColumnDefinition<K, ?> columnDefinition, Supplier<ClassMeta<P>> propertyClassMetaSupplier, MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder) {
 		@SuppressWarnings("unchecked")
 		ContextualGetter<? super S, ? extends P> getter = ContextualGetterAdapter.of((Getter<? super S, ? extends P>) columnDefinition.getCustomGetterFrom(sourceType));
 
@@ -264,7 +264,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		return getter;
 	}
 
-	private <P, J> ContextualGetter<? super S, ? extends P> lookForAlternativeGetter(ClassMeta<P> classMeta, K key, ColumnDefinition<K, ?> columnDefinition, Collection<Type> types, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder) {
+	private <P, J> ContextualGetter<? super S, ? extends P> lookForAlternativeGetter(ClassMeta<P> classMeta, K key, ColumnDefinition<K, ?> columnDefinition, Collection<Type> types, MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder) {
 		// look for converter
 		Type propertyType = classMeta.getType();
 		Type sourceType = key.getType(propertyType);
@@ -280,7 +280,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		return lookForInstantiatorGetter(classMeta, key, columnDefinition, types, mappingContextFactoryBuilder);
 	}
 
-	public <P> ContextualGetter<? super S, ? extends P> lookForInstantiatorGetter(ClassMeta<P> classMeta, K key, ColumnDefinition<K, ?> columnDefinition, Collection<Type> types, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder) {
+	public <P> ContextualGetter<? super S, ? extends P> lookForInstantiatorGetter(ClassMeta<P> classMeta, K key, ColumnDefinition<K, ?> columnDefinition, Collection<Type> types, MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder) {
 
 
 		InstantiatorDefinitions.CompatibilityScorer scorer = InstantiatorDefinitions.getCompatibilityScorer(key);
@@ -297,7 +297,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 			ClassMeta<P> classMeta,
 			InstantiatorDefinition id, K key, ColumnDefinition<K, ?> columnDefinition,
 			Collection<Type> types,
-			MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder) {
+			MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder) {
 
 		Instantiator<? super T, ? extends P> instantiator =
 				classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id, classMeta.getReflectionService().builderIgnoresNullValues());

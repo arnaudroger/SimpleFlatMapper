@@ -2,6 +2,7 @@ package org.simpleflatmapper.test.map.property;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
@@ -104,7 +105,7 @@ public class PropertyTest {
     public void testGetterFactoryProperty() {
         ContextualGetterFactory<Object, Object> getterFactory = new ContextualGetterFactory<Object, Object>() {
             @Override
-            public <P> ContextualGetter<Object, P> newGetter(Type target, Object key, MappingContextFactoryBuilder<?, Object> mappingContextFactoryBuilder, Object... properties) {
+            public <P> ContextualGetter<Object, P> newGetter(Type target, Object key, MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder, Object... properties) {
                 return null;
             }
 

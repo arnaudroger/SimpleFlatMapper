@@ -163,7 +163,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
 
         return new ContextualGetterFactory<Object, K>() {
             @Override
-            public <P> ContextualGetter<Object, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, K> mappingContextFactoryBuilder, Object... properties) {
+            public <P> ContextualGetter<Object, P> newGetter(Type target, K key, MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder, Object... properties) {
                 for(ContextualGetterFactory<?, K> fact : factories) {
                     ContextualGetter<?, ?> getter = fact.newGetter(target, key, mappingContextFactoryBuilder, properties);
                     if (getter != null) {

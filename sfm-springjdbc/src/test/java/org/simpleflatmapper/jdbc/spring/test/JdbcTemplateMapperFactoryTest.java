@@ -8,6 +8,7 @@ import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.spring.JdbcTemplateMapperFactory;
 import org.simpleflatmapper.jdbc.spring.PreparedStatementCallbackImpl;
 import org.simpleflatmapper.jdbc.spring.ResultSetExtractorImpl;
+import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.getter.ContextualGetter;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
@@ -258,7 +259,7 @@ public class JdbcTemplateMapperFactoryTest {
 					}
 				}, new ContextualGetterFactory<ResultSet, JdbcColumnKey>() {
 					@Override
-					public <P> ContextualGetter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, MappingContextFactoryBuilder<?, JdbcColumnKey> mappingContextFactoryBuilder, Object... properties) {
+					public <P> ContextualGetter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, MappingContextFactoryBuilder<?, ? extends FieldKey<?>> mappingContextFactoryBuilder, Object... properties) {
 						Class enumClass = TypeHelper.toClass(target);
 						final Enum[] values = EnumHelper.getValues(enumClass);
 						final int index = key.getIndex();

@@ -16,13 +16,12 @@ import java.sql.ResultSet;
 public final class JdbcTemplateMapperFactory extends AbstractColumnNameDiscriminatorMapperFactory<JdbcColumnKey, JdbcTemplateMapperFactory, ResultSet> {
 
 	private JdbcTemplateMapperFactory(AbstractMapperFactory<JdbcColumnKey, ?, ResultSet> config) {
-		super(config, NameBasedResultSetGetterFactory.INSTANCE);
+		super(config);
 	}
 
 	private JdbcTemplateMapperFactory() {
 		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(),
 				FieldMapperColumnDefinition.<JdbcColumnKey>identity(),
-				NameBasedResultSetGetterFactory.INSTANCE,
 				new ContextualGetterFactoryAdapter<ResultSet, JdbcColumnKey>(ResultSetGetterFactory.INSTANCE));
 	}
 

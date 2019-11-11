@@ -1,7 +1,5 @@
 package org.simpleflatmapper.csv;
 
-import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.mapper.CsvMappingContextFactoryBuilder;
 import org.simpleflatmapper.csv.mapper.CsvRowGetterFactory;
@@ -21,7 +19,6 @@ import org.simpleflatmapper.map.mapper.DynamicSetRowMapper;
 import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.map.mapper.TransformSetRowMapper;
 import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
-import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ParameterizedTypeImpl;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ConstantPredicate;
@@ -69,23 +66,6 @@ import java.util.stream.Stream;
 public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMapperFactory<CsvColumnKey, CsvMapperFactory, CsvRow> {
 
 
-	private static final DiscriminatorNamedGetterFactory<CsvRow> NAMED_GETTER = new DiscriminatorNamedGetterFactory<CsvRow>() {
-		@Override
-		public <T> DiscriminatorNamedGetter<CsvRow, T> newGetter(final Class<T> discriminatorType) {
-			final Converter<? super String, ? extends T> converter = ConverterService.getInstance().findConverter(String.class, discriminatorType);
-			return new DiscriminatorNamedGetter<CsvRow, T>() {
-				@Override
-				public T get(CsvRow target, String discriminatorColumn) throws Exception {
-					int index = target.getIndex(discriminatorColumn);
-					if (index < 0) {
-						return null;
-					}
-					return converter.convert(target.getString(index));
-				}
-			};
-		}
-	};
-	
 	/**
 	 * instantiate a new JdbcMapperFactory
 	 * @return a new JdbcMapperFactory
@@ -104,15 +84,15 @@ public final class CsvMapperFactory extends AbstractColumnNameDiscriminatorMappe
 	private String defaultDateFormat = CsvMapperBuilder.DEFAULT_DATE_FORMAT;
 
 	private CsvMapperFactory(AbstractColumnDefinitionProvider<CsvColumnKey> columnDefinitionProvider) {
-		super(columnDefinitionProvider, CsvColumnDefinition.identity(), NAMED_GETTER,  CsvRowGetterFactory.INSTANCE);
+		super(columnDefinitionProvider, CsvColumnDefinition.identity(),  CsvRowGetterFactory.INSTANCE);
 	}
 
 	private CsvMapperFactory() {
-		super(new CsvColumnDefinitionProviderImpl(), CsvColumnDefinition.identity(), NAMED_GETTER,  CsvRowGetterFactory.INSTANCE);
+		super(new CsvColumnDefinitionProviderImpl(), CsvColumnDefinition.identity(),  CsvRowGetterFactory.INSTANCE);
 	}
 	
 	private CsvMapperFactory(CsvMapperFactory parent)  {
-		super(parent, NAMED_GETTER);
+		super(parent);
 		this.defaultDateFormat = parent.defaultDateFormat;
 	}
 

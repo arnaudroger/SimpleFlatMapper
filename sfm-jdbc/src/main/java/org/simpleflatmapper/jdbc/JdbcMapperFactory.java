@@ -76,11 +76,11 @@ public final class JdbcMapperFactory
 
 
 	private JdbcMapperFactory(AbstractMapperFactory<JdbcColumnKey, ?, ResultSet> config) {
-		super(config, NameBasedResultSetGetterFactory.INSTANCE);
+		super(config);
 	}
 
 	private JdbcMapperFactory() {
-		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(), FieldMapperColumnDefinition.<JdbcColumnKey>identity(), NameBasedResultSetGetterFactory.INSTANCE, new ContextualGetterFactoryAdapter<ResultSet, JdbcColumnKey>(ResultSetGetterFactory.INSTANCE));
+		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(), FieldMapperColumnDefinition.<JdbcColumnKey>identity(), new ContextualGetterFactoryAdapter<ResultSet, JdbcColumnKey>(ResultSetGetterFactory.INSTANCE));
 	}
 
 	/**

@@ -16,19 +16,6 @@ import java.lang.reflect.Type;
 public class SfmRecordMapperProviderFactory
         extends AbstractColumnNameDiscriminatorMapperFactory<JooqFieldKey, SfmRecordMapperProviderFactory, Record> {
 
-
-    private static final DiscriminatorNamedGetterFactory<Record> NAMED_GETTER = new DiscriminatorNamedGetterFactory<Record>() {
-        @Override
-        public <T> DiscriminatorNamedGetter<Record, T> newGetter(final Class<T> type) {
-            return new DiscriminatorNamedGetter<Record, T>() {
-                @Override
-                public T get(Record record, String discriminatorColumn) throws Exception {
-                    return record.<T>getValue(discriminatorColumn, type);
-                }
-            };
-        }
-    };
-
     public static SfmRecordMapperProviderFactory newInstance() {
         return new SfmRecordMapperProviderFactory();
     }
@@ -39,15 +26,15 @@ public class SfmRecordMapperProviderFactory
     }
 
     public SfmRecordMapperProviderFactory(AbstractMapperFactory<JooqFieldKey, ?, Record> config) {
-        super(config, NAMED_GETTER);
+        super(config);
     }
 
     public SfmRecordMapperProviderFactory(AbstractColumnDefinitionProvider<JooqFieldKey> columnDefinitions, FieldMapperColumnDefinition<JooqFieldKey> identity) {
-        super(columnDefinitions, identity, NAMED_GETTER, new ContextualGetterFactoryAdapter<Record, JooqFieldKey>(new RecordGetterFactory()));
+        super(columnDefinitions, identity, new ContextualGetterFactoryAdapter<Record, JooqFieldKey>(new RecordGetterFactory()));
     }
 
     private SfmRecordMapperProviderFactory() {
-        super(new FieldMapperColumnDefinitionProviderImpl<JooqFieldKey>(), FieldMapperColumnDefinition.<JooqFieldKey>identity(), NAMED_GETTER, new ContextualGetterFactoryAdapter<Record, JooqFieldKey>(new RecordGetterFactory()));
+        super(new FieldMapperColumnDefinitionProviderImpl<JooqFieldKey>(), FieldMapperColumnDefinition.<JooqFieldKey>identity(), new ContextualGetterFactoryAdapter<Record, JooqFieldKey>(new RecordGetterFactory()));
     }
 
     public SfmRecordMapperProvider newProvider() {

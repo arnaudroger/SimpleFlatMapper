@@ -12,15 +12,24 @@ import java.lang.reflect.Type;
 public class AbstractColumnNameDiscriminatorMapperFactory<
         K extends FieldKey<K>,
         MF extends AbstractColumnNameDiscriminatorMapperFactory<K, MF, S>, S> extends AbstractMapperFactory<K, MF, S> {
-    private final DiscriminatorNamedGetterFactory<S> columnNameGetterFactory;
-    public AbstractColumnNameDiscriminatorMapperFactory(AbstractMapperFactory<K, ?, S> config, DiscriminatorNamedGetterFactory<S> columnNameGetterFactory) {
+
+
+    public AbstractColumnNameDiscriminatorMapperFactory(AbstractMapperFactory<K, ?, S> config) {
         super(config);
-        this.columnNameGetterFactory = columnNameGetterFactory;
     }
 
+    public AbstractColumnNameDiscriminatorMapperFactory(AbstractColumnDefinitionProvider<K> columnDefinitions, ColumnDefinition<K, ?> identity, ContextualGetterFactory<S, K> getterFactory) {
+        super(columnDefinitions, identity, getterFactory);
+    }
+
+    @Deprecated
+    public AbstractColumnNameDiscriminatorMapperFactory(AbstractMapperFactory<K, ?, S> config, DiscriminatorNamedGetterFactory<S> columnNameGetterFactory) {
+        super(config);
+    }
+
+    @Deprecated
     public AbstractColumnNameDiscriminatorMapperFactory(AbstractColumnDefinitionProvider<K> columnDefinitions, ColumnDefinition<K, ?> identity, DiscriminatorNamedGetterFactory<S> columnNameGetterFactory, ContextualGetterFactory<S, K> getterFactory) {
         super(columnDefinitions, identity, getterFactory);
-        this.columnNameGetterFactory = columnNameGetterFactory;
     }
 
     /**

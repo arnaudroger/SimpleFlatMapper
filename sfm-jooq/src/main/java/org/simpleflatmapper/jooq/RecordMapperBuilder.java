@@ -1,8 +1,10 @@
 package org.simpleflatmapper.jooq;
 
 
+import org.jooq.Configuration;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
@@ -28,25 +30,28 @@ import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 
 
-public class RecordMapperBuilder<E, R extends Record> extends AbstractConstantTargetMapperBuilder<R, E, JooqFieldKey, RecordMapperBuilder<E, R>> {
+public class RecordMapperBuilder<E> extends AbstractConstantTargetMapperBuilder<Record, E, JooqFieldKey, RecordMapperBuilder<E>> {
 
+
+    private Field[] fields;
+    private final Configuration configuration;
 
     public RecordMapperBuilder(
             ClassMeta<E> classMeta,
             MapperConfig<JooqFieldKey, ?> mapperConfig,
-            Class<R> recordClass) {
-        super(classMeta, recordClass, mapperConfig, new ConstantTargetFieldMapperFactory<R, JooqFieldKey>() {
+            Configuration configuration) {
+        super(classMeta, Record.class, mapperConfig, new ConstantTargetFieldMapperFactory<Record, JooqFieldKey>() {
             @Override
-            public <S, P> FieldMapper<S, R> newFieldMapper(PropertyMapping<S, P, JooqFieldKey> propertyMapping, MappingContextFactoryBuilder contextFactoryBuilder, MapperBuilderErrorHandler mappingErrorHandler) {
+            public <S, P> FieldMapper<S, Record> newFieldMapper(PropertyMapping<S, P, JooqFieldKey> propertyMapping, MappingContextFactoryBuilder contextFactoryBuilder, MapperBuilderErrorHandler mappingErrorHandler) {
                 final Getter<? super S, ? extends P> getter = propertyMapping.getPropertyMeta().getGetter();
                 final Field<?> field = propertyMapping.getColumnKey().getField();
                 final Type propertyType = propertyMapping.getPropertyMeta().getPropertyType();
                 final Class<?> fieldType = field.getType();
 
                 if (fieldType.isAssignableFrom(TypeHelper.toClass(propertyType))) {
-                    return new FieldMapper<S, R>() {
+                    return new FieldMapper<S, Record>() {
                         @Override
-                        public void mapTo(S source, R target, MappingContext<? super S> context) throws Exception {
+                        public void mapTo(S source, Record target, MappingContext<? super S> context) throws Exception {
                             P value = getter.get(source);
                             target.set((Field<P>)field, value);
                         }
@@ -54,9 +59,9 @@ public class RecordMapperBuilder<E, R extends Record> extends AbstractConstantTa
                 } else {
                     final Converter converter = ConverterService.getInstance().findConverter(propertyType, fieldType);
                     if (converter == null) throw new IllegalStateException("Cannot find converter from " + propertyType + " to " + fieldType + " for field " + field);
-                    return new FieldMapper<S, R>() {
+                    return new FieldMapper<S, Record>() {
                         @Override
-                        public void mapTo(S source, R target, MappingContext<? super S> context) throws Exception {
+                        public void mapTo(S source, Record target, MappingContext<? super S> context) throws Exception {
                             P value = getter.get(source);
                             target.set((Field)field, converter.convert(value));
                         }
@@ -65,15 +70,19 @@ public class RecordMapperBuilder<E, R extends Record> extends AbstractConstantTa
                 }
             }
         });
+        this.configuration = configuration;
     }
 
     @Override
-    protected BiInstantiator<E, MappingContext<? super E>, R> getInstantiator() {
-        try {
-            return new EmptyConstructorBiInstantiator<>(sourceClass.getConstructor());
-        } catch (NoSuchMethodException e) {
-            return ErrorHelper.rethrow(e);
-        }
+    protected BiInstantiator<E, MappingContext<? super E>, Record> getInstantiator() {
+        final Field[] fields = this.fields;
+        final Configuration conf = this.configuration;
+        return new BiInstantiator<E, MappingContext<? super E>, Record>() {
+            @Override
+            public Record newInstance(E e, MappingContext<? super E> mappingContext) {
+                return DSL.using(conf).newRecord(fields);
+            }
+        };
     }
 
     @Override
@@ -87,4 +96,11 @@ public class RecordMapperBuilder<E, R extends Record> extends AbstractConstantTa
     }
 
 
+    public void setFields(Field<?>[] fields) {
+        this.fields = fields;
+        int i = 0;
+        for(Field f : fields) {
+            addColumn(new JooqFieldKey(f, i++));
+        }
+    }
 }

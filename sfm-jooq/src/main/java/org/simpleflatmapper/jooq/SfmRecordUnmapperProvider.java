@@ -1,11 +1,9 @@
 package org.simpleflatmapper.jooq;
 
 import org.jooq.*;
-import org.simpleflatmapper.jooq.getter.RecordGetter;
 import org.simpleflatmapper.map.ContextualSourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SourceMapper;
-import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.Function;
 
@@ -22,15 +20,17 @@ public class SfmRecordUnmapperProvider implements RecordUnmapperProvider {
 	private final ConcurrentMap<TargetColumnsMapperKey, ContextualSourceMapper> mapperCache = new ConcurrentHashMap<TargetColumnsMapperKey, ContextualSourceMapper>();
 	private final Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory;
 	private final ReflectionService reflectionService;
+	private final Configuration configuration;
 
 	@Deprecated
 	/**
 	 * please use SfmRecorMapperProviderFactory.
 	 */
 	public SfmRecordUnmapperProvider(
-			Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory, ReflectionService reflectionService) {
+			Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory, ReflectionService reflectionService, Configuration configuration) {
 		this.mapperConfigFactory = mapperConfigFactory;
 		this.reflectionService = reflectionService;
+		this.configuration = configuration;
 	}
 
 	@Override
@@ -43,14 +43,16 @@ public class SfmRecordUnmapperProvider implements RecordUnmapperProvider {
 		if (mapper == null) {
 			MapperConfig<JooqFieldKey, Record> mapperConfig = mapperConfigFactory.apply(type);
 
-			JooqUnmapperBuilder<E, R> mapperBuilder =
-					new JooqUnmapperBuilder<E, R>(
+			RecordMapperBuilder<E> mapperBuilder =
+					new RecordMapperBuilder<E>(
 							reflectionService.<E>getClassMeta(type),
-							mapperConfig, (Class<R>) recordType.getClass());
+							mapperConfig, configuration);
+
+			mapperBuilder.setFields(recordType.fields());
 
 			int i = 0;
 			for(Field<?> field : recordType.fields()) {
-				mapperBuilder.addField(new JooqFieldKey(field, i++));
+				mapperBuilder.addColumn(new JooqFieldKey(field, i++));
 			}
 
 			mapper = mapperBuilder.mapper();

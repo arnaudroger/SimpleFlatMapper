@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.simpleflatmapper</groupId>
-    <artifactId>sfm-parent</artifactId>
+    <artifactId>sfm-parent-jre6</artifactId>
     <version>8.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -88,7 +87,7 @@
                     <configuration>
                         <classifier>${javadoc.classifier}</classifier>
                         <header>
-                            <![CDATA[<a href="http://www.simpleflatmapper.org">SimpleFlatMapper</a> hosted on <a href="https://github.com/arnaudroger/SimpleFlatMapper">GitHub</a>]]>
+                            &lt;a href="http://www.simpleflatmapper.org"&gt;SimpleFlatMapper&lt;/a&gt; hosted on &lt;a href="https://github.com/arnaudroger/SimpleFlatMapper"&gt;GitHub&lt;/a&gt;
                         </header>
                         <sourceFileExcludes>
                             <exclude>**/module-info.java</exclude>
@@ -293,7 +292,7 @@
                         <configuration>
                             <classifier>${javadoc.classifier}</classifier>
                             <header>
-                                <![CDATA[<a href="http://www.simpleflatmapper.org">SimpleFlatMapper</a> hosted on <a href="https://github.com/arnaudroger/SimpleFlatMapper">GitHub</a>]]>
+                                &lt;a href="http://www.simpleflatmapper.org"&gt;SimpleFlatMapper&lt;/a&gt; hosted on &lt;a href="https://github.com/arnaudroger/SimpleFlatMapper"&gt;GitHub&lt;/a&gt;
                             </header>
                             <sourceFileExcludes>
                                 <exclude>**/module-info.java</exclude>
@@ -542,7 +541,7 @@
                         <configuration>
                             <classifier>${javadoc.classifier}</classifier>
                             <header>
-                                <![CDATA[<a href="http://www.simpleflatmapper.org">SimpleFlatMapper</a> hosted on <a href="https://github.com/arnaudroger/SimpleFlatMapper">GitHub</a>]]>
+                                &lt;a href="http://www.simpleflatmapper.org"&gt;SimpleFlatMapper&lt;/a&gt; hosted on &lt;a href="https://github.com/arnaudroger/SimpleFlatMapper"&gt;GitHub&lt;/a&gt;
                             </header>
                         </configuration>
                     </plugin>
@@ -558,8 +557,8 @@
                 </property>
             </activation>
             <properties>
-                <staging.repository />
-                <release.arguments />
+                <staging.repository/>
+                <release.arguments/>
             </properties>
             <build>
                 <plugins>
@@ -660,7 +659,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.simpleflatmapper</groupId>
-                    <artifactId>ow2asm</artifactId>
+                    <artifactId>ow2asm-jre6</artifactId>
                     <version>5_1</version>
                     <scope>provided</scope>
                 </dependency>
@@ -692,7 +691,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.simpleflatmapper</groupId>
-                    <artifactId>ow2asm</artifactId>
+                    <artifactId>ow2asm-jre6</artifactId>
                     <version>6.0</version>
                     <scope>provided</scope>
                 </dependency>
@@ -702,7 +701,9 @@
         <profile>
             <id>release</id>
             <activation>
-                <property><name>release</name></property>
+                <property>
+<name>release</name>
+</property>
             </activation>
             <build>
                 <plugins>

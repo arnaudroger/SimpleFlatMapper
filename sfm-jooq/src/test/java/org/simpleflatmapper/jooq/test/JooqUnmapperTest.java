@@ -5,6 +5,9 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
 import org.simpleflatmapper.jooq.*;
+import org.simpleflatmapper.jooq.test.books.Label;
+import org.simpleflatmapper.jooq.test.books.Labels;
+import org.simpleflatmapper.jooq.test.books.LabelsRecord;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 

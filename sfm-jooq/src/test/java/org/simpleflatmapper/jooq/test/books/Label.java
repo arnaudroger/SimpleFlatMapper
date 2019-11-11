@@ -1,4 +1,4 @@
-package org.simpleflatmapper.jooq.test;
+package org.simpleflatmapper.jooq.test.books;
 
 import java.util.UUID;
 

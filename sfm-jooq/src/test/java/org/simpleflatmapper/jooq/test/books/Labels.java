@@ -3,7 +3,7 @@
 // (powered by Fernflower decompiler)
 //
 
-package org.simpleflatmapper.jooq.test;
+package org.simpleflatmapper.jooq.test.books;
 
 import java.util.List;
 import java.util.UUID;

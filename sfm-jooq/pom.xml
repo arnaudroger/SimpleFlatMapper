@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
-			<version>3.11.11</version>
+			<version>3.12.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -126,7 +126,6 @@
 								<exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
 								<exclude>**/org/simpleflatmapper/**/time/*</exclude>
 								<exclude>**/*Unmapper*.java</exclude>
-								<exclude>**/*Labels*.java</exclude>
 							</excludes>
 						</configuration>
 
@@ -149,6 +148,7 @@
 										<exclude>**/org/simpleflatmapper/jooq/test/Issue337Test*</exclude>
 										<exclude>**/*Unmapper*.java</exclude>
 										<exclude>**/*Labels*.java</exclude>
+										<exclude>**/books/*.java</exclude>
 									</testExcludes>
 								</configuration>
 								<goals>
@@ -189,7 +189,6 @@
 								<exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
 								<exclude>**/org/simpleflatmapper/**/time/*</exclude>
 								<exclude>**/*Unmapper*.java</exclude>
-								<exclude>**/*Labels*.java</exclude>
 							</excludes>
 						</configuration>
 
@@ -212,6 +211,7 @@
 										<exclude>**/org/simpleflatmapper/jooq/test/Issue337Test*</exclude>
 										<exclude>**/*Unmapper*.java</exclude>
 										<exclude>**/*Labels*.java</exclude>
+										<exclude>**/books/*.java</exclude>
 									</testExcludes>
 								</configuration>
 								<goals>

@@ -18,7 +18,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+//IFJAVA8_START
 import java.util.stream.Stream;
+//IFJAVA8_END
 
 public final class SelectQueryMapper<T> {
 
@@ -35,7 +38,7 @@ public final class SelectQueryMapper<T> {
             throws MappingException {
         SetRowMapper<ResultSet, ResultSet, T, SQLException> mapper = getMapper(source);
         try {
-            ArrayList<T> list = new ArrayList<T>();
+            final ArrayList<T> list = new ArrayList<T>();
 
             ResultSet rs = source.fetchResultSet();
             try {
@@ -205,7 +208,7 @@ public final class SelectQueryMapper<T> {
     }
 
 
-    private Closer closer(ResultSet rs) {
+    private Closer closer(final ResultSet rs) {
         return new Closer() {
             @Override
             public void close() {

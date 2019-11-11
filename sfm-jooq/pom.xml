@@ -120,8 +120,42 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
 						<configuration>
-							<excludes><exclude>**/*Unmapper*.java</exclude></excludes>
+							<excludes>
+								<exclude>**/module-info.java</exclude>
+								<exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
+								<exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
+								<exclude>**/org/simpleflatmapper/**/time/*</exclude>
+								<exclude>**/*Unmapper*.java</exclude>
+								<exclude>**/*Labels*.java</exclude>
+							</excludes>
 						</configuration>
+
+						<executions>
+							<execution>
+								<id>default-testCompile</id>
+								<phase>test-compile</phase>
+								<configuration>
+									<testExcludes>
+										<exclude>**/module-info.java</exclude>
+										<exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
+										<exclude>**/org/simpleflatmapper/core/tuples/fasttuple/**/*</exclude>
+										<exclude>**/org/simpleflatmapper/core/tuples/jool/**/*</exclude>
+										<exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
+										<exclude>**/org/simpleflatmapper/**/samples/GettingStarted*</exclude>
+										<exclude>**/org/simpleflatmapper/**/time/*</exclude>
+										<exclude>**/org/simpleflatmapper/datastax/test/*</exclude>
+										<exclude>**/org/simpleflatmapper/**/JoolTupleTest.java</exclude>
+										<exclude>**/org/simpleflatmapper/**/FastTupleTest.java</exclude>
+										<exclude>**/org/simpleflatmapper/jooq/test/Issue337Test*</exclude>
+										<exclude>**/*Unmapper*.java</exclude>
+										<exclude>**/*Labels*.java</exclude>
+									</testExcludes>
+								</configuration>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
@@ -149,8 +183,42 @@
 						<artifactId>maven-compiler-plugin</artifactId>
 
 						<configuration>
-							<excludes><exclude>**/*Unmapper*.java</exclude></excludes>
+							<excludes>
+								<exclude>**/module-info.java</exclude>
+								<exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
+								<exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
+								<exclude>**/org/simpleflatmapper/**/time/*</exclude>
+								<exclude>**/*Unmapper*.java</exclude>
+								<exclude>**/*Labels*.java</exclude>
+							</excludes>
 						</configuration>
+
+						<executions>
+							<execution>
+								<id>default-testCompile</id>
+								<phase>test-compile</phase>
+								<configuration>
+									<testExcludes>
+										<exclude>**/module-info.java</exclude>
+										<exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
+										<exclude>**/org/simpleflatmapper/core/tuples/fasttuple/**/*</exclude>
+										<exclude>**/org/simpleflatmapper/core/tuples/jool/**/*</exclude>
+										<exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
+										<exclude>**/org/simpleflatmapper/**/samples/GettingStarted*</exclude>
+										<exclude>**/org/simpleflatmapper/**/time/*</exclude>
+										<exclude>**/org/simpleflatmapper/datastax/test/*</exclude>
+										<exclude>**/org/simpleflatmapper/**/JoolTupleTest.java</exclude>
+										<exclude>**/org/simpleflatmapper/**/FastTupleTest.java</exclude>
+										<exclude>**/org/simpleflatmapper/jooq/test/Issue337Test*</exclude>
+										<exclude>**/*Unmapper*.java</exclude>
+										<exclude>**/*Labels*.java</exclude>
+									</testExcludes>
+								</configuration>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

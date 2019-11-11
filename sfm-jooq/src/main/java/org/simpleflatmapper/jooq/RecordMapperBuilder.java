@@ -7,27 +7,20 @@ import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
-import org.simpleflatmapper.jdbc.JdbcColumnKey;
-import org.simpleflatmapper.jdbc.impl.*;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.setter.ContextualIndexedSetterFactory;
 import org.simpleflatmapper.reflect.*;
-import org.simpleflatmapper.reflect.impl.EmptyConstructorBiInstantiator;
 import org.simpleflatmapper.reflect.meta.*;
-import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
-import java.sql.PreparedStatement;
 
 
 public class RecordMapperBuilder<E> extends AbstractConstantTargetMapperBuilder<Record, E, JooqFieldKey, RecordMapperBuilder<E>> {

@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 public final class SelectQueryMapper<T> {
 
-    private final MapperCache<JooqFieldKey, SetRowMapper<ResultSet, ResultSet, T, SQLException>> mapperCache = new MapperCache<>(JdbcColumnKeyMapperKeyComparator.INSTANCE);
+    private final MapperCache<JooqFieldKey, SetRowMapper<ResultSet, ResultSet, T, SQLException>> mapperCache = new MapperCache<JooqFieldKey, SetRowMapper<ResultSet, ResultSet, T, SQLException>>(JdbcColumnKeyMapperKeyComparator.INSTANCE);
     private final ClassMeta<T> classMeta;
     private final MapperConfig<JooqFieldKey, ResultSet> mapperConfig;
 

@@ -9,8 +9,6 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 
 import java.sql.Connection;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -25,7 +23,7 @@ public class JooqUnmapperTest {
 	@SuppressWarnings("unchecked")
 	public void testCacheMapper() {
 
-		SfmRecordUnmapperProvider recordMapperProvider = SfmRecordMapperProviderFactory.newInstance().newRecordUnapperProvider(null);
+		SfmRecordUnmapperProvider recordMapperProvider = JooqMapperFactory.newInstance().newRecordUnmapperProvider(null);
 		RecordType rt = mock(RecordType.class);
 		Field field1 = mock(Field.class);
 		when(field1.getName()).thenReturn("id");
@@ -48,7 +46,7 @@ public class JooqUnmapperTest {
 				.set(conn)
 				.set(SQLDialect.HSQLDB);
 
-		cfg.set(SfmRecordMapperProviderFactory.newInstance().newRecordUnapperProvider(cfg));
+		cfg.set(JooqMapperFactory.newInstance().newRecordUnmapperProvider(cfg));
 
 		DSLContext dsl = DSL.using(cfg);
 

@@ -13,6 +13,10 @@ import org.simpleflatmapper.util.Function;
 
 import java.lang.reflect.Type;
 
+/**
+ * use JooqMapperFactory
+ */
+@Deprecated
 public class SfmRecordMapperProviderFactory
         extends AbstractColumnNameDiscriminatorMapperFactory<JooqFieldKey, SfmRecordMapperProviderFactory, Record> {
 
@@ -46,19 +50,5 @@ public class SfmRecordMapperProviderFactory
         }, getReflectionService());
     }
 
-    public SfmRecordMapperProvider newRecordMapperProvider() {
-        return newProvider();
-    }
-
-    //IFJAVA8_START
-    public SfmRecordUnmapperProvider newRecordUnapperProvider(Configuration configuration) {
-        return new SfmRecordUnmapperProvider(new Function<Type, MapperConfig<JooqFieldKey, Record>>() {
-            @Override
-            public MapperConfig<JooqFieldKey, Record> apply(Type type) {
-                return mapperConfig(type);
-            }
-        }, getReflectionService(), configuration);
-    }
-    //IFJAVA8_END
 
 }

@@ -1,11 +1,8 @@
 package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.getter.ContextualGetterFactory;
-import org.simpleflatmapper.util.CheckedBiFunction;
 import org.simpleflatmapper.util.Consumer;
-import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
 

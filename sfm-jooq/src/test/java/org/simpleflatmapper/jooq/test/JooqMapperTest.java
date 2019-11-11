@@ -25,7 +25,7 @@ public class JooqMapperTest {
 	@SuppressWarnings("unchecked")
 	public void testCacheMapper() {
 		
-		SfmRecordMapperProvider recordMapperProvider = SfmRecordMapperProviderFactory.newInstance().newRecordMapperProvider();;
+		SfmRecordMapperProvider recordMapperProvider = SfmRecordMapperProviderFactory.newInstance().newProvider();;
 		RecordType rt = mock(RecordType.class);
 		Field field1 = mock(Field.class);
 		when(field1.getName()).thenReturn("id");

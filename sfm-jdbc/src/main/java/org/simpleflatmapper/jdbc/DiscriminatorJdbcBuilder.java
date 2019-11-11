@@ -1,7 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
 
-import org.simpleflatmapper.jdbc.impl.ResultSetEnumerable;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.DiscriminatorMapper;

@@ -1,4 +1,4 @@
-package org.simpleflatmapper.jdbc.impl;
+package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.ErrorHelper;

@@ -17,7 +17,6 @@ import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.Enumerable;
 import org.simpleflatmapper.util.UnaryFactory;
-import org.simpleflatmapper.jdbc.impl.ResultSetEnumerable;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;

@@ -50,11 +50,6 @@ public class SfmRecordUnmapperProvider implements RecordUnmapperProvider {
 
 			mapperBuilder.setFields(recordType.fields());
 
-			int i = 0;
-			for(Field<?> field : recordType.fields()) {
-				mapperBuilder.addColumn(new JooqFieldKey(field, i++));
-			}
-
 			mapper = mapperBuilder.mapper();
 
 			mapperCache.putIfAbsent(key, mapper);

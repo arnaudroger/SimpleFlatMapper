@@ -1,7 +1,6 @@
 package org.simpleflatmapper.map.setter;
 
 
-import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.converter.ContextFactoryBuilder;
 
 public interface ContextualSetterFactory<T, A> {

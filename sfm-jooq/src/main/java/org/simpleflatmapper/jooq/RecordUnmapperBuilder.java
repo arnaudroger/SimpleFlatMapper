@@ -23,13 +23,13 @@ import org.simpleflatmapper.util.TypeHelper;
 import java.lang.reflect.Type;
 
 
-public class RecordMapperBuilder<E> extends AbstractConstantTargetMapperBuilder<Record, E, JooqFieldKey, RecordMapperBuilder<E>> {
+public class RecordUnmapperBuilder<E> extends AbstractConstantTargetMapperBuilder<Record, E, JooqFieldKey, RecordUnmapperBuilder<E>> {
 
 
     private Field[] fields;
     private final Configuration configuration;
 
-    public RecordMapperBuilder(
+    public RecordUnmapperBuilder(
             ClassMeta<E> classMeta,
             MapperConfig<JooqFieldKey, ?> mapperConfig,
             Configuration configuration) {

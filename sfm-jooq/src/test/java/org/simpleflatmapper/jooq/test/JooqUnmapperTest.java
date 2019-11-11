@@ -5,7 +5,6 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
 import org.simpleflatmapper.jooq.*;
-import org.simpleflatmapper.test.beans.DbExtendedType;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 
@@ -21,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 public class JooqUnmapperTest {
 
+	//IFJAVA8_START
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testCacheMapper() {
@@ -63,4 +63,6 @@ public class JooqUnmapperTest {
 
 
 	}
+	//IFJAVA8_END
+
 }

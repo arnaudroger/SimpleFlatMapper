@@ -43,8 +43,8 @@ public class SfmRecordUnmapperProvider implements RecordUnmapperProvider {
 		if (mapper == null) {
 			MapperConfig<JooqFieldKey, Record> mapperConfig = mapperConfigFactory.apply(type);
 
-			RecordMapperBuilder<E> mapperBuilder =
-					new RecordMapperBuilder<E>(
+			RecordUnmapperBuilder<E> mapperBuilder =
+					new RecordUnmapperBuilder<E>(
 							reflectionService.<E>getClassMeta(type),
 							mapperConfig, configuration);
 

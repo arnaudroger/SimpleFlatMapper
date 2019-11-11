@@ -63,6 +63,7 @@ public class SfmRecordMapperProviderFactory
         return newProvider();
     }
 
+    //IFJAVA8_START
     public SfmRecordUnmapperProvider newRecordUnapperProvider(Configuration configuration) {
         return new SfmRecordUnmapperProvider(new Function<Type, MapperConfig<JooqFieldKey, Record>>() {
             @Override
@@ -71,5 +72,6 @@ public class SfmRecordMapperProviderFactory
             }
         }, getReflectionService(), configuration);
     }
+    //IFJAVA8_END
 
 }

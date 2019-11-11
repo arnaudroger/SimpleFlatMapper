@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jooq;
 
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
+import org.simpleflatmapper.jdbc.ResultSetEnumerable;
 import org.simpleflatmapper.jdbc.ResultSetGetterFactory;
 import org.simpleflatmapper.map.*;
 import org.simpleflatmapper.map.context.KeySourceGetter;

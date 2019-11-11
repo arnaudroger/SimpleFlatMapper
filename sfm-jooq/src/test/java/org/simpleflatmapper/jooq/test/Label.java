@@ -1,6 +1,5 @@
 package org.simpleflatmapper.jooq.test;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Label {

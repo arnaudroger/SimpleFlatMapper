@@ -15,7 +15,6 @@ public class AutoCloseableEnumerable<T> implements Enumerable<T>
         this.closeable = closeable;
     }
 
-    @Override
     public void close() throws Exception {
         closeable.close();
     }

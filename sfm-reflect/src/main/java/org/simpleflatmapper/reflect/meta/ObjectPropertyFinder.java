@@ -231,6 +231,10 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 
 	private boolean tryPlural(PropertyMeta<T, ?> prop) {
 		Type propertyType = prop.getPropertyType();
+		return isListOrArray(propertyType);
+	}
+
+	private boolean isListOrArray(Type propertyType) {
 		return TypeHelper.isArray(propertyType) || TypeHelper.isAssignable(Iterable.class, propertyType);
 	}
 
@@ -256,7 +260,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	private boolean excludeSpeculation(PropertyMeta<T, ?> prop) {
 		Type propertyType = prop.getPropertyType();
 		String type = TypeHelper.toClass(propertyType).getName();
-		return type.startsWith("java.")
+		return (!isListOrArray(propertyType) && type.startsWith("java."))
 				|| TypeHelper.isEnum(propertyType)
 				|| TypeHelper.isPrimitive(propertyType);
 	}

@@ -27,22 +27,25 @@ public class SelectQueryMapperFactory
 
     public static SelectQueryMapperFactory newInstance(
             AbstractMapperFactory<JooqFieldKey, ?, ResultSet> config) {
-        return new SelectQueryMapperFactory(config.addColumnProperty(ConstantPredicate.truePredicate(), SpeculativeObjectLookUpProperty.INSTANCE));
+        return new SelectQueryMapperFactory(config);
     }
 
 
     private SelectQueryMapperFactory() {
         super(new FieldMapperColumnDefinitionProviderImpl<JooqFieldKey>(), FieldMapperColumnDefinition.<JooqFieldKey>identity(), adapt(ResultSetGetterFactory.INSTANCE));
+        addColumnProperty(ConstantPredicate.truePredicate(), SpeculativeObjectLookUpProperty.INSTANCE);
     }
 
 
 
     private SelectQueryMapperFactory(AbstractMapperFactory<JooqFieldKey, ?, ResultSet> config) {
         super(config);
+        addColumnProperty(ConstantPredicate.truePredicate(), SpeculativeObjectLookUpProperty.INSTANCE);
     }
 
     private SelectQueryMapperFactory(AbstractColumnDefinitionProvider<JooqFieldKey> columnDefinitions, FieldMapperColumnDefinition<JooqFieldKey> identity) {
         super(columnDefinitions, identity, adapt(ResultSetGetterFactory.INSTANCE));
+        addColumnProperty(ConstantPredicate.truePredicate(), SpeculativeObjectLookUpProperty.INSTANCE);
     }
 
     private static ContextualGetterFactory<ResultSet, JooqFieldKey> adapt(final ResultSetGetterFactory instance) {

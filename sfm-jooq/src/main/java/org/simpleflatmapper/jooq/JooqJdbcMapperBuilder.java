@@ -1,9 +1,7 @@
 package org.simpleflatmapper.jooq;
 
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
-import org.simpleflatmapper.jdbc.JdbcMappingContextFactoryBuilder;
 import org.simpleflatmapper.jdbc.ResultSetGetterFactory;
-import org.simpleflatmapper.jdbc.impl.JdbcKeySourceGetter;
 import org.simpleflatmapper.map.*;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.getter.ContextualGetter;
@@ -26,9 +24,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.List;
-//IFJAVA8_START
-import java.util.stream.Stream;
-//IFJAVA8_END
 /**
  * @param <T> the targeted type of the jdbcMapper
  */

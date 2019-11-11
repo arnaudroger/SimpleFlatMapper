@@ -149,7 +149,7 @@ public final class SelectQueryMapper<T> {
 
 
     private <SET extends TableLike & ResultQuery> SetRowMapper<ResultSet, ResultSet, T, SQLException> getMapper(SET source) {
-        Field[] fields = source.fields();
+        Field[] fields = getFields(source);
 
         JooqFieldKey[] keys = new JooqFieldKey[fields.length];
         for(int i = 0; i < fields.length; i ++) {
@@ -166,6 +166,14 @@ public final class SelectQueryMapper<T> {
         }
 
         return mapper;
+    }
+
+    private <SET extends TableLike & ResultQuery> Field[] getFields(SET source) {
+        if (source instanceof Select) {
+            List<Field<?>> select = ((Select<?>) source).getSelect();
+            return select.toArray(new Field[0]);
+        }
+        return source.fields();
     }
 
     private SetRowMapper<ResultSet, ResultSet, T, SQLException> buildMapper(Field[] fields) {
@@ -186,8 +194,11 @@ public final class SelectQueryMapper<T> {
     private boolean isKey(Field<?> field) {
         if (field instanceof TableField) {
             TableField<?, ?> tf = (TableField<?, ?>) field;
-            for (UniqueKey key : tf.getTable().getKeys()) {
-                if (key.getFields().contains(field)) return true;
+            List<? extends UniqueKey<?>> keys = tf.getTable().getKeys();
+            if (keys != null) {
+                for (UniqueKey key : keys) {
+                    if (key.getFields().contains(field)) return true;
+                }
             }
         }
         return false;

@@ -10,6 +10,8 @@ import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFact
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.reflect.property.SpeculativeObjectLookUpProperty;
+import org.simpleflatmapper.util.ConstantPredicate;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -25,7 +27,7 @@ public class SelectQueryMapperFactory
 
     public static SelectQueryMapperFactory newInstance(
             AbstractMapperFactory<JooqFieldKey, ?, ResultSet> config) {
-        return new SelectQueryMapperFactory(config);
+        return new SelectQueryMapperFactory(config.addColumnProperty(ConstantPredicate.truePredicate(), SpeculativeObjectLookUpProperty.INSTANCE));
     }
 
 

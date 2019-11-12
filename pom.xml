@@ -6,7 +6,7 @@
         
     <artifactId>sfm-parent-jre9</artifactId>
         
-    <version>8.2.1-SNAPSHOT</version>
+    <version>8.2.0</version>
         
     <packaging>pom</packaging>
         
@@ -54,7 +54,7 @@
                 
         <developerConnection>scm:git:git@github.com:arnaudroger/SimpleFlatMapper.git</developerConnection>
                 
-        <tag>HEAD</tag>
+        <tag>sfm-8.2.0-jre9</tag>
             
     </scm>
         
@@ -1041,9 +1041,9 @@
                         
             <properties>
                                 
-                <staging.repository/>
+                <staging.repository />
                                 
-                <release.arguments/>
+                <release.arguments />
                             
             </properties>
                         

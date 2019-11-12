@@ -12,7 +12,7 @@
         		
         <artifactId>sfm-parent-jre9</artifactId>
         		
-        <version>8.2.1-SNAPSHOT</version>
+        <version>8.2.0</version>
         	
     </parent>
     	
@@ -109,7 +109,7 @@
             			
             <artifactId>sfm-csv-jre9</artifactId>
             			
-            <version>8.2.1-SNAPSHOT</version>
+            <version>8.2.0</version>
             		
         </dependency>
         		
@@ -119,7 +119,7 @@
             			
             <artifactId>sfm-converter-joda-time-jre9</artifactId>
             			
-            <version>8.2.1-SNAPSHOT</version>
+            <version>8.2.0</version>
             			
             <scope>test</scope>
             		
@@ -131,7 +131,7 @@
             			
             <artifactId>sfm-test-jre9</artifactId>
             			
-            <version>8.2.1-SNAPSHOT</version>
+            <version>8.2.0</version>
             			
             <scope>test</scope>
             		

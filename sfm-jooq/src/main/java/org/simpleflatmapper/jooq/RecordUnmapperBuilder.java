@@ -2,6 +2,7 @@ package org.simpleflatmapper.jooq;
 
 
 import org.jooq.Configuration;
+import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
@@ -53,6 +54,18 @@ public class RecordUnmapperBuilder<E> extends AbstractConstantTargetMapperBuilde
 
     private Field[] fields;
     private final DSLContextProvider dslContextProvider;
+
+    public RecordUnmapperBuilder(
+            ClassMeta<E> classMeta,
+            MapperConfig<JooqFieldKey, ?> mapperConfig,
+            final Configuration configuration) {
+        this(classMeta, mapperConfig, new DSLContextProvider() {
+            @Override
+            public DSLContext provide() {
+                return DSL.using(configuration);
+            }
+        });
+    }
 
     public RecordUnmapperBuilder(
             ClassMeta<E> classMeta,

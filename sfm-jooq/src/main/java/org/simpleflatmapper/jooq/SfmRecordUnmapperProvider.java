@@ -20,17 +20,17 @@ public class SfmRecordUnmapperProvider implements RecordUnmapperProvider {
 	private final ConcurrentMap<TargetColumnsMapperKey, ContextualSourceMapper> mapperCache = new ConcurrentHashMap<TargetColumnsMapperKey, ContextualSourceMapper>();
 	private final Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory;
 	private final ReflectionService reflectionService;
-	private final Configuration configuration;
+	private final DSLContextProvider dslContextProvider;
 
 	@Deprecated
 	/**
 	 * please use SfmRecorMapperProviderFactory.
 	 */
 	public SfmRecordUnmapperProvider(
-			Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory, ReflectionService reflectionService, Configuration configuration) {
+			Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory, ReflectionService reflectionService, DSLContextProvider dslContextProvider) {
 		this.mapperConfigFactory = mapperConfigFactory;
 		this.reflectionService = reflectionService;
-		this.configuration = configuration;
+		this.dslContextProvider = dslContextProvider;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class SfmRecordUnmapperProvider implements RecordUnmapperProvider {
 			RecordUnmapperBuilder<E> mapperBuilder =
 					new RecordUnmapperBuilder<E>(
 							reflectionService.<E>getClassMeta(type),
-							mapperConfig, configuration);
+							mapperConfig, dslContextProvider);
 
 			mapperBuilder.setFields(recordType.fields());
 

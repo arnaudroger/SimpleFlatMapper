@@ -4,7 +4,10 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
-import org.simpleflatmapper.jooq.*;
+import org.simpleflatmapper.jooq.DSLContextProvider;
+import org.simpleflatmapper.jooq.JooqMapperFactory;
+import org.simpleflatmapper.jooq.JooqRecordUnmapperWrapper;
+import org.simpleflatmapper.jooq.SfmRecordUnmapperProvider;
 import org.simpleflatmapper.jooq.test.books.Label;
 import org.simpleflatmapper.jooq.test.books.Labels;
 import org.simpleflatmapper.jooq.test.books.LabelsRecord;
@@ -14,10 +17,8 @@ import org.simpleflatmapper.test.jdbc.DbHelper;
 import java.sql.Connection;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class JooqUnmapperTest {
 
@@ -26,7 +27,8 @@ public class JooqUnmapperTest {
 	@SuppressWarnings("unchecked")
 	public void testCacheMapper() {
 
-		SfmRecordUnmapperProvider recordMapperProvider = JooqMapperFactory.newInstance().newRecordUnmapperProvider(null);
+		SfmRecordUnmapperProvider recordMapperProvider = JooqMapperFactory.newInstance()
+				.newRecordUnmapperProvider(null);
 		RecordType rt = mock(RecordType.class);
 		Field field1 = mock(Field.class);
 		when(field1.getName()).thenReturn("id");
@@ -49,7 +51,12 @@ public class JooqUnmapperTest {
 				.set(conn)
 				.set(SQLDialect.HSQLDB);
 
-		cfg.set(JooqMapperFactory.newInstance().newRecordUnmapperProvider(cfg));
+		cfg.set(JooqMapperFactory.newInstance().newRecordUnmapperProvider(new DSLContextProvider() {
+			@Override
+			public DSLContext provide() {
+				return DSL.using(cfg);
+			}
+		}));
 
 		DSLContext dsl = DSL.using(cfg);
 

@@ -52,24 +52,24 @@ public class RecordUnmapperBuilder<E> extends AbstractConstantTargetMapperBuilde
     };
 
     private Field[] fields;
-    private final Configuration configuration;
+    private final DSLContextProvider dslContextProvider;
 
     public RecordUnmapperBuilder(
             ClassMeta<E> classMeta,
             MapperConfig<JooqFieldKey, ?> mapperConfig,
-            Configuration configuration) {
+            DSLContextProvider dslContextProvider) {
         super(classMeta, Record.class, mapperConfig, ConstantTargetFieldMapperFactoryImpl.newInstance(SETTER_FACTORY, Record.class));
-        this.configuration = configuration;
+        this.dslContextProvider = dslContextProvider;
     }
 
     @Override
     protected BiInstantiator<E, MappingContext<? super E>, Record> getInstantiator() {
         final Field[] fields = this.fields;
-        final Configuration conf = this.configuration;
+        final DSLContextProvider dslContextProvider = this.dslContextProvider;
         return new BiInstantiator<E, MappingContext<? super E>, Record>() {
             @Override
             public Record newInstance(E e, MappingContext<? super E> mappingContext) {
-                return DSL.using(conf).newRecord(fields);
+                return dslContextProvider.provide().newRecord(fields);
             }
         };
     }

@@ -1,4 +1,4 @@
-<project>
+<?xml version="1.0" encoding="UTF-8"?><project>
   <modelVersion>4.0.0</modelVersion>
 
 
@@ -10,7 +10,7 @@
 
   <parent>
     <groupId>org.simpleflatmapper</groupId>
-    <artifactId>sfm-parent</artifactId>
+    <artifactId xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">sfm-parent-jre6</artifactId>
     <version>3.18.1</version>
   </parent>
 
@@ -108,8 +108,8 @@
                 </property>
             </activation>
             <properties>
-                <staging.repository />
-                <release.arguments />
+                <staging.repository/>
+                <release.arguments/>
             </properties>
             <build>
                 <plugins>

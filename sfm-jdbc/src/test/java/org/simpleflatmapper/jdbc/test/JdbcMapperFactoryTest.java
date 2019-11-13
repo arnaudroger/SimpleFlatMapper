@@ -345,10 +345,22 @@ public class JdbcMapperFactoryTest {
 		Long id;
 		String name;
 		List<Student693> students;
+//
+//		public Prof693(Long id, String name, List<Student693> students) {
+//			this.id = id;
+//			this.name = name;
+//			this.students = students;
+//		}
 
-		public Prof693(Long id, String name, List<Student693> students) {
+		public void setId(Long id) {
 			this.id = id;
+		}
+
+		public void setName(String name) {
 			this.name = name;
+		}
+
+		public void setStudents(List<Student693> students) {
 			this.students = students;
 		}
 

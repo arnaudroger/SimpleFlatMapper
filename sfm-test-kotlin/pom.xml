@@ -5,7 +5,7 @@
 	<artifactId>sfm-test-kotlin</artifactId>
 	<packaging>jar</packaging>
 
-	<version>8.2.1</version>
+	<version>8.2.2-SNAPSHOT</version>
 
 	<licenses>
 		<license>
@@ -52,12 +52,12 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
-			<version>8.2.1</version>
+			<version>8.2.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-jdbc</artifactId>
-			<version>8.2.1</version>
+			<version>8.2.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>

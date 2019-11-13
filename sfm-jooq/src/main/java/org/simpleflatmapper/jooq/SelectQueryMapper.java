@@ -287,11 +287,10 @@ public final class SelectQueryMapper<T> {
                 return delegate.hasNext();
             } catch (MappingException e) {
                 throw new org.jooq.exception.MappingException(e.getMessage(), e);
-            } catch (Exception e) {
-                if (e instanceof SQLException) {
-                    throw new DataAccessException(e.getMessage(), e);
-                }
+            } catch (RuntimeException e) {
                 throw e;
+            } catch (Exception e) {
+                throw new DataAccessException(e.getMessage(), e);
             }
         }
 
@@ -301,11 +300,10 @@ public final class SelectQueryMapper<T> {
                 return delegate.next();
             } catch (MappingException e) {
                 throw new org.jooq.exception.MappingException(e.getMessage(), e);
-            } catch (Exception e) {
-                if (e instanceof SQLException) {
-                    throw new DataAccessException(e.getMessage(), e);
-                }
+            } catch (RuntimeException e) {
                 throw e;
+            } catch (Exception e) {
+                throw new DataAccessException(e.getMessage(), e);
             }
         }
     }
@@ -323,11 +321,10 @@ public final class SelectQueryMapper<T> {
                 return delegate.next();
             } catch (MappingException e) {
                 throw new org.jooq.exception.MappingException(e.getMessage(), e);
-            } catch (Exception e) {
-                if (e instanceof SQLException) {
-                    throw new DataAccessException(e.getMessage(), e);
-                }
+            } catch (RuntimeException e) {
                 throw e;
+            } catch (Exception e) {
+                throw new DataAccessException(e.getMessage(), e);
             }
         }
 
@@ -337,11 +334,10 @@ public final class SelectQueryMapper<T> {
                 return delegate.currentValue();
             } catch (MappingException e) {
                 throw new org.jooq.exception.MappingException(e.getMessage(), e);
-            } catch (Exception e) {
-                if (e instanceof SQLException) {
-                    throw new DataAccessException(e.getMessage(), e);
-                }
+            } catch (RuntimeException e) {
                 throw e;
+            } catch (Exception e) {
+                throw new DataAccessException(e.getMessage(), e);
             }
         }
     }

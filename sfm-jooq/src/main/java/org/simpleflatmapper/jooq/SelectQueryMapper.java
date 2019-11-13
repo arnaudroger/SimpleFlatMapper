@@ -276,6 +276,10 @@ public final class SelectQueryMapper<T> {
             this.delegate = delegate;
         }
 
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("remove");
+        }
 
         @Override
         public boolean hasNext() {

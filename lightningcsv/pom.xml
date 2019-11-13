@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent-jre6</artifactId>
-		<version>8.2.1-SNAPSHOT</version>
+		<version>8.2.1</version>
 	</parent>
 
 	<name>lightning-csv</name>
@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-util-jre6</artifactId>
-			<version>8.2.1-SNAPSHOT</version>
+			<version>8.2.1</version>
 		</dependency>
 
 		<dependency>

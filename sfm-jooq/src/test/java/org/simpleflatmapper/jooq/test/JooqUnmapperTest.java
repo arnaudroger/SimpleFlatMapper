@@ -28,7 +28,7 @@ public class JooqUnmapperTest {
 	public void testCacheMapper() {
 
 		SfmRecordUnmapperProvider recordMapperProvider = JooqMapperFactory.newInstance()
-				.newRecordUnmapperProvider(null);
+				.newRecordUnmapperProvider((Configuration) null);
 		RecordType rt = mock(RecordType.class);
 		Field field1 = mock(Field.class);
 		when(field1.getName()).thenReturn("id");

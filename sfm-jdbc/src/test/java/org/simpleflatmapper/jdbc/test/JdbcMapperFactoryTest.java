@@ -4,7 +4,9 @@ import org.junit.Test;
 import org.simpleflatmapper.converter.Context;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapper;
+import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
+import org.simpleflatmapper.map.annotation.Key;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
@@ -26,11 +28,12 @@ import org.simpleflatmapper.util.CheckedConsumer;
 import java.lang.reflect.Type;
 import java.sql.*;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class JdbcMapperFactoryTest {
@@ -303,5 +306,152 @@ public class JdbcMapperFactoryTest {
 		List<DbFinalObject> list = mapper.forEach(rs, new ListCollector<DbFinalObject>()).getList();
 		assertEquals(1,  list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
+	}
+
+
+	@Test
+	public void testIssue693() throws SQLException {
+		Connection dbConnection = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
+
+		if (dbConnection == null) return;
+
+		try {
+
+			JdbcMapper<Prof693> mapper =  JdbcMapperFactory
+					.newInstance()
+					.newMapper(Prof693.class);;
+			;
+
+			Statement st = dbConnection.createStatement();
+
+			Iterator<Prof693> iterator = mapper.iterator(st.executeQuery("SELECT 1 as id , 'p1' as name, null as students_id, 's1' as students_name, 1::bit as students_test "));
+
+			assertTrue(iterator.hasNext());
+
+			assertEquals(new Prof693(1l, "p1", Collections.emptyList()), iterator.next());
+
+		} finally {
+			dbConnection.close();
+		}
+
+
+	}
+
+
+
+
+	public static class Prof693 {
+		@Key
+		Long id;
+		String name;
+		List<Student693> students;
+
+		public Prof693(Long id, String name, List<Student693> students) {
+			this.id = id;
+			this.name = name;
+			this.students = students;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+
+		public String getName() {
+			return name;
+		}
+
+
+		public List<Student693> getStudents() {
+			return students;
+		}
+
+
+		@Override
+		public String toString() {
+			return "Prof{" +
+					"id=" + id +
+					", name='" + name + '\'' +
+					", students=" + students +
+					'}';
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Prof693 prof = (Prof693) o;
+
+			if (id != prof.id) return false;
+			if (name != null ? !name.equals(prof.name) : prof.name != null) return false;
+			return students != null ? students.equals(prof.students) : prof.students == null;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = (int) (id ^ (id >>> 32));
+			result = 31 * result + (name != null ? name.hashCode() : 0);
+			result = 31 * result + (students != null ? students.hashCode() : 0);
+			return result;
+		}
+	}
+
+	public static class Student693 {
+		@Key
+		Long id;
+		String name;
+		boolean test;
+
+
+		public Student693(Long id, String name, boolean test) {
+			this.id = id;
+			this.name = name;
+			this.test = test;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+
+		public String getName() {
+			return name;
+		}
+
+
+		public boolean getTest() {
+			return test;
+		}
+
+
+		@Override
+		public String toString() {
+			return "Student{" +
+					"id=" + id +
+					", name='" + name + '\'' +
+					", test='" + test + '\'' +
+					'}';
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Student693 student = (Student693) o;
+
+			if (id != student.id) return false;
+			if (test != student.test) return false;
+			return name != null ? name.equals(student.name) : student.name == null;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = (int) (id ^ (id >>> 32));
+			result = 31 * result + (name != null ? name.hashCode() : 0);
+			result = 31 * result + (test ? 1 : 0);
+			return result;
+		}
 	}
 }

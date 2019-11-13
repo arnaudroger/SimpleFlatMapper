@@ -1,6 +1,8 @@
 package org.simpleflatmapper.map.annotation.impl;
 
+import org.simpleflatmapper.map.annotation.InferNull;
 import org.simpleflatmapper.map.annotation.Key;
+import org.simpleflatmapper.map.property.InferNullProperty;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.meta.AnnotationToPropertyService;
 import org.simpleflatmapper.reflect.meta.AnnotationToPropertyServiceProducer;
@@ -19,6 +21,9 @@ public class MappingAnnotationToPropertyServiceProducer implements AnnotationToP
         public void generateProperty(Annotation annotation, Consumer<Object> consumer) {
             if (Key.class.equals(annotation.annotationType())) {
                 consumer.accept(KeyProperty.DEFAULT);
+            }
+            if (InferNull.class.equals(annotation.annotationType())) {
+                consumer.accept(InferNullProperty.DEFAULT);
             }
         }
     }

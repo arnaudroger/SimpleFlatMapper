@@ -328,7 +328,8 @@ public class JdbcMapperFactoryTest {
 
 			assertTrue(iterator.hasNext());
 
-			assertEquals(new Prof693(1l, "p1", Collections.emptyList()), iterator.next());
+			List<Student693> prof693s = Collections.<Student693>emptyList();
+			assertEquals(new Prof693(1l, "p1", prof693s), iterator.next());
 
 		} finally {
 			dbConnection.close();
@@ -345,22 +346,10 @@ public class JdbcMapperFactoryTest {
 		Long id;
 		String name;
 		List<Student693> students;
-//
-//		public Prof693(Long id, String name, List<Student693> students) {
-//			this.id = id;
-//			this.name = name;
-//			this.students = students;
-//		}
 
-		public void setId(Long id) {
+		public Prof693(Long id, String name, List<Student693> students) {
 			this.id = id;
-		}
-
-		public void setName(String name) {
 			this.name = name;
-		}
-
-		public void setStudents(List<Student693> students) {
 			this.students = students;
 		}
 

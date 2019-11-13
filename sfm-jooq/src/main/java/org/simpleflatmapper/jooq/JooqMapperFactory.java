@@ -8,9 +8,11 @@ import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFact
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Function;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 public class JooqMapperFactory
         extends AbstractColumnNameDiscriminatorMapperFactory<JooqFieldKey, JooqMapperFactory, Record> {
@@ -24,7 +26,6 @@ public class JooqMapperFactory
         return new JooqMapperFactory(config);
     }
 
-
     private JooqMapperFactory() {
         super(new FieldMapperColumnDefinitionProviderImpl<JooqFieldKey>(), FieldMapperColumnDefinition.<JooqFieldKey>identity(), new ContextualGetterFactoryAdapter<Record, JooqFieldKey>(new RecordGetterFactory()));
     }
@@ -37,6 +38,14 @@ public class JooqMapperFactory
         super(columnDefinitions, identity, new ContextualGetterFactoryAdapter<Record, JooqFieldKey>(new RecordGetterFactory()));
     }
 
+    public JooqMapperFactory addBiConverters(List<JooqBiConverter> converters) {
+        for (JooqBiConverter converter : converters) {
+            addColumnProperty(ConstantPredicate.truePredicate(), converter.buildGetterProperty());
+        }
+        addColumnProperty(ConstantPredicate.truePredicate(),
+                JooqBiConverter.buildConverterProperty(converters));
+        return this;
+    }
 
     public SfmRecordMapperProvider newRecordMapperProvider() {
         return new SfmRecordMapperProvider(new Function<Type, MapperConfig<JooqFieldKey, Record>>() {

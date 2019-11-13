@@ -1,5 +1,7 @@
 package org.simpleflatmapper.jooq.test.books;
 
+import org.simpleflatmapper.jooq.test.JSONObjectTest494;
+
 import java.util.UUID;
 
 public class Label {
@@ -7,15 +9,16 @@ public class Label {
     private UUID uuid;
     private String name;
     private Boolean obsolete;
+    private JSONObjectTest494.File file;
 
-
-    public Label(Integer id, UUID uuid, String name, Boolean obsolete) {
+    public Label(Integer id, UUID uuid, String name, Boolean obsolete,
+                 JSONObjectTest494.File file) {
         this.id = id;
         this.uuid = uuid;
         this.name = name;
         this.obsolete = obsolete;
+        this.file = file;
     }
-
 
     public Integer getId() {
         return id;
@@ -31,6 +34,10 @@ public class Label {
 
     public Boolean getObsolete() {
         return obsolete;
+    }
+
+    public JSONObjectTest494.File getFile() {
+        return file;
     }
 
     @Override

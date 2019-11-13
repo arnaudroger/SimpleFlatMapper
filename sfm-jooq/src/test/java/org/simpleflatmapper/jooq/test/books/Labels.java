@@ -5,20 +5,13 @@
 
 package org.simpleflatmapper.jooq.test.books;
 
-import java.util.List;
-import java.util.UUID;
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
+import java.util.List;
+import java.util.UUID;
 
 public class Labels extends TableImpl<LabelsRecord> {
     private static final long serialVersionUID = 359479367L;
@@ -27,6 +20,7 @@ public class Labels extends TableImpl<LabelsRecord> {
     public final TableField<LabelsRecord, UUID> UUID;
     public final TableField<LabelsRecord, String> NAME;
     public final TableField<LabelsRecord, Boolean> OBSOLETE;
+    public final TableField<LabelsRecord, String> FILE;
 
     public Class<LabelsRecord> getRecordType() {
         return LabelsRecord.class;
@@ -54,6 +48,7 @@ public class Labels extends TableImpl<LabelsRecord> {
         this.UUID = createField("uuid", SQLDataType.UUID.nullable(false), this, "");
         this.NAME = createField("name", SQLDataType.VARCHAR(500).nullable(false), this, "");
         this.OBSOLETE = createField("obsolete", SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("false", SQLDataType.BOOLEAN)), this, "");
+        this.FILE = createField("file", SQLDataType.VARCHAR.nullable(true), this, "");
     }
 
     public <O extends Record> Labels(Table<O> child, ForeignKey<O, LabelsRecord> key) {
@@ -62,6 +57,7 @@ public class Labels extends TableImpl<LabelsRecord> {
         this.UUID = createField("uuid", SQLDataType.UUID.nullable(false), this, "");
         this.NAME = createField("name", SQLDataType.VARCHAR(500).nullable(false), this, "");
         this.OBSOLETE = createField("obsolete", SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("false", SQLDataType.BOOLEAN)), this, "");
+        this.FILE = createField("file", SQLDataType.VARCHAR.nullable(true), this, "");
     }
 
     public Schema getSchema() {

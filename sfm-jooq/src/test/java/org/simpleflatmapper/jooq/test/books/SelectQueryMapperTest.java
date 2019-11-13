@@ -43,7 +43,7 @@ public class SelectQueryMapperTest {
 		SelectQueryMapper<Label> mapper = SelectQueryMapperFactory.newInstance().newMapper(Label.class);
 
 		UUID uuid1 = UUID.randomUUID();
-		Label label = new Label(1, uuid1, "l1", false);
+		Label label = new Label(1, uuid1, "l1", false, null);
 
 
 

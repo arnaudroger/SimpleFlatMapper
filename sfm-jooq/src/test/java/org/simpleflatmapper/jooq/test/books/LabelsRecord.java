@@ -5,10 +5,13 @@
 
 package org.simpleflatmapper.jooq.test.books;
 
-import java.util.UUID;
-
-import org.jooq.*;
+import org.jooq.Field;
+import org.jooq.Record1;
+import org.jooq.Record4;
+import org.jooq.Row4;
 import org.jooq.impl.UpdatableRecordImpl;
+
+import java.util.UUID;
 
 public class LabelsRecord extends UpdatableRecordImpl<LabelsRecord> implements Record4<Integer, UUID, String, Boolean> {
     private static final long serialVersionUID = 1840732564L;
@@ -45,6 +48,13 @@ public class LabelsRecord extends UpdatableRecordImpl<LabelsRecord> implements R
         return (Boolean)this.get(3);
     }
 
+    public void setFile(String value) {
+        this.set(4, value);
+    }
+
+    public String getFile() {
+        return (String)this.get(4);
+    }
 
     public Record1<Integer> key() {
         return (Record1)super.key();

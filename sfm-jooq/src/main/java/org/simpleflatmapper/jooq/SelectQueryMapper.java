@@ -3,6 +3,7 @@ package org.simpleflatmapper.jooq;
 
 import org.jooq.*;
 import org.jooq.exception.DataAccessException;
+import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
@@ -21,6 +22,7 @@ import java.util.List;
 
 //IFJAVA8_START
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 //IFJAVA8_END
 
 public final class SelectQueryMapper<T> {
@@ -52,6 +54,8 @@ public final class SelectQueryMapper<T> {
                 rs.close();
             }
             return list;
+        } catch (MappingException e) {
+            throw new org.jooq.exception.MappingException(e.getMessage(), e);
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage(), e);
 
@@ -84,9 +88,10 @@ public final class SelectQueryMapper<T> {
             } finally {
                 rs.close();
             }
+        } catch (MappingException e) {
+            throw new org.jooq.exception.MappingException(e.getMessage(), e);
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage(), e);
-
         }
         return handler;
     }
@@ -102,7 +107,7 @@ public final class SelectQueryMapper<T> {
         SetRowMapper<ResultSet, ResultSet, T, SQLException> mapper = getMapper(source);
         try {
             final ResultSet rs = source.fetchResultSet();
-            final Iterator<T> iterator = mapper.iterator(rs);
+            final Iterator<T> iterator = new ExceptionTranslatorIterator<T>(mapper.iterator(rs));
             return new AutoCloseableIterator<T>(iterator, closer(rs));
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage(), e);
@@ -120,9 +125,11 @@ public final class SelectQueryMapper<T> {
         SetRowMapper<ResultSet, ResultSet, T, SQLException> mapper = getMapper(source);
         try {
             final ResultSet rs = source.fetchResultSet();
-            final Stream<T> enumerable = mapper.stream(rs);
 
-            return enumerable.onClose(new Runnable() {
+            final Enumerable<T> enumerate = new ExceptionTranslatorEnumerable<T>(mapper.enumerate(rs));
+            final Stream<T> stream = StreamSupport.stream(new EnumerableSpliterator<T>(enumerate), false);
+
+            return stream.onClose(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -143,7 +150,7 @@ public final class SelectQueryMapper<T> {
         SetRowMapper<ResultSet, ResultSet, T, SQLException> mapper = getMapper(source);
         try {
             final ResultSet rs = source.fetchResultSet();
-            final Enumerable<T> enumerable = mapper.enumerate(rs);
+            final Enumerable<T> enumerable = new ExceptionTranslatorEnumerable<T>(mapper.enumerate(rs));
             return new AutoCloseableEnumerable<T>(enumerable, closer(rs));
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage(), e);
@@ -152,23 +159,27 @@ public final class SelectQueryMapper<T> {
 
 
     private <SET extends TableLike & ResultQuery> SetRowMapper<ResultSet, ResultSet, T, SQLException> getMapper(SET source) {
-        Field[] fields = getFields(source);
+        try {
+            Field[] fields = getFields(source);
 
-        JooqFieldKey[] keys = new JooqFieldKey[fields.length];
-        for(int i = 0; i < fields.length; i ++) {
-            keys[i] = new JooqFieldKey(fields[i], i);
+            JooqFieldKey[] keys = new JooqFieldKey[fields.length];
+            for (int i = 0; i < fields.length; i++) {
+                keys[i] = new JooqFieldKey(fields[i], i);
+            }
+
+            MapperKey<JooqFieldKey> mapperKey = new MapperKey<JooqFieldKey>(keys);
+
+            SetRowMapper<ResultSet, ResultSet, T, SQLException> mapper = mapperCache.get(mapperKey);
+
+            if (mapper == null) {
+                mapper = buildMapper(fields);
+                mapperCache.add(mapperKey, mapper);
+            }
+
+            return mapper;
+        } catch (Exception e) {
+            throw new org.jooq.exception.MappingException(e.getMessage(), e);
         }
-
-        MapperKey<JooqFieldKey> mapperKey = new MapperKey<JooqFieldKey>(keys);
-
-        SetRowMapper<ResultSet, ResultSet, T, SQLException> mapper = mapperCache.get(mapperKey);
-
-        if (mapper == null) {
-            mapper = buildMapper(fields);
-            mapperCache.add(mapperKey, mapper);
-        }
-
-        return mapper;
     }
 
     private <SET extends TableLike & ResultQuery> Field[] getFields(SET source) {
@@ -258,4 +269,76 @@ public final class SelectQueryMapper<T> {
         }
     }
 
+    private static class ExceptionTranslatorIterator<T> implements Iterator<T> {
+        private final Iterator<T> delegate;
+
+        public ExceptionTranslatorIterator(Iterator<T> delegate) {
+            this.delegate = delegate;
+        }
+
+
+        @Override
+        public boolean hasNext() {
+            try {
+                return delegate.hasNext();
+            } catch (MappingException e) {
+                throw new org.jooq.exception.MappingException(e.getMessage(), e);
+            } catch (Exception e) {
+                if (e instanceof SQLException) {
+                    throw new DataAccessException(e.getMessage(), e);
+                }
+                throw e;
+            }
+        }
+
+        @Override
+        public T next() {
+            try {
+                return delegate.next();
+            } catch (MappingException e) {
+                throw new org.jooq.exception.MappingException(e.getMessage(), e);
+            } catch (Exception e) {
+                if (e instanceof SQLException) {
+                    throw new DataAccessException(e.getMessage(), e);
+                }
+                throw e;
+            }
+        }
+    }
+
+    private class ExceptionTranslatorEnumerable<T> implements Enumerable<T> {
+        private final Enumerable<T> delegate;
+
+        public ExceptionTranslatorEnumerable(Enumerable<T> delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public boolean next() {
+            try {
+                return delegate.next();
+            } catch (MappingException e) {
+                throw new org.jooq.exception.MappingException(e.getMessage(), e);
+            } catch (Exception e) {
+                if (e instanceof SQLException) {
+                    throw new DataAccessException(e.getMessage(), e);
+                }
+                throw e;
+            }
+        }
+
+        @Override
+        public T currentValue() {
+            try {
+                return delegate.currentValue();
+            } catch (MappingException e) {
+                throw new org.jooq.exception.MappingException(e.getMessage(), e);
+            } catch (Exception e) {
+                if (e instanceof SQLException) {
+                    throw new DataAccessException(e.getMessage(), e);
+                }
+                throw e;
+            }
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package org.simpleflatmapper.jooq;
 
-import org.jooq.Configuration;
 import org.jooq.Record;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
@@ -49,13 +48,13 @@ public class JooqMapperFactory
     }
 
     //IFJAVA8_START
-    public SfmRecordUnmapperProvider newRecordUnmapperProvider(Configuration configuration) {
+    public SfmRecordUnmapperProvider newRecordUnmapperProvider(DSLContextProvider dslContextProvider) {
         return new SfmRecordUnmapperProvider(new Function<Type, MapperConfig<JooqFieldKey, Record>>() {
             @Override
             public MapperConfig<JooqFieldKey, Record> apply(Type type) {
                 return mapperConfig(type);
             }
-        }, getReflectionService(), configuration);
+        }, getReflectionService(), dslContextProvider);
     }
     //IFJAVA8_END
 

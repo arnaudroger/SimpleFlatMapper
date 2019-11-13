@@ -1,6 +1,9 @@
 package org.simpleflatmapper.jooq;
 
+import org.jooq.Configuration;
+import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
@@ -57,6 +60,15 @@ public class JooqMapperFactory
     }
 
     //IFJAVA8_START
+    public SfmRecordUnmapperProvider newRecordUnmapperProvider(final Configuration configuration) {
+        return newRecordUnmapperProvider(new DSLContextProvider() {
+            @Override
+            public DSLContext provide() {
+                return DSL.using(configuration);
+            }
+        });
+    }
+
     public SfmRecordUnmapperProvider newRecordUnmapperProvider(DSLContextProvider dslContextProvider) {
         return new SfmRecordUnmapperProvider(new Function<Type, MapperConfig<JooqFieldKey, Record>>() {
             @Override

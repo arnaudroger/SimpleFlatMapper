@@ -13,6 +13,7 @@ import org.simpleflatmapper.reflect.IndexedGetter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.property.SpeculativeArrayIndexResolutionProperty;
+import org.simpleflatmapper.reflect.property.SpeculativeObjectLookUpProperty;
 import org.simpleflatmapper.util.*;
 
 import java.lang.reflect.Member;
@@ -117,6 +118,14 @@ public abstract class AbstractMapperFactory<
     public final MF ignorePropertyNotFound() {
     	return addColumnProperty(ConstantPredicate.truePredicate(), OptionalProperty.INSTANCE);
     }
+
+	/**
+	 * enabled speculative property look up on object.
+	 * @return this
+	 */
+	public final MF enableSpeculativePropertyLookupOnObject() {
+    	return addColumnProperty(ConstantPredicate.truePredicate(), SpeculativeObjectLookUpProperty.INSTANCE);
+	}
 
     /**
 	 * Set the new MapperBuilderErrorHandler. the MapperBuilderErrorHandler is called when an error occurred or a property is not found in the builder while creating the jdbcMapper.

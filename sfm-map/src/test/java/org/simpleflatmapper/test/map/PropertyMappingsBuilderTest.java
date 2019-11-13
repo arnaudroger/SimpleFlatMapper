@@ -8,11 +8,14 @@ import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.annotation.InferNull;
 import org.simpleflatmapper.map.annotation.Key;
 import org.simpleflatmapper.map.mapper.MapperImpl;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
+import org.simpleflatmapper.map.property.InferNullProperty;
+import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.map.property.OptionalProperty;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Getter;
@@ -237,7 +240,7 @@ public class PropertyMappingsBuilderTest {
     }
 
     @Test
-    public void testAnnotations() {
+    public void testAnnotationsKey() {
 
         final ClassMeta<ObjectWithAnnotation> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithAnnotation.class);
         PropertyMappingsBuilder<ObjectWithAnnotation, SampleFieldKey> builder2 =
@@ -247,7 +250,21 @@ public class PropertyMappingsBuilderTest {
 
         List<PropertyMapping<ObjectWithAnnotation, ?, SampleFieldKey>> propertyMappings = builder2.currentProperties();
 
-        assertTrue(propertyMappings.get(0).getColumnDefinition().isKey());
+        assertTrue(propertyMappings.get(0).getColumnDefinition().has(KeyProperty.class));
+    }
+
+    @Test
+    public void testAnnotationsNull() {
+
+        final ClassMeta<ObjectWithAnnotationNull> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithAnnotationNull.class);
+        PropertyMappingsBuilder<ObjectWithAnnotationNull, SampleFieldKey> builder2 =
+                defaultPropertyMappingBuilder(classMeta);
+
+        builder2.addProperty(new SampleFieldKey("id", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+
+        List<PropertyMapping<ObjectWithAnnotationNull, ?, SampleFieldKey>> propertyMappings = builder2.currentProperties();
+
+        assertTrue(propertyMappings.get(0).getColumnDefinition().has(InferNullProperty.class));
     }
 
     public static class ObjectWithAnnotation {
@@ -255,7 +272,10 @@ public class PropertyMappingsBuilderTest {
         public int id;
     }
 
-
+    public static class ObjectWithAnnotationNull {
+        @InferNull
+        public int id;
+    }
     @Test
     public void test418() {
         ClassMeta<List<Tuple2<B, List<C>>>> classMeta2 = ReflectionService.newInstance().getClassMeta(new TypeReference<List<Tuple2<B, List<C>>>>() {}.getType());

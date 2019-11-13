@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jooq;
 
 import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.simpleflatmapper.map.ContextualSourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SourceMapper;
@@ -22,6 +23,20 @@ public class SfmRecordUnmapperProvider implements RecordUnmapperProvider {
 	private final ReflectionService reflectionService;
 	private final DSLContextProvider dslContextProvider;
 
+
+	@Deprecated
+	/**
+	 * please use SfmRecorMapperProviderFactory.
+	 */
+	public SfmRecordUnmapperProvider(
+			Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory, ReflectionService reflectionService, final Configuration configuration) {
+		this(mapperConfigFactory, reflectionService, new DSLContextProvider() {
+			@Override
+			public DSLContext provide() {
+				return DSL.using(configuration);
+			}
+		});
+	}
 	@Deprecated
 	/**
 	 * please use SfmRecorMapperProviderFactory.

@@ -48,7 +48,14 @@ public class JavaBaseConverterFactoryProducer extends AbstractContextualConverte
 
 		factoryConverter (consumer, new ObjectEnumConverterFactory());
 		factoryConverter (consumer, new ArrayToListConverterFactory());
-		factoryConverter (consumer, new ListToStringArrayConverterFactory());
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(String.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(Short.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(Integer.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(Long.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(Double.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(Float.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(BigInteger.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(BigDecimal.class));
 
 		constantConverter(consumer, Object.class, String.class, ToStringConverter.INSTANCE);
 		constantConverter(consumer, Object.class, URL.class, new ToStringToURLConverter());
@@ -224,34 +231,37 @@ public class JavaBaseConverterFactoryProducer extends AbstractContextualConverte
 			}
 			return ConvertingScore.NO_MATCH;
 		}
-
 	}
 
-	private static class ListToStringArrayConverterFactory extends AbstractContextualConverterFactory<List, String[]> {
-		protected ListToStringArrayConverterFactory() {
-			super(List.class, String[].class);
+	@SuppressWarnings("unchecked")
+	private static class ListToArrayConverterFactory<E> extends AbstractContextualConverterFactory<List, E[]> {
+
+		private Class<E> elementClass;
+		private Class<E> elementArrayClass;
+
+		protected ListToArrayConverterFactory(Class<E> elementClass) {
+			super(List.class, (Class<E[]>)
+					Array.newInstance(elementClass, 0).getClass());
+			this.elementClass = elementClass;
+			this.elementArrayClass = (Class<E>) Array.newInstance(elementClass, 0).getClass();
 		}
 
 		@Override
-		public ContextualConverter<? super List, ? extends String[]> newConverter(ConvertingTypes targetedTypes,
-																				  ContextFactoryBuilder contextFactoryBuilder,
-																				  Object... params) {
-			return new ContextualConverter<List, String[]>() {
+		public ContextualConverter<? super List, E[]> newConverter(ConvertingTypes targetedTypes,
+																   ContextFactoryBuilder contextFactoryBuilder,
+																   Object... params) {
+			return new ContextualConverter<List, E[]>() {
 				@Override
-				public String[] convert(List in, Context context) throws Exception {
+				public E[] convert(List in, Context context) throws Exception {
 					if (in == null) return null;
-					String[] array = new String[in.size()];
-					for (int i=0; i<in.size(); i++) {
-						array[i] = in.get(i).toString();
-					}
-					return array;
+					return (E[]) in.toArray((E[]) Array.newInstance(elementClass, in.size()));
 				}
 			};
 		}
 
 		@Override
 		public ConvertingScore score(ConvertingTypes targetedTypes) {
-			if (TypeHelper.isAssignable(String[].class, targetedTypes.getTo())) {
+			if (TypeHelper.isAssignable(elementArrayClass, targetedTypes.getTo())) {
 				return new ConvertingScore(ConvertingScore.MAX_SCORE, ConvertingTypes.getSourceScore(convertingTypes.getTo(), targetedTypes.getTo()));
 			}
 			return ConvertingScore.NO_MATCH;

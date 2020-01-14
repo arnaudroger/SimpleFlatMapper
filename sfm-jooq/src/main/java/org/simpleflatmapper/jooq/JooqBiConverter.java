@@ -36,9 +36,11 @@ public abstract class JooqBiConverter<F, M> implements ContextualGetter<F, M>, C
                 if (!JooqBiConverter.this.match(target)) return null;
                 final int index = key.getIndex();
                 return new ContextualGetter<R, P>() {
+                    @SuppressWarnings("unchecked")
                     @Override
                     public P get(R record, Context context) throws Exception {
-                        return (P) JooqBiConverter.this.get((F) record.get(index), context);
+                        return (P) JooqBiConverter.this.get((F) record.get(index),
+                                new TypedMappingContextDelegate(target, context));
                     }
                 };
             }

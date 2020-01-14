@@ -1,28 +1,19 @@
 package org.simpleflatmapper.converter.test;
 
 import org.junit.Test;
-import org.simpleflatmapper.converter.ComposedContextualConverter;
-import org.simpleflatmapper.converter.ConversionException;
-import org.simpleflatmapper.converter.ContextualConverter;
-import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.ConverterFactoryProducer;
-import org.simpleflatmapper.converter.ConverterService;
-import org.simpleflatmapper.converter.EmptyContextFactoryBuilder;
-import org.simpleflatmapper.converter.ToStringConverter;
+import org.simpleflatmapper.converter.*;
 import org.simpleflatmapper.converter.impl.CharSequenceIntegerConverter;
 import org.simpleflatmapper.util.date.DateFormatSupplier;
 
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -205,6 +196,38 @@ public class ConverterServiceTest {
         });
         
         assertEquals(new SimpleDateFormat("yyyyMMdd").parse("20180927"), dateConv.convert("20180927"));
+    }
 
+    @Test
+    public void testStringListToArrayConverter() throws Exception {
+        ConverterService converterService = ConverterService.getInstance();
+        Converter<? super List, ? extends String[]> converter = converterService.findConverter(List.class, String[].class);
+        assertNotNull(converter);
+
+        List<String> strList = new ArrayList<>();
+        strList.add("a");
+        strList.add("b");
+        strList.add("c");
+        String[] strArr = converter.convert(strList);
+        assertEquals(strList.get(0), strArr[0]);
+        assertEquals(strList.get(1), strArr[1]);
+        assertEquals(strList.get(2), strArr[2]);
+    }
+
+    @Test
+    public void testNumberListToArrayConverter() throws Exception {
+        ConverterService converterService = ConverterService.getInstance();
+        Converter<? super List, ? extends Integer[]> intConverter = converterService.findConverter(List.class, Integer[].class);
+        assertNotNull(intConverter);
+
+        // Test Int
+        List<Integer> intList = new ArrayList<>();
+        intList.add(1);
+        intList.add(2);
+        intList.add(3);
+        Integer[] intArr = intConverter.convert(intList);
+        assertEquals(intList.get(0), intArr[0]);
+        assertEquals(intList.get(1), intArr[1]);
+        assertEquals(intList.get(2), intArr[2]);
     }
 }

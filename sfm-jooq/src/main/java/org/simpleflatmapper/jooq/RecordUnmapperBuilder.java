@@ -7,16 +7,17 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.simpleflatmapper.converter.*;
-import org.simpleflatmapper.map.*;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
-import org.simpleflatmapper.map.property.ConverterProperty;
+import org.simpleflatmapper.map.property.ContextualConverterFactoryProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.setter.ContextualSetter;
 import org.simpleflatmapper.map.setter.ContextualSetterFactory;
-import org.simpleflatmapper.reflect.*;
-import org.simpleflatmapper.reflect.meta.*;
+import org.simpleflatmapper.reflect.BiInstantiator;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -35,11 +36,14 @@ public class RecordUnmapperBuilder<E> extends AbstractConstantTargetMapperBuilde
             if (TypeHelper.isAssignable(fieldType, propertyType)) {
                 return new RecordContextualSetter<P>((Field<? super P>) field);
             } else {
-                ContextualConverter converter;
-                if (pm.getColumnDefinition().has(ConverterProperty.class)) {
-                    ConverterProperty converterProperty = pm.getColumnDefinition().lookFor(ConverterProperty.class);
-                    converter = converterProperty.function;
-                } else {
+                ContextualConverter converter = null;
+                if (pm.getColumnDefinition().has(ContextualConverterFactoryProperty.class)) {
+                    ContextualConverterFactoryProperty contextualConverterFactoryProperty = pm.getColumnDefinition().lookFor(ContextualConverterFactoryProperty.class);
+                    converter = contextualConverterFactoryProperty.factory.newConverter(
+                            new ConvertingTypes(propertyType, fieldType), contextFactoryBuilder);
+                }
+
+                if (converter == null) {
                     converter = ConverterService.getInstance().findConverter(propertyType, fieldType, contextFactoryBuilder, pm.getColumnDefinition().properties());
                 }
 

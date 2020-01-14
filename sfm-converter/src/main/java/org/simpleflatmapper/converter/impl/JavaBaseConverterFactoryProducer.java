@@ -1,16 +1,7 @@
 package org.simpleflatmapper.converter.impl;
 
 
-import org.simpleflatmapper.converter.AbstractContextualConverterFactory;
-import org.simpleflatmapper.converter.AbstractContextualConverterFactoryProducer;
-import org.simpleflatmapper.converter.Context;
-import org.simpleflatmapper.converter.ContextFactoryBuilder;
-import org.simpleflatmapper.converter.ContextualConverter;
-import org.simpleflatmapper.converter.ContextualConverterFactory;
-import org.simpleflatmapper.converter.ConvertingScore;
-import org.simpleflatmapper.converter.ConvertingTypes;
-
-import org.simpleflatmapper.converter.ToStringConverter;
+import org.simpleflatmapper.converter.*;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeHelper;
@@ -22,11 +13,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
 public class JavaBaseConverterFactoryProducer extends AbstractContextualConverterFactoryProducer {
 	@Override
@@ -61,6 +48,14 @@ public class JavaBaseConverterFactoryProducer extends AbstractContextualConverte
 
 		factoryConverter (consumer, new ObjectEnumConverterFactory());
 		factoryConverter (consumer, new ArrayToListConverterFactory());
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(String.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(Short.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(Integer.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(Long.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(Double.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(Float.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(BigInteger.class));
+		factoryConverter (consumer, new ListToArrayConverterFactory<>(BigDecimal.class));
 
 		constantConverter(consumer, Object.class, String.class, ToStringConverter.INSTANCE);
 		constantConverter(consumer, Object.class, URL.class, new ToStringToURLConverter());
@@ -236,6 +231,40 @@ public class JavaBaseConverterFactoryProducer extends AbstractContextualConverte
 			}
 			return ConvertingScore.NO_MATCH;
 		}
+	}
 
+	@SuppressWarnings("unchecked")
+	private static class ListToArrayConverterFactory<E> extends AbstractContextualConverterFactory<List, E[]> {
+
+		private Class<E> elementClass;
+		private Class<E> elementArrayClass;
+
+		protected ListToArrayConverterFactory(Class<E> elementClass) {
+			super(List.class, (Class<E[]>)
+					Array.newInstance(elementClass, 0).getClass());
+			this.elementClass = elementClass;
+			this.elementArrayClass = (Class<E>) Array.newInstance(elementClass, 0).getClass();
+		}
+
+		@Override
+		public ContextualConverter<? super List, E[]> newConverter(ConvertingTypes targetedTypes,
+																   ContextFactoryBuilder contextFactoryBuilder,
+																   Object... params) {
+			return new ContextualConverter<List, E[]>() {
+				@Override
+				public E[] convert(List in, Context context) throws Exception {
+					if (in == null) return null;
+					return (E[]) in.toArray((E[]) Array.newInstance(elementClass, in.size()));
+				}
+			};
+		}
+
+		@Override
+		public ConvertingScore score(ConvertingTypes targetedTypes) {
+			if (TypeHelper.isAssignable(elementArrayClass, targetedTypes.getTo())) {
+				return new ConvertingScore(ConvertingScore.MAX_SCORE, ConvertingTypes.getSourceScore(convertingTypes.getTo(), targetedTypes.getTo()));
+			}
+			return ConvertingScore.NO_MATCH;
+		}
 	}
 }

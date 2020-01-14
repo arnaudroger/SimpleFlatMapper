@@ -60,7 +60,7 @@ public class JooqUnmapperTest {
 
 		DSLContext dsl = DSL.using(cfg);
 
-		Label label = new Label(1, UUID.randomUUID(), "label", false);
+		Label label = new Label(1, UUID.randomUUID(), "label", false, null);
 
 		LabelsRecord labelsRecord = dsl.newRecord(Labels.LABELS, label);
 

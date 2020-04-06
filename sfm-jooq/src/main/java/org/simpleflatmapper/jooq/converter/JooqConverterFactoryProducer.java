@@ -6,17 +6,58 @@ import org.jooq.types.UByte;
 import org.jooq.types.UInteger;
 import org.jooq.types.ULong;
 import org.jooq.types.UShort;
+import org.simpleflatmapper.converter.AbstractContextualConverterFactory;
 import org.simpleflatmapper.converter.AbstractContextualConverterFactoryProducer;
 import org.simpleflatmapper.converter.Context;
+import org.simpleflatmapper.converter.ContextFactoryBuilder;
 import org.simpleflatmapper.converter.ContextualConverter;
 import org.simpleflatmapper.converter.ContextualConverterFactory;
+import org.simpleflatmapper.converter.ConvertingTypes;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.Supplier;
+import org.simpleflatmapper.util.SupplierHelper;
 
+//IFJAVA8_START
+import org.simpleflatmapper.jdbc.converter.time.DateToLocalDateConverter;
+import org.simpleflatmapper.jdbc.converter.time.TimeToLocalTimeConverter;
+import org.simpleflatmapper.jdbc.converter.time.TimeToOffsetTimeConverter;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetTime;
+import java.time.ZoneOffset;
+//IFJAVA8_END
 import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Time;
 
 public class JooqConverterFactoryProducer extends AbstractContextualConverterFactoryProducer {
     @Override
     public void produce(Consumer<? super ContextualConverterFactory<?, ?>> consumer) {
+        //IFJAVA8_START
+        constantConverter(consumer, Time.class, LocalTime.class, new TimeToLocalTimeConverter());
+        constantConverter(consumer, Date.class, LocalDate.class, new DateToLocalDateConverter());
+        factoryConverter(consumer, new AbstractContextualConverterFactory<Time, OffsetTime>(Time.class, OffsetTime.class) {
+            @Override
+            public ContextualConverter<Time, OffsetTime> newConverter(ConvertingTypes targetedTypes, ContextFactoryBuilder contextFactoryBuilder, Object... params) {
+                ZoneOffset zoneOffset = getZoneOffset(params);
+                return new TimeToOffsetTimeConverter(zoneOffset);
+            }
+
+            @SuppressWarnings("unchecked")
+            private ZoneOffset getZoneOffset(Object[] params) {
+                for(Object prop : params) {
+                    if (prop instanceof ZoneOffset) {
+                        return (ZoneOffset) prop;
+                    } else if (SupplierHelper.isSupplierOf(prop, ZoneOffset.class)) {
+                        return ((Supplier<ZoneOffset>)prop).get();
+                    }
+                }
+
+                return ZoneOffset.UTC;
+            }
+        });
+        //IFJAVA8_END
+
         this.constantConverter(consumer, byte.class, UByte.class, new ContextualConverter<Byte, UByte>() {
             @Override
             public UByte convert(Byte in, Context context) throws Exception {
@@ -120,6 +161,6 @@ public class JooqConverterFactoryProducer extends AbstractContextualConverterFac
                 return (JSONObject)parser.parse(in);
             }
         });
-        
+
     }
 }

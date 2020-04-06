@@ -1,5 +1,21 @@
 package org.simpleflatmapper.jooq.test.books;
 
+import static org.junit.Assert.assertEquals;
+import static org.simpleflatmapper.jooq.test.books.Author.AUTHOR;
+import static org.simpleflatmapper.jooq.test.books.Book.BOOK;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import javax.persistence.Column;
+import javax.sql.DataSource;
+
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -10,23 +26,9 @@ import org.simpleflatmapper.jooq.SelectQueryMapper;
 import org.simpleflatmapper.jooq.SelectQueryMapperFactory;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.simpleflatmapper.jooq.test.books.Author.AUTHOR;
-import static org.simpleflatmapper.jooq.test.books.Book.BOOK;
-
 public class SelectQueryMapperTest {
+
+	private final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	@Test
 	public void testSelectQuery() throws SQLException {
@@ -44,8 +46,6 @@ public class SelectQueryMapperTest {
 
 		UUID uuid1 = UUID.randomUUID();
 		Label label = new Label(1, uuid1, "l1", false);
-
-
 
 		dsl.insertInto(Labels.LABELS).columns(Labels.LABELS.ID, Labels.LABELS.NAME, Labels.LABELS.OBSOLETE, Labels.LABELS.UUID)
 				.values(1, "l1", false, uuid1).execute();
@@ -78,16 +78,15 @@ public class SelectQueryMapperTest {
 
 			assertEquals(2, authors.size());
 
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyy-MM-dd");
 			assertEquals(
-					new Author(1, "George", "Orwell", sdf.parse("1903-06-25"),
+					new Author(1, "George", "Orwell", LocalDate.parse("1903-06-25", DATE_FORMAT),
 						Arrays.asList(
 								new Book(1, "1984"),
 								new Book(2, "Animal Farm")
 						)
 					), authors.get(0));
 			assertEquals(
-					new Author(2, "Paulo", "Coelho", sdf.parse("1947-08-24"),
+					new Author(2, "Paulo", "Coelho", LocalDate.parse("1947-08-24", DATE_FORMAT),
 						Arrays.asList(
 								new Book(3, "O Alquimista"),
 								new Book(4, "Brida")
@@ -135,10 +134,12 @@ public class SelectQueryMapperTest {
 		public final int id;
 		public final String firstName;
 		public final String lastName;
-		public final Date dateOfBirth;
+		@Column(nullable = false, name = "date_of_birth")
+		public final LocalDate dateOfBirth;
+
 		public final List<Book> books;
 
-		public Author(int id, String firstName, String lastName, Date dateOfBirth, List<Book> books) {
+		public Author(int id, String firstName, String lastName, LocalDate dateOfBirth, List<Book> books) {
 			this.id = id;
 			this.firstName = firstName;
 			this.lastName = lastName;

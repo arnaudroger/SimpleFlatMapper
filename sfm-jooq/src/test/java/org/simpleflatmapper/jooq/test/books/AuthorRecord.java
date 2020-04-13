@@ -255,12 +255,13 @@ public class AuthorRecord extends UpdatableRecordImpl<AuthorRecord> implements R
     /**
      * Create a detached, initialised AuthorRecord
      */
-    public AuthorRecord(Integer id, String firstName, String lastName, LocalDate dateOfBirth) {
+    public AuthorRecord(Integer id, String firstName, String lastName, Date dateOfBirth, LocalDate dateOfDeath) {
         super(Author.AUTHOR);
 
         set(0, id);
         set(1, firstName);
         set(2, lastName);
         set(3, dateOfBirth);
+        set(3, dateOfDeath);
     }
 }

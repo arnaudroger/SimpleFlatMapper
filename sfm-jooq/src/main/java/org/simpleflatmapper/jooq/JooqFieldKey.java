@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jooq;
 
 import org.jooq.Field;
+import org.simpleflatmapper.jdbc.JdbcTypeHelper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.util.TypeHelper;
@@ -61,6 +62,12 @@ public class JooqFieldKey extends FieldKey<JooqFieldKey> implements TypeAffinity
 			}else if (TypeHelper.isAssignable(java.sql.Array.class, targetType)) {
 				return java.sql.Array.class;
 			}
+		}
+
+		//FIXME: "some" test fail
+		Type mappedType = JdbcTypeHelper.toJavaType(field.getDataType().getSQLType(), targetType);
+		if (mappedType != null) {
+			return mappedType;
 		}
 		return type;
 	}

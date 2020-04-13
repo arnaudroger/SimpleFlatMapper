@@ -4,6 +4,7 @@
 package org.simpleflatmapper.jooq.test.books;
 
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Row4;
+import org.jooq.Row5;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -70,7 +72,12 @@ public class Author extends TableImpl<AuthorRecord> {
     /**
      * The column <code>PUBLIC.AUTHOR.DATE_OF_BIRTH</code>.
      */
-    public final TableField<AuthorRecord, LocalDate> DATE_OF_BIRTH = createField(DSL.name("DATE_OF_BIRTH"), org.jooq.impl.SQLDataType.LOCALDATE, this, "");
+    public final TableField<AuthorRecord, Date> DATE_OF_BIRTH = createField(DSL.name("DATE_OF_BIRTH"), org.jooq.impl.SQLDataType.DATE, this, "");
+
+    /**
+     * The column <code>PUBLIC.AUTHOR.DATE_OF_DEATH</code>.
+     */
+    public final TableField<AuthorRecord, LocalDate> DATE_OF_DEATH = createField(DSL.name("DATE_OF_DEATH"), org.jooq.impl.SQLDataType.LOCALDATE, this, "");
 
     /**
      * Create a <code>PUBLIC.AUTHOR</code> table reference
@@ -156,7 +163,7 @@ public class Author extends TableImpl<AuthorRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Integer, String, String, LocalDate> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row5<Integer, String, String, Date, LocalDate> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 }

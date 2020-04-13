@@ -5,8 +5,10 @@ import static org.simpleflatmapper.jooq.test.books.Author.AUTHOR;
 import static org.simpleflatmapper.jooq.test.books.Book.BOOK;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -70,7 +72,7 @@ public class SelectQueryMapperTest {
 			SelectQueryMapper<Author> authorMapper = SelectQueryMapperFactory.newInstance().newMapper(Author.class);
 
 			List<Author> authors = authorMapper.asList(DSL.using(connection)
-					.select(AUTHOR.ID, AUTHOR.FIRST_NAME, AUTHOR.LAST_NAME, AUTHOR.DATE_OF_BIRTH,
+					.select(AUTHOR.ID, AUTHOR.FIRST_NAME, AUTHOR.LAST_NAME, AUTHOR.DATE_OF_BIRTH, AUTHOR.DATE_OF_DEATH,
 							BOOK.ID, BOOK.TITLE)
 					.from(AUTHOR).leftJoin(BOOK).on(BOOK.AUTHOR_ID.eq(AUTHOR.ID))
 					.orderBy(AUTHOR.ID));
@@ -78,15 +80,16 @@ public class SelectQueryMapperTest {
 
 			assertEquals(2, authors.size());
 
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyy-MM-dd");
 			assertEquals(
-					new Author(1, "George", "Orwell", LocalDate.parse("1903-06-25", DATE_FORMAT),
+					new Author(1, "George", "Orwell", sdf.parse("1903-06-25"), LocalDate.parse("1950-01-21", DATE_FORMAT),
 						Arrays.asList(
 								new Book(1, "1984"),
 								new Book(2, "Animal Farm")
 						)
 					), authors.get(0));
 			assertEquals(
-					new Author(2, "Paulo", "Coelho", LocalDate.parse("1947-08-24", DATE_FORMAT),
+					new Author(2, "Paulo", "Coelho", sdf.parse("1947-08-24"), null,
 						Arrays.asList(
 								new Book(3, "O Alquimista"),
 								new Book(4, "Brida")
@@ -105,6 +108,7 @@ public class SelectQueryMapperTest {
 				"  first_name VARCHAR(50),\n" +
 				"  last_name VARCHAR(50) NOT NULL,\n" +
 				"  date_of_birth DATE,\n" +
+				"  date_of_death DATE,\n" +
 				"\n" +
 				"  CONSTRAINT pk_t_author PRIMARY KEY (ID)\n" +
 				")");
@@ -121,8 +125,8 @@ public class SelectQueryMapperTest {
 				"  CONSTRAINT fk_t_book_author_id FOREIGN KEY (author_id) REFERENCES author(id),\n" +
 				")\n" +
 				";");
-		st.execute("INSERT INTO author VALUES (1, 'George', 'Orwell', '1903-06-25')\n");
-		st.execute("INSERT INTO author VALUES (2, 'Paulo', 'Coelho', '1947-08-24')\n");
+		st.execute("INSERT INTO author VALUES (1, 'George', 'Orwell', '1903-06-25', '1950-01-21')\n");
+		st.execute("INSERT INTO author VALUES (2, 'Paulo', 'Coelho', '1947-08-24', null)\n");
 		st.execute("INSERT INTO book VALUES (1, 1, '1984'        , 1948, null)\n");
 		st.execute("INSERT INTO book VALUES (2, 1, 'Animal Farm' , 1945, null)\n");
 		st.execute("INSERT INTO book VALUES (3, 2, 'O Alquimista', 1988, null)\n");
@@ -134,16 +138,17 @@ public class SelectQueryMapperTest {
 		public final int id;
 		public final String firstName;
 		public final String lastName;
-		@Column(nullable = false, name = "date_of_birth")
-		public final LocalDate dateOfBirth;
+		public final Date dateOfBirth;
+		public final LocalDate dateOfDeath;
 
 		public final List<Book> books;
 
-		public Author(int id, String firstName, String lastName, LocalDate dateOfBirth, List<Book> books) {
+		public Author(int id, String firstName, String lastName, Date dateOfBirth, LocalDate dateOfDeath, List<Book> books) {
 			this.id = id;
 			this.firstName = firstName;
 			this.lastName = lastName;
 			this.dateOfBirth = dateOfBirth;
+			this.dateOfDeath = dateOfDeath;
 			this.books = books;
 		}
 
@@ -160,6 +165,8 @@ public class SelectQueryMapperTest {
 			if (lastName != null ? !lastName.equals(author.lastName) : author.lastName != null) return false;
 			if (dateOfBirth != null ? !dateOfBirth.equals(author.dateOfBirth) : author.dateOfBirth != null)
 				return false;
+			if (dateOfDeath != null ? !dateOfDeath.equals(author.dateOfDeath) : author.dateOfDeath != null)
+				return false;
 			return books != null ? books.equals(author.books) : author.books == null;
 		}
 
@@ -169,6 +176,7 @@ public class SelectQueryMapperTest {
 			result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
 			result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
 			result = 31 * result + (dateOfBirth != null ? dateOfBirth.hashCode() : 0);
+			result = 31 * result + (dateOfDeath != null ? dateOfDeath.hashCode() : 0);
 			result = 31 * result + (books != null ? books.hashCode() : 0);
 			return result;
 		}
@@ -179,6 +187,7 @@ public class SelectQueryMapperTest {
 					"id=" + id +
 					", firstName='" + firstName + '\'' +
 					", dateOfBirth=" + dateOfBirth +
+					", dateOfDeath=" + dateOfDeath +
 					", books=" + books +
 					'}';
 		}

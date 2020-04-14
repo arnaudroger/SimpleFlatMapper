@@ -504,6 +504,23 @@ public class AbstractMapperBuilderTest {
 
 
     }
+
+
+    @Test
+    public void testNewSeparatorChar712() throws Exception {
+        ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+
+        EnumerableMapper<Object[][], DbObject, ?> mapper =
+                new SampleMapperBuilder<DbObject>(classMeta, MapperConfig.<SampleFieldKey, Object[]>fieldMapperConfig().propertyNameMatcherFactory(DefaultPropertyNameMatcherFactory.DEFAULT.addSeparators('/')))
+                        .addKey("id")
+                        .addMapping("na/me")
+                        .mapper();
+
+        DbObject dbObject = mapper.iterator(new Object[][] { {1l, "hello"} }).next();
+        assertEquals(1, dbObject.getId());
+        assertEquals("hello", dbObject.getName());
+    }
+
     private <T> void testDbObjectxxxMapper(Supplier<T> supplier, boolean mapTo) throws Exception {
         testDbObjectxxxMapper(supplier, mapTo, DbObject.HEADERS);
     }

@@ -24,7 +24,7 @@ public class NonMappedPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
 	private static String cleanUpName(String name) {
 		int i = 0;
-		while(i < name.length() && DefaultPropertyNameMatcher.isSeparatorChar(name.charAt(i)))
+		while(i < name.length() && DefaultPropertyNameMatcher._isSeparatorChar(name.charAt(i)))
 			i++;
 
 		return i > 0 ? name.substring(i) : name;

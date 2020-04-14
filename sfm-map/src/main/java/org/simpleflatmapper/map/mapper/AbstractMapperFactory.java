@@ -349,6 +349,19 @@ public abstract class AbstractMapperFactory<
 		return (MF) this;
 	}
 
+	//IFJAVA8_START
+	/**
+	 * Override the default PropertyNameMatcherFactory with the specified factory.
+	 * @param propertyNameMatcherFactorySetup a function that takes the current factory and return the newly configured one
+	 * @return the current factory
+	 */
+	public final MF propertyNameMatcherFactory(Function<PropertyNameMatcherFactory, PropertyNameMatcherFactory> propertyNameMatcherFactorySetup) {
+		this.propertyNameMatcherFactory = propertyNameMatcherFactorySetup.apply(propertyNameMatcherFactory);
+		return (MF) this;
+	}
+
+	//IFJAVA8_END
+
     /**
      * Associate the aliases value to the property key.
      * @param aliases the key value pair

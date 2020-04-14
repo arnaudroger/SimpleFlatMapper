@@ -1,12 +1,21 @@
 package org.simpleflatmapper.reflect.meta;
 
 
+import org.simpleflatmapper.util.CharPredicate;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
+	public static final CharPredicate DEFAULT_IS_SEPARATOR_CHAR = new CharPredicate() {
+		@Override
+		public boolean apply(char c) {
+			return _isSeparatorChar(c);
+		}
+	};
+
 	private final String column;
 	private final int from;
 
@@ -14,7 +23,13 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	private final boolean caseSensitive;
 	private final int effectiveEndIndex;
 
+	private final CharPredicate isSeparatorChar;
+
 	public DefaultPropertyNameMatcher(String column, int from, boolean exactMatch, boolean caseSensitive) {
+		this(column, from, exactMatch, caseSensitive, DEFAULT_IS_SEPARATOR_CHAR);
+	}
+
+	public DefaultPropertyNameMatcher(String column, int from, boolean exactMatch, boolean caseSensitive, CharPredicate isSeparatorChar) {
 		if (from > column.length()) {
 			throw new IndexOutOfBoundsException("Index " + from + " out of " + column.length());
 		}
@@ -22,6 +37,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		this.from = from;
 		this.exactMatch = exactMatch;
 		this.caseSensitive = caseSensitive;
+		this.isSeparatorChar = isSeparatorChar;
 		this.effectiveEndIndex = lastNonIgnorableChar(column) + 1;
 	}
 
@@ -69,7 +85,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 
 	private int lastNonIgnorableChar(String column) {
 		for(int i = column.length() - 1; i >= 0; i--) {
-			if (!isSeparatorChar(column.charAt(i))) return i;
+			if (!isSeparatorChar.apply(column.charAt(i))) return i;
 		}
 		return 0;
 	}
@@ -81,7 +97,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		int listIndexStart = from;
 		
 		// skip separtor char
-		while(listIndexStart < column.length() && isSeparatorChar(column.charAt(listIndexStart))) {
+		while(listIndexStart < column.length() && isSeparatorChar.apply(column.charAt(listIndexStart))) {
 			listIndexStart++;
 		}
 		
@@ -92,7 +108,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 			char ch = column.charAt(listIndexStart);
 			if (Character.isDigit(ch)) {
 				break;
-			} else if (isSeparatorChar(ch)) {
+			} else if (isSeparatorChar.apply(ch)) {
 				encounterSeparator = true;
 			} else if (encounterSeparator) {
 				return null;
@@ -126,7 +142,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 				column.substring(listIndexStart, listIndexEnd),
 				subPropertyNameMatcher,
 				score,
-				(listIndexStart != effectivePropertyStart || (listIndexEnd < column.length() && !isSeparatorChar(column.charAt(listIndexEnd)))) // has text at the start or at the ends
+				(listIndexStart != effectivePropertyStart || (listIndexEnd < column.length() && !isSeparatorChar.apply(column.charAt(listIndexEnd)))) // has text at the start or at the ends
 		);
 	}
 
@@ -315,7 +331,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	}
 
 	private boolean isEndOfWord(CharSequence property, int nextIndexProperty) {
-		return nextIndexProperty >= property.length() || Character.isUpperCase(property.charAt(nextIndexProperty)) || isSeparatorChar(property.charAt(nextIndexProperty));
+		return nextIndexProperty >= property.length() || Character.isUpperCase(property.charAt(nextIndexProperty)) || isSeparatorChar.apply(property.charAt(nextIndexProperty));
 	}
 
 	private boolean areDifferentCharacters(char c1, char c2) {
@@ -327,10 +343,10 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	}
 
 	private boolean ignoreCharacter(final char charColumn) {
-		return !exactMatch && isSeparatorChar(charColumn);
+		return !exactMatch && isSeparatorChar.apply(charColumn);
 	}
 
-	public static  boolean isSeparatorChar(char charColumn) {
+	public static  boolean _isSeparatorChar(char charColumn) {
 		return charColumn == '_' || charColumn == ' ' || charColumn == '.' || charColumn == '-';
 	}
 
@@ -363,7 +379,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 
 		int f = from;
 		// skip separator char
-		for(; f < column.length() && isSeparatorChar(column.charAt(f)); f++)
+		for(; f < column.length() && isSeparatorChar.apply(column.charAt(f)); f++)
 			;
 		keyValuePairs.add(
 				new PropertyNameMatcherKeyValuePair(
@@ -372,7 +388,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 				));
 		for(int i = column.length() - 1; i >= f; i--) {
 			char c = column.charAt(i);
-			if (isSeparatorChar(c)) {
+			if (isSeparatorChar.apply(c)) {
 				PropertyNameMatcher key = new DefaultPropertyNameMatcher(column.substring(f,  i), 0, exactMatch, caseSensitive);
 				PropertyNameMatcher value = new DefaultPropertyNameMatcher(column,  i + 1, exactMatch, caseSensitive);
 				keyValuePairs.add(new PropertyNameMatcherKeyValuePair(key, value));
@@ -384,7 +400,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 
 	@Override
 	public int asScore() {
-		return toScore(column, from);
+		return toScore(column, from, isSeparatorChar);
 	}
 
 	private int _speculativeMatch() {
@@ -403,13 +419,21 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	}
 
 	public static int toScore(String property) {
-		return toScore(property, 0);
+		return toScore(property, DEFAULT_IS_SEPARATOR_CHAR);
 	}
 
 	public static int toScore(String property, int from) {
+		return toScore(property, from, DEFAULT_IS_SEPARATOR_CHAR);
+	}
+
+	public static int toScore(String property, CharPredicate isSeparatorChar) {
+		return toScore(property, 0, isSeparatorChar);
+	}
+
+	public static int toScore(String property, int from, CharPredicate isSeparatorChar) {
 		int s = 0;
 		for(int i = from; i < property.length(); i++) {
-			if (!isSeparatorChar(property.charAt(i))) s++;
+			if (!isSeparatorChar.apply(property.charAt(i))) s++;
 		}
 		return s;
 	}

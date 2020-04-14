@@ -19,6 +19,7 @@ public class DiscriminatorEnumerable<S, T> implements Enumerable<T> {
     private T nextValue;
     private SourceFieldMapper<S, T> currentMapper;
     private MappingContext<? super S> currentMappingContext;
+    private boolean exhausted = false;
 
 
     public DiscriminatorEnumerable(
@@ -32,6 +33,7 @@ public class DiscriminatorEnumerable<S, T> implements Enumerable<T> {
 
     @Override
     public boolean next() {
+        if (exhausted) return false;
         try {
             currentValue = nextValue;
             nextValue = null;
@@ -52,6 +54,8 @@ public class DiscriminatorEnumerable<S, T> implements Enumerable<T> {
                     currentMapper.mapTo(source, currentValue, currentMappingContext);
                 }
             }
+
+            exhausted = true;
 
             return currentValue != null;
         } catch (Exception e) {

@@ -15,6 +15,8 @@ public class JoinMapperEnumerable<S, T> implements Enumerable<T> {
     private T currentValue;
     private T nextValue;
 
+    private boolean exhausted = false;
+
     public JoinMapperEnumerable(SourceFieldMapper<S, T> mapper,
                                 MappingContext<? super S> mappingContext,
                                 Enumerable<S> sourceEnumerable) {
@@ -25,6 +27,7 @@ public class JoinMapperEnumerable<S, T> implements Enumerable<T> {
 
     @Override
     public boolean next() {
+        if (exhausted) return false;
         try {
             currentValue = nextValue;
             nextValue = null;
@@ -43,6 +46,8 @@ public class JoinMapperEnumerable<S, T> implements Enumerable<T> {
                     mapper.mapTo(source, currentValue, mappingContext);
                 }
             }
+
+            exhausted = true;
 
             return currentValue != null;
         } catch (Exception e) {

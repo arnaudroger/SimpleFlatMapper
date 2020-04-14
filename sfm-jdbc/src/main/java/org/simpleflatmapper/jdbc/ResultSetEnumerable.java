@@ -8,15 +8,22 @@ import java.sql.SQLException;
 
 public class ResultSetEnumerable implements Enumerable<ResultSet> {
     private final ResultSet resultSet;
-
+    private boolean exhausted = false;
     public ResultSetEnumerable(ResultSet resultSet) {
         this.resultSet = resultSet;
     }
 
     @Override
     public boolean next() {
+        if (exhausted) {
+            return false;
+        }
         try {
-            return resultSet.next();
+            if (resultSet.next()) return true;
+            else {
+                exhausted = true;
+                return false;
+            }
         } catch(SQLException e) {
             ErrorHelper.rethrow(e);
             return false;

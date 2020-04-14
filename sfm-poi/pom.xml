@@ -1,171 +1,319 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<artifactId>sfm-poi</artifactId>
-	<packaging>bundle</packaging>
-
-	<parent>
-		<groupId>org.simpleflatmapper</groupId>
-		<artifactId>sfm-parent</artifactId>
-		<version>8.2.3-SNAPSHOT</version>
-	</parent>
-
-	<name>sfm-poi</name>
-	<url>http://github.com/arnaudroger/SimpleFlatMapper</url>
-
-	<description>Excel POI supports.</description>
-
-
-	<licenses>
-		<license>
-			<name>The MIT License (MIT)</name>
-			<url>http://opensource.org/licenses/MIT</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Export-Package>org.simpleflatmapper.poi</Export-Package>
-						<Import-Package>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    	
+    <modelVersion>4.0.0</modelVersion>
+    	
+    <artifactId>sfm-poi-jre9</artifactId>
+    	
+    <packaging>bundle</packaging>
+    	
+    <parent>
+        		
+        <groupId>org.simpleflatmapper</groupId>
+        		
+        <artifactId>sfm-parent-jre9</artifactId>
+        		
+        <version>8.2.3-SNAPSHOT</version>
+        	
+    </parent>
+    	
+    <name>sfm-poi</name>
+    	
+    <url>http://github.com/arnaudroger/SimpleFlatMapper</url>
+    	
+    <description>Excel POI supports.</description>
+    	
+    <licenses>
+        		
+        <license>
+            			
+            <name>The MIT License (MIT)</name>
+            			
+            <url>http://opensource.org/licenses/MIT</url>
+            			
+            <distribution>repo</distribution>
+            		
+        </license>
+        	
+    </licenses>
+    	
+    <build>
+        		
+        <plugins>
+            			
+            <plugin>
+                				
+                <groupId>org.apache.felix</groupId>
+                				
+                <artifactId>maven-bundle-plugin</artifactId>
+                				
+                <extensions>true</extensions>
+                				
+                <configuration>
+                    					
+                    <instructions>
+                        						
+                        <Export-Package>org.simpleflatmapper.poi</Export-Package>
+                        						
+                        <Import-Package>
 							org.simpleflatmapper.*,
 							org.apache.poi.*
 						</Import-Package>
-					</instructions>
-					<archive>
-						<manifestEntries>
-							<Automatic-Module-Name>org.simpleflatmapper.poi</Automatic-Module-Name>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.17</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-csv</artifactId>
-			<version>8.2.3-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-converter-joda-time</artifactId>
-			<version>8.2.3-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-test</artifactId>
-			<version>8.2.3-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-	<profiles>
-		<profile>
-			<id>travis</id>
-			<activation>
-				<property>
-					<name>env.TRAVIS</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>jdk16</id>
-			<activation>
-				<jdk>1.6</jdk>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>jdk17</id>
-			<activation>
-				<jdk>1.7</jdk>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>jdk19</id>
-			<activation>
-				<jdk>[9,12]</jdk>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>org.jooq</groupId>
-					<artifactId>jool</artifactId>
-					<version>0.9.12</version>
-					<optional>true</optional>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>com.boundary</groupId>
-					<artifactId>fasttuple-core</artifactId>
-					<version>0.1</version>
-					<optional>true</optional>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-
-			<build>
-				<plugins>
-	
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-exports=org.simpleflatmapper.poi/org.simpleflatmapper.poi.test=org.simpleflatmapper.reflect</argLine>
-						</configuration>
-					</plugin>
-				</plugins>
-
-			</build>
-		</profile>
-	</profiles>
+                        					
+                    </instructions>
+                    					
+                    <archive>
+                        						
+                        <manifestEntries>
+                            							
+                            <Automatic-Module-Name>org.simpleflatmapper.poi</Automatic-Module-Name>
+                            						
+                        </manifestEntries>
+                        					
+                    </archive>
+                    				
+                </configuration>
+                			
+            </plugin>
+            		
+        </plugins>
+        	
+    </build>
+    	
+    <dependencies>
+        		
+        <dependency>
+            			
+            <groupId>org.apache.poi</groupId>
+            			
+            <artifactId>poi</artifactId>
+            			
+            <version>3.17</version>
+            			
+            <scope>provided</scope>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>joda-time</groupId>
+            			
+            <artifactId>joda-time</artifactId>
+            			
+            <scope>test</scope>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>org.simpleflatmapper</groupId>
+            			
+            <artifactId>sfm-csv-jre9</artifactId>
+            			
+            <version>8.2.3-SNAPSHOT</version>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>org.simpleflatmapper</groupId>
+            			
+            <artifactId>sfm-converter-joda-time-jre9</artifactId>
+            			
+            <version>8.2.3-SNAPSHOT</version>
+            			
+            <scope>test</scope>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>org.simpleflatmapper</groupId>
+            			
+            <artifactId>sfm-test-jre9</artifactId>
+            			
+            <version>8.2.3-SNAPSHOT</version>
+            			
+            <scope>test</scope>
+            		
+        </dependency>
+        	
+    </dependencies>
+    	
+    <profiles>
+        		
+        <profile>
+            			
+            <id>travis</id>
+            			
+            <activation>
+                				
+                <property>
+                    					
+                    <name>env.TRAVIS</name>
+                    					
+                    <value>true</value>
+                    				
+                </property>
+                			
+            </activation>
+            			
+            <build>
+                				
+                <plugins>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.jacoco</groupId>
+                        						
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        					
+                    </plugin>
+                    				
+                </plugins>
+                			
+            </build>
+            		
+        </profile>
+        		
+        <profile>
+            			
+            <id>jdk16</id>
+            			
+            <activation>
+                				
+                <jdk>1.6</jdk>
+                			
+            </activation>
+            			
+            <build>
+                				
+                <plugins>
+                    					
+                    <plugin>
+                        						
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        						
+                        <artifactId>replacer</artifactId>
+                        					
+                    </plugin>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.apache.maven.plugins</groupId>
+                        						
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        					
+                    </plugin>
+                    				
+                </plugins>
+                			
+            </build>
+            		
+        </profile>
+        		
+        <profile>
+            			
+            <id>jdk17</id>
+            			
+            <activation>
+                				
+                <jdk>1.7</jdk>
+                			
+            </activation>
+            			
+            <build>
+                				
+                <plugins>
+                    					
+                    <plugin>
+                        						
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        						
+                        <artifactId>replacer</artifactId>
+                        					
+                    </plugin>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.apache.maven.plugins</groupId>
+                        						
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        					
+                    </plugin>
+                    				
+                </plugins>
+                			
+            </build>
+            		
+        </profile>
+        		
+        <profile>
+            			
+            <id>jdk19</id>
+            			
+            <activation>
+                				
+                <jdk>[9,12]</jdk>
+                			
+            </activation>
+            			
+            <dependencies>
+                				
+                <dependency>
+                    					
+                    <groupId>org.jooq</groupId>
+                    					
+                    <artifactId>jool</artifactId>
+                    					
+                    <version>0.9.12</version>
+                    					
+                    <optional>true</optional>
+                    					
+                    <scope>test</scope>
+                    				
+                </dependency>
+                				
+                <dependency>
+                    					
+                    <groupId>com.boundary</groupId>
+                    					
+                    <artifactId>fasttuple-core</artifactId>
+                    					
+                    <version>0.1</version>
+                    					
+                    <optional>true</optional>
+                    					
+                    <scope>test</scope>
+                    				
+                </dependency>
+                			
+            </dependencies>
+            			
+            <build>
+                				
+                <plugins>
+                    	
+					
+                    <plugin>
+                        						
+                        <groupId>org.apache.maven.plugins</groupId>
+                        						
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        						
+                        <configuration>
+                            							
+                            <argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-exports=org.simpleflatmapper.poi/org.simpleflatmapper.poi.test=org.simpleflatmapper.reflect</argLine>
+                            						
+                        </configuration>
+                        					
+                    </plugin>
+                    				
+                </plugins>
+                			
+            </build>
+            		
+        </profile>
+        	
+    </profiles>
+    
 </project>

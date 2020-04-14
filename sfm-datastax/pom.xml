@@ -1,252 +1,473 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<artifactId>sfm-datastax</artifactId>
-	<packaging>bundle</packaging>
-
-	<parent>
-		<groupId>org.simpleflatmapper</groupId>
-		<artifactId>sfm-parent</artifactId>
-		<version>8.2.3-SNAPSHOT</version>
-	</parent>
-
-	<name>sfm-datastax</name>
-	<description>Cassandra Datastax SFM supports.</description>
-
-
-	<licenses>
-		<license>
-			<name>The MIT License (MIT)</name>
-			<url>http://opensource.org/licenses/MIT</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Export-Package>org.simpleflatmapper.datastax</Export-Package>
-						<Import-Package>org.simpleflatmapper.*,com.datastax.driver.*,com.google.*</Import-Package>
-					</instructions>
-					<archive>
-						<manifestEntries>
-							<Automatic-Module-Name>org.simpleflatmapper.datastax</Automatic-Module-Name>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>
-
-		<dependency>
-			<groupId>com.datastax.cassandra</groupId>
-			<artifactId>cassandra-driver-core</artifactId>
-			<version>3.7.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>io.netty</groupId>
-					<artifactId>netty-transport-native-epoll</artifactId>
-				</exclusion>
-			</exclusions>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-map</artifactId>
-			<version>8.2.3-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-tuples</artifactId>
-			<version>8.2.3-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.datastax.cassandra</groupId>
-			<artifactId>cassandra-driver-mapping</artifactId>
-			<version>2.1.8</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-map</artifactId>
-			<version>8.2.3-SNAPSHOT</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-test</artifactId>
-			<version>8.2.3-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-converter-joda-time</artifactId>
-			<version>8.2.3-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-	<profiles>
-		<profile>
-			<id>cassandra2</id>
-			<activation>
-				<jdk>[1.6,1.9)</jdk>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>org.cassandraunit</groupId>
-					<artifactId>cassandra-unit</artifactId>
-					<version>2.1.3.1</version>
-					<scope>test</scope>
-					<exclusions>
-						<exclusion>
-							<groupId>io.netty</groupId>
-							<artifactId>netty-all</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>travis</id>
-			<activation>
-				<property>
-					<name>env.TRAVIS</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>jdk16</id>
-			<activation>
-				<jdk>1.6</jdk>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<excludes>
-								<exclude>**/Datastax3Test.java</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>jdk17</id>
-			<activation>
-				<jdk>1.7</jdk>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<!--<argLine>-XX:MaxPermSize=256m</argLine>-->
-							<excludes>
-								<exclude>**/Datastax3Test.java</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<id>jdk19</id>
-			<activation>
-				<jdk>[9,12]</jdk>
-			</activation>
-			<properties>
-				<maven.test.skip>true</maven.test.skip>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-
-						<executions>
-							<execution>
-								<id>default-testCompile</id>
-								<phase>test-compile</phase>
-								<configuration>
-									<fork>true</fork>
-
-									<compilerArgs>
-										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.datastax/org.simpleflatmapper.datastax.impl=org.simpleflatmapper.datastax.test</arg>
-									</compilerArgs>
-									<testExcludes>
-										<exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxHelper.java</exclude>
-										<exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxCrudTest.java</exclude>
-										<exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxMapperCollectionTest.java</exclude>
-										<exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxMapperFactoryTest.java</exclude>
-										<exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxMapperTupleTest.java</exclude>
-										<exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxMapperUDTTest.java</exclude>
-										<exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxNumberTest.java</exclude>
-										<exclude>**/src/test/java/org/simpleflatmapper/datastax/test/SettableDataMapperTest.java</exclude>
-									</testExcludes>
-								</configuration>
-								<goals>
-									<goal>testCompile</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<argLine>--add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED</argLine>
-						</configuration>
-					</plugin>
-				</plugins>
-
-			</build>
-		</profile>
-
-	</profiles>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    	
+    <modelVersion>4.0.0</modelVersion>
+    	
+    <artifactId>sfm-datastax-jre9</artifactId>
+    	
+    <packaging>bundle</packaging>
+    	
+    <parent>
+        		
+        <groupId>org.simpleflatmapper</groupId>
+        		
+        <artifactId>sfm-parent-jre9</artifactId>
+        		
+        <version>8.2.3-SNAPSHOT</version>
+        	
+    </parent>
+    	
+    <name>sfm-datastax</name>
+    	
+    <description>Cassandra Datastax SFM supports.</description>
+    	
+    <licenses>
+        		
+        <license>
+            			
+            <name>The MIT License (MIT)</name>
+            			
+            <url>http://opensource.org/licenses/MIT</url>
+            			
+            <distribution>repo</distribution>
+            		
+        </license>
+        	
+    </licenses>
+    	
+    <build>
+        		
+        <plugins>
+            			
+            <plugin>
+                				
+                <groupId>org.apache.felix</groupId>
+                				
+                <artifactId>maven-bundle-plugin</artifactId>
+                				
+                <extensions>true</extensions>
+                				
+                <configuration>
+                    					
+                    <instructions>
+                        						
+                        <Export-Package>org.simpleflatmapper.datastax</Export-Package>
+                        						
+                        <Import-Package>org.simpleflatmapper.*,com.datastax.driver.*,com.google.*</Import-Package>
+                        					
+                    </instructions>
+                    					
+                    <archive>
+                        						
+                        <manifestEntries>
+                            							
+                            <Automatic-Module-Name>org.simpleflatmapper.datastax</Automatic-Module-Name>
+                            						
+                        </manifestEntries>
+                        					
+                    </archive>
+                    				
+                </configuration>
+                			
+            </plugin>
+            		
+        </plugins>
+        	
+    </build>
+    	
+    <dependencies>
+        		
+        <dependency>
+            			
+            <groupId>com.datastax.cassandra</groupId>
+            			
+            <artifactId>cassandra-driver-core</artifactId>
+            			
+            <version>3.7.1</version>
+            			
+            <exclusions>
+                				
+                <exclusion>
+                    					
+                    <groupId>io.netty</groupId>
+                    					
+                    <artifactId>netty-transport-native-epoll</artifactId>
+                    				
+                </exclusion>
+                			
+            </exclusions>
+            			
+            <scope>provided</scope>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>org.simpleflatmapper</groupId>
+            			
+            <artifactId>sfm-map-jre9</artifactId>
+            			
+            <version>8.2.3-SNAPSHOT</version>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>org.simpleflatmapper</groupId>
+            			
+            <artifactId>sfm-tuples-jre9</artifactId>
+            			
+            <version>8.2.3-SNAPSHOT</version>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>com.datastax.cassandra</groupId>
+            			
+            <artifactId>cassandra-driver-mapping</artifactId>
+            			
+            <version>2.1.8</version>
+            			
+            <scope>test</scope>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>org.simpleflatmapper</groupId>
+            			
+            <artifactId>sfm-map-jre9</artifactId>
+            			
+            <version>8.2.3-SNAPSHOT</version>
+            			
+            <type>test-jar</type>
+            			
+            <scope>test</scope>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>org.simpleflatmapper</groupId>
+            			
+            <artifactId>sfm-test-jre9</artifactId>
+            			
+            <version>8.2.3-SNAPSHOT</version>
+            			
+            <scope>test</scope>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>org.simpleflatmapper</groupId>
+            			
+            <artifactId>sfm-converter-joda-time-jre9</artifactId>
+            			
+            <version>8.2.3-SNAPSHOT</version>
+            			
+            <scope>test</scope>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>joda-time</groupId>
+            			
+            <artifactId>joda-time</artifactId>
+            			
+            <scope>test</scope>
+            		
+        </dependency>
+        	
+    </dependencies>
+    	
+    <profiles>
+        		
+        <profile>
+            			
+            <id>cassandra2</id>
+            			
+            <activation>
+                				
+                <jdk>[1.6,1.9)</jdk>
+                			
+            </activation>
+            			
+            <dependencies>
+                				
+                <dependency>
+                    					
+                    <groupId>org.cassandraunit</groupId>
+                    					
+                    <artifactId>cassandra-unit</artifactId>
+                    					
+                    <version>2.1.3.1</version>
+                    					
+                    <scope>test</scope>
+                    					
+                    <exclusions>
+                        						
+                        <exclusion>
+                            							
+                            <groupId>io.netty</groupId>
+                            							
+                            <artifactId>netty-all</artifactId>
+                            						
+                        </exclusion>
+                        					
+                    </exclusions>
+                    				
+                </dependency>
+                			
+            </dependencies>
+            		
+        </profile>
+        		
+        <profile>
+            			
+            <id>travis</id>
+            			
+            <activation>
+                				
+                <property>
+                    					
+                    <name>env.TRAVIS</name>
+                    					
+                    <value>true</value>
+                    				
+                </property>
+                			
+            </activation>
+            			
+            <build>
+                				
+                <plugins>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.jacoco</groupId>
+                        						
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        					
+                    </plugin>
+                    				
+                </plugins>
+                			
+            </build>
+            		
+        </profile>
+        		
+        <profile>
+            			
+            <id>jdk16</id>
+            			
+            <activation>
+                				
+                <jdk>1.6</jdk>
+                			
+            </activation>
+            			
+            <build>
+                				
+                <plugins>
+                    					
+                    <plugin>
+                        						
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        						
+                        <artifactId>replacer</artifactId>
+                        					
+                    </plugin>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.apache.maven.plugins</groupId>
+                        						
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        					
+                    </plugin>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.apache.maven.plugins</groupId>
+                        						
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        						
+                        <configuration>
+                            							
+                            <excludes>
+                                								
+                                <exclude>**/Datastax3Test.java</exclude>
+                                							
+                            </excludes>
+                            						
+                        </configuration>
+                        					
+                    </plugin>
+                    				
+                </plugins>
+                			
+            </build>
+            		
+        </profile>
+        		
+        <profile>
+            			
+            <id>jdk17</id>
+            			
+            <activation>
+                				
+                <jdk>1.7</jdk>
+                			
+            </activation>
+            			
+            <build>
+                				
+                <plugins>
+                    					
+                    <plugin>
+                        						
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        						
+                        <artifactId>replacer</artifactId>
+                        					
+                    </plugin>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.apache.maven.plugins</groupId>
+                        						
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        					
+                    </plugin>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.apache.maven.plugins</groupId>
+                        						
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        						
+                        <configuration>
+                            							
+                            <!--<argLine>-XX:MaxPermSize=256m</argLine>-->
+                            							
+                            <excludes>
+                                								
+                                <exclude>**/Datastax3Test.java</exclude>
+                                							
+                            </excludes>
+                            						
+                        </configuration>
+                        					
+                    </plugin>
+                    				
+                </plugins>
+                			
+            </build>
+            		
+        </profile>
+        		
+        <profile>
+            			
+            <id>jdk19</id>
+            			
+            <activation>
+                				
+                <jdk>[9,12]</jdk>
+                			
+            </activation>
+            			
+            <properties>
+                				
+                <maven.test.skip>true</maven.test.skip>
+                			
+            </properties>
+            			
+            <build>
+                				
+                <plugins>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.apache.maven.plugins</groupId>
+                        						
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        						
+                        <executions>
+                            							
+                            <execution>
+                                								
+                                <id>default-testCompile</id>
+                                								
+                                <phase>test-compile</phase>
+                                								
+                                <configuration>
+                                    									
+                                    <fork>true</fork>
+                                    									
+                                    <compilerArgs>
+                                        										
+                                        <arg>--add-exports</arg>
+                                        										
+                                        <arg>org.simpleflatmapper.datastax/org.simpleflatmapper.datastax.impl=org.simpleflatmapper.datastax.test</arg>
+                                        									
+                                    </compilerArgs>
+                                    									
+                                    <testExcludes>
+                                        										
+                                        <exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxHelper.java</exclude>
+                                        										
+                                        <exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxCrudTest.java</exclude>
+                                        										
+                                        <exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxMapperCollectionTest.java</exclude>
+                                        										
+                                        <exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxMapperFactoryTest.java</exclude>
+                                        										
+                                        <exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxMapperTupleTest.java</exclude>
+                                        										
+                                        <exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxMapperUDTTest.java</exclude>
+                                        										
+                                        <exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxNumberTest.java</exclude>
+                                        										
+                                        <exclude>**/src/test/java/org/simpleflatmapper/datastax/test/SettableDataMapperTest.java</exclude>
+                                        									
+                                    </testExcludes>
+                                    								
+                                </configuration>
+                                								
+                                <goals>
+                                    									
+                                    <goal>testCompile</goal>
+                                    								
+                                </goals>
+                                							
+                            </execution>
+                            						
+                        </executions>
+                        					
+                    </plugin>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.apache.maven.plugins</groupId>
+                        						
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        						
+                        <configuration>
+                            							
+                            <argLine>--add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED</argLine>
+                            						
+                        </configuration>
+                        					
+                    </plugin>
+                    				
+                </plugins>
+                			
+            </build>
+            		
+        </profile>
+        	
+    </profiles>
+    
 </project>

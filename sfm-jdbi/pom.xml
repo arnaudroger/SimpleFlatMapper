@@ -14,7 +14,7 @@
         		
         <groupId>org.simpleflatmapper</groupId>
         		
-        <version>8.2.3-SNAPSHOT</version>
+        <version>8.2.2</version>
         		
         <artifactId>sfm-parent-jre9</artifactId>
         	
@@ -94,7 +94,7 @@
             			
             <artifactId>sfm-jdbc-jre9</artifactId>
             			
-            <version>8.2.3-SNAPSHOT</version>
+            <version>8.2.2</version>
             		
         </dependency>
         		
@@ -104,7 +104,7 @@
             			
             <artifactId>sfm-test-jre9</artifactId>
             			
-            <version>8.2.3-SNAPSHOT</version>
+            <version>8.2.2</version>
             			
             <scope>test</scope>
             		

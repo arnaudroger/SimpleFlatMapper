@@ -8,7 +8,7 @@
     	
     <packaging>jar</packaging>
     	
-    <version>8.2.3-SNAPSHOT</version>
+    <version>8.2.2</version>
     	
     <licenses>
         		
@@ -62,7 +62,7 @@
             			
             <artifactId>sfm-jdbc-jre9</artifactId>
             			
-            <version>8.2.3-SNAPSHOT</version>
+            <version>8.2.2</version>
             		
         </dependency>
         		
@@ -341,7 +341,7 @@
                                     									
                                     <includes>.*</includes>
                                     									
-                                    <excludes/>
+                                    <excludes />
                                     									
                                     <inputSchema>PUBLIC</inputSchema>
                                     									

@@ -22,13 +22,13 @@ import java.util.jar.Manifest;
 public class OsgiTest {
 
 
-    private static final URL FELIX   = url("http://repo1.maven.org/maven2/org/apache/felix/org.apache.felix.log/1.0.1/org.apache.felix.log-1.0.1.jar");
-    private static final URL ASM     = url("http://repo1.maven.org/maven2/org/ow2/asm/asm-all/5.0.4/asm-all-5.0.4.jar");
-    private static final URL ASM6    = url("http://repo1.maven.org/maven2/org/ow2/asm/asm-all/6.0_ALPHA/asm-all-6.0_ALPHA.jar");
-    private static final URL OW2ASM     = url("http://repo1.maven.org/maven2/org/simpleflatmapper/ow2-asm/5.2/ow2-asm-5.2.jar");
-    private static final URL OW2ASM6    = url("http://repo1.maven.org/maven2/org/simpleflatmapper/ow2-asm/6.2/ow2-asm-6.2.jar");
-    private static final URL ARIES   = url("http://repo1.maven.org/maven2/org/apache/aries/org.apache.aries.util/1.1.3/org.apache.aries.util-1.1.3.jar");
-    private static final URL SPLIFLY = url("http://repo1.maven.org/maven2/org/apache/aries/spifly/org.apache.aries.spifly.dynamic.bundle/1.0.12/org.apache.aries.spifly.dynamic.bundle-1.0.12.jar");
+    private static final URL FELIX   = url("https://repo1.maven.org/maven2/org/apache/felix/org.apache.felix.log/1.0.1/org.apache.felix.log-1.0.1.jar");
+    private static final URL ASM     = url("https://repo1.maven.org/maven2/org/ow2/asm/asm-all/5.0.4/asm-all-5.0.4.jar");
+    private static final URL ASM6    = url("https://repo1.maven.org/maven2/org/ow2/asm/asm-all/6.0_ALPHA/asm-all-6.0_ALPHA.jar");
+    private static final URL OW2ASM     = url("https://repo1.maven.org/maven2/org/simpleflatmapper/ow2-asm/5.2/ow2-asm-5.2.jar");
+    private static final URL OW2ASM6    = url("https://repo1.maven.org/maven2/org/simpleflatmapper/ow2-asm/6.2/ow2-asm-6.2.jar");
+    private static final URL ARIES   = url("https://repo1.maven.org/maven2/org/apache/aries/org.apache.aries.util/1.1.3/org.apache.aries.util-1.1.3.jar");
+    private static final URL SPLIFLY = url("https://repo1.maven.org/maven2/org/apache/aries/spifly/org.apache.aries.spifly.dynamic.bundle/1.0.12/org.apache.aries.spifly.dynamic.bundle-1.0.12.jar");
 
 
     private static URL url(String s) {

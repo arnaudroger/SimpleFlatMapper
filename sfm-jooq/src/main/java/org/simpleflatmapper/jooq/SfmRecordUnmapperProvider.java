@@ -3,7 +3,6 @@ package org.simpleflatmapper.jooq;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Record;
 import org.jooq.RecordType;
 import org.jooq.RecordUnmapper;
 import org.jooq.RecordUnmapperProvider;
@@ -20,12 +19,12 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Integration point with jooq.<p>
- * Provide a JooqRecordMapper backed by an Sfm {@link Record} {@link SourceMapper}
+ * Provide a JooqRecordMapper backed by an Sfm {@link org.jooq.Record} {@link SourceMapper}
  */
 public class SfmRecordUnmapperProvider implements RecordUnmapperProvider {
 
 	private final ConcurrentMap<TargetColumnsMapperKey, ContextualSourceMapper> mapperCache = new ConcurrentHashMap<TargetColumnsMapperKey, ContextualSourceMapper>();
-	private final Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory;
+	private final Function<Type, MapperConfig<JooqFieldKey, org.jooq.Record>> mapperConfigFactory;
 	private final ReflectionService reflectionService;
 	private final DSLContextProvider dslContextProvider;
 
@@ -35,7 +34,7 @@ public class SfmRecordUnmapperProvider implements RecordUnmapperProvider {
 	 * please use SfmRecorMapperProviderFactory.
 	 */
 	public SfmRecordUnmapperProvider(
-			Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory, ReflectionService reflectionService, final Configuration configuration) {
+			Function<Type, MapperConfig<JooqFieldKey, org.jooq.Record>> mapperConfigFactory, ReflectionService reflectionService, final Configuration configuration) {
 		this(mapperConfigFactory, reflectionService, new DSLContextProvider() {
 			@Override
 			public DSLContext provide() {
@@ -48,21 +47,21 @@ public class SfmRecordUnmapperProvider implements RecordUnmapperProvider {
 	 * please use SfmRecorMapperProviderFactory.
 	 */
 	public SfmRecordUnmapperProvider(
-			Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory, ReflectionService reflectionService, DSLContextProvider dslContextProvider) {
+			Function<Type, MapperConfig<JooqFieldKey, org.jooq.Record>> mapperConfigFactory, ReflectionService reflectionService, DSLContextProvider dslContextProvider) {
 		this.mapperConfigFactory = mapperConfigFactory;
 		this.reflectionService = reflectionService;
 		this.dslContextProvider = dslContextProvider;
 	}
 
 	@Override
-	public <E, R extends Record> RecordUnmapper<E, R> provide(Class<? extends E> type, RecordType<R> recordType) {
+	public <E, R extends org.jooq.Record> RecordUnmapper<E, R> provide(Class<? extends E> type, RecordType<R> recordType) {
 
 		TargetColumnsMapperKey key = getMapperKey(recordType, type);
 
 		ContextualSourceMapper mapper = mapperCache.get(key);
 
 		if (mapper == null) {
-			MapperConfig<JooqFieldKey, Record> mapperConfig = mapperConfigFactory.apply(type);
+			MapperConfig<JooqFieldKey, org.jooq.Record> mapperConfig = mapperConfigFactory.apply(type);
 
 			RecordUnmapperBuilder<E> mapperBuilder =
 					new RecordUnmapperBuilder<E>(
@@ -79,7 +78,7 @@ public class SfmRecordUnmapperProvider implements RecordUnmapperProvider {
 		return new JooqRecordUnmapperWrapper<E, R>(mapper);
 	}
 
-	private <R extends Record> TargetColumnsMapperKey getMapperKey(RecordType<R> recordType, Class<?> type) {
+	private <R extends org.jooq.Record> TargetColumnsMapperKey getMapperKey(RecordType<R> recordType, Class<?> type) {
 		String[] columns = new String[recordType.size()];
 		int i = 0;
 		for(Field<?> field : recordType.fields()) {

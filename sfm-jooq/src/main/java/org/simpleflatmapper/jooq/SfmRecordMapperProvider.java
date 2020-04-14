@@ -1,6 +1,9 @@
 package org.simpleflatmapper.jooq;
 
-import org.jooq.*;
+import org.jooq.Field;
+import org.jooq.RecordMapper;
+import org.jooq.RecordMapperProvider;
+import org.jooq.RecordType;
 import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.context.MappingContextFactory;
@@ -18,7 +21,7 @@ import java.util.concurrent.ConcurrentMap;
 public class SfmRecordMapperProvider implements RecordMapperProvider {
 
 	private final ConcurrentMap<TargetColumnsMapperKey, MapperAndContext> mapperCache = new ConcurrentHashMap<TargetColumnsMapperKey, MapperAndContext>();
-	private final Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory;
+	private final Function<Type, MapperConfig<JooqFieldKey, org.jooq.Record>> mapperConfigFactory;
 	private final ReflectionService reflectionService;
 
 	@Deprecated
@@ -26,10 +29,10 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 	 * please use SfmRecorMapperProviderFactory.
 	 */
 	public SfmRecordMapperProvider() {
-		this(new Function<Type, MapperConfig<JooqFieldKey, Record>>() {
+		this(new Function<Type, MapperConfig<JooqFieldKey, org.jooq.Record>>() {
 			@Override
-			public MapperConfig<JooqFieldKey, Record> apply(Type type) {
-				return MapperConfig.<JooqFieldKey, Record>fieldMapperConfig();
+			public MapperConfig<JooqFieldKey, org.jooq.Record> apply(Type type) {
+				return MapperConfig.<JooqFieldKey, org.jooq.Record>fieldMapperConfig();
 			}
 		}, ReflectionService.newInstance());
 	}
@@ -39,16 +42,16 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 	 * please use SfmRecorMapperProviderFactory.
 	 */
 	public SfmRecordMapperProvider(
-			Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory, ReflectionService reflectionService) {
+			Function<Type, MapperConfig<JooqFieldKey, org.jooq.Record>> mapperConfigFactory, ReflectionService reflectionService) {
 		this.mapperConfigFactory = mapperConfigFactory;
 		this.reflectionService = reflectionService;
 	}
 
 	@Override
-	public <R extends Record, E> RecordMapper<R, E> provide(RecordType<R> recordType, Class<? extends E> type) {
+	public <R extends org.jooq.Record, E> RecordMapper<R, E> provide(RecordType<R> recordType, Class<? extends E> type) {
 
-		SourceMapper<Record, E> mapper;
-		MappingContextFactory<? super Record> mappingContextFactory;
+		SourceMapper<org.jooq.Record, E> mapper;
+		MappingContextFactory<? super org.jooq.Record> mappingContextFactory;
 
 		TargetColumnsMapperKey key = getMapperKey(recordType, type);
 
@@ -56,12 +59,12 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 		
 				
 		if (mc == null) {
-			MapperConfig<JooqFieldKey, Record> mapperConfig = mapperConfigFactory.apply(type);
+			MapperConfig<JooqFieldKey, org.jooq.Record> mapperConfig = mapperConfigFactory.apply(type);
 
 			JooqMapperBuilder<E> mapperBuilder =
 					new JooqMapperBuilder<E>(
 							reflectionService.<E>getClassMeta(type),
-							new JooqMappingContextFactoryBuilder<Record>(!mapperConfig.unorderedJoin()),
+							new JooqMappingContextFactoryBuilder<org.jooq.Record>(!mapperConfig.unorderedJoin()),
 							mapperConfig);
 
 			int i = 0;
@@ -74,7 +77,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 			
 			mapperCache.putIfAbsent(key, new MapperAndContext(mapper, mappingContextFactory));
 		} else {
-			mapper = (SourceMapper<Record, E>) mc.mapper;
+			mapper = (SourceMapper<org.jooq.Record, E>) mc.mapper;
 			mappingContextFactory = mc.mappingContextFactory;
 		}
 		
@@ -83,7 +86,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 
 
 
-	private <R extends Record> TargetColumnsMapperKey getMapperKey(RecordType<R> recordType, Class<?> type) {
+	private <R extends org.jooq.Record> TargetColumnsMapperKey getMapperKey(RecordType<R> recordType, Class<?> type) {
 		String[] columns = new String[recordType.size()];
 		int i = 0;
 		for(Field<?> field : recordType.fields()) {
@@ -94,10 +97,10 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 	}
 
 	private class MapperAndContext {
-		private final SourceMapper<Record, ?> mapper;
-		private final MappingContextFactory<? super Record> mappingContextFactory;
+		private final SourceMapper<org.jooq.Record, ?> mapper;
+		private final MappingContextFactory<? super org.jooq.Record> mappingContextFactory;
 
-		private MapperAndContext(SourceMapper<Record, ?> mapper, MappingContextFactory<? super Record> mappingContextFactory) {
+		private MapperAndContext(SourceMapper<org.jooq.Record, ?> mapper, MappingContextFactory<? super org.jooq.Record> mappingContextFactory) {
 			this.mapper = mapper;
 			this.mappingContextFactory = mappingContextFactory;
 		}

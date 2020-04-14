@@ -7,7 +7,10 @@ package org.simpleflatmapper.jooq.test.books;
 
 import java.util.UUID;
 
-import org.jooq.*;
+import org.jooq.Field;
+import org.jooq.Record1;
+import org.jooq.Record4;
+import org.jooq.Row4;
 import org.jooq.impl.UpdatableRecordImpl;
 
 public class LabelsRecord extends UpdatableRecordImpl<LabelsRecord> implements Record4<Integer, UUID, String, Boolean> {

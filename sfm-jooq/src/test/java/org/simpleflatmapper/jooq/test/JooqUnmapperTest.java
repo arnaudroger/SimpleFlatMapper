@@ -1,6 +1,11 @@
 package org.simpleflatmapper.jooq.test;
 
-import org.jooq.*;
+import org.jooq.Configuration;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.RecordType;
+import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;

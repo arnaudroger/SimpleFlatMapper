@@ -1,10 +1,14 @@
 package org.simpleflatmapper.jooq;
 
 
-import org.jooq.*;
+import org.jooq.Field;
+import org.jooq.ResultQuery;
+import org.jooq.Select;
+import org.jooq.TableField;
+import org.jooq.TableLike;
+import org.jooq.UniqueKey;
 import org.jooq.exception.DataAccessException;
 import org.simpleflatmapper.jdbc.JdbcTypeHelper;
-import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;

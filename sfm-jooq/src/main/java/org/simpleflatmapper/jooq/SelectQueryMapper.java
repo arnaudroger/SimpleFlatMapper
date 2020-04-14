@@ -3,6 +3,7 @@ package org.simpleflatmapper.jooq;
 
 import org.jooq.*;
 import org.jooq.exception.DataAccessException;
+import org.simpleflatmapper.jdbc.JdbcTypeHelper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingException;
@@ -197,7 +198,10 @@ public final class SelectQueryMapper<T> {
         for(int i = 0; i < fields.length; i ++) {
             Field field = fields[i];
             Object[] properties = isKey(field) ? new Object[]{KeyProperty.DEFAULT} : new Object[0];
-            JooqFieldKey key = new JooqFieldKey(field, i + 1);
+
+            int sqlType = field.getDataType().getSQLType();
+
+            JooqFieldKey key = new JooqFieldKey(field, i + 1, JdbcTypeHelper.toJavaType(sqlType, field.getType()));
 
             mapperBuilder.addMapping(key, properties);
         }

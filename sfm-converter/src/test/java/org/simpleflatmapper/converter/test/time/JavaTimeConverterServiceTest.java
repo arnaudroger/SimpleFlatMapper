@@ -41,11 +41,12 @@ public class JavaTimeConverterServiceTest {
     public void testJavaTimeToDate() throws Exception {
         long time = System.currentTimeMillis();
         final Date date = new Date(time);
-        final LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZONE_ID);
-        final ZonedDateTime zonedDateTime = localDateTime.atZone(ZONE_ID);
+        ZoneId systemDefault = ZoneId.systemDefault();
+        final LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), systemDefault);
+        final ZonedDateTime zonedDateTime = localDateTime.atZone(systemDefault).withZoneSameInstant(UTC);
         testConverter(localDateTime, date);
         testConverter(localDateTime.toLocalTime(), date);
-        testConverter(localDateTime.toLocalDate(), trunc(date, ZoneId.systemDefault().getId()));
+        testConverter(localDateTime.toLocalDate(), trunc(date, systemDefault.getId()));
         testConverter(date.toInstant(), date);
         testConverter(zonedDateTime, date);
         testConverter(zonedDateTime.toOffsetDateTime(), date);

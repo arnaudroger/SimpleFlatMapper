@@ -11,15 +11,24 @@ import java.util.List;
 
 public class JooqFieldKey extends FieldKey<JooqFieldKey> implements TypeAffinity {
 	private final Field<?> field;
+	private final Type targetType;
 
 	public JooqFieldKey(Field<?> field, int index) {
 		super(field.getName(), index);
 		this.field = field;
+		this.targetType = null;
+	}
+
+	public JooqFieldKey(Field<?> field, int index, Type targetType) {
+		super(field.getName(), index);
+		this.field = field;
+		this.targetType = targetType;
 	}
 
 	public JooqFieldKey(String alias, Field<?> field, int index, JooqFieldKey parent) {
 		super(alias, index, parent);
 		this.field = field;
+		this.targetType = parent.targetType;
 	}
 
 	@Override
@@ -53,6 +62,8 @@ public class JooqFieldKey extends FieldKey<JooqFieldKey> implements TypeAffinity
 
 	@Override
 	public Type getType(Type targetType) {
+		if (this.targetType != null) return this.targetType;
+
 		Class<?> type = field.getType();
 		if (Object.class.equals(type)) {
 			if (TypeHelper.isArray(targetType)) {
@@ -62,12 +73,6 @@ public class JooqFieldKey extends FieldKey<JooqFieldKey> implements TypeAffinity
 			}else if (TypeHelper.isAssignable(java.sql.Array.class, targetType)) {
 				return java.sql.Array.class;
 			}
-		}
-
-		//FIXME: "some" test fail
-		Type mappedType = JdbcTypeHelper.toJavaType(field.getDataType().getSQLType(), targetType);
-		if (mappedType != null) {
-			return mappedType;
 		}
 		return type;
 	}

@@ -30,6 +30,8 @@ public class DatastaxHelper {
                         System.setProperty("java.vm.version", "25.51-b03");
                     }
 
+                    System.setProperty("disk_failure_policy", "ignore");
+
                     File configFile = new File("target/embeddedCassandra/cu-cassandra.yaml");
 
                     configFile.getParentFile().mkdirs();

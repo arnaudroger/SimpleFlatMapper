@@ -1,6 +1,12 @@
 package org.simpleflatmapper.jooq;
 
-import org.jooq.*;
+import org.jooq.Configuration;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.RecordType;
+import org.jooq.RecordUnmapper;
+import org.jooq.RecordUnmapperProvider;
 import org.jooq.impl.DSL;
 import org.simpleflatmapper.map.ContextualSourceMapper;
 import org.simpleflatmapper.map.MapperConfig;

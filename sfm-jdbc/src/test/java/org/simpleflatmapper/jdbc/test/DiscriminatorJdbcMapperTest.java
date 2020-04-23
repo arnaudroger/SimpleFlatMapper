@@ -218,6 +218,11 @@ public class DiscriminatorJdbcMapperTest {
 
     @Test
     public void testAbstractDiscriminator() throws Exception {
+//      worked at some time
+//    	JdbcMapper<TopicOverviewItem> mapper2 = JdbcMapperFactory.newInstance()
+//                .discriminator(BaseTestPlan.class, builder -> builder.when(rs -> true, DwhTestPlan.class))
+//                .newMapper(TopicOverviewItem.class);
+//
     	JdbcMapper<TestPlanTopicOverviewItem> mapper = JdbcMapperFactory.newInstance()
                 .discriminator(TestPlanBase.class).with(TestPlanDwh.class)
                 .newMapper(TestPlanTopicOverviewItem.class);

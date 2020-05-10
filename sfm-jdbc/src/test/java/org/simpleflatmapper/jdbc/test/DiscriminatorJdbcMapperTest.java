@@ -5,6 +5,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapper;
+import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -13,11 +14,14 @@ import org.simpleflatmapper.test.beans.Person;
 import org.simpleflatmapper.test.beans.Professor;
 import org.simpleflatmapper.test.beans.Student;
 import org.simpleflatmapper.test.beans.StudentGS;
+import org.simpleflatmapper.test.beans.TestPlanBase;
+import org.simpleflatmapper.test.beans.TestPlanDwh;
 import org.simpleflatmapper.test.beans.ProfessorGS;
 import org.simpleflatmapper.util.CheckedBiFunction;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.ConstantPredicate;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -133,7 +137,7 @@ public class DiscriminatorJdbcMapperTest {
                         .newMapper(Person.class);
         validateMapper(mapper);
     }
-    
+
     @Test
     public void testNewDiscriminator() throws Exception {
         JdbcMapper<Person> mapper =
@@ -211,10 +215,24 @@ public class DiscriminatorJdbcMapperTest {
             executor.shutdown();
         }
     }
-    
+
+    @Test
+    public void testAbstractDiscriminator() throws Exception {
+//      worked at some time
+//    	JdbcMapper<TopicOverviewItem> mapper2 = JdbcMapperFactory.newInstance()
+//                .discriminator(BaseTestPlan.class, builder -> builder.when(rs -> true, DwhTestPlan.class))
+//                .newMapper(TopicOverviewItem.class);
+//
+    	JdbcMapper<TestPlanTopicOverviewItem> mapper = JdbcMapperFactory.newInstance()
+                .discriminator(TestPlanBase.class).with(TestPlanDwh.class)
+                .newMapper(TestPlanTopicOverviewItem.class);
+
+    	validateAbstractMapper(mapper);
+    }
+
     @Test
     public void testDiscriminator() throws Exception {
-        JdbcMapper<Person> mapper =
+    	JdbcMapper<Person> mapper =
                 JdbcMapperFactoryHelper.asm()
                 .addKeys("id", "students_id")
                 .<Person>newDiscriminator("person_type")
@@ -281,6 +299,37 @@ public class DiscriminatorJdbcMapperTest {
         }
     }
 
+    private <T extends TestPlanTopicOverviewItem> void validateAbstractMapper(JdbcMapper<T> mapper) throws Exception {
+        List<T> topicOverviewItems = mapper.forEach(setUpAbstractResultSetMock(), new ListCollector<T>()).getList();
+        //validatePersons(persons);
+
+//        //IFJAVA8_START
+//        validatePersons(mapper.stream(setUpResultSetMock()).collect(Collectors.<T>toList()));
+//
+//        final Stream<T> stream = mapper.stream(setUpResultSetMock());
+//        validatePersons(stream.limit(10).collect(Collectors.<T>toList()));
+//        //IFJAVA8_END
+//
+//        Iterator<T> iterator = mapper.iterator(setUpResultSetMock());
+//        persons = new ArrayList<T>();
+//        while(iterator.hasNext()) {
+//            persons.add(iterator.next());
+//        }
+//        validatePersons(persons);
+//
+//        ResultSet rs = setUpResultSetMock();
+//
+//        rs.next();
+//        MappingContext<? super ResultSet> mappingContext = mapper.newMappingContext(rs);
+//        mappingContext.broke(rs);
+//        final T professor = mapper.map(rs, mappingContext);
+//        validateProfessorMap((Professor)professor);
+//        rs.next();
+//        mappingContext.broke(rs);
+//        rs.next();
+//        mappingContext.broke(rs);
+    }
+
     private <T extends Person> void validateMapper(JdbcMapper<T> mapper) throws Exception {
         List<T> persons = mapper.forEach(setUpResultSetMock(), new ListCollector<T>()).getList();
         validatePersons(persons);
@@ -334,8 +383,6 @@ public class DiscriminatorJdbcMapperTest {
         final Professor<?> professor4 = (Professor<?>)persons.get(3);
 
         assertPersonEquals(4, "professor4", professor4);
-
-
     }
 
 
@@ -387,6 +434,66 @@ public class DiscriminatorJdbcMapperTest {
                 {"student", 2, "student2", null, null,  null},
                 {"student", 3, "student3", null, null,  null},
                 {"professor", 4, "professor4", null, null,  null},
+        };
+
+        when(rs.next()).then(new Answer<Boolean>() {
+            @Override
+            public Boolean answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return ai.getAndIncrement() < rows.length;
+            }
+        });
+        final Answer<Object> getValue = new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                final Object[] row = rows[ai.get() - 1];
+                final Integer col = -1 + (Integer) invocationOnMock.getArguments()[0];
+                return (row[col]);
+            }
+        };
+
+        final Answer<Object> getColumnValue = new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                final Object[] row = rows[ai.get() - 1];
+                final String col = (String) invocationOnMock.getArguments()[0];
+                return (row[Arrays.asList(columns).indexOf(col)]);
+            }
+        };
+
+        when(rs.getInt(anyInt())).then(getValue);
+        when(rs.getString(anyInt())).then(getValue);
+        when(rs.getString(any(String.class))).then(getColumnValue);
+        when(rs.getObject(anyInt())).then(getValue);
+        when(rs.getObject(anyString(), any(Class.class))).then(getColumnValue);
+
+        return rs;
+    }
+
+    private ResultSet setUpAbstractResultSetMock() throws SQLException {
+        ResultSet rs = mock(ResultSet.class);
+
+        ResultSetMetaData metaData = mock(ResultSetMetaData.class);
+
+
+        // final String[] columns = new String[] { "topicName", "test_plan_id", "test_plan_testPlanUuid", "test_plan_groupId", "test_plan_artifactId"};
+        final String[] columns = new String[] { "topicName", "test_plan_id", "test_plan_test_plan_uuid", "test_plan_group_id", "test_plan_artifact_id"};
+
+        when(metaData.getColumnCount()).thenReturn(columns.length);
+        when(metaData.getColumnLabel(anyInt())).then(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return columns[-1 + (Integer)invocationOnMock.getArguments()[0]];
+            }
+        });
+
+        when(rs.getMetaData()).thenReturn(metaData);
+
+        final AtomicInteger ai = new AtomicInteger();
+
+        final Object[][] rows = new Object[][]{
+                {"topic1", 1, "testPlanUUID1", "groupId1", "artifactId1"},
+                {"topic2", 1, "testPlanUUID1", "groupId1", "artifactId1"},
+                {"topic1", 1, "testPlanUUID2", "groupId1", "artifactId1"},
         };
 
         when(rs.next()).then(new Answer<Boolean>() {

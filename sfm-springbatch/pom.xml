@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-core</artifactId>
-			<version>3.0.7.RELEASE</version>
+			<version>3.0.10.RELEASE</version>
 		</dependency>
 
 		<dependency>

@@ -1,7 +1,6 @@
 package org.simpleflatmapper.jdbc.test;
 
 import org.junit.Test;
-import org.postgresql.shaded.com.ongres.scram.common.util.Preconditions;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;

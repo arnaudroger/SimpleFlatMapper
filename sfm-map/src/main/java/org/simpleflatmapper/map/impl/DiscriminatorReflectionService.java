@@ -82,7 +82,8 @@ public class DiscriminatorReflectionService extends ReflectionService {
         
         if (implementations.size() == 1) {
             // only one implementation
-            return (ClassMeta<T>) implementations.get(0).withReflectionService(this);
+            ClassMetaWithDiscriminatorId<?> metaWithDiscriminatorId = implementations.get(0);
+            return (ClassMeta<T>) metaWithDiscriminatorId.withReflectionService(this).classMeta;
         }
         
         List<ClassMetaWithDiscriminatorId<?>> reassignedImplementations = new ArrayList<ClassMetaWithDiscriminatorId<?>>();

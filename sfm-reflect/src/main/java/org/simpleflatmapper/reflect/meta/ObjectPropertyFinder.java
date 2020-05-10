@@ -47,10 +47,11 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 								  TypeAffinityScorer typeAffinityScorer,
 								  PropertyFilter propertyFilter, ShortCircuiter shortCircuiter) {
 
-		if (isSpeculativeEnabled(properties)) {
-			CountNumberOfMatchedProperties<T> countMatchingProperties = new CountNumberOfMatchedProperties(matchingProperties);
+		PropertyFilter excludedMatchedPathPropertyFilter = excludeAlreadyMatched(propertyFilter);
+		CountNumberOfMatchedProperties<T> countMatchingProperties = new CountNumberOfMatchedProperties<T>(matchingProperties);
 
-			PropertyFilter excludedMatchedPathPropertyFilter = excludeAlreadyMatched(propertyFilter);
+		if (isSpeculativeEnabled(properties)) {
+
 
 			lookForConstructor(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
 			lookForProperty(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
@@ -63,13 +64,18 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 
 				// still no match do a strict lookup including already match path
 				if (countMatchingProperties.nbFound == 0) {
-					lookForConstructor(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
-					lookForProperty(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+					lookForConstructor(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+					lookForProperty(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
 				}
 			}
 		} else {
-			lookForConstructor(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
-			lookForProperty(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+			lookForConstructor(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
+			lookForProperty(propertyNameMatcher, properties, countMatchingProperties, score, propertyFinderTransform, typeAffinityScorer, excludedMatchedPathPropertyFilter, shortCircuiter);
+
+			if (countMatchingProperties.nbFound == 0) {
+				lookForConstructor(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+				lookForProperty(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform, typeAffinityScorer, propertyFilter, shortCircuiter);
+			}
 		}
 
 		final String propName = propertyNameMatcher.toString();

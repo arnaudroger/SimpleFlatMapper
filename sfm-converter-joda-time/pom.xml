@@ -1,101 +1,185 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<artifactId>sfm-converter-joda-time</artifactId>
-	<packaging>bundle</packaging>
-
-	<parent>
-		<groupId>org.simpleflatmapper</groupId>
-		<artifactId>sfm-parent</artifactId>
-		<version>8.2.4-SNAPSHOT</version>
-	</parent>
-
-	<name>sfm-converter-joda-time</name>
-	<description>Java library to map flat record - ResultSet, csv - to java object with minimum configuration and low footprint.</description>
-
-	<developers>
-		<developer>
-			<id>arnaudroger</id>
-			<name>Arnaud Roger</name>
-			<email>arnaud.roger@gmail.com</email>
-		</developer>
-	</developers>
-
-	<licenses>
-		<license>
-			<name>The MIT License (MIT)</name>
-			<url>http://opensource.org/licenses/MIT</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
-	<dependencies>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-converter</artifactId>
-			<version>8.2.4-SNAPSHOT</version>
-		</dependency>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    	
+    <modelVersion>4.0.0</modelVersion>
+    	
+    <artifactId>sfm-converter-joda-time-jre9</artifactId>
+    	
+    <packaging>bundle</packaging>
+    	
+    <parent>
+        		
+        <groupId>org.simpleflatmapper</groupId>
+        		
+        <artifactId>sfm-parent-jre9</artifactId>
+        		
+        <version>8.2.4-SNAPSHOT</version>
+        	
+    </parent>
+    	
+    <name>sfm-converter-joda-time</name>
+    	
+    <description>Java library to map flat record - ResultSet, csv - to java object with minimum configuration and low footprint.</description>
+    	
+    <developers>
+        		
+        <developer>
+            			
+            <id>arnaudroger</id>
+            			
+            <name>Arnaud Roger</name>
+            			
+            <email>arnaud.roger@gmail.com</email>
+            		
+        </developer>
+        	
+    </developers>
+    	
+    <licenses>
+        		
+        <license>
+            			
+            <name>The MIT License (MIT)</name>
+            			
+            <url>http://opensource.org/licenses/MIT</url>
+            			
+            <distribution>repo</distribution>
+            		
+        </license>
+        	
+    </licenses>
+    	
+    <dependencies>
+        		
         <dependency>
+            			
+            <groupId>joda-time</groupId>
+            			
+            <artifactId>joda-time</artifactId>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
             <groupId>org.simpleflatmapper</groupId>
-            <artifactId>sfm-util</artifactId>
-			<version>8.2.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-converter</artifactId>
-			<version>8.2.4-SNAPSHOT</version>
-			<scope>test</scope>
-			<type>test-jar</type>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Import-Package>org.simpleflatmapper.*,org.joda.*</Import-Package>
-					</instructions>
-					<archive>
-						<manifestEntries>
-							<Automatic-Module-Name>org.simpleflatmapper.converter.joda</Automatic-Module-Name>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
-	<profiles>
-		<profile>
-			<id>travis</id>
-			<activation>
-				<property>
-					<name>env.TRAVIS</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>jdk19</id>
-			<activation>
-				<jdk>[9,12]</jdk>
-			</activation>
-		</profile>
-	</profiles>
+            			
+            <artifactId>sfm-converter-jre9</artifactId>
+            			
+            <version>8.2.4-SNAPSHOT</version>
+            		
+        </dependency>
+                
+        <dependency>
+                        
+            <groupId>org.simpleflatmapper</groupId>
+                        
+            <artifactId>sfm-util-jre9</artifactId>
+            			
+            <version>8.2.4-SNAPSHOT</version>
+            		
+        </dependency>
+        		
+        <dependency>
+            			
+            <groupId>org.simpleflatmapper</groupId>
+            			
+            <artifactId>sfm-converter-jre9</artifactId>
+            			
+            <version>8.2.4-SNAPSHOT</version>
+            			
+            <scope>test</scope>
+            			
+            <type>test-jar</type>
+            		
+        </dependency>
+        	
+    </dependencies>
+    	
+    <build>
+        		
+        <plugins>
+            			
+            <plugin>
+                				
+                <groupId>org.apache.felix</groupId>
+                				
+                <artifactId>maven-bundle-plugin</artifactId>
+                				
+                <extensions>true</extensions>
+                				
+                <configuration>
+                    					
+                    <instructions>
+                        						
+                        <Import-Package>org.simpleflatmapper.*,org.joda.*</Import-Package>
+                        					
+                    </instructions>
+                    					
+                    <archive>
+                        						
+                        <manifestEntries>
+                            							
+                            <Automatic-Module-Name>org.simpleflatmapper.converter.joda</Automatic-Module-Name>
+                            						
+                        </manifestEntries>
+                        					
+                    </archive>
+                    				
+                </configuration>
+                			
+            </plugin>
+            		
+        </plugins>
+        	
+    </build>
+    	
+    <profiles>
+        		
+        <profile>
+            			
+            <id>travis</id>
+            			
+            <activation>
+                				
+                <property>
+                    					
+                    <name>env.TRAVIS</name>
+                    					
+                    <value>true</value>
+                    				
+                </property>
+                			
+            </activation>
+            			
+            <build>
+                				
+                <plugins>
+                    					
+                    <plugin>
+                        						
+                        <groupId>org.jacoco</groupId>
+                        						
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        					
+                    </plugin>
+                    				
+                </plugins>
+                			
+            </build>
+            		
+        </profile>
+        		
+        <profile>
+            			
+            <id>jdk19</id>
+            			
+            <activation>
+                				
+                <jdk>[9,12]</jdk>
+                			
+            </activation>
+            		
+        </profile>
+        	
+    </profiles>
+    
 </project>

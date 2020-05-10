@@ -7,6 +7,7 @@ import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.map.annotation.Key;
+import org.simpleflatmapper.map.mapper.DefaultPropertyNameMatcherFactory;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
@@ -273,6 +274,17 @@ public class JdbcMapperFactoryTest {
 
 		assertEquals("Hello!", object.getName());
 	}
+
+	//IFJAVA8_START
+	@Test
+	public void testCustomPropertyNameMatcher_712() {
+		JdbcMapper<DbObject> mapper =
+				JdbcMapperFactory
+					.newInstance()
+					.propertyNameMatcherFactory(DefaultPropertyNameMatcherFactory.DEFAULT.addSeparators('/'))
+					.newBuilder(DbObject.class).addMapping("id").addMapping("na/me").mapper();
+	}
+	//IFJAVA8_END
 
 
 	private void assertMapPsDbObject(ResultSet rs,

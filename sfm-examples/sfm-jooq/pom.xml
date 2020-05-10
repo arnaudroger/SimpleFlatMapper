@@ -1,8 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.simpleflatmapper</groupId>
-	<artifactId>sfm-examples-jooq</artifactId>
+	<artifactId>sfm-examples-jooq-jre6</artifactId>
 	<packaging>jar</packaging>
 
 	<version>8.2.3-SNAPSHOT</version>
@@ -36,7 +36,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-jdbc</artifactId>
+			<artifactId>sfm-jdbc-jre6</artifactId>
 			<version>8.2.3-SNAPSHOT</version>
 		</dependency>
 
@@ -195,7 +195,7 @@
 								<database>
 									<name>org.jooq.meta.h2.H2Database</name>
 									<includes>.*</includes>
-									<excludes />
+									<excludes/>
 									<inputSchema>PUBLIC</inputSchema>
 									<recordTimestampFields>REC_TIMESTAMP</recordTimestampFields>
 								</database>

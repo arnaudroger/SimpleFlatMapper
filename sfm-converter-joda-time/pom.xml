@@ -1,12 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>sfm-converter-joda-time</artifactId>
+	<artifactId>sfm-converter-joda-time-jre6</artifactId>
 	<packaging>bundle</packaging>
 
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
-		<artifactId>sfm-parent</artifactId>
+		<artifactId>sfm-parent-jre6</artifactId>
 		<version>8.2.3-SNAPSHOT</version>
 	</parent>
 
@@ -36,17 +36,17 @@
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-converter</artifactId>
+			<artifactId>sfm-converter-jre6</artifactId>
 			<version>8.2.3-SNAPSHOT</version>
 		</dependency>
         <dependency>
             <groupId>org.simpleflatmapper</groupId>
-            <artifactId>sfm-util</artifactId>
+            <artifactId>sfm-util-jre6</artifactId>
 			<version>8.2.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-converter</artifactId>
+			<artifactId>sfm-converter-jre6</artifactId>
 			<version>8.2.3-SNAPSHOT</version>
 			<scope>test</scope>
 			<type>test-jar</type>

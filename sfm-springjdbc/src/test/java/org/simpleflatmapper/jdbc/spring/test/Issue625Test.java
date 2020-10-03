@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jdbc.spring.test;
 
 import org.junit.Test;
+import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.spring.JdbcTemplateMapperFactory;
 import org.simpleflatmapper.jdbc.spring.SqlParameterSourceFactory;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -9,6 +10,10 @@ import static org.junit.Assert.assertEquals;
 
 public class Issue625Test {
 
+
+    public void test() {
+        JdbcMapperFactory.newInstance().unorderedJoin().enableSpeculativePropertyLookupOnObject().newRowmapper(Device.class)
+    }
     @Test
     public void testSourceFactory() {
         String query = "WITH some_cte AS (\n" +

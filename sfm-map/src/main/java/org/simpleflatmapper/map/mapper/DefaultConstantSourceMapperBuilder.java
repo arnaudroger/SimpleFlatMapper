@@ -72,6 +72,9 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
     private final KeyFactory<K> keyFactory;
 
+    private List<Supplier<KeyAndPredicate<S, K>>> keys = new ArrayList<>();
+    private List<Supplier<KeyAndPredicate<S, K>>> inferNulls = new ArrayList<>();
+
     public DefaultConstantSourceMapperBuilder(
             final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
@@ -148,11 +151,23 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             if (propertyMapping != null) {
                 ColumnDefinition<K, ?> effectiveColumnDefinition = propertyMapping.getColumnDefinition();
                 if (effectiveColumnDefinition.isKey() && effectiveColumnDefinition.keyAppliesTo().test(propertyMapping.getPropertyMeta())) {
-                    Predicate<S> predicate = buildKeyPredicate(propertyMapping.getPropertyMeta(), effectiveColumnDefinition.keyAppliesTo());
-                    mappingContextFactoryBuilder.addKey(new KeyAndPredicate<S, K>(mappedColumnKey, predicate));
+                    keys.add(new Supplier<KeyAndPredicate<S, K>>() {
+                        @Override
+                        public KeyAndPredicate<S, K> get() {
+                            Predicate<S> predicate = buildKeyPredicate(propertyMapping.getPropertyMeta(), effectiveColumnDefinition.keyAppliesTo(), effectiveColumnDefinition);
+                            return new KeyAndPredicate<S, K>(mappedColumnKey, predicate);
+                        }
+                    });
+//                    mappingContextFactoryBuilder.addKey();
                 } else if (effectiveColumnDefinition.isInferNull() && effectiveColumnDefinition.inferNullsAppliesTo().test(propertyMapping.getPropertyMeta())) {
-                    Predicate<S> predicate = buildKeyPredicate(propertyMapping.getPropertyMeta(), effectiveColumnDefinition.inferNullsAppliesTo());
-                    mappingContextFactoryBuilder.addInferNull(new KeyAndPredicate<S, K>(mappedColumnKey, predicate));
+                    inferNulls.add(new Supplier<KeyAndPredicate<S, K>>() {
+                        @Override
+                        public KeyAndPredicate<S, K> get() {
+                            Predicate<S> predicate = buildKeyPredicate(propertyMapping.getPropertyMeta(), effectiveColumnDefinition.inferNullsAppliesTo(), effectiveColumnDefinition);
+                            return new KeyAndPredicate<S, K>(mappedColumnKey, predicate);
+                        }
+                    });
+//                    mappingContextFactoryBuilder.addInferNull(new KeyAndPredicate<S, K>(mappedColumnKey, predicate));
 
                 }
             }
@@ -163,13 +178,36 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     @Override
     @SuppressWarnings("unchecked")
     public ContextualSourceFieldMapperImpl<S, T> mapper() {
+
+
         SourceFieldMapper<S, T> mapper = sourceFieldMapper();
-        return new ContextualSourceFieldMapperImpl<S, T>(mappingContextFactoryBuilder.build(), mapper);
+        return new ContextualSourceFieldMapperImpl<S, T>(buildMatchContextFactory(), mapper);
+
+    }
+
+    private MappingContextFactory<S> buildMatchContextFactory() {
+        preparemappingContextFactoryBuilder();
+        return mappingContextFactoryBuilder.build();
+    }
+
+    private void preparemappingContextFactoryBuilder() {
+        if (keys != null) {
+            for (Supplier<KeyAndPredicate<S, K>> key : keys) {
+                mappingContextFactoryBuilder.addKey(key.get());
+            }
+            for (Supplier<KeyAndPredicate<S, K>> key : inferNulls) {
+                mappingContextFactoryBuilder.addInferNull(key.get());
+            }
+            keys = null;
+            inferNulls = null;
+        }
 
     }
 
     @Override
     public SourceFieldMapper<S, T> sourceFieldMapper() {
+
+        preparemappingContextFactoryBuilder();
         // look for property with a default value property but no definition.
         mapperConfig
                 .columnDefinitions()
@@ -232,6 +270,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     }
 
     private boolean isTargetForTransformer(List<InjectionParam> injectionParams) {
+        preparemappingContextFactoryBuilder();
         return
                 propertyMappingsBuilder.getClassMeta().needTransformer() 
                         || needGenericBuilder(injectionParams)
@@ -555,6 +594,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
     @Override
     public boolean isRootAggregate() {
+        preparemappingContextFactoryBuilder();
         return mappingContextFactoryBuilder.isRoot()
                 && !mappingContextFactoryBuilder.hasNoDependentKeys();
     }
@@ -686,6 +726,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
     }
 
     private <P> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K>> properties, Setter<T, P> setter, SourceMapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+        preparemappingContextFactoryBuilder();
         final MapperFieldMapper fieldMapper =
                 new MapperFieldMapper(mapper,
                         (Setter<T, P>)setter,
@@ -781,7 +822,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
 
     @Override
     public MappingContextFactory<? super S> contextFactory() {
-        return mappingContextFactoryBuilder.build();
+        return buildMatchContextFactory();
     }
 
     private static class MethodFunction implements Function {
@@ -1088,7 +1129,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                     // ignore ArrayElementPropertyMeta as it's a direct getter and will be managed in the setter
                     if (pm.getColumnDefinition().isKey()) {
                         if (propertyMetaKeyPredicate.test(subPropertyMeta.getSubProperty())) {
-                            Predicate<? super S> predicate = buildKeyPredicate(subPropertyMeta.getSubProperty(), propertyMetaKeyPredicate);;
+                            Predicate<? super S> predicate = buildKeyPredicate(subPropertyMeta.getSubProperty(), propertyMetaKeyPredicate, pm.getColumnDefinition());
                             keys.add(new KeyAndPredicate<S, K>(pm.getColumnKey(), predicate));
                         }
                     }
@@ -1096,10 +1137,12 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             } else {
                 if (pm.getColumnDefinition().isKey()) {
                     if (propertyMetaKeyPredicate.test(pm.getPropertyMeta())) {
-                        keys.add(new KeyAndPredicate<S, K>(pm.getColumnKey(), null));
+                        Predicate<? super S> predicate = buildKeyPredicate(pm.getPropertyMeta(), propertyMetaKeyPredicate, pm.getColumnDefinition());
+                        keys.add(new KeyAndPredicate<S, K>(pm.getColumnKey(), predicate));
                     }
                 }
             }
+
         }
 
         return keys;
@@ -1117,7 +1160,7 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
                     // ignore ArrayElementPropertyMeta as it's a direct getter and will be managed in the setter
                     if (pm.getColumnDefinition().isInferNull()) {
                         if (propertyMetaKeyPredicate.test(subPropertyMeta.getSubProperty())) {
-                            Predicate<? super S> predicate = buildKeyPredicate(subPropertyMeta.getSubProperty(), propertyMetaKeyPredicate);;
+                            Predicate<? super S> predicate = buildKeyPredicate(subPropertyMeta.getSubProperty(), propertyMetaKeyPredicate, pm.getColumnDefinition());
                             keys.add(new KeyAndPredicate<S, K>(pm.getColumnKey(), predicate));
                         }
                     }
@@ -1125,7 +1168,8 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
             } else {
                 if (pm.getColumnDefinition().isInferNull()) {
                     if (propertyMetaKeyPredicate.test(pm.getPropertyMeta())) {
-                        keys.add(new KeyAndPredicate<S, K>(pm.getColumnKey(), null));
+                        Predicate<? super S> predicate = buildKeyPredicate(pm.getPropertyMeta(), propertyMetaKeyPredicate, pm.getColumnDefinition());
+                        keys.add(new KeyAndPredicate<S, K>(pm.getColumnKey(), predicate));
                     }
                 }
             }
@@ -1134,47 +1178,53 @@ public final class DefaultConstantSourceMapperBuilder<S, T, K extends FieldKey<K
         return keys;
     }
 
-    private Predicate<S> buildKeyPredicate(final PropertyMeta<?, ?> propertyMeta, final Predicate<PropertyMeta<?, ?>> propertyMetaPredicate) {
+    private Predicate<S> buildKeyPredicate(final PropertyMeta<?, ?> propertyMeta, final Predicate<PropertyMeta<?, ?>> propertyMetaPredicate, final ColumnDefinition<?, ?> columnDefinition) {
         Predicate<S> predicate = null;
+
         if (propertyMeta instanceof DiscriminatorPropertyFinder.DiscriminatorPropertyMeta) {
-            
+
             final DiscriminatorPropertyFinder.DiscriminatorPropertyMeta<?, ?> dpm = (DiscriminatorPropertyFinder.DiscriminatorPropertyMeta<?, ?>) propertyMeta;
 
             final List<Predicate<? super S>> not =
-                dpm.forEachProperty(new Consumer<DiscriminatorPropertyFinder.DiscriminatorMatch>() {
-                    List<Predicate<? super S>> not = new ArrayList<Predicate<? super S>>();
-                    @Override
-                    public void accept(DiscriminatorPropertyFinder.DiscriminatorMatch dm) {
+                    dpm.forEachProperty(new Consumer<DiscriminatorPropertyFinder.DiscriminatorMatch>() {
+                        List<Predicate<? super S>> not = new ArrayList<Predicate<? super S>>();
 
-                        Type type = dm.type;
-                        PropertyMeta<?, ?> propertyMeta = dm.matchedProperty.getPropertyMeta();
+                        @Override
+                        public void accept(DiscriminatorPropertyFinder.DiscriminatorMatch dm) {
 
-                        if (!propertyMetaPredicate.test(propertyMeta)) {
-                            MapperConfig.Discriminator<Object, K, Object>[] discriminators = mapperConfig.getDiscriminators(dpm.getOwnerType());
-                            for (MapperConfig.Discriminator<Object, K, Object> discriminator : discriminators) {
-                                if (MapperConfig.sameDiscriminatorId(dm.discriminatorId, discriminator.discriminatorId)) {
-                                    not.add(discriminator.getCase(type).predicateFactory.apply(findAllDiscriminatorKeys(discriminator.discriminatorId)));
+                            Type type = dm.type;
+                            PropertyMeta<?, ?> propertyMeta = dm.matchedProperty.getPropertyMeta();
+
+                            if (!propertyMetaPredicate.test(propertyMeta)) {
+                                MapperConfig.Discriminator<Object, K, Object>[] discriminators = mapperConfig.getDiscriminators(dpm.getOwnerType());
+                                for (MapperConfig.Discriminator<Object, K, Object> discriminator : discriminators) {
+                                    if (MapperConfig.sameDiscriminatorId(dm.discriminatorId, discriminator.discriminatorId)) {
+                                        not.add(discriminator.getCase(type).predicateFactory.apply(findAllDiscriminatorKeys(discriminator.discriminatorId)));
+                                    }
+                                }
+                            } else {
+                                Predicate<? super S> p = buildKeyPredicate(propertyMeta, propertyMetaPredicate, columnDefinition);
+
+                                if (p != null) {
+                                    not.add(p);
                                 }
                             }
-                        } else {
-                            Predicate<? super S> p = buildKeyPredicate(propertyMeta, propertyMetaPredicate);
-                            
-                            if (p != null) {
-                                not.add(p);
-                            }
                         }
-                    }
-                }).not;
-            
+                    }).not;
+
             if (not.isEmpty()) return null;
-            
+
             return new DiscriminatorKeyPredicate<S>(not);
-                    
+
         } else if (propertyMeta.isSubProperty()) {
             SubPropertyMeta subPropertyMeta = (SubPropertyMeta) propertyMeta;
-            predicate = buildKeyPredicate(subPropertyMeta.getSubProperty(), propertyMetaPredicate);
+            predicate = buildKeyPredicate(subPropertyMeta.getSubProperty(), propertyMetaPredicate, columnDefinition);
+        } else if (columnDefinition.has(DiscriminatorConstantSourceMapperBuilder.DiscriminatedBuilder.class)) {
+            DiscriminatorConstantSourceMapperBuilder.DiscriminatedBuilder discriminatorBuilder = columnDefinition.lookFor(DiscriminatorConstantSourceMapperBuilder.DiscriminatedBuilder.class);
+            List<K> allDiscriminatorKeys = findAllDiscriminatorKeys(discriminatorBuilder.discriminatorId);
+            predicate = (Predicate<S>) discriminatorBuilder.discriminatorCase.predicateFactory.apply(allDiscriminatorKeys);
         }
-        return predicate;
+      return predicate;
     }
 
     public static class TargetFromBuilderParamBiFunction implements BiFunction<Object[], Object, Object> {

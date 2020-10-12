@@ -17,7 +17,7 @@
 
 	<properties>
 	    <kotlin.version>1.2.21</kotlin.version>
-		<junit.version>4.12</junit.version>
+		<junit.version>4.13.1</junit.version>
 
 	</properties>
 

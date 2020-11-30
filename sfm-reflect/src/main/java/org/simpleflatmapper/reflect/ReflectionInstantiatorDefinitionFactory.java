@@ -96,6 +96,7 @@ public class ReflectionInstantiatorDefinitionFactory {
         for(Method m : clazz.getDeclaredMethods()) {
             if (Modifier.isPublic(m.getModifiers())
                     && Modifier.isStatic(m.getModifiers())
+                    && m.getAnnotation(SfmInstantiator.class) != null
                     && clazz.isAssignableFrom(m.getReturnType())) {
                 InstantiatorDefinition definition = new ExecutableInstantiatorDefinition(m, parameterBuilder.getParameters(m, target));
                 instantiatorDefinitions.add(definition);

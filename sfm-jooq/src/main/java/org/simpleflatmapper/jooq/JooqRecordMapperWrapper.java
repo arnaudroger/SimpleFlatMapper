@@ -17,7 +17,11 @@ public class JooqRecordMapperWrapper<R extends Record, E> implements RecordMappe
 
 	@Override
 	public E map(R record) {
-		return mapper.map(record, mappingContextFactory.newContext());
+		E mappingResult = mapper.map(record, mappingContextFactory.newContext());
+		if (mappingResult instanceof PostMappingProcessor) {
+			((PostMappingProcessor) mappingResult).postMapping();
+		}
+		return mappingResult;
 	}
 
 	public SourceMapper<Record, E> getMapper() {

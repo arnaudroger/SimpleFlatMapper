@@ -1,8 +1,9 @@
 package org.simpleflatmapper.map.fieldmapper;
 
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.SourceMapper;
+import org.simpleflatmapper.map.MapResultValidator;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.util.Predicate;
 
@@ -38,6 +39,11 @@ public final class MapperFieldMapper<S, T, P, M extends SourceMapper<S, P> & Fie
 
         if (value == null) {
             value = mapper.map(source, context);
+
+            // invalid mapping result, leave default or null
+            if (value instanceof MapResultValidator
+                && !((MapResultValidator) value).isValid()) return;
+
             if (context != null) {
                 context.setCurrentValue(currentValueIndex, value);
             }

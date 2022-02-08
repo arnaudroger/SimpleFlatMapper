@@ -451,6 +451,7 @@
                             <excludes>
                                 <exclude>**/module-info.java</exclude>
                             </excludes>
+                        	<fork>true</fork>
                         </configuration>
 
                         <executions>
@@ -513,6 +514,7 @@
                         <configuration>
                             <source>9</source>
                             <target>9</target>
+                        	<fork>true</fork>
                         </configuration>
                         <dependencies>
                             <dependency>

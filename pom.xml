@@ -308,7 +308,7 @@
                     <dependency>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-jdbc</artifactId>
-                        <version>4.3.14.RELEASE</version>
+                        <version>5.2.20.RELEASE</version>
                     </dependency>
                 </dependencies>
             </dependencyManagement>
@@ -421,7 +421,7 @@
                     <dependency>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-jdbc</artifactId>
-                        <version>4.3.14.RELEASE</version>
+                        <version>5.2.20.RELEASE</version>
                     </dependency>
                 </dependencies>
             </dependencyManagement>
@@ -558,8 +558,8 @@
                 </property>
             </activation>
             <properties>
-                <staging.repository />
-                <release.arguments />
+                <staging.repository/>
+                <release.arguments/>
             </properties>
             <build>
                 <plugins>
@@ -756,7 +756,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jdbc</artifactId>
-                <version>5.1.8.RELEASE</version>
+                <version>5.2.20.RELEASE</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

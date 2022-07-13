@@ -41,6 +41,7 @@ public final class MapperFieldMapper<S, T, P, M extends SourceMapper<S, P> & Fie
 
             if (context != null) {
                 context.setCurrentValue(currentValueIndex, value);
+                value = context.beforePropertySet(value);
             }
             propertySetter.set(target, value);
         } else {

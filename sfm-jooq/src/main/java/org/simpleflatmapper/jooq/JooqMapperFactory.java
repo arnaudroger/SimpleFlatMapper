@@ -5,6 +5,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.getter.ContextualGetterFactoryAdapter;
 import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.AbstractColumnNameDiscriminatorMapperFactory;
@@ -19,6 +20,8 @@ import java.util.List;
 
 public class JooqMapperFactory
         extends AbstractColumnNameDiscriminatorMapperFactory<JooqFieldKey, JooqMapperFactory, Record> {
+
+    private MappingContextFactory<? super Record> mappingContextFactory;
 
     public static JooqMapperFactory newInstance() {
         return new JooqMapperFactory();
@@ -50,13 +53,18 @@ public class JooqMapperFactory
         return this;
     }
 
+    public JooqMapperFactory setContextFactory(MappingContextFactory<? super Record> mappingContextFactory) {
+        this.mappingContextFactory = mappingContextFactory;
+        return this;
+    }
+
     public SfmRecordMapperProvider newRecordMapperProvider() {
         return new SfmRecordMapperProvider(new Function<Type, MapperConfig<JooqFieldKey, Record>>() {
             @Override
             public MapperConfig<JooqFieldKey, Record> apply(Type type) {
                 return mapperConfig(type);
             }
-        }, getReflectionService());
+        }, getReflectionService(), this.mappingContextFactory);
     }
 
     //IFJAVA8_START

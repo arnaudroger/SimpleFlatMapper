@@ -1,8 +1,8 @@
 package org.simpleflatmapper.jooq;
 
 import org.jooq.*;
-import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.SourceMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.Function;
@@ -19,11 +19,14 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 
 	private final ConcurrentMap<TargetColumnsMapperKey, MapperAndContext> mapperCache = new ConcurrentHashMap<TargetColumnsMapperKey, MapperAndContext>();
 	private final Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory;
+
 	private final ReflectionService reflectionService;
+
+	private final MappingContextFactory<? super Record> defaultMappingContextFactory;
 
 	@Deprecated
 	/**
-	 * please use SfmRecorMapperProviderFactory.
+	 * please use SfmRecordMapperProviderFactory.
 	 */
 	public SfmRecordMapperProvider() {
 		this(new Function<Type, MapperConfig<JooqFieldKey, Record>>() {
@@ -31,7 +34,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 			public MapperConfig<JooqFieldKey, Record> apply(Type type) {
 				return MapperConfig.<JooqFieldKey, Record>fieldMapperConfig();
 			}
-		}, ReflectionService.newInstance());
+		}, ReflectionService.newInstance(), null);
 	}
 
 	@Deprecated
@@ -39,9 +42,12 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 	 * please use SfmRecorMapperProviderFactory.
 	 */
 	public SfmRecordMapperProvider(
-			Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory, ReflectionService reflectionService) {
+			Function<Type, MapperConfig<JooqFieldKey, Record>> mapperConfigFactory,
+			ReflectionService reflectionService,
+			MappingContextFactory<? super Record> defaultMappingContextFactory) {
 		this.mapperConfigFactory = mapperConfigFactory;
 		this.reflectionService = reflectionService;
+		this.defaultMappingContextFactory = defaultMappingContextFactory;
 	}
 
 	@Override
@@ -53,16 +59,16 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 		TargetColumnsMapperKey key = getMapperKey(recordType, type);
 
 		MapperAndContext mc = mapperCache.get(key);
-		
-				
+
+
 		if (mc == null) {
 			MapperConfig<JooqFieldKey, Record> mapperConfig = mapperConfigFactory.apply(type);
 
 			JooqMapperBuilder<E> mapperBuilder =
-					new JooqMapperBuilder<E>(
-							reflectionService.<E>getClassMeta(type),
-							new JooqMappingContextFactoryBuilder<Record>(!mapperConfig.unorderedJoin()),
-							mapperConfig);
+					new JooqMapperBuilder<>(
+						reflectionService.<E>getClassMeta(type),
+						new JooqMappingContextFactoryBuilder<>(!mapperConfig.unorderedJoin()),
+						mapperConfig);
 
 			int i = 0;
 			for(Field<?> field : recordType.fields()) {
@@ -70,14 +76,15 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 			}
 
 			mapper = mapperBuilder.mapper();
-			mappingContextFactory = mapperBuilder.contextFactory();
-			
+			mappingContextFactory = defaultMappingContextFactory != null
+					? defaultMappingContextFactory : mapperBuilder.contextFactory();
+
 			mapperCache.putIfAbsent(key, new MapperAndContext(mapper, mappingContextFactory));
 		} else {
 			mapper = (SourceMapper<Record, E>) mc.mapper;
 			mappingContextFactory = mc.mappingContextFactory;
 		}
-		
+
 		return new JooqRecordMapperWrapper<R, E>(mapper, mappingContextFactory);
 	}
 
@@ -89,7 +96,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 		for(Field<?> field : recordType.fields()) {
 			columns[i++] = field.getName();
 		}
-		
+
 		return new TargetColumnsMapperKey(type, columns);
 	}
 

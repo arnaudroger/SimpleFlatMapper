@@ -20,7 +20,7 @@ public class MappingContext<S> implements Context {
 
     public void handleSource(S source) {
     }
-    
+
     public void markAsBroken() {
     }
 
@@ -35,6 +35,10 @@ public class MappingContext<S> implements Context {
 
     public Object getCurrentValue(int i) {
         return null;
+    }
+
+    public <T> T beforePropertySet(T propertyValue) {
+        return propertyValue;
     }
 
 }

@@ -47,7 +47,7 @@ public class SfmRecordMapperProviderFactory
             public MapperConfig<JooqFieldKey, Record> apply(Type type) {
                 return mapperConfig(type);
             }
-        }, getReflectionService());
+        }, getReflectionService(), null);
     }
 
 

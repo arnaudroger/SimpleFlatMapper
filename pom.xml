@@ -763,13 +763,13 @@
     <repositories>
         <repository>
             <id>arnaudroger-maven-repository</id>
-            <url>http://arnaudroger.github.io/maven</url>
+            <url>https://arnaudroger.github.io/maven</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
             <id>arnaudroger-maven-plugin-repository</id>
-            <url>http://arnaudroger.github.io/maven</url>
+            <url>https://arnaudroger.github.io/maven</url>
         </pluginRepository>
     </pluginRepositories>
     <distributionManagement>

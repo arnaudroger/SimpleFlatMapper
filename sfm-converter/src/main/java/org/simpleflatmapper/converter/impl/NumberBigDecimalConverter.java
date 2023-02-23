@@ -13,7 +13,7 @@ public class NumberBigDecimalConverter implements ContextualConverter<Number, Bi
         if (in instanceof BigInteger) {
             return new BigDecimal((BigInteger) in);
         }
-        return new BigDecimal(in.doubleValue());
+        return BigDecimal.valueOf(in.doubleValue());
     }
 
     public String toString() {

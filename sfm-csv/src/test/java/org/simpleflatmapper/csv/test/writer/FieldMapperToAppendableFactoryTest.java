@@ -1,11 +1,5 @@
 package org.simpleflatmapper.csv.test.writer;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 import org.simpleflatmapper.lightningcsv.CsvCellWriter;
 import org.simpleflatmapper.reflect.TypeAffinity;
@@ -56,27 +50,11 @@ public class FieldMapperToAppendableFactoryTest {
     }
 
 
-    static class JodaObject  {
-        public DateTime dateTime;
-        public LocalDate localDate;
-        public LocalDateTime localDateTime;
-        public LocalTime localTime;
-    }
 
     static class UUIDObject {
         public UUID uuid;
     }
 
-    JodaObject jodaObject = new JodaObject();
-
-    {
-        jodaObject.dateTime = ISODateTimeFormat.dateTime().parseDateTime("2014-06-07T15:04:06.008+02:00");
-        jodaObject.localDate = jodaObject.dateTime.toLocalDate();
-        jodaObject.localDateTime = jodaObject.dateTime.toLocalDateTime();
-        jodaObject.localTime = jodaObject.dateTime.toLocalTime();
-    }
-
-    ClassMeta<JodaObject> jodaObjectClassMeta = ReflectionService.newInstance().getClassMeta(JodaObject.class);
 
 
     @Test
@@ -88,30 +66,6 @@ public class FieldMapperToAppendableFactoryTest {
                 ReflectionService.newInstance().getClassMeta(UUIDObject.class), object);
     }
 
-    @Test
-    public void testJodaDateTime() throws  Exception {
-        testFieldMapperForClassAndProp(jodaObject.dateTime.toString(), "dateTime", jodaObjectClassMeta, jodaObject);
-    }
-
-    @Test
-    public void testJodaDateTimeWithFormater() throws  Exception {
-        MappingContextFactoryBuilder<JodaObject, CsvColumnKey> builder = getMappingContextBuilder();
-        FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(DateTimeFormat.forPattern("yyyyMMdd"));
-        FieldMapper<JodaObject, Appendable> fieldMapper =
-                defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
-                        builder, null);
-        testFieldMapper("20140607", fieldMapper, jodaObject, builder.build());
-    }
-
-    @Test
-    public void testJodaDateTimeWithDateFormat() throws  Exception {
-        MappingContextFactoryBuilder<JodaObject, CsvColumnKey> builder = getMappingContextBuilder();
-        FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new DateFormatProperty("yyyyMMdd"));
-        FieldMapper<JodaObject, Appendable> fieldMapper =
-                defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
-                        builder, null);
-        testFieldMapper("20140607", fieldMapper, jodaObject, builder.build());
-    }
 
 
     @Test

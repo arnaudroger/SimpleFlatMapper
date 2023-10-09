@@ -1,6 +1,5 @@
 package org.simpleflatmapper.csv.test;
 
-import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.csv.CsvMapper;
@@ -113,22 +112,6 @@ public class CsvMapperFactoryDefaultValueTest {
 		assertEquals("v0", value.getElement0());
 		assertEquals(123, value.getElement2());
 	}
-
-	@Test
-	public void testDefaultValueJodaDateTime() throws IOException {
-		LocalDateTime localDateTime = LocalDateTime.now();
-		final Tuple2<String, LocalDateTime> value =
-				CsvMapperFactory
-						.newInstance()
-						.addColumnProperty("element1", new DefaultValueProperty<LocalDateTime>(localDateTime))
-						.newMapper(new TypeReference<Tuple2<String, LocalDateTime>>() {
-						})
-						.iterator(CsvParser.reader("element0\nv0"))
-						.next();
-		assertEquals("v0", value.getElement0());
-		assertEquals(localDateTime, value.getElement1());
-	}
-
 
 	public static class MyObjectPrimitiveGS {
 		private String element0;

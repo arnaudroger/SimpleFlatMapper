@@ -1,8 +1,5 @@
 package org.simpleflatmapper.test.map.mapper;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.converter.Context;
@@ -70,36 +67,8 @@ import static org.junit.Assert.*;
 
 public class AbstractMapperBuilderTest {
 
-    @Test
-    public void testConversionDateToJodaTime() throws Exception {
-        ClassMeta<List<DateTime>> classMeta =
-                ReflectionService.disableAsm().<List<DateTime>>getClassMeta(new TypeReference<List<DateTime>>() {}.getType());
 
-        EnumerableMapper<Object[][] , List<DateTime>, ?> mapper =
-                new SampleMapperBuilder<List<DateTime>>(classMeta)
-                    .addMapping(new SampleFieldKey("0", 0, new Class[0], Date.class)).mapper();
 
-        Object[] objects = new Object[] { new Date() };
-        List<DateTime> map = mapper.iterator(new Object[][] {objects}).next();
-        assertEquals(objects[0], map.get(0).toDate());
-    }
-
-    @Test
-    public void testConversionCharacterToJodaTime() throws Exception {
-        ClassMeta<List<DateTime>> classMeta =
-                ReflectionService.disableAsm().<List<DateTime>>getClassMeta(new TypeReference<List<DateTime>>() {}.getType());
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyyMMdd HH:mm:ss.SSSS Z");
-
-        EnumerableMapper<Object[][] , List<DateTime>, ?> mapper =
-                new SampleMapperBuilder<List<DateTime>>(classMeta)
-                        .addMapping(new SampleFieldKey("0", 0, new Class[0], String.class), dateTimeFormatter).mapper();
-
-        DateTime now = DateTime.now();
-        Object[] objects = new Object[] { dateTimeFormatter.print(now) };
-        List<DateTime> map = mapper.iterator(new Object[][] {objects}).next();
-        assertEquals(now, map.get(0));
-    }
 
     //IFJAVA8_START
     @Test

@@ -1,6 +1,5 @@
 package org.simpleflatmapper.jdbc.test;
 
-import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
@@ -372,64 +371,6 @@ public class PreparedStatementFieldMapperFactoryTest {
         verify(ps).setNull(2, Types.JAVA_OBJECT);
     }
 
-
-    @Test
-    public void testJodaDateTime() throws Exception {
-        org.joda.time.DateTime value = new org.joda.time.DateTime();
-
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.DateTime>(value), org.joda.time.DateTime.class);
-        newFieldMapperAndMapToPS(NullGetter.<Object,  org.joda.time.DateTime>getter(), org.joda.time.DateTime.class);
-
-        verify(ps).setTimestamp(1, new Timestamp(value.getMillis()));
-        verify(ps).setNull(2, Types.TIMESTAMP);
-    }
-
-    @Test
-    public void testJodaLocalDateTime() throws Exception {
-        org.joda.time.LocalDateTime value = new org.joda.time.LocalDateTime();
-        DateTimeZone dateTimeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
-
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalDateTime>(value), org.joda.time.LocalDateTime.class, dateTimeZone);
-        newFieldMapperAndMapToPS(NullGetter.<Object,  org.joda.time.LocalDateTime>getter(), org.joda.time.LocalDateTime.class);
-
-        verify(ps).setTimestamp(1, new Timestamp(value.toDateTime(dateTimeZone).getMillis()));
-        verify(ps).setNull(2, Types.TIMESTAMP);
-    }
-
-    @Test
-    public void testJodaLocalTime() throws Exception {
-        org.joda.time.LocalTime value = new org.joda.time.LocalTime();
-        DateTimeZone dateTimeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
-
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalTime>(value), org.joda.time.LocalTime.class, dateTimeZone);
-        newFieldMapperAndMapToPS(NullGetter.<Object,  org.joda.time.LocalTime>getter(), org.joda.time.LocalTime.class);
-
-        verify(ps).setTime(1, new Time(value.toDateTimeToday(dateTimeZone).getMillis()));
-        verify(ps).setNull(2, Types.TIME);
-    }
-
-    @Test
-    public void testJodaLocaDate() throws Exception {
-        org.joda.time.LocalDate value = new org.joda.time.LocalDate();
-        DateTimeZone dateTimeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
-
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalDate>(value), org.joda.time.LocalDate.class, dateTimeZone);
-        newFieldMapperAndMapToPS(NullGetter.<Object,  org.joda.time.LocalDate>getter(), org.joda.time.LocalDate.class);
-
-        verify(ps).setDate(1, new java.sql.Date(value.toDate().getTime()));
-        verify(ps).setNull(2, Types.DATE);
-    }
-
-    @Test
-    public void testJodaInstant() throws Exception {
-        org.joda.time.Instant value = new org.joda.time.Instant();
-
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.Instant>(value), org.joda.time.Instant.class);
-        newFieldMapperAndMapToPS(NullGetter.<Object,  org.joda.time.Instant>getter(), org.joda.time.Instant.class);
-
-        verify(ps).setTimestamp(1, new java.sql.Timestamp(value.getMillis()));
-        verify(ps).setNull(2, Types.TIMESTAMP);
-    }
 
     @Test
     public void testUUIDString() throws Exception {

@@ -117,7 +117,7 @@
 		<profile>
 			<id>jdk19</id>
 			<activation>
-				<jdk>[9,12]</jdk>
+				<jdk>[9,21]</jdk>
 			</activation>
 
 		</profile>

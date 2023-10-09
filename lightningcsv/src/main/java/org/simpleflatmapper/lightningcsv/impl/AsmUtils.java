@@ -28,12 +28,9 @@ public class AsmUtils {
 	
 	public static final int API;
 	static {
-		//IFJAVA8_START
-		if (true) API = Opcodes.ASM7_EXPERIMENTAL; else
-			//IFJAVA8_END
-			API = Opcodes.ASM5;
+		API = Opcodes.ASM9;
 	}
-	
+
 	public static byte[] writeClassToFile (final String className, final byte[] bytes) throws IOException {
 		return writeClassToFileInDir(className, bytes,  AsmUtils.targetDir);
 	}

@@ -55,10 +55,7 @@ public class AsmUtils {
 
 	public static final int API;
 	static {
-		//IFJAVA8_START
-		if (true) API = Opcodes.ASM7_EXPERIMENTAL; else
-		//IFJAVA8_END
-		API = Opcodes.ASM5;
+		API = Opcodes.ASM9;
 	}
 	static final Map<Class<?>, Class<?>> wrappers = new HashMap<Class<?>, Class<?>>();
 

@@ -4,7 +4,7 @@
 
   <groupId>org.simpleflatmapper</groupId>
   <name>Repackaged OW2 ASM Core</name>
-  <version>6.2</version>
+  <version>9.5</version>
   <artifactId>ow2-asm</artifactId>
   <packaging>jar</packaging>
 
@@ -36,7 +36,7 @@
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>6.2</version>
+      <version>9.5</version>
     </dependency>
   </dependencies>
 

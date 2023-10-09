@@ -53,21 +53,11 @@
 			<version>3.17</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<scope>test</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
 			<version>8.2.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-converter-joda-time</artifactId>
-			<version>8.2.4-SNAPSHOT</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -134,7 +124,7 @@
 		<profile>
 			<id>jdk19</id>
 			<activation>
-				<jdk>[9,12]</jdk>
+				<jdk>[9,21]</jdk>
 			</activation>
 			<dependencies>
 				<dependency>

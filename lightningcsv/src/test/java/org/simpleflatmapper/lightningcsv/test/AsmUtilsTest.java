@@ -15,7 +15,7 @@ public class AsmUtilsTest {
             assertEquals(Opcodes.ASM5, AsmUtils.API);
         } else {
             //IFJAVA8_START
-            assertEquals(Opcodes.ASM7_EXPERIMENTAL, AsmUtils.API);
+            assertEquals(Opcodes.ASM9, AsmUtils.API);
             if (true) return;
             //IFJAVA8_END
             fail(" fail " + version);

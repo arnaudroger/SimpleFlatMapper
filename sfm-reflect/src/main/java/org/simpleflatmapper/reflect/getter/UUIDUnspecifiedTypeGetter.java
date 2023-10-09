@@ -19,7 +19,9 @@ public final class UUIDUnspecifiedTypeGetter<R> implements Getter<R, UUID> {
 	public UUID get(final R target) throws Exception {
 		final Object o = getter.get(target);
 		if (o == null) return null;
-		if (o instanceof String) {
+		if (o instanceof UUID) {
+			return (UUID) o;
+		} else if (o instanceof String) {
 			return UUID.fromString((String)o);
 		} else if (o instanceof byte[]) {
 			return UUIDHelper.fromBytes((byte[])o);

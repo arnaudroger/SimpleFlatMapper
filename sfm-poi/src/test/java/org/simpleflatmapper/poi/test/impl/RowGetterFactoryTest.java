@@ -2,7 +2,6 @@ package org.simpleflatmapper.poi.test.impl;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.simpleflatmapper.poi.impl.RowGetterFactory;
 import org.simpleflatmapper.reflect.primitive.BooleanGetter;

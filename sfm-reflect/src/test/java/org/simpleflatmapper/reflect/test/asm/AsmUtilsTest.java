@@ -37,7 +37,7 @@ public class AsmUtilsTest {
 			assertEquals(ASM5, AsmUtils.API);
 		} else {
 			//IFJAVA8_START
-			assertEquals(ASM7_EXPERIMENTAL, AsmUtils.API);
+			assertEquals(ASM9, AsmUtils.API);
 			if (true) return;
 			//IFJAVA8_END
 			fail("fail " + version);

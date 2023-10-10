@@ -5,7 +5,7 @@
 	<artifactId>sfm-test-osgi</artifactId>
 	<packaging>jar</packaging>
 
-	<version>8.2.4-SNAPSHOT</version>
+	<version>9.0.0-SNAPSHOT</version>
 
 	<licenses>
 		<license>
@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
-			<version>8.2.4-SNAPSHOT</version>
+			<version>9.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -58,12 +58,12 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-jdbc</artifactId>
-			<version>8.2.4-SNAPSHOT</version>
+			<version>9.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-poi</artifactId>
-			<version>8.2.4-SNAPSHOT</version>
+			<version>9.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>

@@ -58,7 +58,7 @@ function release {
 #exit
 REL=9.0.0.A
 DEV=9.0.0-SNAPSHOT
-REPOID=orgsimpleflatmapper-1686
+REPOID=orgsimpleflatmapper-1687
 
 #release 7 $REL $DEV $REPOID
 #release 8 $REL $DEV $REPOID

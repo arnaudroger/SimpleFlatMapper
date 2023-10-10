@@ -147,7 +147,7 @@
                 <module>sfm-poi</module>
                 <module>sfm-springjdbc</module>
                 <module>sfm-test</module>
-                <module>ow2.asm/ASM_9_5</module>
+<!--                <module>ow2.asm/ASM_9_5</module>-->
             </modules>
             <build>
                 <plugins>

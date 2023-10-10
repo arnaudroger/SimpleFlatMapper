@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 function java11 {
-	sudo update-alternatives --set java /usr/lib/jvm/java-9-oracle/bin/java;export JAVA_HOME=/usr/lib/jvm/java-9-oracle
+	sudo update-alternatives --set java /usr/lib/jvm/java-19-openjdk-amd64/bin/java;export JAVA_HOME=/usr/lib/jvm/java-19-openjdk-amd64
 }
 function java9 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-9-oracle/bin/java;export JAVA_HOME=/usr/lib/jvm/java-9-oracle

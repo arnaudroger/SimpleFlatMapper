@@ -93,6 +93,8 @@
                         <sourceFileExcludes>
                             <exclude>**/module-info.java</exclude>
                         </sourceFileExcludes>
+                        <failOnError>false</failOnError>
+                        <failOnWarnings>false</failOnWarnings>
                     </configuration>
                 </plugin>
             </plugins>

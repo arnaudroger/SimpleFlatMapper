@@ -132,7 +132,7 @@
                 <jdk>[9,21]</jdk>
             </activation>
             <properties>
-                <source.classifier>-sources</source.classifier>
+                <source.classifier>sources</source.classifier>
                 <javadoc.classifier>javadoc</javadoc.classifier>
             </properties>
 

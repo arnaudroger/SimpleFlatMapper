@@ -7,7 +7,7 @@ import org.simpleflatmapper.util.Consumer;
 public class JpaAliasProviderFactory implements AliasProviderProducer {
     private boolean isActive() {
         try {
-            Class.forName("javax.persistence.Column");
+            Class.forName("jakarta.persistence.Column");
             return true;
         } catch (Throwable e) {
         }

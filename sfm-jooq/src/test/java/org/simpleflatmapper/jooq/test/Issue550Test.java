@@ -10,7 +10,7 @@ import org.simpleflatmapper.jooq.SfmRecordMapperProvider;
 import org.simpleflatmapper.jooq.SfmRecordMapperProviderFactory;
 import org.simpleflatmapper.map.property.ConverterProperty;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Arrays;

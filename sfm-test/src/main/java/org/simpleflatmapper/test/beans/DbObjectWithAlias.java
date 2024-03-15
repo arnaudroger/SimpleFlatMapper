@@ -2,7 +2,7 @@ package org.simpleflatmapper.test.beans;
 
 import org.simpleflatmapper.test.beans.DbObject.Type;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 import java.util.Date;
 
 public class DbObjectWithAlias {

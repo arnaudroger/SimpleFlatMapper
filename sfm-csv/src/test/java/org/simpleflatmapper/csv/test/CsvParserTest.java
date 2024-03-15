@@ -33,7 +33,7 @@ import org.simpleflatmapper.util.CloseableIterator;
 import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 import java.io.CharArrayReader;
 import java.io.File;
 import java.io.FileWriter;

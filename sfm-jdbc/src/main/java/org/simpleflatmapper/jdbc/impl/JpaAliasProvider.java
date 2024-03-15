@@ -26,9 +26,9 @@ public class JpaAliasProvider implements AliasProvider {
 		Method tableSchema = null;
 		Method tableCatalog = null;
 		try {
-			columnClass = (Class<? extends Annotation>) Class.forName("javax.persistence.Column");
+			columnClass = (Class<? extends Annotation>) Class.forName("jakarta.persistence.Column");
 			columnName = columnClass.getDeclaredMethod("name");
-			tableClass = (Class<? extends Annotation>) Class.forName("javax.persistence.Table");
+			tableClass = (Class<? extends Annotation>) Class.forName("jakarta.persistence.Table");
 			tableName = tableClass.getDeclaredMethod("name");
 			tableSchema = tableClass.getDeclaredMethod("schema");
 			tableCatalog = tableClass.getDeclaredMethod("catalog");

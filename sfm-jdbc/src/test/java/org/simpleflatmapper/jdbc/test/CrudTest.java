@@ -17,7 +17,7 @@ import org.simpleflatmapper.test.jdbc.MysqlDbHelper;
 import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.CheckedConsumer;
 
-import javax.persistence.Table;
+import jakarta.persistence.Table;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

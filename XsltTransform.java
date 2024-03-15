@@ -1,7 +1,7 @@
 
 import java.io.*;
-import javax.xml.transform.*;
-import javax.xml.transform.stream.*;
+import jakarta.xml.transform.*;
+import jakarta.xml.transform.stream.*;
 
 public class XsltTransform {
 

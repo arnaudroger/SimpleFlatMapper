@@ -11,7 +11,7 @@ import org.simpleflatmapper.reflect.meta.DefaultAliasProvider;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ListCollector;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-function java11 {
+function java19 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-19-openjdk-amd64/bin/java;export JAVA_HOME=/usr/lib/jvm/java-19-openjdk-amd64
 }
 
@@ -17,7 +17,7 @@ function release {
   export GPG_TTY
   git reset --hard
 
-  java11
+  java19
   git checkout master
   git reset --hard
   git pull

@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jdbc.test;
 
 import org.junit.Test;
+import org.simpleflatmapper.jdbc.impl.JakartaAliasProvider;
 import org.simpleflatmapper.jdbc.impl.JpaAliasProvider;
 import org.simpleflatmapper.jdbc.impl.JpaAliasProviderFactory;
 import org.simpleflatmapper.reflect.getter.ConstantBooleanGetter;
@@ -37,6 +38,16 @@ public class AliasProviderTest {
         }
     }
 
+    public class TestClassJakarta {
+        @jakarta.persistence.Column(name = "bar1")
+        public String foo;
+
+        @jakarta.persistence.Column(name = "bar2")
+        public String getFoo() {
+            return null;
+        }
+    }
+
     
     @Test
     public void testJPAAliasProvider() throws NoSuchFieldException, NoSuchMethodException {
@@ -47,8 +58,32 @@ public class AliasProviderTest {
 
     }
 
-    
-    
+
+    @Test
+    public void testJakartaAliasProvider() throws NoSuchFieldException, NoSuchMethodException {
+        JakartaAliasProvider p = new JakartaAliasProvider();
+
+        assertEquals("bar1", p.getAliasForField(TestClassJakarta.class.getField("foo")));
+        assertEquals("bar2", p.getAliasForMethod(TestClassJakarta.class.getMethod("getFoo")));
+
+    }
+    @Test
+    public void testFactoryJakartaPresent() {
+        AliasProvider aliasProvider = AliasProviderService.getAliasProvider();
+        if (aliasProvider instanceof ArrayAliasProvider) {
+            ArrayAliasProvider arrayAliasProvider = (ArrayAliasProvider) aliasProvider;
+            for(AliasProvider ap : arrayAliasProvider.providers()) {
+                if (ap instanceof JakartaAliasProvider) {
+                    return;
+                }
+            }
+
+            fail();
+
+        } else {
+            assertEquals(JpaAliasProvider.class, aliasProvider.getClass());
+        }
+    }
     @Test
     public void testFactoryJPAPresent() {
         AliasProvider aliasProvider = AliasProviderService.getAliasProvider();
@@ -69,10 +104,55 @@ public class AliasProviderTest {
     @Test
     public void testFactoryJPANotPresent() throws Exception {
         final ClassLoader original = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = excludingClassLoader(original, "javax.persitence");
+        Thread.currentThread().setContextClassLoader(cl);
+        try {
+            Class<JpaAliasProviderFactory> factoryClass = JpaAliasProviderFactory.class;
+            List<AliasProvider> list = getAliasProviders(cl, factoryClass);
+
+            for(Object ap : list) {
+                if (ap.getClass().getName().equals(JpaAliasProvider.class.getName())) fail();
+            }
+
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
+    @Test
+    public void testFactoryJakartaNotPresent() throws Exception {
+        final ClassLoader original = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = excludingClassLoader(original, "jakarta.persitence");
+        Thread.currentThread().setContextClassLoader(cl);
+        try {
+            Class<JpaAliasProviderFactory> factoryClass = JpaAliasProviderFactory.class;
+            List<AliasProvider> list = getAliasProviders(cl, factoryClass);
+
+            for(Object ap : list) {
+                if (ap.getClass().getName().equals(JpaAliasProvider.class.getName())) fail();
+            }
+
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
+    private static List<AliasProvider> getAliasProviders(ClassLoader cl, Class<JpaAliasProviderFactory> factoryClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        Class<?> jpa = cl.loadClass(factoryClass.getName());
+        Class<?> consumerClass = cl.loadClass(Consumer.class.getName());
+
+        Object consumer = cl.loadClass(ListCollector.class.getName()).newInstance();
+        jpa.getMethod("produce", consumerClass).invoke(jpa.getConstructor().newInstance(), consumer);
+
+        List<AliasProvider> list = (List<AliasProvider>) consumer.getClass().getMethod("getList").invoke(consumer);
+        return list;
+    }
+
+    private static ClassLoader excludingClassLoader(ClassLoader original, String exclude) {
         ClassLoader cl = new ClassLoader(ClassLoader.getSystemClassLoader().getParent()) {
             @Override
             protected Class<?> findClass(String name) throws ClassNotFoundException {
-                if (!name.startsWith("javax.persistence")) {
+                if (!name.startsWith(exclude)) {
                     InputStream resourceAsStream = original.getResourceAsStream(name.replace(".", "/") + ".class");
                     if (resourceAsStream == null) {
                         throw new ClassNotFoundException(name);
@@ -99,22 +179,6 @@ public class AliasProviderTest {
                 }
             }
         };
-        Thread.currentThread().setContextClassLoader(cl);
-        try {
-            Class<?> jpa = cl.loadClass(JpaAliasProviderFactory.class.getName());
-            Class<?> consumerClass = cl.loadClass(Consumer.class.getName());
-
-            Object consumer = cl.loadClass(ListCollector.class.getName()).newInstance();
-            jpa.getMethod("produce", consumerClass).invoke(jpa.getConstructor().newInstance(), consumer);
-
-            List<AliasProvider> list = (List<AliasProvider>) consumer.getClass().getMethod("getList").invoke(consumer);
-
-            for(Object ap : list) {
-                if (ap.getClass().getName().equals(JpaAliasProvider.class.getName())) fail();
-            }
-
-        } finally {
-            Thread.currentThread().setContextClassLoader(original);
-        }
+        return cl;
     }
 }

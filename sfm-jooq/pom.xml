@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
-			<version>3.13.1</version>
+			<version>3.19.6</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -95,131 +95,7 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>jdk16</id>
-			<activation>
-				<jdk>1.6</jdk>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<configuration>
-							<excludes>
-								<exclude>**/module-info.java</exclude>
-								<exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
-								<exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
-								<exclude>**/org/simpleflatmapper/**/time/*</exclude>
-								<exclude>**/*Unmapper*.java</exclude>
-							</excludes>
-						</configuration>
 
-						<executions>
-							<execution>
-								<id>default-testCompile</id>
-								<phase>test-compile</phase>
-								<configuration>
-									<testExcludes>
-										<exclude>**/module-info.java</exclude>
-										<exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
-										<exclude>**/org/simpleflatmapper/core/tuples/fasttuple/**/*</exclude>
-										<exclude>**/org/simpleflatmapper/core/tuples/jool/**/*</exclude>
-										<exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
-										<exclude>**/org/simpleflatmapper/**/samples/GettingStarted*</exclude>
-										<exclude>**/org/simpleflatmapper/**/time/*</exclude>
-										<exclude>**/org/simpleflatmapper/datastax/test/*</exclude>
-										<exclude>**/org/simpleflatmapper/**/JoolTupleTest.java</exclude>
-										<exclude>**/org/simpleflatmapper/**/FastTupleTest.java</exclude>
-										<exclude>**/org/simpleflatmapper/jooq/test/Issue337Test*</exclude>
-										<exclude>**/*Unmapper*.java</exclude>
-										<exclude>**/*Labels*.java</exclude>
-										<exclude>**/books/*.java</exclude>
-									</testExcludes>
-								</configuration>
-								<goals>
-									<goal>testCompile</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>org.jooq</groupId>
-					<artifactId>jooq</artifactId>
-					<version>3.6.4</version>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>jdk17</id>
-			<activation>
-				<jdk>1.7</jdk>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-
-						<configuration>
-							<excludes>
-								<exclude>**/module-info.java</exclude>
-								<exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
-								<exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
-								<exclude>**/org/simpleflatmapper/**/time/*</exclude>
-								<exclude>**/*Unmapper*.java</exclude>
-							</excludes>
-						</configuration>
-
-						<executions>
-							<execution>
-								<id>default-testCompile</id>
-								<phase>test-compile</phase>
-								<configuration>
-									<testExcludes>
-										<exclude>**/module-info.java</exclude>
-										<exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
-										<exclude>**/org/simpleflatmapper/core/tuples/fasttuple/**/*</exclude>
-										<exclude>**/org/simpleflatmapper/core/tuples/jool/**/*</exclude>
-										<exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
-										<exclude>**/org/simpleflatmapper/**/samples/GettingStarted*</exclude>
-										<exclude>**/org/simpleflatmapper/**/time/*</exclude>
-										<exclude>**/org/simpleflatmapper/datastax/test/*</exclude>
-										<exclude>**/org/simpleflatmapper/**/JoolTupleTest.java</exclude>
-										<exclude>**/org/simpleflatmapper/**/FastTupleTest.java</exclude>
-										<exclude>**/org/simpleflatmapper/jooq/test/Issue337Test*</exclude>
-										<exclude>**/*Unmapper*.java</exclude>
-										<exclude>**/*Labels*.java</exclude>
-										<exclude>**/books/*.java</exclude>
-									</testExcludes>
-								</configuration>
-								<goals>
-									<goal>testCompile</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>org.jooq</groupId>
-					<artifactId>jooq</artifactId>
-					<version>3.6.4</version>
-				</dependency>
-			</dependencies>
-		</profile>
 
 		<profile>
 			<id>jdk19</id>

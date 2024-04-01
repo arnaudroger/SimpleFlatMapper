@@ -173,7 +173,7 @@ public class ReflectionInstantiatorDefinitionFactory {
     private static boolean _areParameterNamePresent(Type target) {
         Class<?> targetClass = TypeHelper.toClass(target);
         final List<Method> declaredMethods = Arrays.stream(targetClass.getDeclaredMethods())
-            .filter(Method::isSynthetic)
+            .filter(m -> !m.isSynthetic())
             .toList();
 
         for (Method m : declaredMethods) {

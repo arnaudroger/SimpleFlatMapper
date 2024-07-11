@@ -31,9 +31,9 @@ function release {
 
 #echo "change versions"
 #exit
-REL=9.0.1
-DEV=9.0.2-SNAPSHOT
-REPOID=orgsimpleflatmapper-1689
+REL=9.0.2
+DEV=9.0.3-SNAPSHOT
+REPOID=orgsimpleflatmapper-1690
 
 release $REL $DEV $REPOID
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 function java19 {
-	sudo update-alternatives --set java /usr/lib/jvm/java-19-openjdk-amd64/bin/java;export JAVA_HOME=/usr/lib/jvm/java-19-openjdk-amd64
+	sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java;export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 }
 
 

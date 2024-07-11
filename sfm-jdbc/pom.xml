@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent</artifactId>
-		<version>9.0.2-SNAPSHOT</version>
+		<version>9.0.2</version>
 	</parent>
 
 	<name>sfm-jdbc</name>
@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-map</artifactId>
-			<version>9.0.2-SNAPSHOT</version>
+			<version>9.0.2</version>
 		</dependency>
 
 		<dependency>
@@ -51,20 +51,20 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-test</artifactId>
-			<version>9.0.2-SNAPSHOT</version>
+			<version>9.0.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-map</artifactId>
-			<version>9.0.2-SNAPSHOT</version>
+			<version>9.0.2</version>
 			<scope>test</scope>
 			<classifier>tests</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-tuples</artifactId>
-			<version>9.0.2-SNAPSHOT</version>
+			<version>9.0.2</version>
 			<scope>test</scope>
 		</dependency>
 

@@ -177,13 +177,7 @@
 				<jdk>1.7</jdk>
 			</activation>
 			<dependencies>
-				<dependency>
-					<groupId>com.boundary</groupId>
-					<artifactId>fasttuple-core</artifactId>
-					<version>0.1</version>
-					<optional>true</optional>
-					<scope>test</scope>
-				</dependency>
+
 			</dependencies>
 			<build>
 				<plugins>
@@ -212,13 +206,7 @@
 					<optional>true</optional>
 					<scope>test</scope>
 				</dependency>
-				<dependency>
-					<groupId>com.boundary</groupId>
-					<artifactId>fasttuple-core</artifactId>
-					<version>0.1</version>
-					<optional>true</optional>
-					<scope>test</scope>
-				</dependency>
+
 			</dependencies>
 		</profile>
 
@@ -235,13 +223,7 @@
 					<optional>true</optional>
 					<scope>test</scope>
 				</dependency>
-				<dependency>
-					<groupId>com.boundary</groupId>
-					<artifactId>fasttuple-core</artifactId>
-					<version>0.1</version>
-					<optional>true</optional>
-					<scope>test</scope>
-				</dependency>
+
 			</dependencies>
 
 			<build>

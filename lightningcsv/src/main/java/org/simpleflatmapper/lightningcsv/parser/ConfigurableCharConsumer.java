@@ -35,6 +35,10 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 	private int _currentIndex = 0;
 	private int _currentState = NONE;
 
+	public static AbstractCharConsumer of(CharBuffer csvBuffer, TextFormat textFormat, CellPreProcessor cellPreProcessor) {
+		return new ConfigurableCharConsumer(csvBuffer, textFormat, cellPreProcessor);
+	}
+
 	public ConfigurableCharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellPreProcessor cellPreProcessor) {
 		this.csvBuffer = csvBuffer;
 		this._currentIndex = csvBuffer.rowStartMark;

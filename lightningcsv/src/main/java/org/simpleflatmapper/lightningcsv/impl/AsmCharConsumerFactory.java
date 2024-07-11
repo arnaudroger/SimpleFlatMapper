@@ -15,7 +15,10 @@ import org.simpleflatmapper.ow2asm.MethodVisitor;
 import org.simpleflatmapper.ow2asm.Opcodes;
 import org.simpleflatmapper.util.FactoryClassLoader;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,26 +34,31 @@ import static org.simpleflatmapper.ow2asm.Opcodes.IRETURN;
 
 public class AsmCharConsumerFactory extends CharConsumerFactory {
     private static final AtomicInteger id = new AtomicInteger();
-    
+
     public AbstractCharConsumer newCharConsumer(TextFormat textFormat, CharBuffer charBuffer, CellPreProcessor cellTransformer, boolean specialisedCharConsumer) {
         if (specialisedCharConsumer) {
+
+            MethodHandle constructor;
+
+            if (RFC4180_CC != null && isRfc4180(cellTransformer, textFormat)) {
+                try {
+                    return (AbstractCharConsumer) RFC4180_CC.invokeExact(charBuffer, textFormat, cellTransformer);
+                }catch (Throwable e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                }
+            }
+
             SpecialisationKey key = new SpecialisationKey(cellTransformer.ignoreLeadingSpace(), textFormat, cellTransformer.getClass());
 
-            Constructor<? extends AbstractCharConsumer> constructor;
-
-            if (key.equals(RFC4180)) {
-                constructor = RFC4180_CC;
-            } else {
-                constructor = specialisedCharConsumers.get(key);
-                if (constructor == null && specialisedCharConsumers.size() < 64) {
-                    constructor = createNewSpecialisedCharConsumer(key);
-                }
+            constructor = specialisedCharConsumers.get(key);
+            if (constructor == null && specialisedCharConsumers.size() < 64) {
+                constructor = createNewSpecialisedCharConsumer(key);
             }
 
             if (constructor != null) {
                 try {
-                    return constructor.newInstance(charBuffer, key.textFormat, cellTransformer);
-                } catch (Exception e) {
+                    return (AbstractCharConsumer) constructor.invokeExact(charBuffer, key.textFormat, cellTransformer);
+                } catch (Throwable e) {
                     throw new RuntimeException(e.getMessage(), e);
                 }
             }
@@ -60,16 +68,25 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
 
     }
 
+    private boolean isRfc4180(CellPreProcessor cellTransformer, TextFormat textFormat) {
+        return (RFC4180.ignoreLeadingSpace == cellTransformer.ignoreLeadingSpace())
+                && textFormat.equals(RFC4180.textFormat)
+                && cellTransformer.getClass().equals(RFC4180.cellTransformer);
+    }
 
-    private static Constructor<? extends AbstractCharConsumer> createNewSpecialisedCharConsumer(SpecialisationKey key) {
+
+    private static MethodHandle createNewSpecialisedCharConsumer(SpecialisationKey key) {
         synchronized (lock) {
-            Constructor<? extends AbstractCharConsumer> constructor;
+            MethodHandle constructor;
             constructor = specialisedCharConsumers.get(key);
             if (constructor == null) {
-                if (specialisedCharConsumers.size() < 64) { // artificial limit to avoid DOS
-                    constructor = generateSpecialisedCharConsumer(key);
-                    if (constructor != null) {
-                        specialisedCharConsumers.put(key, constructor);
+                if (specialisedCharConsumers.size() < 64) {
+                    try {// artificial limit to avoid DOS
+                        constructor = MethodHandles.lookup().unreflect(generateSpecialisedCharConsumer(key));
+                        if (constructor != null) {
+                            specialisedCharConsumers.put(key, constructor);
+                        }
+                    } catch (Throwable t) {
                     }
                 }
             }
@@ -78,7 +95,7 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private static Constructor<? extends AbstractCharConsumer> generateSpecialisedCharConsumer(final SpecialisationKey key) {
+    private static Method generateSpecialisedCharConsumer(final SpecialisationKey key) {
         try {
             final String newName = "org/simpleflatmapper/lightningcsv/parser/Asm_"
                     + (key.ignoreLeadingSpace ? "Ils_" : "")
@@ -94,7 +111,7 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
             ClassReader reader = new ClassReader(
                     ConfigurableCharConsumer.class.getResourceAsStream("ConfigurableCharConsumer.class")
             );
-            ClassWriter writer = new ClassWriter(reader,      ClassWriter.COMPUTE_MAXS |
+            ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS |
                     ClassWriter.COMPUTE_FRAMES);
             ClassVisitor visitor = new ClassVisitor(AsmUtils.API, writer) {
                 @Override
@@ -155,8 +172,8 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
 
                     } else {
                         return new MethodVisitor(AsmUtils.API, mv) {
-                            
-                            
+
+
                             public void visitTypeInsn(int i, String s) {
                                 if (oldNames.contains(s)) {
                                     s = newName;
@@ -215,7 +232,7 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
 
             Class<?> clazz = classLoader.registerClass(className, bytes);
 
-            return (Constructor<? extends AbstractCharConsumer>) clazz.getConstructor(CharBuffer.class, TextFormat.class, CellPreProcessor.class);
+            return clazz.getMethod("of", CharBuffer.class, TextFormat.class, CellPreProcessor.class);
 
         } catch (Exception e) {
             // ignore
@@ -227,19 +244,25 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
     private static final FactoryClassLoader classLoader = new FactoryClassLoader(AbstractCharConsumer.class.getClassLoader());
     private static final Object lock = new Object();
     private static final SpecialisationKey RFC4180 = new SpecialisationKey(false, new TextFormat(',', '"', '"', false), UnescapeCellPreProcessor.class);
-    private static final Constructor<? extends AbstractCharConsumer> RFC4180_CC;
+    private static final MethodHandle RFC4180_CC;
 
     static {
-        RFC4180_CC = generateSpecialisedCharConsumer(RFC4180);
+        MethodHandle methodHandle = null;
+        try {
+            methodHandle = MethodHandles.lookup().unreflect(generateSpecialisedCharConsumer(RFC4180));
+        } catch (Throwable t) {
+        }
+        RFC4180_CC = methodHandle;
     }
 
-    private static final ConcurrentHashMap<SpecialisationKey, Constructor<? extends AbstractCharConsumer>> specialisedCharConsumers =
-            new ConcurrentHashMap<SpecialisationKey, Constructor<? extends AbstractCharConsumer>>();
+    private static final ConcurrentHashMap<SpecialisationKey, MethodHandle> specialisedCharConsumers =
+            new ConcurrentHashMap<SpecialisationKey, MethodHandle>();
 
     private static class SpecialisationKey {
         final boolean ignoreLeadingSpace;
         final TextFormat textFormat;
         final Class<?> cellTransformer;
+
         private SpecialisationKey(boolean ignoreLeadingSpace, TextFormat textFormat, Class<?> cellTransformer) {
             this.ignoreLeadingSpace = ignoreLeadingSpace;
             this.textFormat = textFormat;

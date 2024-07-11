@@ -10,6 +10,10 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 		super(toCharArray(str), str.length());
 	}
 
+	public CharSequenceCharBuffer(final char[] str, int offset, int length) {
+		super(str, offset, length);
+	}
+
 	@Override
 	public boolean isConstant() {
 		return true;
@@ -24,7 +28,8 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 		if (charSequence instanceof String) {
 			return ((String)charSequence).toCharArray();
 		} else {
-			char[] buffer = new char[charSequence.length()];for(int i = 0; i < buffer.length; i++) {
+			char[] buffer = new char[charSequence.length()];
+			for(int i = 0; i < buffer.length; i++) {
 				buffer[i] = charSequence.charAt(i);
 			}
 			return buffer;

@@ -37,6 +37,7 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 
 	public ConfigurableCharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellPreProcessor cellPreProcessor) {
 		this.csvBuffer = csvBuffer;
+		this._currentIndex = csvBuffer.rowStartMark;
 		this.cellPreProcessor = cellPreProcessor;
 		this.textFormat = textFormat;
 	}

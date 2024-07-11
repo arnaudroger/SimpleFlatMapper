@@ -361,6 +361,11 @@ public final class CsvParser {
 			return reader(charBuffer(content));
 		}
 
+		public final CsvReader reader(char[] chars, int from, int to) throws IOException {
+			return reader(charBuffer(chars, from, to));
+		}
+
+
 		private CsvReader reader(CharBuffer charBuffer) throws IOException {
 			CsvReader csvReader = new CsvReader(charConsumer(charBuffer), cellConsumerWrapper);
 			csvReader.skipRows(skip);
@@ -378,6 +383,11 @@ public final class CsvParser {
 		protected CharBuffer charBuffer(String content) throws IOException {
 			return new CharSequenceCharBuffer(content);
 		}
+
+		protected CharBuffer charBuffer(char[] content, int from, int to) throws IOException {
+			return new CharSequenceCharBuffer(content, from , to);
+		}
+
 
 		public final CloseableCsvReader reader(File file) throws IOException {
 			return onReader(file, this, CREATE_CLOSEABLE_CSV_READER);

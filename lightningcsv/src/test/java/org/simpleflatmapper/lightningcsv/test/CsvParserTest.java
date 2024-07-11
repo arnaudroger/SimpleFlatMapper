@@ -79,6 +79,18 @@ public class CsvParserTest {
         String[] strs = iterator.next();
         assertEquals("0", strs[0]);
     }
+
+	@Test
+	public void testFromCharArray() throws IOException {
+		char[] array = "1,2,3,4".toCharArray();
+		CsvReader reader = CsvParser.dsl().reader(array, 2, array.length);
+		List<String[]> list = reader.stream().collect(Collectors.toList());
+
+		assertEquals(1, list.size());
+
+		assertArrayEquals(new String[] {"2", "3", "4"}, list.get(0));
+
+	}
     
     @Test
 	public void test459EscapeChar() throws IOException {

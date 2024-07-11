@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 function java19 {
-	sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java;export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+	sudo update-alternatives --set java /usr/lib/jvm/zulu19/bin/java;export JAVA_HOME=/usr/lib/jvm/zulu19
 }
 
 
@@ -25,7 +25,7 @@ function release {
   mvn --batch-mode -Dtag=sfm-$REL -Pdev9 -Pjdk19 release:prepare \
                -DreleaseVersion=$REL \
                -DdevelopmentVersion=$DEV
-  mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -Drelease -Pjdk19"
+  mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID -Drelease"
 
 }
 

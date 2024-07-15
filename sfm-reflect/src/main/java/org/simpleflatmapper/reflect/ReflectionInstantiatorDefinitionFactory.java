@@ -1,5 +1,6 @@
 package org.simpleflatmapper.reflect;
 
+import java.util.Arrays;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -171,15 +172,18 @@ public class ReflectionInstantiatorDefinitionFactory {
     // assume parameter name are either present or not for the type
     private static boolean _areParameterNamePresent(Type target) {
         Class<?> targetClass = TypeHelper.toClass(target);
+        final List<Method> declaredMethods = Arrays.stream(targetClass.getDeclaredMethods())
+            .filter(m -> !m.isSynthetic())
+            .toList();
 
-        for(Method m : targetClass.getDeclaredMethods()) {
+        for (Method m : declaredMethods) {
             final java.lang.reflect.Parameter[] parameters = m.getParameters();
             if (parameters.length > 0) {
                 return parameters[0].isNamePresent();
             }
         }
 
-        for(Constructor<?> c : targetClass.getDeclaredConstructors()) {
+        for (Constructor<?> c : targetClass.getDeclaredConstructors()) {
             final java.lang.reflect.Parameter[] parameters = c.getParameters();
             if (parameters.length > 0) {
                 return parameters[0].isNamePresent();

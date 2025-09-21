@@ -205,8 +205,8 @@
                 </property>
             </activation>
             <properties>
-                <staging.repository />
-                <release.arguments />
+                <staging.repository/>
+                <release.arguments/>
             </properties>
             <build>
                 <plugins>
@@ -361,7 +361,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jdbc</artifactId>
-                <version>5.1.8.RELEASE</version>
+                <version>6.2.11</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
